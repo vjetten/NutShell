@@ -191,7 +191,7 @@ QString nutshellqt::MakeFileListString()
                 Sfilelist = Sfilelist + plus + temp;
         }
     }
-    qDebug() << "Sfilelist" << Sfilelist;
+    //qDebug() << "Sfilelist" << Sfilelist;
     return(Sfilelist);
 }
 //---------------------------------------------------------------------------
@@ -297,7 +297,7 @@ QString nutshellqt::getScriptReport()
             }
         }
         timer << "endtime";
-        qDebug() << "timer" << timer;
+        //qDebug() << "timer" << timer;
         // get all reports
         QStringList name;
         name.clear();
@@ -349,9 +349,11 @@ int nutshellqt::getTimesteps()
     if (tabWidget->currentIndex() >= 0)
     {
         bool go;
+        bool nothing = true;
         QString all;
         QStringList SL;
         QStringList ss;
+        ss << "0" << "0";
 
         all = ETPlainText;
         SL = all.split("\n");
@@ -364,13 +366,16 @@ int nutshellqt::getTimesteps()
         foreach (QString str, SL)
         {
             if (str.indexOf("timer") == 0)
+            {
                 go = true;
+                nothing = false;
+            }
             if (str.indexOf("areamap") == 0 ||
                     str.indexOf("initial") == 0 ||
                     str.indexOf("dynamic") == 0)
                 go = false;
 
-            if (go  && str.contains(';') && !str.contains("endtime"))
+            if (go  && str.contains(';') && !str.contains("endtime") && !str.simplified().indexOf("#")==0)
             {
                 QString line;
                 line = str.simplified();
@@ -379,9 +384,12 @@ int nutshellqt::getTimesteps()
                 qDebug() << line << ss[1];
             }
         }
-        return ss[1].toInt();
+        if (nothing)
+            return -1;
+        else
+            return ss[1].toInt();
     }
-    return 0;
+    return -1;
 }
 //---------------------------------------------------------------
 bool nutshellqt::isTSSfile(QString name)

@@ -22,6 +22,11 @@ void nutshellqt::setupCommandwindow()
 
    connect(toolButton_clearcmd, SIGNAL(clicked()), this, SLOT(clearCommandWindow()));
    connect(toolButton_cmdlist, SIGNAL(clicked()), this, SLOT(clearCommandList()));
+
+//   connect(fontAct, SIGNAL(triggered()), commandWindow, SLOT(fontSelect()));
+//   connect(fontIncreaseAct, SIGNAL(triggered()), commandWindow, SLOT(fontIncrease()));
+//   connect(fontDecreaseAct, SIGNAL(triggered()), commandWindow, SLOT(fontDecrease()));
+
    commandcounter = -1;
 }
 //---------------------------------------------------------------
@@ -94,6 +99,8 @@ void nutshellqt::parseCommand()
       {
          args.removeAt(0);
          PCRProcess->start(prog, args);
+         //commandWindow->appendPlainText("...");
+         PCRProcess->waitForReadyRead(10000);
          commandWindow->appendPlainText("");
       }
 

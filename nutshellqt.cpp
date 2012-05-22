@@ -103,12 +103,12 @@ void nutshellqt::createMainActions()
     savefileAct->setShortcuts(QKeySequence::Save);
     connect(savefileAct, SIGNAL(triggered()), this, SLOT(saveFile()));
 
-    saveasfileAct = new QAction(QIcon(":/resources/filesaveas.png"), "&Save script file as...", this);
+    saveasfileAct = new QAction(QIcon(":/resources/filesaveas.png"), "S&ave script file as...", this);
     saveasfileAct->setShortcuts(QKeySequence::SaveAs);
     connect(saveasfileAct , SIGNAL(triggered()), this, SLOT(saveasFile()));
 
     closefileAct = new QAction(QIcon(":/resources/fileclose.png"), "&Close script file...", this);
-    closefileAct->setShortcut(Qt::CTRL+Qt::Key_W);
+    //closefileAct->setShortcut(Qt::CTRL+Qt::Key_W);
     connect(closefileAct, SIGNAL(triggered()), this, SLOT(closeFile()));
 
     // run model actions
@@ -124,7 +124,7 @@ void nutshellqt::createMainActions()
 
     killmodelAct = new QAction(QIcon(":/resources/stop1.png"), "&Stop model...", this);
     killmodelAct->setCheckable (true);
-    killmodelAct->setShortcut(Qt::CTRL+Qt::Key_C);
+    //killmodelAct->setShortcut(Qt::CTRL+Qt::Key_C);
     killmodelAct->setToolTip("Stop running");
     connect(killmodelAct, SIGNAL(triggered()), this, SLOT(killModel()));
 
@@ -158,20 +158,18 @@ void nutshellqt::createMainActions()
 void nutshellqt::createEditorActions()
 {
     // text edit options
+    // text actions are defined here but connected with slot in myeditor construction
     cutAct = new QAction(QIcon(":/resources/Cut.png"), tr("Cu&t text"), this);
     cutAct->setShortcuts(QKeySequence::Cut);
     cutAct->setStatusTip(tr("Cut selection"));
-    connect(cutAct, SIGNAL(triggered()), commandWindow, SLOT(cut()));
 
     copyAct = new QAction(QIcon(":/resources/editCopy.png"), tr("&Copy text"), this);
     copyAct->setShortcuts(QKeySequence::Copy);
     copyAct->setStatusTip(tr("Copy selection"));
-    connect(copyAct, SIGNAL(triggered()), commandWindow, SLOT(copy()));
 
     pasteAct = new QAction(QIcon(":/resources/editPaste.png"), tr("&Paste text"), this);
     pasteAct->setShortcuts(QKeySequence::Paste);
     pasteAct->setStatusTip(tr("Paste selection"));
-    connect(pasteAct, SIGNAL(triggered()), commandWindow, SLOT(paste()));
 
     undoAct = new QAction(QIcon(":/resources/editUndo.png"), tr("&Undo edit"), this);
     undoAct->setShortcuts(QKeySequence::Undo);
@@ -181,6 +179,11 @@ void nutshellqt::createEditorActions()
     redoAct->setShortcuts(QKeySequence::Redo);
     redoAct->setStatusTip(tr("Redo"));
 
+    // the rest is done here3
+    syntaxAct = new QAction(QIcon(":/resources/syntax.png"), "&Show syntax", this);
+    syntaxAct->setCheckable (true);
+    syntaxAct->setChecked(true);
+    connect(syntaxAct , SIGNAL(toggled(bool)), this, SLOT(showsyntax(bool)));
 
     actionFind = new QAction(QIcon(":/resources/editFind.png"), "&Find", this);
     actionFind->setShortcuts(QKeySequence::Find);
@@ -197,11 +200,6 @@ void nutshellqt::createEditorActions()
     actionFindPrev = new QAction(QIcon(":/resources/editfindprev.png"), "&Find Prev", this);
     actionFindPrev->setShortcut(Qt::SHIFT+Qt::Key_F3);
     connect(actionFindPrev, SIGNAL(triggered()), this, SLOT(findPrevfind()));
-
-    syntaxAct = new QAction(QIcon(":/resources/syntax.png"), "&Show syntax", this);
-    syntaxAct->setCheckable (true);
-    syntaxAct->setChecked(true);
-    connect(syntaxAct , SIGNAL(toggled(bool)), this, SLOT(showsyntax(bool)));
 
     fontAct = new QAction(QIcon(":/resources/fontselect.png"), "&Select font", this);
     connect(fontAct, SIGNAL(triggered()), this, SLOT(fontSelect()));
@@ -228,9 +226,6 @@ void nutshellqt::createEditorActions()
     toggleReportAct->setShortcut(Qt::ALT+Qt::Key_5);
     connect(toggleReportAct, SIGNAL(triggered()), this, SLOT(increaseReport()));
 
-    //	displayvarAct = new QAction(QIcon(""), "&Show variable...", this);
-    //	displayvarAct->setShortcut(Qt::Key_F4);
-    //	connect(displayvarAct, SIGNAL(triggered()), this, SLOT(displayVar()));
 }
 //---------------------------------------------------------------
 void nutshellqt::createExplorerActions()
@@ -239,7 +234,7 @@ void nutshellqt::createExplorerActions()
 
     aguilaplusAct   = new QAction(QIcon(":/resources/plus-button.png"), "", this);
     aguilaplusAct->setCheckable (true);
-    aguilaplusAct->setChecked(false);
+    aguilaplusAct->setChecked(true);
     aguilaplusAct->setToolTip ("Show maps on top of each other or in parallel windows");
     connect(aguilaplusAct,   SIGNAL(toggled(bool)), this, SLOT(actionplusaguila(bool)));
 
@@ -277,7 +272,6 @@ void nutshellqt::createExplorerActions()
 //---------------------------------------------------------------
 void nutshellqt::createContextMenuActions()
 {
-
     cutFileAct = new QAction(tr("Cu&t"), this);
     copyFileAct = new QAction(tr("Copy"), this);
     pasteFileAct = new QAction(tr("Paste"), this);
@@ -309,8 +303,7 @@ void nutshellqt::setupToolBar()
     toolBar->addAction(actionFindNext);
     toolBar->addAction(actionFindPrev);
     toolBar->addSeparator ();
-    // toolBar->addAction(syntaxAct);
-    // nicer to the eye
+    //toolBar->addAction(syntaxAct);
     toolBar->addAction(fontAct);
     toolBar->addAction(fontIncreaseAct);
     toolBar->addAction(fontDecreaseAct);
@@ -490,9 +483,21 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
     }
     if (obj == commandWindow)
     {
+        if (event->type() == QEvent::MouseButtonPress)
+        {
+            //            QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
+            //            if (mouseEvent->button()==Qt::LeftButton
+            //                    && calcProcess && calcProcess->state() == QProcess::Running
+            //                    )
+            //return true;
+            qDebug() << "click";
+        }
         if (event->type() == QEvent::KeyPress)
         {
             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+
+            if (calcProcess && calcProcess->state() == QProcess::Running)
+                return true;
 
             if (keyEvent->key() == Qt::Key_Return)
             {
@@ -547,11 +552,13 @@ void nutshellqt::setNutshellIni()
     settings.setValue("aguilaDirectory", AguilaDirName);
     settings.setValue("mapeditDirectory", MapeditDirName);
 
-    //settings.setValue(QString("workdirnr/currentNr"),comboBox_workdir->currentIndex());
-    settings.setValue(QString("workdir/current"),comboBox_workdir->currentIndex());
+    //settings.setValue(QString("workdir/current"),comboBox_workdir->currentIndex());
     for (int i = 0; i < comboBox_workdir->count(); i++)
     {
-        settings.setValue(QString("workdir/workdir%1").arg(i),comboBox_workdir->itemText(i));
+        if (i == comboBox_workdir->currentIndex())
+            settings.setValue(QString("workdir/workdir%1").arg(i),comboBox_workdir->itemText(i)+"<");
+        else
+            settings.setValue(QString("workdir/workdir%1").arg(i),comboBox_workdir->itemText(i));
     }
 
     //settings.setValue(QString("modelnr/active"),tabWidget->currentIndex());
@@ -606,22 +613,35 @@ void nutshellqt::getNutshellIni()
     settings.beginGroup("workdir");
     QStringList keys = settings.childKeys();
     int currentworkdir = 0;
+    comboBox_workdir->setInsertPolicy(QComboBox::InsertAtBottom);
+    QStringList dirs;
     for (int i = 0; i < keys.count(); i++)
     {
+        //        if (keys[i] == "current")
+        //        {
+        //            int nr = settings.value(keys[i]).toInt();
+        //            if (nr >= 0)
+        //                currentworkdir = nr;
+        //        }
+        //        else
+        //        {
         QString str = settings.value(keys[i]).toString();
-        if (keys[i] == "current")
+        if (!str.isEmpty())
         {
-            int nr = settings.value(keys[i]).toInt();
-            if (nr >= 0)
-                currentworkdir = nr;
-        }
-        else
-            if (!str.isEmpty())
+            if(str.contains("<"))
             {
-                comboBox_workdir->addItem(str);
+                str.remove(str.size()-1,1);
+                currentworkdir = i;
             }
+            dirs << str;
+        }
+        //        }
     }
-    currentPath = comboBox_workdir->itemText(currentworkdir);
+    comboBox_workdir->clear();
+    comboBox_workdir->addItems(dirs);
+
+    comboBox_workdir->setCurrentIndex(currentworkdir);
+    //    currentPath = comboBox_workdir->itemText(currentworkdir);
     settings.endGroup();
 
     //   settings.beginGroup("workdirnr");

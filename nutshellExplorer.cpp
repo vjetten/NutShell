@@ -70,8 +70,9 @@ void nutshellqt::setupExplorer()
    fileView->setSelectionMode(QAbstractItemView::ExtendedSelection);
    fileView->setSelectionBehavior(QAbstractItemView::SelectRows);
    fileView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
-   //  fileView->horizontalHeader()->setDefaultSectionSize(12);
-   fileView->horizontalHeader()->setStretchLastSection(true);
+  // fileView->horizontalHeader()->setDefaultSectionSize(112);
+   //fileView->horizontalHeader()->setStretchLastSection(true);
+   fileView->resizeColumnToContents(0);
    fileView->verticalHeader()->hide();
    fileView->setShowGrid(false);
    fileView->setSortingEnabled(true);
@@ -79,10 +80,10 @@ void nutshellqt::setupExplorer()
    fileView->setWordWrap(false);
    fileView->setColumnWidth (0, 156);
    fileView->setColumnWidth (1, 72);
-   fileView->setColumnWidth (2, 80);
+   fileView->setColumnWidth (2, 72);
+   fileView->setColumnWidth (3, 128);
    //fileView->setIconSize(QSize(0,0));
    fileView->verticalHeader()->setDefaultSectionSize(16);
-   //fileView->resizeColumnsToContents();
    fileView->setDragEnabled(true);
    fileView->setAcceptDrops(true);
 
@@ -134,7 +135,12 @@ void nutshellqt::setupExplorer()
 
    remember = true;
 
-   plus = "!";
+   plus = "!+!";
+   // plus is used in the creation of correct filename string for aguila
+   // you cannot split on a space when the path name has a space in it!!!
+   // but if you do not split aguila doesn't recognize two maps as one argument
+   // so we use a character like ! to split and create the separate arguments
+
    ismapseries = true;
 }
 //---------------------------------------------------------------
@@ -494,12 +500,12 @@ void nutshellqt::deleteFiles()
    QModelIndexList indexes = selectionModel->selectedIndexes();
    QModelIndex index;
 
-   if (calcProcess && calcProcess->state() == QProcess::Running)
-   {
-      toolButton_startrun->setChecked(false);
-      ErrorMsg("pcrcalc is active, wait until it is finished or press stop first");
-      return;
-   }
+//   if (calcProcess && calcProcess->state() == QProcess::Running)
+//   {
+//      toolButton_startrun->setChecked(false);
+//      ErrorMsg("pcrcalc is active, wait until it is finished or press stop first");
+//      return;
+//   }
 
    // each file has 4 indexes (name, date, type, size)
    bool start = true;

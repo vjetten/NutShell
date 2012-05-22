@@ -82,5 +82,6 @@
         <file>resources/showmods2.png</file>
         <file>resources/editRedo.png</file>
         <file>resources/editUndo.png</file>
+        <file>resources/showpcr3.png</file>
     </qresource>
 </RCC>

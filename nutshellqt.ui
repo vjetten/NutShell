@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>898</width>
+    <width>924</width>
     <height>609</height>
    </rect>
   </property>
@@ -325,7 +325,7 @@
                  <bool>true</bool>
                 </property>
                 <attribute name="buttonGroup">
-                 <string>buttonGroup</string>
+                 <string notr="true">buttonGroup</string>
                 </attribute>
                </widget>
               </item>
@@ -351,7 +351,7 @@
                  <bool>true</bool>
                 </property>
                 <attribute name="buttonGroup">
-                 <string>buttonGroup</string>
+                 <string notr="true">buttonGroup</string>
                 </attribute>
                </widget>
               </item>
@@ -377,7 +377,7 @@
                  <bool>true</bool>
                 </property>
                 <attribute name="buttonGroup">
-                 <string>buttonGroup</string>
+                 <string notr="true">buttonGroup</string>
                 </attribute>
                </widget>
               </item>
@@ -391,7 +391,7 @@
                 </property>
                 <property name="icon">
                  <iconset resource="nutshellqt.qrc">
-                  <normaloff>:/resources/showmods2.png</normaloff>:/resources/showmods2.png</iconset>
+                  <normaloff>:/resources/showpcr3.png</normaloff>:/resources/showpcr3.png</iconset>
                 </property>
                 <property name="checkable">
                  <bool>true</bool>
@@ -403,7 +403,7 @@
                  <bool>true</bool>
                 </property>
                 <attribute name="buttonGroup">
-                 <string>buttonGroup</string>
+                 <string notr="true">buttonGroup</string>
                 </attribute>
                </widget>
               </item>
@@ -429,7 +429,7 @@
                  <bool>true</bool>
                 </property>
                 <attribute name="buttonGroup">
-                 <string>buttonGroup</string>
+                 <string notr="true">buttonGroup</string>
                 </attribute>
                </widget>
               </item>
@@ -455,7 +455,7 @@
                  <bool>true</bool>
                 </property>
                 <attribute name="buttonGroup">
-                 <string>buttonGroup</string>
+                 <string notr="true">buttonGroup</string>
                 </attribute>
                </widget>
               </item>
@@ -481,7 +481,7 @@
                  <bool>true</bool>
                 </property>
                 <attribute name="buttonGroup">
-                 <string>buttonGroup</string>
+                 <string notr="true">buttonGroup</string>
                 </attribute>
                </widget>
               </item>
@@ -532,16 +532,25 @@
                </sizepolicy>
               </property>
               <property name="toolTip">
-               <string>Show model scripts</string>
+               <string/>
+              </property>
+              <property name="horizontalScrollBarPolicy">
+               <enum>Qt::ScrollBarAsNeeded</enum>
               </property>
               <property name="editTriggers">
                <set>QAbstractItemView::EditKeyPressed</set>
               </property>
+              <property name="dragDropMode">
+               <enum>QAbstractItemView::DragDrop</enum>
+              </property>
+              <property name="defaultDropAction">
+               <enum>Qt::CopyAction</enum>
+              </property>
               <property name="selectionMode">
-               <enum>QAbstractItemView::SingleSelection</enum>
+               <enum>QAbstractItemView::MultiSelection</enum>
               </property>
               <property name="selectionBehavior">
-               <enum>QAbstractItemView::SelectItems</enum>
+               <enum>QAbstractItemView::SelectRows</enum>
               </property>
               <property name="textElideMode">
                <enum>Qt::ElideLeft</enum>

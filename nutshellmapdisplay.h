@@ -24,9 +24,7 @@
 #include "CsfMap.h"
 #include "ui_nutshellMapdisplay.h"
 
-//namespace Ui {
-//class nutshellMapdisplay;
-//}
+//http://geography.uoregon.edu/datagraphics/color_scales.htm
 class colorMapWaterLog: public QwtLinearColorMap
 {
 public:
@@ -65,6 +63,34 @@ public:
       addColorStop( 0.7, Qt::yellow);
    }
 };
+
+class colorMapRedBlue: public QwtLinearColorMap
+{
+public:
+   colorMapRedBlue():
+      QwtLinearColorMap( QColor("#eeeeee"),QColor(220,  0,  0))
+   {
+       addColorStop(0.00,  QColor(0  ,   0,   220));
+       addColorStop(0.25,  QColor(0  ,   250, 250));
+       addColorStop(0.50,  QColor(0  ,   250,   0));
+       addColorStop(0.75,  QColor(250,   250,   0));
+   }
+};
+
+//       addColorStop(0.000,  QColor(  7 ,  90,255,255));
+//       addColorStop(0.077,  QColor( 50 , 118,255,255));
+//       addColorStop(0.154,  QColor( 89 , 144,255,255));
+//       addColorStop(0.231,  QColor(140 , 178,255,255));
+//       addColorStop(0.308,  QColor(191 , 212,255,255));
+//       addColorStop(0.385,  QColor(229 , 238,255,255));
+//       addColorStop(0.462,  QColor(247 , 249,255,255));
+//       addColorStop(0.538,  QColor(255 , 255,204,255));
+//       addColorStop(0.615,  QColor(255 , 255,153,255));
+//       addColorStop(0.692,  QColor(255 , 255,  0,255));
+//       addColorStop(0.769,  QColor(255 , 204,  0,255));
+//       addColorStop(0.846,  QColor(255 , 153,  0,255));
+//       addColorStop(0.923,  QColor(255 , 102,  0,255));
+//       addColorStop(1.000,  QColor(255 ,   0,  0,255));
 
 class nutshellMapdisplay : public QMainWindow, private Ui::nutshellMapdisplay
 {

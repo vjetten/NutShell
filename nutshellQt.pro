@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
-TARGET = nutshellQt
+TARGET = nutshell
 TEMPLATE = app
 QWTDIR = c:/Qt/qwt
 SOURCES += main.cpp\
