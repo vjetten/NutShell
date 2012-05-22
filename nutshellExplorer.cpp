@@ -135,6 +135,11 @@ void nutshellqt::setupExplorer()
    remember = true;
 
    plus = "!";
+   // plus is used in the creation of correct filename string for aguila
+   // you cannot split on a space when the path name has a space in it!!!
+   // but if you do not split aguila doesn't recognize two maps as one argument
+   // so we use a character like ! to split and create the separate arguments
+
    ismapseries = true;
 }
 //---------------------------------------------------------------
@@ -494,12 +499,12 @@ void nutshellqt::deleteFiles()
    QModelIndexList indexes = selectionModel->selectedIndexes();
    QModelIndex index;
 
-   if (calcProcess && calcProcess->state() == QProcess::Running)
-   {
-      toolButton_startrun->setChecked(false);
-      ErrorMsg("pcrcalc is active, wait until it is finished or press stop first");
-      return;
-   }
+//   if (calcProcess && calcProcess->state() == QProcess::Running)
+//   {
+//      toolButton_startrun->setChecked(false);
+//      ErrorMsg("pcrcalc is active, wait until it is finished or press stop first");
+//      return;
+//   }
 
    // each file has 4 indexes (name, date, type, size)
    bool start = true;

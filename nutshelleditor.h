@@ -1,9 +1,7 @@
 #ifndef NUTSHELLEDITOR_H
 #define NUTSHELLEDITOR_H
 
-//#include <QPlainTextEdit>
 #include <QtGui>
-
 
 QT_BEGIN_NAMESPACE
 class QPaintEvent;
@@ -33,20 +31,36 @@ public:
 
 protected:
 	void resizeEvent(QResizeEvent *event);
-//	void mousePressEvent(QMouseEvent *evt);
-//	void mouseReleaseEvent(QMouseEvent *evt);
 
 public slots:
 	void updateLineNumberAreaWidth(int newBlockCount);
 	void highlightCurrentLine();
 	void updateLineNumberArea(const QRect &, int);
-	//void findText();
 
 signals:
 	void showVar(QPoint point);//QTextCursor);
 
 private:
 	QWidget *lineNumberArea;
+// actions themselves are defined in the main class
+//    QAction *cutAct;
+//    QAction *copyAct;
+//    QAction *pasteAct;
+//    QAction *undoAct;
+//    QAction *redoAct;
+//    QAction *actionFind;
+//    QAction *actionReplace;
+//    QAction *actionFindNext;
+//    QAction *actionFindPrev;
+//    QAction *fontAct;
+//    QAction *fontIncreaseAct;
+//    QAction *fontDecreaseAct;
+//    QAction *decreaseIndentAct;
+//    QAction *increaseIndentAct;
+//    QAction *toggleHashAct;
+//    QAction *toggleReportAct;
+//    QAction *syntaxAct;
+
 };
 
 

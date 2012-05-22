@@ -23,12 +23,14 @@ void nutshellqt::setupModel()
     calcProcess->setTextModeEnabled (true);
     connect(calcProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderr()) );
     connect(calcProcess, SIGNAL(finished(int)),this, SLOT(finishedModel(int)) );
+    connect(PCRProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderr()) );
     useOldCalc = false;
 
     connect(toolButton_oldcalc, SIGNAL(toggled(bool)), this, SLOT(toggleOldcalc(bool)));
     connect(toolButton_startrun, SIGNAL(clicked()), this, SLOT(runModel()));
     connect(toolButton_stoprun, SIGNAL(clicked()), this, SLOT(killModel()));
     connect(toolButton_pauserun, SIGNAL(toggled(bool)), this, SLOT(suspendModel(bool)));
+
 }
 //---------------------------------------------------------------
 void nutshellqt::runModelCommandwindow(QString prog, QStringList args)
@@ -92,6 +94,15 @@ void nutshellqt::runModel()
         return;
     }
 
+    QString ext = QFileInfo(ETfilePath).suffix();
+    if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
+    {
+        STATUS("Opening file in operating system");
+        QDesktopServices::openUrl(QUrl("\""+ETfilePath+"\""));
+        return;
+    }
+    // run a batch file by passing it on to the system
+
     args << QString("-f") <<  ETfilePath;
     argsscreen << QString("-f") <<  ETfileName;
 
@@ -136,7 +147,8 @@ void nutshellqt::onScreen(QString buffer)
     QString output, SStep;
     QStringList list, listb;
     QTextCursor cur = commandWindow->textCursor();
-
+    //save position of textcursor
+//qDebug()<<"A"<<cur.position();
     listb.clear();
     listb = buffer.split("\r");
     // split process output all out in seperate lines, using UNIX CR
@@ -155,23 +167,29 @@ void nutshellqt::onScreen(QString buffer)
         // join new lines and replace the commandWindow
     }
     else
-        if(listb[0].contains("version"))// && !buffer.contains("ERROR"))
+        // first output at start run
+        if(listb[0].contains("version"))
         {
+  //          qDebug() << xlast << listb.count() << list.count();
+            int last = listb.count() -1;
             list.replace(xlast-3,listb[0]);
-            list.replace(xlast-2,listb[2]);
+            list.replace(xlast-2,listb[last]);
             output=list.join("\n");
             commandWindow->setPlainText(output);
             // join new lines and replace the commandWindow
-            cur.setPosition(commandWindow->toPlainText().size() - listb[2].size() - 1);
+            cur.setPosition(commandWindow->toPlainText().size() - listb[last].size() - 1);
         }
         else
         {
-            for (int j = 0; j < listb.count(); j+=2)
+            // runstep output
+            for (int j = 0; j < listb.count(); j+=2) //<= each runstep is repeated twice for some reason
                 if (listb[j].contains("Exec"))
                 {
                     //Delay(10);
                     cur.setPosition(commandWindow->toPlainText().size(),QTextCursor::KeepAnchor);
                     commandWindow->setTextCursor(cur);
+                    //set cursor at the end
+    //                qDebug()<<"B"<<cur.position();
 
                     commandWindow->textCursor().removeSelectedText();
                     commandWindow->textCursor().insertText(listb[j]);
@@ -185,13 +203,15 @@ void nutshellqt::onScreen(QString buffer)
     commandWindow->setTextCursor(cur);
     // update cursor
 
-    int steps = SStep.toInt();
-    double timemin = time_ms.elapsed()*(0.001/60);
-    SStep = QString(" Estimated runtime : %1 of %2 minutes").arg(timemin,0,'g',2).arg(timemin * totalsteps/steps,0,'g',2);
-    statusLabel.setText(SStep);
-    statusLabel.show();
-    // calculate runtime and show
-
+    if (totalsteps > 0)
+    {
+        int steps = SStep.toInt();
+        double timemin = time_ms.elapsed()*(0.001/60);
+        SStep = QString(" Estimated runtime : %1 of %2 minutes").arg(timemin,0,'g',2).arg(timemin * totalsteps/steps,0,'g',2);
+        statusLabel.setText(SStep);
+        statusLabel.show();
+        // calculate runtime and show
+    }
     QCoreApplication::sendPostedEvents(this, 0);
     // update the plaintextedit with these actions
 
@@ -201,12 +221,12 @@ void nutshellqt::onScreen(QString buffer)
 //---------------------------------------------------------------
 void nutshellqt::readFromStderr()
 {
-    QByteArray buf;
     QString buffer;
 
-    buf.clear();
-    buf = calcProcess->readAllStandardError();
-    buffer = QString(buf);
+//    QByteArray buf;
+//    buf.clear();
+//    buf = calcProcess->readAllStandardError();
+    buffer = QString(calcProcess->readAllStandardError()); //buf);
 
     onScreen(buffer);
 
@@ -226,7 +246,7 @@ void nutshellqt::killModel()
 
         calcProcess->waitForFinished();
 
-        output.append("\nuser interupt...");
+        output.append("\nuser interupt...\n");
         commandWindow->setPlainText(output);
 
         QTextCursor cur = commandWindow->textCursor();
@@ -303,7 +323,7 @@ void nutshellqt::doRunErrorMessage(QString buffer)
     ETEditor->setTextCursor(cur);
     ETEditor->repaint();
     statusBar()->showMessage(QString("Error in line %1 pos %2, or before.").arg(errorpos[0]).arg(errorpos[1]));
-   // statusLabel.setText(QString("Error in line %1 pos %2, or before.").arg(errorpos[0]).arg(errorpos[1]));
+    // statusLabel.setText(QString("Error in line %1 pos %2, or before.").arg(errorpos[0]).arg(errorpos[1]));
 }
 //---------------------------------------------------------------
 void nutshellqt::finishedModel(int c)
@@ -318,7 +338,9 @@ void nutshellqt::finishedModel(int c)
     }
 
     QString output = commandWindow->toPlainText();
-    output.append("\n");
+    QStringList hop = output.split("\n");
+    if (hop[hop.count()-1].size() > 1)
+        output.append("\n");
     commandWindow->setPlainText(output);
 
     QTextCursor cur = commandWindow->textCursor();
@@ -332,6 +354,8 @@ void nutshellqt::finishedModel(int c)
     changeFileFilter(_filternr);
 
     statusBar()->removeWidget(&statusLabel);
+
+    commandWindow->setFocus();
 
     QCoreApplication::sendPostedEvents(this, 0);
     //necessary?

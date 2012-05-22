@@ -13,152 +13,156 @@
 // when a toolbutton is pressed or enter or doubleclick on the fileView is executed
 void nutshellqt::actionaguila2D()
 {
-   PerformAction(ACTIONTYPEAGUILA2D);
+    PerformAction(ACTIONTYPEAGUILA2D);
 }
 //---------------------------------------------------------------------------
 void nutshellqt::actionaquila3D()
 {
-   PerformAction(ACTIONTYPEAGUILA3D);
+    PerformAction(ACTIONTYPEAGUILA3D);
 }
 //---------------------------------------------------------------------------
 void nutshellqt::actionaguila3Drape()
 {
-   PerformAction(ACTIONTYPEDRAPE);
+    PerformAction(ACTIONTYPEDRAPE);
 }
 //---------------------------------------------------------------------------
 void nutshellqt::actionaguilaplot()
 {
-   PerformAction(ACTIONTYPETIMEPLOT);
+    PerformAction(ACTIONTYPETIMEPLOT);
 }
 //---------------------------------------------------------------------------
 void nutshellqt::actionplusaguila(bool check)
 {
-   if (check)
-      plus = "!+!";
-   else
-      plus = "!";
+    if (check)
+        plus = "!+!";
+    else
+        plus = "!";
 }
 //---------------------------------------------------------------------------
 void nutshellqt::actionlegend()
 {
-   PerformAction(ACTIONTYPELEGEND);
+    PerformAction(ACTIONTYPELEGEND);
 }
 //---------------------------------------------------------------------------
 void nutshellqt::actionmapattribute()
 {
-   PerformAction(ACTIONTYPEATTRIBUTE);
+    PerformAction(ACTIONTYPEATTRIBUTE);
 }
 //---------------------------------------------------------------------------
 void nutshellqt::actionmapnew()
 {
-   PerformAction(ACTIONTYPEATTRIBUTENEW);
+    PerformAction(ACTIONTYPEATTRIBUTENEW);
 }
 //---------------------------------------------------------------------------
 void nutshellqt::actioneditor()
 {
-   PerformAction(ACTIONTYPEMODEL);
+    PerformAction(ACTIONTYPEMODEL);
 }
 //---------------------------------------------------------------------------
 void nutshellqt::actionmapedit()
 {
-   PerformAction(ACTIONTYPEMAPEDIT);
+    PerformAction(ACTIONTYPEMAPEDIT);
 }
 //---------------------------------------------------------------------------
 void nutshellqt::actionmapDisplay()
 {
-   PerformAction(ACTIONTYPEMAPDISPLAY);
+    PerformAction(ACTIONTYPEMAPDISPLAY);
 }
 //---------------------------------------------------------------------------
 // get actiontype if double click or <enter> keypress in fileView
 int nutshellqt::GetActionType()
 {
-   int at;
+    int at;
 
-   QString ext = QFileInfo(SelectedPathName).suffix();
-   //	QString ext = QFileInfo(name).suffix();
+    QString ext = QFileInfo(SelectedPathName).suffix();
+    //	QString ext = QFileInfo(name).suffix();
 
-   MAP *m = Mopen(SelectedPathName.toAscii(),M_READ);
-   //	MAP *m = Mopen(name.toAscii(),M_READ);
-   if (m != NULL)
-   {
-      at = ACTIONTYPEAGUILA2D; //ACTIONTYPEDISPLAY;
-      Mclose(m);
-      m=NULL;
-   }
-   else
-      //		if (ext.toUpper() == "TSS")
-      if( isTSSfile(SelectedPathName))
-         at = ACTIONTYPETIMEPLOT;
-      else
-         if (ext.toUpper() == "PCR")
-            at = ACTIONTYPEPCRASTER;
-         else
-            if (ext.toUpper() == "MOD")
-            {
-               at = ACTIONTYPEMODEL;
-               syntaxAct->setChecked(true);
-            }
+    MAP *m = Mopen(SelectedPathName.toAscii(),M_READ);
+    //	MAP *m = Mopen(name.toAscii(),M_READ);
+    if (m != NULL)
+    {
+        at = ACTIONTYPEAGUILA2D; //ACTIONTYPEDISPLAY;
+        Mclose(m);
+        m=NULL;
+    }
+    else
+        //		if (ext.toUpper() == "TSS")
+        if( isTSSfile(SelectedPathName))
+            at = ACTIONTYPETIMEPLOT;
+        else
+            if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
+                at = ACTIONTYPEWINDOWSCMD;
+        else
+            if (ext.toUpper() == "PCR")
+                at = ACTIONTYPEPCRASTER;
             else
-               if (ext.toUpper() == "TXT" ||
-                   ext.toUpper() == "TBL" ||
-                   ext.toUpper() == "DAT" ||
-                   ext.toUpper() == "INI")
-               {
-                  at = ACTIONTYPEMODEL;
-                  syntaxAct->setChecked(false);
-               }
-               else
-                  if (ext.toUpper() == "GST")
-                     at = ACTIONTYPEGSTAT;
-                  else
-                     at = ACTIONTYPEUNDEFINED;
+                if (ext.toUpper() == "MOD")
+                {
+                    at = ACTIONTYPEMODEL;
+                    syntaxAct->setChecked(true);
+                }
+                else
+                    if (ext.toUpper() == "TXT" ||
+                            ext.toUpper() == "TBL" ||
+                            ext.toUpper() == "DAT" ||
+                            ext.toUpper() == "INI")
+                    {
+                        at = ACTIONTYPEMODEL;
+                        syntaxAct->setChecked(false);
+                    }
+                    else
+                        if (ext.toUpper() == "GST")
+                            at = ACTIONTYPEGSTAT;
+                        else
+                            at = ACTIONTYPEUNDEFINED;
 
-   return at;
+    return at;
 }
 //---------------------------------------------------------------------------
 void nutshellqt::PerformAction(int actiontype)
 {
-   QString prog;
-   QString cmdl;
-   QStringList args;
-   MAP *m = NULL;
-   bool fileIsMap = true;
-   bool isAguila = false;
+    QString prog;
+    QString cmdl;
+    QStringList args;
+    MAP *m = NULL;
+    bool fileIsMap = true;
+    bool isAguila = false;
 
-   args.clear();
-   if(!selectionModel->currentIndex().isValid())
-   {
-      ErrorMsg("No file selected.");
-      return;
-   }
-   // make a filelist string for aguila related actions
-   if (actiontype != ACTIONTYPEATTRIBUTENEW &&
-       actiontype != ACTIONTYPEATTRIBUTE &&
-       actiontype != ACTIONTYPELEGEND &&
-       actiontype != ACTIONTYPENONE)
-      cmdl = MakeFileListString();
-   // also makes mapseries if needed
+    args.clear();
+    if(!selectionModel->currentIndex().isValid())
+    {
+        ErrorMsg("No file selected.");
+        return;
+    }
+    // make a filelist string for aguila related actions
+    if (actiontype != ACTIONTYPEATTRIBUTENEW &&
+            actiontype != ACTIONTYPEATTRIBUTE &&
+            actiontype != ACTIONTYPELEGEND &&
+            actiontype != ACTIONTYPENONE)
+        cmdl = MakeFileListString();
+ //   qDebug() << cmdl;
+    // also makes mapseries if needed
 
-   m = Mopen(SelectedPathName.toAscii().data(),M_READ);
-   if (m == NULL)
-      fileIsMap = false;
-   else
-      Mclose(m);
+    m = Mopen(SelectedPathName.toAscii().data(),M_READ);
+    if (m == NULL)
+        fileIsMap = false;
+    else
+        Mclose(m);
 
-   // check if selection is a pcraster map
-   if (!fileIsMap && (
-          actiontype == ACTIONTYPEDISPLAY ||
-          actiontype == ACTIONTYPEAGUILA3D ||
-          actiontype == ACTIONTYPEAGUILA2D ||
-          actiontype == ACTIONTYPEDRAPE ||
-          actiontype == ACTIONTYPEMAPEDIT ||
-          actiontype == ACTIONTYPELEGEND ))
-      //|| actiontype == ACTIONTYPEATTRIBUTE))
-   {
-      ErrorMsg(QString("%1 is not a PCRaster map.").arg(SelectedPathName));
-      actiontype = ACTIONTYPENONE;
-   }
-   /*
+    // check if selection is a pcraster map
+    if (!fileIsMap && (
+                actiontype == ACTIONTYPEDISPLAY ||
+                actiontype == ACTIONTYPEAGUILA3D ||
+                actiontype == ACTIONTYPEAGUILA2D ||
+                actiontype == ACTIONTYPEDRAPE ||
+                actiontype == ACTIONTYPEMAPEDIT ||
+                actiontype == ACTIONTYPELEGEND ))
+        //|| actiontype == ACTIONTYPEATTRIBUTE))
+    {
+        ErrorMsg(QString("%1 is not a PCRaster map.").arg(SelectedPathName));
+        actiontype = ACTIONTYPENONE;
+    }
+    /*
  if (actiontype == ACTIONTYPEDISPLAY)
  {
       //NO LONGER USED, THIS IS NEVER SELECTED
@@ -167,148 +171,174 @@ void nutshellqt::PerformAction(int actiontype)
  }
  else
     */
+    if (fileIsMap)
+    {
+        QString mapatts;
+        mapatts = mapattribute.getMapAttributes(SelectedPathName);
+        statusLabel.setText("<b>Map Attributes</b> - " + mapatts);
+        statusBar()->addWidget(&statusLabel);
+        statusLabel.show();
+    }
 
-   switch (actiontype)
-   {
-   case ACTIONTYPEAGUILA2D :
-      // cmdl = " -2 " + cmdl;
-      // args << cmdl;
-      args << "-2" << cmdl.split("!");
+    switch (actiontype)
+    {
+    case ACTIONTYPEAGUILA2D :
+        args << "-2" << cmdl.split("!");
+        //you cannot split on a space when the path name has a space in it!!!
+        // but if you do not split aguila doesn't recognize two maps as one argument
+        // so we use a character like ! to split and create the separate arguments
 
-      prog = AguilaDirName + "aguila.exe";
-      isAguila = true;
-      break;
-   case ACTIONTYPEAGUILA3D :
-      args << "-3" << cmdl.split(plus);
-      prog = AguilaDirName + "aguila.exe";
-      isAguila = true;
-      break;
-   case ACTIONTYPEDRAPE :
-      if (cmdl.contains(" + "))
-         args << "-3" << cmdl.split(" ");
-      // cmdl already contains more maps with +
-      else
-      {         
-         // cmdl contains one or moremaps without +
-         args = cmdl.split(" ");        
+        prog = AguilaDirName + "aguila.exe";
+        isAguila = true;
+        break;
+    case ACTIONTYPEAGUILA3D :
+        args << "-3" << cmdl.split(plus);
+        // a split on plus will always show as a single 3D surface,
+        // two maps as two seperate surfaces
+        prog = AguilaDirName + "aguila.exe";
+        isAguila = true;
+        break;
+    case ACTIONTYPEDRAPE :
+        if (cmdl.contains("!+!"))
+            args << "-3" << cmdl.split("!");
+        // cmdl already contains more maps with +, first map will be base
+        else
+        {
+            // cmdl contains one or moremaps without +
+            args = cmdl.split("!");
+            // splt first if possible
 
-         if (args.count() == 1)
-            args << cmdl;
-         // if one map is chosen double it to construct e.g. dem.map + dem.map
+            if (args.count() == 1)
+                args << cmdl;
+            // if one map is chosen double it to construct e.g. dem.map + dem.map
 
-         cmdl = args.join(" + ");
-         // join aleways with a + for drape effect in aguila
-         args.clear();
-         args << "-3" << cmdl.split(" ");
-      }
-      prog = AguilaDirName + "aguila.exe";
-      isAguila = true;
-      break;
-   case ACTIONTYPETIMEPLOT :
-      args << "-t" << cmdl.split(" ");
-      prog = AguilaDirName + "aguila.exe";
-      isAguila = true;
-      break;
-   case ACTIONTYPEPCRASTER :
-      args << cmdl;
-      prog = PCRasterAppDirName + "pcraster.exe";
-      break;
-   case ACTIONTYPEMODEL :
-      if (fileIsMap)
-      {
-         ErrorMsg(QString("%1 is a PCRaster map and cannot be loaded in the editor. Use mapEdit.").arg(SelectedPathName));
-         actiontype = ACTIONTYPENONE;
-      }
-      else
-      {
-         AddModel(SelectedPathName,1);// dosyntax ? 1 : 0);
-         actiontype = ACTIONTYPENONE;
-      }
-      break;
-   case ACTIONTYPEMAPEDIT :
-      args << cmdl;
-      prog = MapeditDirName + "mapedit.exe";
-      break;
-   case ACTIONTYPELEGEND:
-      if (fileIsMap)
-      {
-         m = Mopen(SelectedPathName.toAscii().data(),M_READ);
-         if (RgetValueScale(m) == VS_NOMINAL ||
-             RgetValueScale(m) == VS_ORDINAL ||
-             RgetValueScale(m) == VS_BOOLEAN)
-         {
-            maplegend.makelegend(SelectedPathName);
-            maplegend.show();
-         }
-         else
-            ErrorMsg("Only nominal, ordinal or boolean maps can have a legend.");
-         Mclose(m);
-      }
-      else
-         ErrorMsg("Error opening file as PCRaster map.");
-      m = NULL;
-      actiontype = ACTIONTYPENONE;
-      break;
-   case ACTIONTYPEATTRIBUTENEW :
-      if (fileIsMap)
-      {
-         if (mapattribute.fill(SelectedPathName, true) == 0)
-         {
+            cmdl = args.join("!+!");
+            // join allways with a + for drape effect in aguila
+            args.clear();
+            args << "-3" << cmdl.split("!");
+        }
+        prog = AguilaDirName + "aguila.exe";
+        isAguila = true;
+        break;
+    case ACTIONTYPETIMEPLOT :
+        args << "-t" << cmdl.split("!");
+        prog = AguilaDirName + "aguila.exe";
+        isAguila = true;
+        break;
+    case ACTIONTYPEPCRASTER :
+        args << cmdl;
+        prog = PCRasterAppDirName + "pcraster.exe";
+        break;
+    case ACTIONTYPEMODEL :
+        if (fileIsMap)
+        {
+            ErrorMsg(QString("%1 is a PCRaster map and cannot be loaded in the editor. Use mapEdit.").arg(SelectedPathName));
+            actiontype = ACTIONTYPENONE;
+        }
+        else
+        {
+            AddModel(SelectedPathName,1);// dosyntax ? 1 : 0);
+            actiontype = ACTIONTYPENONE;
+        }
+        break;
+    case ACTIONTYPEMAPEDIT :
+        args << cmdl;
+        prog = MapeditDirName + "mapedit.exe";
+        break;
+    case ACTIONTYPELEGEND:
+        if (fileIsMap)
+        {
+            m = Mopen(SelectedPathName.toAscii().data(),M_READ);
+            if (RgetValueScale(m) == VS_NOMINAL ||
+                    RgetValueScale(m) == VS_ORDINAL ||
+                    RgetValueScale(m) == VS_BOOLEAN)
+            {
+                maplegend.makelegend(SelectedPathName);
+                maplegend.show();
+            }
+            else
+                ErrorMsg("Only nominal, ordinal or boolean maps can have a legend.");
+            Mclose(m);
+        }
+        else
+            ErrorMsg("Error opening file as PCRaster map.");
+        m = NULL;
+        actiontype = ACTIONTYPENONE;
+        break;
+    case ACTIONTYPEATTRIBUTENEW :
+        if (fileIsMap)
+        {
+            if (mapattribute.fill(SelectedPathName, true) == 0)
+            {
+                mapattribute.show();
+                mapattribute.raise();
+            }
+        }
+        else
+        {
             mapattribute.show();
             mapattribute.raise();
-         }
-      }
-      else
-         ErrorMsg("Error opening file as PCRaster map.");
-      actiontype = ACTIONTYPENONE;
-      break;
-   case ACTIONTYPEATTRIBUTE :
-      if (fileIsMap)
-      {
-         //if (mapattribute.fill(SelectedPathName, false) == 0)
-         //   mapattribute.show();
-         QString mapatts;
-         mapatts = mapattribute.getMapAttributes(SelectedPathName);
-         statusLabel.setText("<b>Map Attributes</b> - " + mapatts);
-         statusBar()->addWidget(&statusLabel);
-         statusLabel.show();
-      }
-      else
-         statusBar()->removeWidget(&statusLabel);
+        }
+        //         ErrorMsg("Error opening file as PCRaster map.");
+        actiontype = ACTIONTYPENONE;
+        break;
+    case ACTIONTYPEATTRIBUTE :
+        if (fileIsMap)
+        {
+            if (mapattribute.fill(SelectedPathName, false) == 0)
+            {
+                mapattribute.show();
+                mapattribute.raise();
+            }
 
-      actiontype = ACTIONTYPENONE;
-      break;
-   case ACTIONTYPEGSTAT :
-      args << cmdl;
-      prog = PCRasterAppDirName + "gstat.exe";
-      //actiontype = ACTIONTYPENONE;
-      break;
-   case ACTIONTYPEMAPDISPLAY :
-//      args << cmdl;
-      mapDisplay.mapDisplayNames = SelectedPathName;
-      mapDisplay.initMapPlot();
-      mapDisplay.show();
-      mapDisplay.ShowMap();
-      break;
-   default:
-      STATUS("Opening file in operating system");
-      QDesktopServices::openUrl(QUrl("\""+cmdl+"\""));
-      // open process in its standard OS application
-      actiontype = ACTIONTYPENONE;
-      break;
-   }
+            //         QString mapatts;
+            //         mapatts = mapattribute.getMapAttributes(SelectedPathName);
+            //         statusLabel.setText("<b>Map Attributes</b> - " + mapatts);
+            //         statusBar()->addWidget(&statusLabel);
+            //         statusLabel.show();
+        }
+        else
+            statusBar()->removeWidget(&statusLabel);
 
-   if (actiontype != ACTIONTYPENONE)
-   {
-      if (isAguila)//prog.contains("aguila"))
-         PCRProcess->startDetached(prog,args);
-      else
-         PCRProcess->start(prog,args);
-      //TODO check if detached only for aguila?
-   }
+        actiontype = ACTIONTYPENONE;
+        break;
+    case ACTIONTYPEGSTAT :
+        args << cmdl;
+        prog = PCRasterAppDirName + "gstat.exe";
+        //actiontype = ACTIONTYPENONE;
+        break;
+    case ACTIONTYPEMAPDISPLAY :
+        //      args << cmdl;
+        mapDisplay.mapDisplayNames = SelectedPathName;
+        mapDisplay.initMapPlot();
+        mapDisplay.show();
+        mapDisplay.ShowMap();
+        break;
+    case ACTIONTYPEWINDOWSCMD:
+       // QDesktopServices::openUrl(QUrl("\""+cmdl+"\""));
+       // break;
+    default:
+        STATUS("Opening file in operating system");
+        QDesktopServices::openUrl(QUrl("\""+cmdl+"\""));
+        // open process in its standard OS application
+        actiontype = ACTIONTYPENONE;
+        break;
+    }
 
-   actiontype = ACTIONTYPENONE;
-   // reset actiontype for the next command
+    if (actiontype != ACTIONTYPENONE)
+    {
+        if (isAguila)//prog.contains("aguila"))
+            PCRProcess->startDetached(prog,args);
+        else
+        {
+            PCRProcess->start(prog,args);
+            PCRProcess->waitForStarted(10000);
+        }
+        //TODO check if detached only for aguila?
+    }
+
+    actiontype = ACTIONTYPENONE;
+    // reset actiontype for the next command
 
 }
 //---------------------------------------------------------------------------
