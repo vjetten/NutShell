@@ -168,13 +168,14 @@ void nutshellqt::onScreen(QString buffer)
         // first output at start run
         if(listb[0].contains("version"))
         {
+
             int last = listb.count() - 1;
+
             list.replace(xlast-3,listb[0]);
             list.replace(xlast-2,listb[last]);
             output=list.join("\n");
             commandWindow->setPlainText(output);
             // join new lines and replace the commandWindow
-
             calcCursor = commandWindow->textCursor();
             calcCursor.setPosition(commandWindow->toPlainText().size() - listb[last].size() - 1);
             cursorPosition = calcCursor.position();
@@ -188,6 +189,7 @@ void nutshellqt::onScreen(QString buffer)
                 if (listb[j].contains("Exec"))
                 {
                     //Delay(10);
+
                     calcCursor.setPosition(commandWindow->toPlainText().size(),QTextCursor::KeepAnchor);
                     commandWindow->setTextCursor(calcCursor);
                     //set cursor at the end
@@ -200,6 +202,7 @@ void nutshellqt::onScreen(QString buffer)
                         SStep = QString("Executing timestep %1 (runtime: %2 of %3 min)").arg(SStep).arg(timemin,0,'g',2).arg(timemin * totalsteps/SStep.toInt(),0,'g',2);
                         // calculate runtime and show
                     }
+
 
                     commandWindow->textCursor().removeSelectedText();
                     commandWindow->textCursor().insertText(SStep);
@@ -214,6 +217,7 @@ void nutshellqt::onScreen(QString buffer)
     //commandWindow->setTextCursor(cur);
     // update cursor
 
+
 //    if (totalsteps > 0)
 //    {
 //        int steps = SStep.toInt();
@@ -223,6 +227,7 @@ void nutshellqt::onScreen(QString buffer)
 //        statusLabel.show();
 //        // calculate runtime and show
 //    }
+
     QCoreApplication::sendPostedEvents(this, 0);
     // update the plaintextedit with these actions
 
@@ -234,9 +239,11 @@ void nutshellqt::readFromStderr()
 {
     QString buffer;
 
+
     //    QByteArray buf;
     //    buf.clear();
     //    buf = calcProcess->readAllStandardError();
+
     buffer = QString(calcProcess->readAllStandardError()); //buf);
 
     onScreen(buffer);

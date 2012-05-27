@@ -537,6 +537,9 @@
               <property name="horizontalScrollBarPolicy">
                <enum>Qt::ScrollBarAsNeeded</enum>
               </property>
+              <property name="horizontalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOn</enum>
+              </property>
               <property name="editTriggers">
                <set>QAbstractItemView::EditKeyPressed</set>
               </property>

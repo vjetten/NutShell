@@ -135,6 +135,7 @@ void nutshellqt::setupExplorer()
 
    remember = true;
 
+
    plus = "!+!";
    // plus is used in the creation of correct filename string for aguila
    // you cannot split on a space when the path name has a space in it!!!

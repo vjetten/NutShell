@@ -148,9 +148,11 @@ void nutshellqt::AddModel(QString name, int syntax)
     ET[nr].filePath = name;
     ET[nr].fileName = QFileInfo(name).fileName();
     tabWidget->setTabText(nr, ET.at(nr).fileName);
+
     ET[nr].syntax = 1;//syntax;
     syntaxAct->setChecked(true);//syntax == 1);
     showsyntax(true);//syntax == 1);
+
 
     QTextStream in(&file);
     ET[nr].editor->setPlainText(in.readAll());
@@ -407,6 +409,7 @@ void nutshellqt::showsyntax(bool doit)
 {
     if (tabWidget->currentIndex() == -1)
         return;
+
     ETHighlighter->dosyntax = true;//doit;
     ET[tabWidget->currentIndex()].syntax = 1;//doit ? 1:0;
     ETHighlighter->rehighlight();

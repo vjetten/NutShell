@@ -303,7 +303,9 @@ void nutshellqt::setupToolBar()
     toolBar->addAction(actionFindNext);
     toolBar->addAction(actionFindPrev);
     toolBar->addSeparator ();
+
     //toolBar->addAction(syntaxAct);
+
     toolBar->addAction(fontAct);
     toolBar->addAction(fontIncreaseAct);
     toolBar->addAction(fontDecreaseAct);

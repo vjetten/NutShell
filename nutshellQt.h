@@ -175,8 +175,10 @@ public:
     void prevCommand();
     void nextCommand();
     int commandcounter;
+
     QTextCursor calcCursor;
     int cursorPosition;
+
 
     //========================
     //Vars for pcrcalc process
