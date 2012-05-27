@@ -83,7 +83,7 @@
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>Press to make current directory the working directory</string>
+              <string>Press to make current directory the working directory and add to the list</string>
              </property>
              <property name="text">
               <string>...</string>
@@ -119,6 +119,9 @@
                <weight>75</weight>
                <bold>true</bold>
               </font>
+             </property>
+             <property name="toolTip">
+              <string>Current working directory for pcrcalc</string>
              </property>
              <property name="styleSheet">
               <string notr="true"/>
@@ -180,6 +183,9 @@
              </item>
              <item>
               <widget class="QToolButton" name="toolButton_cmdlist">
+               <property name="toolTip">
+                <string>Clear the command history</string>
+               </property>
                <property name="text">
                 <string>...</string>
                </property>
@@ -194,6 +200,9 @@
              </item>
              <item>
               <widget class="QToolButton" name="toolButton_clearcmd">
+               <property name="toolTip">
+                <string>Clear the command window</string>
+               </property>
                <property name="text">
                 <string>...</string>
                </property>
@@ -462,7 +471,7 @@
               <item>
                <widget class="QToolButton" name="toolButton_showAll">
                 <property name="toolTip">
-                 <string>Show all</string>
+                 <string>Show all files</string>
                 </property>
                 <property name="text">
                  <string>...</string>
@@ -533,9 +542,6 @@
               </property>
               <property name="toolTip">
                <string/>
-              </property>
-              <property name="horizontalScrollBarPolicy">
-               <enum>Qt::ScrollBarAsNeeded</enum>
               </property>
               <property name="horizontalScrollBarPolicy">
                <enum>Qt::ScrollBarAlwaysOn</enum>
@@ -679,6 +685,12 @@
              <iconset resource="nutshellqt.qrc">
               <normaloff>:/resources/stop1.png</normaloff>:/resources/stop1.png</iconset>
             </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
             <property name="autoRaise">
              <bool>true</bool>
             </property>
@@ -686,6 +698,9 @@
           </item>
           <item>
            <widget class="QToolButton" name="toolButton_oldcalc">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="toolTip">
              <string>Use oldcalc instead of pcrcalc</string>
             </property>
@@ -723,8 +738,11 @@
           </item>
           <item>
            <widget class="QCheckBox" name="checkBox_argsubst">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="toolTip">
-             <string>list of srguments to be substituted in active script, separate with space</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;list of arguments substituted in active script, separate with space&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
              <string>Arg.Subst.:</string>
@@ -732,9 +750,29 @@
            </widget>
           </item>
           <item>
+           <widget class="QToolButton" name="toolButton_argSubs">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;activate argument subsitution&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="nutshellqt.qrc">
+              <normaloff>:/resources/argsubs1.png</normaloff>:/resources/argsubs1.png</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLineEdit" name="lineEdit_argsubst">
             <property name="enabled">
              <bool>false</bool>
+            </property>
+            <property name="toolTip">
+             <string>list of arguments substituted in active script, separate with space</string>
             </property>
            </widget>
           </item>
@@ -834,12 +872,28 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>645</x>
-     <y>36</y>
+     <x>770</x>
+     <y>42</y>
     </hint>
     <hint type="destinationlabel">
-     <x>745</x>
-     <y>40</y>
+     <x>912</x>
+     <y>44</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton_argSubs</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>lineEdit_argsubst</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>786</x>
+     <y>33</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>805</x>
+     <y>30</y>
     </hint>
    </hints>
   </connection>

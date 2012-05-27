@@ -1,7 +1,7 @@
 /*
  * NutShellExplorer,
  * v 1.0
- * adapted from the extendd explorer example in Qt wiki:
+ * adapted from the extended explorer example in Qt wiki:
  * http://www.qtcentre.org/wiki/index.php?title=Extended_Dir_View_example
  * Author: VJ 100814
  */
@@ -22,10 +22,12 @@ void nutshellqt::setupExplorer()
       fns->end.isEmpty();
       fns->series.clear();
    }
+   // structure to keep pcr fileseries info
 
    PCRProcess = new QProcess(this);
    PCRProcess->setProcessChannelMode(QProcess::MergedChannels);
    connect(PCRProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(outputCommand()) );
+   // process for comamndwindow actions
 
    baseFilters.clear();
    baseFilters << QString("*.mod;*.map;*.csf;*.tbl;*.tss;*.txt;*.dat;*.csv;*.pcr");
@@ -35,12 +37,14 @@ void nutshellqt::setupExplorer()
    baseFilters << QString("Map Series");
    baseFilters << QString("*.*");
    _filternr = 0;
+   // fileter list for speed button selcetion
 
    dirModel = new QFileSystemModel(this);
    dirModel->setReadOnly(false); //true
    dirModel->setFilter ( QDir::AllDirs | QDir::NoDotAndDotDot);// | QDir::Drives );
    // setting drives prevents trying to map disconnected network drives?
    dirModel->setNameFilterDisables(false);
+   dirModel->setReadOnly(false);
 
    fileModel = new QFileSystemModel(this);
    fileModel->setReadOnly(false);
@@ -58,7 +62,6 @@ void nutshellqt::setupExplorer()
    treeView->hideColumn(1);
    treeView->setSortingEnabled(true);
    treeView->sortByColumn(1, Qt::AscendingOrder);
-
 
    //   filterModel = new QSortFilterProxyModel(this);
    //   filterModel->setSourceModel(fileModel);
@@ -87,7 +90,6 @@ void nutshellqt::setupExplorer()
    fileView->setDragEnabled(true);
    fileView->setAcceptDrops(true);
 
-
    BDgate = new BlueDelegate();
    BDgate->setSeries(false);
    fileView->setItemDelegate(BDgate);
@@ -104,11 +106,11 @@ void nutshellqt::setupExplorer()
    //connect(fileView, SIGNAL(clicked(QModelIndex)), this, SLOT(showAttributes(QModelIndex)));
    // double clicked activate pcraster stuff
 
+   // OBSOLETE:
    //connect(toolButton_dirprev, SIGNAL(clicked()), this, SLOT(goBack()));
    //connect(toolButton_dirnext, SIGNAL(clicked()), this, SLOT(goForward()));
    //connect(toolButton_dirup, SIGNAL(clicked()), this, SLOT(goUp()));
-   //connect(toolButton_deletemapseries, SIGNAL(clicked()), this, SLOT(deleteSeries()));
-   connect(toolButton_deletereport, SIGNAL(clicked()), this, SLOT(deleteScriptReport()));
+   //connect(toolButton_deletemapseries, SIGNAL(clicked()), this, SLOT(deleteSeries()));   
    //connect(toolButton_dirnew, SIGNAL(clicked()), this, SLOT(newDirectory()));
    //connect(toolButton_dirRemove, SIGNAL(clicked()), this, SLOT(removeDirectory()));
 
@@ -119,6 +121,7 @@ void nutshellqt::setupExplorer()
    connect(toolButton_showPlot, SIGNAL(clicked()), this, SLOT(showPlot()));
    connect(toolButton_showSeries, SIGNAL(clicked()), this, SLOT(showSeries()));
    connect(toolButton_showOutput, SIGNAL(clicked()), this, SLOT(showReport()));
+   connect(toolButton_deletereport, SIGNAL(clicked()), this, SLOT(deleteScriptReport()));
 
    statusBarProgress.setMaximum(100);
    statusBarProgress.setValue(0);
@@ -555,7 +558,7 @@ void nutshellqt::deleteFiles()
                               statusBarProgress.setValue(k);
                            }
                         }
-                     doall = reply == QMessageBox::YesToAll;
+                     doall = true;//reply == QMessageBox::YesToAll;
                   }
                   else
                      break; // answer no to delete go on with next file
@@ -590,7 +593,7 @@ void nutshellqt::deleteFiles()
                   {
                      file.setFileName(fileModel->filePath(index));
                      file.remove();
-                     doall = reply == QMessageBox::YesToAll;
+                     doall = true;//reply == QMessageBox::YesToAll;
                   }
                }
                else // yes to all
@@ -638,13 +641,13 @@ void BlueDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 //---------------------------------------------------------------
 void nutshellqt::contextMenuEvent(QContextMenuEvent *event)
 {
-//   QMenu menu(this);
+   QMenu menu(this);
 //   menu.addAction(cutFileAct);
 //   menu.addAction(copyFileAct);
 //   menu.addAction(pasteFileAct);
-//   menu.addAction(newDirAct);
+   menu.addAction(newDirAct);
 
-//   menu.exec(event->globalPos());
+   menu.exec(event->globalPos());
 }
 //---------------------------------------------------------------
 void nutshellqt::cutFile()
@@ -738,42 +741,29 @@ void nutshellqt::newDirectory()
    setRootIndex(index);
 }
 //---------------------------------------------------------------
+//from http://john.nachtimwald.com/2010/06/08/qt-remove-directory-and-its-contents/
+
 bool nutshellqt::removeDirectory(const QString &dirName)
 {
-   bool result = true;
-   QDir dir(dirName);
-   //   QModelIndex index = selectionDirModel->currentIndex();
-   //   QDir dir = dirModel->fileInfo(index).absoluteDir();
-   //   QString dirName = dirModel->fileInfo(index).fileName();
+    bool result = true;
+    QDir dir(dirName);
 
-   //   QMessageBox::StandardButton reply = WarningMsg(QString("Delete directory: %1\n Continue?").arg(dirName));
-   //   if (reply == QMessageBox::No)
-   //      return;
+    if (dir.exists(dirName)) {
+        Q_FOREACH(QFileInfo info, dir.entryInfoList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst)) {
+            if (info.isDir()) {
+                result = removeDirectory(info.absoluteFilePath());
+            }
+            else {
+                result = QFile::remove(info.absoluteFilePath());
+            }
 
-   if (dir.exists(dirName)) {
-      Q_FOREACH(QFileInfo info, dir.entryInfoList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst)) {
-         if (info.isDir()) {
-            result = removeDirectory(info.absoluteFilePath());
-         }
-         else {
-            result = QFile::remove(info.absoluteFilePath());
-         }
+            if (!result) {
+                return result;
+            }
+        }
+        result = dir.rmdir(dirName);
+    }
 
-         if (!result) {
-            return result;
-         }
-      }
-      result = dir.rmdir(dirName);
-   }
-   return result;
-
-   //   if (index.row() == 0)
-   //      setRootIndex(index.parent());
-   //   else
-   //      setRootIndex(treeView->indexAbove(index));
-
-
-   //   if (!dir.rmdir(name))
-   //      ErrorMsg(QString("Could not delete %1").arg(name));
+    return result;
 }
 //---------------------------------------------------------------

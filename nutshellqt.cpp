@@ -45,6 +45,8 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     // present but not used
     toolButton_globaloptions->setVisible(false);
+    toolButton_oldcalc->setVisible(false);
+    checkBox_argsubst->setVisible(false);
 
     //   toolButton_deletemapseries->setVisible(false);
     //   toolButton_dirRemove->setVisible(false);
@@ -78,10 +80,37 @@ nutshellqt::~nutshellqt()
 void nutshellqt::setupActions()
 {
     createMainActions();
+    createModelActions();
     createEditorActions();
     createExplorerActions();
     createContextMenuActions();
     // not needed
+}
+//---------------------------------------------------------------
+void nutshellqt::createModelActions()
+{
+    // run model actions
+    runmodelAct = new QAction(QIcon(":/resources/start1.png"), "&Run active model...", this);
+    runmodelAct->setShortcut(Qt::CTRL+Qt::Key_R);
+    runmodelAct->setToolTip("Run model script");
+    connect(runmodelAct, SIGNAL(triggered()), this, SLOT(runModel()));
+
+    pausemodelAct = new QAction(QIcon(":/resources/pause2.png"), "&Pause model...", this);
+    pausemodelAct->setCheckable (true);
+    pausemodelAct->setToolTip("Pause model run");
+    connect(pausemodelAct, SIGNAL(toggled(bool)), this, SLOT(suspendModel(bool)));
+
+    killmodelAct = new QAction(QIcon(":/resources/stop1.png"), "&Stop model...", this);
+    killmodelAct->setCheckable (true);
+    //killmodelAct->setShortcut(Qt::CTRL+Qt::Key_C);
+    killmodelAct->setToolTip("Stop running");
+    connect(killmodelAct, SIGNAL(triggered()), this, SLOT(killModel()));
+
+    oldmodelAct = new QAction(QIcon(":/resources/oldcalc1.png"), "&Use oldcalc...", this);
+    oldmodelAct->setCheckable (true);
+    oldmodelAct->setToolTip("Run model script with oldcalc");
+    connect(oldmodelAct, SIGNAL(toggled(bool)), this, SLOT(toggleOldcalc(bool)));
+
 }
 //---------------------------------------------------------------
 void nutshellqt::createMainActions()
@@ -110,28 +139,6 @@ void nutshellqt::createMainActions()
     closefileAct = new QAction(QIcon(":/resources/fileclose.png"), "&Close script file...", this);
     //closefileAct->setShortcut(Qt::CTRL+Qt::Key_W);
     connect(closefileAct, SIGNAL(triggered()), this, SLOT(closeFile()));
-
-    // run model actions
-    runmodelAct = new QAction(QIcon(":/resources/start1.png"), "&Run active model...", this);
-    runmodelAct->setShortcut(Qt::CTRL+Qt::Key_R);
-    runmodelAct->setToolTip("Run model script");
-    connect(runmodelAct, SIGNAL(triggered()), this, SLOT(runModel()));
-
-    pausemodelAct = new QAction(QIcon(":/resources/pause2.png"), "&Pause model...", this);
-    pausemodelAct->setCheckable (true);
-    pausemodelAct->setToolTip("Pause model run");
-    connect(pausemodelAct, SIGNAL(toggled(bool)), this, SLOT(suspendModel(bool)));
-
-    killmodelAct = new QAction(QIcon(":/resources/stop1.png"), "&Stop model...", this);
-    killmodelAct->setCheckable (true);
-    //killmodelAct->setShortcut(Qt::CTRL+Qt::Key_C);
-    killmodelAct->setToolTip("Stop running");
-    connect(killmodelAct, SIGNAL(triggered()), this, SLOT(killModel()));
-
-    oldmodelAct = new QAction(QIcon(":/resources/oldcalc1.png"), "&Use oldcalc...", this);
-    oldmodelAct->setCheckable (true);
-    oldmodelAct->setToolTip("Run model script with oldcalc");
-    connect(oldmodelAct, SIGNAL(toggled(bool)), this, SLOT(toggleOldcalc(bool)));
 
 
     helpAct = new QAction(QIcon(":/resources/help.png"), "&Help files", this);
@@ -272,25 +279,25 @@ void nutshellqt::createExplorerActions()
 //---------------------------------------------------------------
 void nutshellqt::createContextMenuActions()
 {
-    cutFileAct = new QAction(tr("Cu&t"), this);
-    copyFileAct = new QAction(tr("Copy"), this);
-    pasteFileAct = new QAction(tr("Paste"), this);
-    newDirAct = new QAction(tr("Create Directory"), this);
+//    cutFileAct = new QAction(tr("Cu&t"), this);
+//    copyFileAct = new QAction(tr("Copy"), this);
+//    pasteFileAct = new QAction(tr("Paste"), this);
+    newDirAct = new QAction(QIcon(":/resources/dirnew.png"),QString("Create Directory"), this);
 
-    connect(cutFileAct, SIGNAL(triggered()), this, SLOT(cutFile()));
-    connect(copyFileAct, SIGNAL(triggered()), this, SLOT(copyFile()));
-    connect(pasteFileAct, SIGNAL(triggered()), this, SLOT(pasteFile()));
+//    connect(cutFileAct, SIGNAL(triggered()), this, SLOT(cutFile()));
+//    connect(copyFileAct, SIGNAL(triggered()), this, SLOT(copyFile()));
+//    connect(pasteFileAct, SIGNAL(triggered()), this, SLOT(pasteFile()));
     connect(newDirAct, SIGNAL(triggered()), this, SLOT(newDirectory()));
 }
 //---------------------------------------------------------------
 void nutshellqt::setupToolBar()
 {
-
+ //   toolBar->addAction(newDirAct);
     toolBar->addAction(newfileAct);
     toolBar->addAction(openfileAct);
     toolBar->addAction(savefileAct);
     toolBar->addAction(saveasfileAct);
-    toolBar->addAction(closefileAct);
+    //toolBar->addAction(closefileAct);
     toolBar->addSeparator ();
     toolBar->addAction(cutAct);
     toolBar->addAction(copyAct);
@@ -337,6 +344,7 @@ void nutshellqt::setupToolBar()
 void nutshellqt::setupMenu( )
 {
     fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMenu->addAction(newDirAct);
     fileMenu->addAction(newfileAct);
     fileMenu->addAction(openfileAct);
     fileMenu->addAction(savefileAct);
@@ -393,8 +401,9 @@ void nutshellqt::setWorkdirectory()
 {
     QDir dir;
     dir.setCurrent(currentPath);
-    //   label_workdir->setText(currentPath);
+
     int place = comboBox_workdir->findText(currentPath);
+    //check if dir exists already, if not insert it on top, else select it
     if(place == -1)
     {
         comboBox_workdir->insertItem(0,currentPath);
@@ -411,7 +420,6 @@ void nutshellqt::setWorkdirectoryNr(int index)
 
     setRootPath1(currentPath);
     dir.setCurrent(currentPath);
-    //   label_workdir->setText(currentPath);
 }
 //---------------------------------------------------------------
 // must return true is event stops in this function or false when it should continue
@@ -426,7 +434,6 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
             changeFileFilter(_filternr);
             QCoreApplication::sendPostedEvents(this, 0);
             fileModel->setRootPath(QDir(currentPath).rootPath());
-
         }
     }
 
@@ -439,15 +446,7 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
             if (keyEvent->key() == Qt::Key_Delete)
             {
                 QModelIndex index = selectionDirModel->currentIndex();
-                //QDir dir = dirModel->fileInfo(index).absoluteDir();
                 QString dirName = dirModel->fileInfo(index).absoluteFilePath();
-
-                if (index.row() == 0)
-                    setRootIndex(index.parent());
-                else
-                    setRootIndex(treeView->indexAbove(index));
-                currentPath = dirModel->fileInfo(treeView->indexAbove(index)).absoluteFilePath();
-                setRootPath1(currentPath);
 
                 QMessageBox::StandardButton reply = WarningMsg(QString("Delete directory and all its contents: %1\n Continue?").arg(dirName));
                 if (reply == QMessageBox::No)
@@ -455,12 +454,15 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
 
                 if (removeDirectory(dirName))
                 {
-                    currentPath = dirModel->fileInfo(index).absoluteFilePath();
+                    if (index.row() == 0)
+                        setRootIndex(index.parent());
+                    else
+                        setRootIndex(treeView->indexAbove(index));
+                    currentPath = dirModel->fileInfo(treeView->indexAbove(index)).absoluteFilePath();
                     setRootPath1(currentPath);
                 }
                 else
                     ErrorMsg(QString("Could not delete %1").arg(dirName));
-
 
                 return true;
             }
@@ -565,7 +567,8 @@ void nutshellqt::setNutshellIni()
 
     //settings.setValue(QString("modelnr/active"),tabWidget->currentIndex());
     settings.setValue("models/current",tabWidget->currentIndex());
-    settings.setValue("models/arg_substitute_do",checkBox_argsubst->isChecked());
+//    settings.setValue("models/arg_substitute_do",checkBox_argsubst->isChecked());
+    settings.setValue("models/arg_substitute_do",toolButton_argSubs->isChecked());
     settings.setValue("models/arg_substitute",lineEdit_argsubst->text());
     for (int i = 0; i < ET.count(); i++)
     {
@@ -675,7 +678,8 @@ void nutshellqt::getNutshellIni()
                 lineEdit_argsubst->setText(settings.value(keys[i]).toString());
             else
                 if (keys[i] == "arg_substitute_do")
-                    checkBox_argsubst->setChecked(settings.value(keys[i]).toBool());
+        //            checkBox_argsubst->setChecked(settings.value(keys[i]).toBool());
+                    toolButton_argSubs->setChecked(settings.value(keys[i]).toBool());
                 else
                 {
                     QString name = settings.value(keys[i]).toString();

@@ -239,12 +239,14 @@ QString nutshellqt::getScriptReport()
                     for (int j = 0; j < subs.count(); j++)
                     {
                         QString repl = QString("$%1").arg(j+1);
-                        if(checkBox_argsubst->isChecked() && !lineEdit_argsubst->text().isEmpty())
+//                        if(checkBox_argsubst->isChecked() && !lineEdit_argsubst->text().isEmpty())
+                        if (toolButton_argSubs->isChecked() && !lineEdit_argsubst->text().isEmpty())
                             SL[i].replace(repl, subs[j]);
                         else
                             SL[i].replace(repl, "");
                         repl = QString("${%1}").arg(j+1);
-                        if(checkBox_argsubst->isChecked() && !lineEdit_argsubst->text().isEmpty())
+                        if (toolButton_argSubs->isChecked() && !lineEdit_argsubst->text().isEmpty())
+//                        if(checkBox_argsubst->isChecked() && !lineEdit_argsubst->text().isEmpty())
                             SL[i].replace(repl, subs[j]);
                         else
                             SL[i].replace(repl, "");
@@ -381,7 +383,6 @@ int nutshellqt::getTimesteps()
                 line = str.simplified();
                 line.remove(line.indexOf("#"),line.count()+10);
                 ss = line.split(" ");
-                qDebug() << line << ss[1];
             }
         }
         if (nothing)

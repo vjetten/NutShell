@@ -59,7 +59,6 @@
         <file>resources/syntax.png</file>
         <file>resources/nutshell1.png</file>
         <file>resources/help.png</file>
-        <file>resources/deletemapseries2.png</file>
         <file>resources/helpoperation.png</file>
         <file>resources/directory_open.png</file>
         <file>resources/showmods1.png</file>
@@ -72,8 +71,6 @@
         <file>resources/showpcr2.png</file>
         <file>resources/showallfiles.png</file>
         <file>resources/directoryRemove.png</file>
-        <file>resources/directoryNew.png</file>
-        <file>resources/directoryRemove1.png</file>
         <file>resources/showreports3.png</file>
         <file>resources/deletereport3.png</file>
         <file>resources/deletereport4.png</file>
@@ -83,5 +80,6 @@
         <file>resources/editRedo.png</file>
         <file>resources/editUndo.png</file>
         <file>resources/showpcr3.png</file>
+        <file>resources/argsubs1.png</file>
     </qresource>
 </RCC>

@@ -31,16 +31,30 @@ void nutshellqt::setupModel()
     connect(toolButton_stoprun, SIGNAL(clicked()), this, SLOT(killModel()));
     connect(toolButton_pauserun, SIGNAL(toggled(bool)), this, SLOT(suspendModel(bool)));
 
+    runPaused = false;
+
 }
 //---------------------------------------------------------------
 void nutshellqt::runModelCommandwindow(QString prog, QStringList args)
 {
-    if (calcProcess && calcProcess->state() == QProcess::Running)
+    ETEditor->clearerror();
+    statusBar()->clearMessage();
+
+    if (!QFileInfo(prog).exists())
     {
-        toolButton_startrun->setChecked(false);
+        ErrorMsg("pcrcalc not found. Specify directory in File->Options.");
+        return;
+    }
+
+    if (!runPaused && calcProcess && calcProcess->state() == QProcess::Running)
+    {
         ErrorMsg("pcrcalc is active, wait until it is finished or press stop first");
         return;
     }
+
+    toolButton_startrun->setChecked(true);
+    toolButton_pauserun->setChecked(false);
+    toolButton_stoprun->setChecked(false);
 
     totalsteps = getTimesteps();
     time_ms.start();
@@ -49,10 +63,20 @@ void nutshellqt::runModelCommandwindow(QString prog, QStringList args)
     commandWindow->appendPlainText("starting... ");
     commandWindow->appendPlainText(" ");
     commandWindow->appendPlainText(" ");
-    //   xlast = commandWindow->document()->lineCount();
     // make room in the plainTextEdit for the pcrcalc counter
 
-    calcProcess->start(prog, args);
+    QString ext = QFileInfo(prog).suffix();
+    if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
+    {
+        STATUS("Opening file in operating system");
+        QDesktopServices::openUrl(QUrl("\""+prog+"\""));
+        return;
+    }
+    // run a batch file by passing it on to the system
+
+    calcProcess->start(prog, args, QIODevice::ReadWrite);
+
+    runPaused = false;
 
 }
 //---------------------------------------------------------------
@@ -64,12 +88,19 @@ void nutshellqt::runModel()
     ETEditor->clearerror();
     statusBar()->clearMessage();
 
-    if (calcProcess && calcProcess->state() == QProcess::Running)
+    if (!runPaused && calcProcess && calcProcess->state() == QProcess::Running)
     {
-        toolButton_startrun->setChecked(false);
         ErrorMsg("pcrcalc is active, wait until it is finished or press stop first");
         return;
     }
+    if (runPaused)
+    {
+        suspendModel(false);
+        return;
+    }
+    toolButton_startrun->setChecked(true);
+    toolButton_pauserun->setChecked(false);
+    toolButton_stoprun->setChecked(false);
 
     totalsteps = getTimesteps();
     time_ms.start();
@@ -106,7 +137,8 @@ void nutshellqt::runModel()
     args << QString("-f") <<  ETfilePath;
     argsscreen << QString("-f") <<  ETfileName;
 
-    if (checkBox_argsubst->isChecked())
+    //    if (checkBox_argsubst->isChecked())
+    if (toolButton_argSubs->isChecked())
     {
         QStringList subs;
         subs = lineEdit_argsubst->text().split(" ",QString::SkipEmptyParts);
@@ -142,6 +174,72 @@ void nutshellqt::runModel()
 
 }
 //---------------------------------------------------------------
+void nutshellqt::suspendModel(bool pause)
+{
+    if (calcProcess && calcProcess->state() == QProcess::NotRunning)
+    {
+        if (pause)
+            ErrorMsg("pcrcalc is not active, nothing to pauze");
+        pause = false;
+        toolButton_pauserun->setChecked(false);
+        return;
+    }
+
+    toolButton_startrun->setChecked(!pause);
+    toolButton_pauserun->setChecked(pause);
+    toolButton_stoprun->setChecked(false);
+
+#ifdef Q_OS_WIN32
+    // only windows uses PROCESS_INFORMATION in this way, on UNIX systems pid
+    // returns an integer of the proces number
+    // needs to be implemented
+    PROCESS_INFORMATION *pi = calcProcess->pid();
+
+    if (pause)
+    {
+        SuspendThread(pi->hThread);
+        runPaused = true;
+    }
+    else
+    {
+        ResumeThread(pi->hThread);
+        runPaused = false;
+    }
+#else
+    ErrorMsg("Only implemented on Windows systems");
+#endif
+}
+//---------------------------------------------------------------
+void nutshellqt::killModel()
+{
+    if (calcProcess && calcProcess->state() == QProcess::Running)
+    {
+        QString output = commandWindow->toPlainText();
+
+        calcProcess->kill();
+
+        calcProcess->waitForFinished();
+
+        output.append("\nuser interupt...\n");
+        commandWindow->setPlainText(output);
+
+        QTextCursor cur = commandWindow->textCursor();
+        cur.setPosition(output.size());
+        commandWindow->setTextCursor(cur);
+
+        toolButton_startrun->setChecked(false);
+        toolButton_pauserun->setChecked(false);
+        toolButton_stoprun->setChecked(true);
+
+    }
+    else
+    {
+        //ErrorMsg("pcrcalc is not active, nothing to stop");
+        toolButton_stoprun->setChecked(true);
+    }
+
+}
+//---------------------------------------------------------------
 void nutshellqt::onScreen(QString buffer)
 {
     QString output, SStep;
@@ -156,19 +254,18 @@ void nutshellqt::onScreen(QString buffer)
     xlast = list.count();
     // get the lines in the commandWindow
 
+    // first output at start run
     if (buffer.contains("ERROR") )
     {
-        list.replace(xlast-3,listb[0]);
-        list.replace(xlast-2,listb[1]);
+        list.replace(xlast-3,listb[0]);  // pcrcalc version
+        list.replace(xlast-2,listb[1]);  // error message
         output=list.join("\n");
         commandWindow->setPlainText(output);
         // join new lines and replace the commandWindow
     }
     else
-        // first output at start run
         if(listb[0].contains("version"))
         {
-
             int last = listb.count() - 1;
 
             list.replace(xlast-3,listb[0]);
@@ -176,11 +273,11 @@ void nutshellqt::onScreen(QString buffer)
             output=list.join("\n");
             commandWindow->setPlainText(output);
             // join new lines and replace the commandWindow
+
             calcCursor = commandWindow->textCursor();
             calcCursor.setPosition(commandWindow->toPlainText().size() - listb[last].size() - 1);
             cursorPosition = calcCursor.position();
             //save output cursor position
-
         }
         else
         {
@@ -210,103 +307,32 @@ void nutshellqt::onScreen(QString buffer)
 
                     calcCursor.setPosition(cursorPosition);
                     //set cursor back to preferred position
-
-
                 }
         }
-    //commandWindow->setTextCursor(cur);
-    // update cursor
 
-
-//    if (totalsteps > 0)
-//    {
-//        int steps = SStep.toInt();
-//        double timemin = time_ms.elapsed()*(0.001/60);
-//        SStep = QString(" Estimated runtime : %1 of %2 minutes").arg(timemin,0,'g',2).arg(timemin * totalsteps/steps,0,'g',2);
-//        statusLabel.setText(SStep);
-//        statusLabel.show();
-//        // calculate runtime and show
-//    }
+    //    if (totalsteps > 0)
+    //    {
+    //        int steps = SStep.toInt();
+    //        double timemin = time_ms.elapsed()*(0.001/60);
+    //        SStep = QString(" Estimated runtime : %1 of %2 minutes").arg(timemin,0,'g',2).arg(timemin * totalsteps/steps,0,'g',2);
+    //        statusLabel.setText(SStep);
+    //        statusLabel.show();
+    //        // calculate runtime and show
+    //    }
 
     QCoreApplication::sendPostedEvents(this, 0);
     // update the plaintextedit with these actions
-
-
 }
-
 //---------------------------------------------------------------
 void nutshellqt::readFromStderr()
 {
-    QString buffer;
-
-
-    //    QByteArray buf;
-    //    buf.clear();
-    //    buf = calcProcess->readAllStandardError();
-
-    buffer = QString(calcProcess->readAllStandardError()); //buf);
-
+    QString buffer = QString(calcProcess->readAllStandardError());
     onScreen(buffer);
 
     if (buffer.contains("ERROR"))
         doRunErrorMessage(buffer);
-
 }
 
-//---------------------------------------------------------------
-void nutshellqt::killModel()
-{
-    if (calcProcess && calcProcess->state() == QProcess::Running)
-    {
-        QString output = commandWindow->toPlainText();
-
-        calcProcess->kill();
-
-        calcProcess->waitForFinished();
-
-        output.append("\nuser interupt...\n");
-        commandWindow->setPlainText(output);
-
-        QTextCursor cur = commandWindow->textCursor();
-        cur.setPosition(output.size());
-        commandWindow->setTextCursor(cur);
-
-        toolButton_startrun->setChecked(false);
-    }
-    else
-        ErrorMsg("pcrcalc is not active, nothing to stop");
-
-}
-//---------------------------------------------------------------
-void nutshellqt::suspendModel(bool pause)
-{
-    if (calcProcess && calcProcess->state() == QProcess::NotRunning)
-    {
-        if (pause)
-            ErrorMsg("pcrcalc is not active, nothing to stop");
-        pause = false;
-        toolButton_pauserun->setChecked(false);
-        return;
-    }
-
-#ifdef Q_OS_WIN32
-    // only windows uses PROCESS_INFORMATION in this way, on UNIX systems pid
-    // returns an integer of the proces number
-    // needs to be implemented
-    PROCESS_INFORMATION *pi = calcProcess->pid();
-
-    if (pause)
-    {
-        SuspendThread(pi->hThread);
-    }
-    else
-    {
-        ResumeThread(pi->hThread);
-    }
-#else
-    ErrorMsg("Only implemented on Windows systems");
-#endif
-}
 //---------------------------------------------------------------
 void nutshellqt::doRunErrorMessage(QString buffer)
 {
@@ -315,12 +341,10 @@ void nutshellqt::doRunErrorMessage(QString buffer)
 
     list = buffer.split(":");
     int i = 0;
-    foreach(QString str, list)
-    {
+    foreach(QString str, list) {
         bool ok;
         int num = str.toInt(&ok, 10);
-        if (ok)
-        {
+        if (ok) {
             errorpos[i]=num;
             i++;
         }
@@ -332,16 +356,20 @@ void nutshellqt::doRunErrorMessage(QString buffer)
     list = hoi.split("\n");
     int curpos = 0;
     for(int i = 0; i < errorpos[0]-1; i++)
-    {
         curpos += list[i].size()+1;
-    }
     curpos += errorpos[1]-1;
+
     QTextCursor cur = ETEditor->textCursor();
     cur.setPosition(curpos);
     ETEditor->setTextCursor(cur);
+
     ETEditor->repaint();
     statusBar()->showMessage(QString("Error in line %1 pos %2, or before.").arg(errorpos[0]).arg(errorpos[1]));
-    // statusLabel.setText(QString("Error in line %1 pos %2, or before.").arg(errorpos[0]).arg(errorpos[1]));
+
+    toolButton_startrun->setChecked(false);
+    toolButton_pauserun->setChecked(false);
+    toolButton_stoprun->setChecked(true);
+
 }
 //---------------------------------------------------------------
 void nutshellqt::finishedModel(int c)
@@ -367,18 +395,14 @@ void nutshellqt::finishedModel(int c)
 
     toolButton_startrun->setChecked(false);
 
-    // QCoreApplication::sendPostedEvents(this, 0);
-
     changeFileFilter(_filternr);
+    // equivalent to F5
 
     statusBar()->removeWidget(&statusLabel);
 
     commandWindow->setFocus();
 
-    QCoreApplication::sendPostedEvents(this, 0);
-    //necessary?
-
-
+//    QCoreApplication::sendPostedEvents(this, 0);
 }
 //---------------------------------------------------------------
 void nutshellqt::toggleOldcalc(bool checked)

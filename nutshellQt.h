@@ -137,6 +137,7 @@ public:
     void createEditorActions();
     void createExplorerActions();
     void createContextMenuActions();
+    void createModelActions();
 
     void setupToolBar();
     void setupMenu();
@@ -189,6 +190,7 @@ public:
     bool useOldCalc;
     int errorpos[2];
     void runModelCommandwindow(QString prog, QStringList args);
+    bool runPaused;
 
     //======================
     //Vars for editor
