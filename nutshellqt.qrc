@@ -70,7 +70,6 @@
         <file>resources/showmapseries3.png</file>
         <file>resources/showpcr2.png</file>
         <file>resources/showallfiles.png</file>
-        <file>resources/directoryRemove.png</file>
         <file>resources/showreports3.png</file>
         <file>resources/deletereport3.png</file>
         <file>resources/deletereport4.png</file>
@@ -81,5 +80,7 @@
         <file>resources/editUndo.png</file>
         <file>resources/showpcr3.png</file>
         <file>resources/argsubs1.png</file>
+        <file>resources/dir_del.png</file>
+        <file>resources/dir_add.png</file>
     </qresource>
 </RCC>

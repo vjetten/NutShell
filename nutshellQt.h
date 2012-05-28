@@ -276,6 +276,7 @@ public slots:
     bool saveFileName(const QString &fileName);
     void AddModel(QString name, int syntax);
     void setWorkdirectory();
+    void removeWorkdirectory();
     void setWorkdirectoryNr(int index);
     void findDialog();
     void findReplaceDialog();
@@ -309,6 +310,7 @@ public slots:
     void goHome();
     void newDirectory();
     bool removeDirectory(const QString &dirName);
+    bool deleteDirectory();
     void deleteSeries();
     void deleteScriptReport();
     void deleteFiles();

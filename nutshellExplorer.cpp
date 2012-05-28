@@ -245,28 +245,24 @@ void nutshellqt::showPCR()
 void nutshellqt::showMaps()
 {
     ismapseries = false;
-    //fileMaskBox->setCurrentIndex(1);
     changeFileFilter(1);
 }
 //---------------------------------------------------------------
 void nutshellqt::showPlot()
 {
     ismapseries = false;
-    //fileMaskBox->setCurrentIndex(2);
     changeFileFilter(2);
 }
 //---------------------------------------------------------------
 void nutshellqt::showScript()
 {
     ismapseries = false;
-    //fileMaskBox->setCurrentIndex(3);
     changeFileFilter(3);
 }
 //---------------------------------------------------------------
 void nutshellqt::showSeries()
 {
     ismapseries = true;
-    //fileMaskBox->setCurrentIndex(4);
     changeFileFilter(4);
 }
 //---------------------------------------------------------------
@@ -313,7 +309,6 @@ void nutshellqt::showReport()
 void nutshellqt::showAll()
 {
     ismapseries = false;
-    //fileMaskBox->setCurrentIndex(5);
     changeFileFilter(5);
 }
 //---------------------------------------------------------------
@@ -804,7 +799,7 @@ void nutshellqt::newDirectory()
 //from http://john.nachtimwald.com/2010/06/08/qt-remove-directory-and-its-contents/
 
 bool nutshellqt::removeDirectory(const QString &dirName)
-{
+{ 
     bool result = true;
     QDir dir(dirName);
 
@@ -827,3 +822,28 @@ bool nutshellqt::removeDirectory(const QString &dirName)
     return result;
 }
 //---------------------------------------------------------------
+bool nutshellqt::deleteDirectory()
+{
+    QModelIndex index = selectionDirModel->currentIndex();
+    QString dirName = dirModel->fileInfo(index).absoluteFilePath();
+
+    QMessageBox::StandardButton reply = WarningMsg(QString("Delete directory and all its contents: %1\n Continue?").arg(dirName));
+    if (reply == QMessageBox::No)
+        return false;
+
+    if (removeDirectory(dirName))
+    {
+        if (index.row() == 0)
+            setRootIndex(index.parent());
+        else
+            setRootIndex(treeView->indexAbove(index));
+        currentPath = dirModel->fileInfo(treeView->indexAbove(index)).absoluteFilePath();
+        setRootPath1(currentPath);
+        return true;
+    }
+    else
+    {
+        ErrorMsg(QString("Could not delete %1").arg(dirName));
+        return false;
+    }
+}

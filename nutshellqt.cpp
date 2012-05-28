@@ -117,6 +117,7 @@ void nutshellqt::createMainActions()
 {
     // main actions
     connect(toolButton_workdir, SIGNAL(clicked()), this, SLOT(setWorkdirectory()));
+    connect(toolButton_delWorkdir, SIGNAL(clicked()), this, SLOT(removeWorkdirectory()));
     connect(comboBox_workdir, SIGNAL(currentIndexChanged(int)), this, SLOT(setWorkdirectoryNr(int)));
     //	connect(tabWidget, SIGNAL(currentChanged(int)),this, SLOT(changeSyntax(int)));
 
@@ -396,11 +397,18 @@ void nutshellqt::setupMenu( )
     helpMenu->addAction(helppcrcalcAct);
 }
 //---------------------------------------------------------------
+void nutshellqt::removeWorkdirectory()
+{
+    int place = comboBox_workdir->findText(currentPath);
+    comboBox_workdir->removeItem(place);
+    if (place > comboBox_workdir->count()-1)
+        comboBox_workdir->setCurrentIndex(place-1);
+    else
+        comboBox_workdir->setCurrentIndex(place);
+}
+//---------------------------------------------------------------
 void nutshellqt::setWorkdirectory()
 {
-    QDir dir;
-    dir.setCurrent(currentPath);
-
     int place = comboBox_workdir->findText(currentPath);
     //check if dir exists already, if not insert it on top, else select it
     if(place == -1)
@@ -433,6 +441,7 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
             changeFileFilter(_filternr);
             QCoreApplication::sendPostedEvents(this, 0);
             fileModel->setRootPath(QDir(currentPath).rootPath());
+            return true;
         }
     }
 
@@ -444,26 +453,7 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
 
             if (keyEvent->key() == Qt::Key_Delete)
             {
-                QModelIndex index = selectionDirModel->currentIndex();
-                QString dirName = dirModel->fileInfo(index).absoluteFilePath();
-
-                QMessageBox::StandardButton reply = WarningMsg(QString("Delete directory and all its contents: %1\n Continue?").arg(dirName));
-                if (reply == QMessageBox::No)
-                    return true;
-
-                if (removeDirectory(dirName))
-                {
-                    if (index.row() == 0)
-                        setRootIndex(index.parent());
-                    else
-                        setRootIndex(treeView->indexAbove(index));
-                    currentPath = dirModel->fileInfo(treeView->indexAbove(index)).absoluteFilePath();
-                    setRootPath1(currentPath);
-                }
-                else
-                    ErrorMsg(QString("Could not delete %1").arg(dirName));
-
-                return true;
+                return(deleteDirectory());
             }
         }
     }
@@ -529,7 +519,10 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
     if (obj == comboBox_cmdlist->lineEdit())
     {
         if (event->type() == QEvent::MouseButtonDblClick)
+        {
             copyCommandList();
+            return true;
+        }
     }
 
     return QMainWindow::eventFilter(obj, event);
