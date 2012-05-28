@@ -209,8 +209,8 @@ public:
     QLabel statusLabel;
     nutshellMapdisplay mapDisplay;
 
-    filenameseries *fns;
-    int nrseries;
+    QList <filenameseries> fns;
+    //int nrseries;
     bool ismapseries;
     BlueDelegate *BDgate;   // display series in blue
     QStringList currentFilter;

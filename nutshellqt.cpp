@@ -48,6 +48,7 @@ nutshellqt::nutshellqt(QWidget *parent) :
     toolButton_oldcalc->setVisible(false);
     checkBox_argsubst->setVisible(false);
 
+    // OBSOLETE
     //   toolButton_deletemapseries->setVisible(false);
     //   toolButton_dirRemove->setVisible(false);
     //   toolButton_dirup->setVisible(false);
@@ -55,8 +56,7 @@ nutshellqt::nutshellqt(QWidget *parent) :
     //   toolButton_dirprev->setVisible(false);
     //   toolButton_dirnew->setVisible(false);
 
-
-    dirModel->setRootPath(QDir(currentPath).rootPath()); //"c:/");//
+    dirModel->setRootPath(QDir(currentPath).rootPath());
     fileModel->setRootPath(QDir(currentPath).rootPath());
     setRootIndex(dirModel->index(currentPath));
     setRootIndex(fileModel->index(currentPath));
@@ -245,10 +245,10 @@ void nutshellqt::createExplorerActions()
     aguilaplusAct->setToolTip ("Show maps on top of each other or in parallel windows");
     connect(aguilaplusAct,   SIGNAL(toggled(bool)), this, SLOT(actionplusaguila(bool)));
 
-    aguila2DAct     = new QAction(QIcon(":/resources/aguila2d.png"), "", this);
+    aguila2DAct = new QAction(QIcon(":/resources/aguila2d.png"), "", this);
     connect(aguila2DAct,     SIGNAL(triggered()), this, SLOT(actionaguila2D()));
 
-    aguila3DAct     = new QAction(QIcon(":/resources/aguila.png"), "", this);
+    aguila3DAct = new QAction(QIcon(":/resources/aguila.png"), "", this);
     connect(aguila3DAct,     SIGNAL(triggered()), this, SLOT(actionaquila3D()));
 
     aguila3DrapeAct = new QAction(QIcon(":/resources/aguila3d.png"), "", this);
@@ -257,42 +257,42 @@ void nutshellqt::createExplorerActions()
     aguilaplotAct   = new QAction(QIcon(":/resources/timeplot.png"), "", this);
     connect(aguilaplotAct,   SIGNAL(triggered()), this, SLOT(actionaguilaplot()));
 
-    legendAct       = new QAction(QIcon(":/resources/maplegend1.png"), "", this);
+    legendAct   = new QAction(QIcon(":/resources/maplegend1.png"), "", this);
     connect(legendAct,       SIGNAL(triggered()), this, SLOT(actionlegend()));
 
-    editorAct       = new QAction(QIcon(":/resources/editmodel.png"), "", this);
+    editorAct   = new QAction(QIcon(":/resources/editmodel.png"), "", this);
     connect(editorAct,       SIGNAL(triggered()), this, SLOT(actioneditor()));
 
     mapattributeAct = new QAction(QIcon(":/resources/header1.png"), "", this);
     connect(mapattributeAct, SIGNAL(triggered()), this, SLOT(actionmapattribute()));
 
-    mapnewAct       = new QAction(QIcon(":/resources/mapnew.png"), "", this);
+    mapnewAct   = new QAction(QIcon(":/resources/mapnew.png"), "", this);
     connect(mapnewAct,       SIGNAL(triggered()), this, SLOT(actionmapnew()));
 
-    mapeditAct      = new QAction(QIcon(":/resources/mapedit.png"), "", this);
+    mapeditAct  = new QAction(QIcon(":/resources/mapedit.png"), "", this);
     connect(mapeditAct,      SIGNAL(triggered()), this, SLOT(actionmapedit()));
 
-    mapDisplayAct      = new QAction(QIcon(":/resources/aguila2d.png"), "", this);
+    mapDisplayAct  = new QAction(QIcon(":/resources/aguila2d.png"), "", this);
     connect(mapDisplayAct,      SIGNAL(triggered()), this, SLOT(actionmapDisplay()));
 
 }
 //---------------------------------------------------------------
 void nutshellqt::createContextMenuActions()
 {
-//    cutFileAct = new QAction(tr("Cu&t"), this);
-//    copyFileAct = new QAction(tr("Copy"), this);
-//    pasteFileAct = new QAction(tr("Paste"), this);
+    //    cutFileAct = new QAction(tr("Cu&t"), this);
+    //    copyFileAct = new QAction(tr("Copy"), this);
+    //    pasteFileAct = new QAction(tr("Paste"), this);
     newDirAct = new QAction(QIcon(":/resources/dirnew.png"),QString("Create Directory"), this);
 
-//    connect(cutFileAct, SIGNAL(triggered()), this, SLOT(cutFile()));
-//    connect(copyFileAct, SIGNAL(triggered()), this, SLOT(copyFile()));
-//    connect(pasteFileAct, SIGNAL(triggered()), this, SLOT(pasteFile()));
+    //    connect(cutFileAct, SIGNAL(triggered()), this, SLOT(cutFile()));
+    //    connect(copyFileAct, SIGNAL(triggered()), this, SLOT(copyFile()));
+    //    connect(pasteFileAct, SIGNAL(triggered()), this, SLOT(pasteFile()));
     connect(newDirAct, SIGNAL(triggered()), this, SLOT(newDirectory()));
 }
 //---------------------------------------------------------------
 void nutshellqt::setupToolBar()
 {
- //   toolBar->addAction(newDirAct);
+    //   toolBar->addAction(newDirAct);
     toolBar->addAction(newfileAct);
     toolBar->addAction(openfileAct);
     toolBar->addAction(savefileAct);
@@ -352,7 +352,7 @@ void nutshellqt::setupMenu( )
     fileMenu->addAction(closefileAct);
     fileMenu->addSeparator();
     fileMenu->addAction(optionsAct);
-    fileMenu->addAction(clearOptionsAct);
+    //fileMenu->addAction(clearOptionsAct);
     //fileMenu->addSeparator();
     //	fileMenu->addAction(exitAct);
 
@@ -361,7 +361,6 @@ void nutshellqt::setupMenu( )
     runMenu->addAction(pausemodelAct);
     runMenu->addAction(killmodelAct);
     runMenu->addAction(oldmodelAct);
-
 
     editMenu = menuBar()->addMenu(tr("&Edit"));
     editMenu->addAction(undoAct);
@@ -487,15 +486,6 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
     }
     if (obj == commandWindow)
     {
-        if (event->type() == QEvent::MouseButtonPress)
-        {
-            //            QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
-            //            if (mouseEvent->button()==Qt::LeftButton
-            //                    && calcProcess && calcProcess->state() == QProcess::Running
-            //                    )
-            //return true;
-            qDebug() << "click";
-        }
         if (event->type() == QEvent::KeyPress)
         {
             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
@@ -532,7 +522,6 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
                 commandWindow->moveCursor( QTextCursor::StartOfLine, QTextCursor::MoveAnchor );
                 commandWindow->moveCursor( QTextCursor::End, QTextCursor::KeepAnchor );
                 commandWindow->textCursor().removeSelectedText();
-                //        commandcounter = -1;
                 return true;
             }
         }
@@ -567,7 +556,7 @@ void nutshellqt::setNutshellIni()
 
     //settings.setValue(QString("modelnr/active"),tabWidget->currentIndex());
     settings.setValue("models/current",tabWidget->currentIndex());
-//    settings.setValue("models/arg_substitute_do",checkBox_argsubst->isChecked());
+    //    settings.setValue("models/arg_substitute_do",checkBox_argsubst->isChecked());
     settings.setValue("models/arg_substitute_do",toolButton_argSubs->isChecked());
     settings.setValue("models/arg_substitute",lineEdit_argsubst->text());
     for (int i = 0; i < ET.count(); i++)
@@ -622,14 +611,6 @@ void nutshellqt::getNutshellIni()
     QStringList dirs;
     for (int i = 0; i < keys.count(); i++)
     {
-        //        if (keys[i] == "current")
-        //        {
-        //            int nr = settings.value(keys[i]).toInt();
-        //            if (nr >= 0)
-        //                currentworkdir = nr;
-        //        }
-        //        else
-        //        {
         QString str = settings.value(keys[i]).toString();
         if (!str.isEmpty())
         {
@@ -640,7 +621,6 @@ void nutshellqt::getNutshellIni()
             }
             dirs << str;
         }
-        //        }
     }
     comboBox_workdir->clear();
     comboBox_workdir->addItems(dirs);
@@ -648,13 +628,6 @@ void nutshellqt::getNutshellIni()
     comboBox_workdir->setCurrentIndex(currentworkdir);
     //    currentPath = comboBox_workdir->itemText(currentworkdir);
     settings.endGroup();
-
-    //   settings.beginGroup("workdirnr");
-    //   keys = settings.childKeys();
-    //   int nr = settings.value(keys[0]).toInt();
-    //   if (nr >= 0)
-    //      currentPath = comboBox_workdir->itemText(nr);
-    //   settings.endGroup();
 
     settings.beginGroup("layout");
     splitter->restoreState(settings.value("splitter1").toByteArray());
@@ -678,7 +651,7 @@ void nutshellqt::getNutshellIni()
                 lineEdit_argsubst->setText(settings.value(keys[i]).toString());
             else
                 if (keys[i] == "arg_substitute_do")
-        //            checkBox_argsubst->setChecked(settings.value(keys[i]).toBool());
+                    //            checkBox_argsubst->setChecked(settings.value(keys[i]).toBool());
                     toolButton_argSubs->setChecked(settings.value(keys[i]).toBool());
                 else
                 {

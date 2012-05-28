@@ -296,7 +296,10 @@ void nutshellqt::onScreen(QString buffer)
                     {
                         SStep = listb[j].remove(0, 19);
                         double timemin = time_ms.elapsed()*(0.001/60);
-                        SStep = QString("Executing timestep %1 (runtime: %2 of %3 min)").arg(SStep).arg(timemin,0,'g',2).arg(timemin * totalsteps/SStep.toInt(),0,'g',2);
+                        SStep = QString("Executing timestep %1 (runtime: %2 of %3 min)")
+                                .arg(SStep)
+                                .arg(timemin,0,'f',2)
+                                .arg(timemin * totalsteps/SStep.toInt(),0,'f',2);
                         // calculate runtime and show
                     }
 

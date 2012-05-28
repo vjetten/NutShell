@@ -13,34 +13,29 @@
 QString nutshellqt::StripForName(QString S)
 {
     QString Ss;
-    //find the integer, delete the dot
-    Ss = QFileInfo(S).fileName();//absoluteFilePath();
-    int i = Ss.lastIndexOf(".");
-    Ss.remove(i,1);
+    Ss = QFileInfo(S).baseName();
 
-    //FIND THE NON NUMBER PART AND DELETE THE REST
+    //FIND THE NUMBER PART AND DELETE IT
+    int i = Ss.length()-1;
     while (i > 0 && int(Ss.toAscii()[i]) >= 48 && int(Ss.toAscii()[i]) <= 57)
         i--;
-    for (int i = Ss.length()-1; i >= 0; i--)
-        if (int(Ss.toAscii()[i]) < 48 && int(Ss.toAscii()[i]) > 57)
-            break;
-
-    Ss = Ss.remove(i+1,128);
+    Ss = Ss.remove(i+1, 256);
 
     return(Ss);
 }
 //---------------------------------------------------------------------------
 QString nutshellqt::StripForNumber(QString S)
 {
-    QString Ss = S;
-    //find the integer, delete the dot
+    QString Ss;
+    //make name without the dot: myname01.001 -> myname01001
     Ss = QFileInfo(S).baseName() + QFileInfo(S).suffix();
-    int i = Ss.length()-1;
+
     //FIND THE NON NUMBER PART AND DELETE IT
+    int i = Ss.length()-1;
     while (i > 0 && int(Ss.toAscii()[i])>=48 && int(Ss.toAscii()[i])<=57)
         i--;
-    i++;
-    Ss = Ss.remove(0,i);
+    Ss = Ss.remove(0, i+1);
+
     //strip all zero's before the value
     while(int(Ss.toAscii()[0])==48)
         Ss.remove(0,1);
@@ -54,16 +49,8 @@ QString nutshellqt::StripForNumber(QString S)
 // also fills and does not delete FNall with all series filenmes
 QString nutshellqt::GetMapSeries()
 {
-    // empty series structure
-    for (int i = 0; i < 128; i++)
-    {
-        fns[i].name.isEmpty();
-        fns[i].base.isEmpty();
-        fns[i].begin.isEmpty();
-        fns[i].end.isEmpty();
-        fns[i].series.clear();
-    }
-    nrseries = 0;
+//    // empty series structure
+    fns.clear();
 
     QDir currentD = QDir(currentPath);
     QFileInfoList allfiles = currentD.entryInfoList(QStringList("*.*"), QDir::Files, QDir::Name);
@@ -77,9 +64,6 @@ QString nutshellqt::GetMapSeries()
     for (int row = 0; row < allfiles.count(); row++)
         if (isExtentionInt(allfiles.at(row).absoluteFilePath()))
             FNall << allfiles.at(row).absoluteFilePath();//fileName();
-
-    // sort to be sure???
-    //FNall.sort();
 
     bool startserie = true;
     bool singleserie = false;
@@ -135,19 +119,21 @@ QString nutshellqt::GetMapSeries()
         Sres = Sres + QFileInfo(FNts.at(i)).fileName() + ";";
 
         // fill fns structure for easier series handling
-        fns[nrseries].name = FNts.at(i);
-        fns[nrseries].base = StripForName(FNts.at(i));
-        fns[nrseries].begin = StripForNumber(FNts.at(i));
-        fns[nrseries].end = StripForNumber(FNts.at(i+1));
+        filenameseries ofn;
+
+        ofn.name = FNts.at(i);
+        ofn.base = StripForName(FNts.at(i));
+        ofn.begin = StripForNumber(FNts.at(i));
+        ofn.end = StripForNumber(FNts.at(i+1));
+
         QStringList filter;
-        filter << QString("%1*.*").arg(QFileInfo(fns[nrseries].base).baseName());
+        filter << QString("%1*.*").arg(ofn.base);
         allfiles = currentD.entryInfoList(filter, QDir::Files, QDir::Name);
         for (int j = 0; j < allfiles.count(); j++)
-            fns[nrseries].series<< allfiles[j].absoluteFilePath();
+            ofn.series << allfiles[j].absoluteFilePath();
 
-        //      qDebug()<< nrseries << fns[nrseries].name << fns[nrseries].base << fns[nrseries].begin << fns[nrseries].end << fns[nrseries].series;
+        fns.append(ofn);
 
-        nrseries++;
     }
     return Sres;
 }
@@ -163,32 +149,39 @@ QString nutshellqt::MakeFileListString()
     QString Sfilelist;
     QModelIndexList indexes = selectionModel->selectedIndexes();
     QModelIndex index;
-    // each file has 4 indexes (name, date, type, size)
 
     Sfilelist.clear();
     //new style aguila but how in 3D, documentation not clear ??
     QString temp;
     foreach (index, indexes)
     {
+        // each file has 4 indexes (name, date, type, size), column 0 is the name
         if (index.column() == 0)
         {
-            temp.isEmpty();
-            if (isExtentionInt(fileModel->fileInfo(index).absoluteFilePath()) && ismapseries) // if it is a series and ismapseries = true
+            temp.clear();
+            // if it is a series and ismapseries = true
+            if (isExtentionInt(fileModel->fileInfo(index).absoluteFilePath()) && ismapseries)
             {
                 int j = 0;
-
-                for (j = 0; j < nrseries; j++)
+                // find the basename
+                for (j = 0; j < fns.count(); j++)
                     if (StripForName(fileModel->fileInfo(index).fileName()) == fns[j].base)
                         break;
                 temp = QString("%1+%2").arg(fns[j].name).arg(fns[j].end);
+                // gives myname00.001+45
             }
             else  // it is a regular file
                 temp = fileModel->fileInfo(index).absoluteFilePath(); //fileName(); //
 
             if (Sfilelist.isEmpty())
                 Sfilelist = temp;
+            // first selected name
             else
                 Sfilelist = Sfilelist + plus + temp;
+            // subsequent seleted names, selection order is remembered
+
+            // plus is either "!+!" or "!", ! is later replaced by a space
+            // this is to circumvent spaces in pathnames
         }
     }
     //qDebug() << "Sfilelist" << Sfilelist;
@@ -324,16 +317,8 @@ QString nutshellqt::getScriptReport()
                 {
                     QStringList bind = stra.split("=");
                     if (str == bind[0])
-                        str = bind[1];//str.replace(bind[0],bind[1]);
+                        str = bind[1];
                 }
-                //replace report vars with binding vars
-
-                //            if (!str.contains(".")) // mapseries
-                //            {
-                //               name << QString("%1*.*").arg(str);
-                //               go = true;
-                //            }
-                //				else
                 reports << str;//currentPath+"/"+str;
             }
         }
@@ -377,7 +362,8 @@ int nutshellqt::getTimesteps()
                     str.indexOf("dynamic") == 0)
                 go = false;
 
-            if (go  && str.contains(';') && !str.contains("endtime") && !str.simplified().indexOf("#")==0)
+            if (go  && str.contains(';') && !str.contains("endtime")
+                    && !str.simplified().indexOf("#") == 0)
             {
                 QString line;
                 line = str.simplified();
@@ -427,7 +413,7 @@ bool nutshellqt::isTSSfile(QString name)
 bool nutshellqt::isExtentionInt(QString name)
 {
     bool ok;
-    int val = QFileInfo(name).suffix().toInt(&ok, 10);
+    long val = QFileInfo(name).suffix().toInt(&ok, 10);
     return (val > 0 && ok);
 }
 //---------------------------------------------------------------
