@@ -39,7 +39,7 @@ nutshellqt::nutshellqt(QWidget *parent) :
     help.setuphelp(PCRasterDocDirName);
 
     // initialize alternative for aguila
-    mapDisplay.setupMapPlot();
+    //mapDisplay.setupMapPlot();
 
     showPCR();
 
@@ -154,6 +154,7 @@ void nutshellqt::createMainActions()
 
     helppcrcalcAct = new QAction(QIcon(":/resources/helpoperation.png"), "Context sensitive help (web)", this);
     helppcrcalcAct->setShortcut(Qt::CTRL+Qt::Key_F1);
+    helppcrcalcAct->setToolTip("Context sensitive help");
     connect(helppcrcalcAct, SIGNAL(triggered()), this, SLOT(showHelpOperation()));
 
     clearOptionsAct = new QAction(QIcon(""), "&Clear nutshell.ini...", this);
@@ -323,6 +324,8 @@ void nutshellqt::setupToolBar()
     toolBar->addAction(toggleHashAct);
     toolBar->addAction(toggleReportAct);
     toolBar->addSeparator ();
+    toolBar->addAction(helppcrcalcAct);
+    toolBar->addAction(helpWebAct);
 
     pcrToolBar = new QToolBar();
     horizontalLayout->insertWidget(0, pcrToolBar);
@@ -338,7 +341,7 @@ void nutshellqt::setupToolBar()
     pcrToolBar->addAction(mapattributeAct );
     pcrToolBar->addAction(mapnewAct       );
     pcrToolBar->addAction(mapeditAct      );
-    pcrToolBar->addAction(mapDisplayAct   );
+   // pcrToolBar->addAction(mapDisplayAct   );
 
 }
 //---------------------------------------------------------------
@@ -427,11 +430,14 @@ void nutshellqt::setWorkdirectoryNr(int index)
 
     setRootPath1(currentPath);
     dir.setCurrent(currentPath);
+
+    //qDebug() << index;
 }
 //---------------------------------------------------------------
 // must return true is event stops in this function or false when it should continue
 bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
 {
+
     if (event->type() == QEvent::KeyPress)
     {
 
@@ -445,6 +451,11 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
         }
     }
 
+//        if (event->type() == QEvent::DragEnter)
+//        {
+//            QModelIndex index = treeView->indexAt(QCursor::pos());
+//            qDebug() << "hoi" << index;
+//        }
     if (obj == treeView)
     {
         if (event->type() == QEvent::KeyPress)
@@ -619,7 +630,7 @@ void nutshellqt::getNutshellIni()
     comboBox_workdir->addItems(dirs);
 
     comboBox_workdir->setCurrentIndex(currentworkdir);
-    //    currentPath = comboBox_workdir->itemText(currentworkdir);
+    currentPath = comboBox_workdir->itemText(currentworkdir);
     settings.endGroup();
 
     settings.beginGroup("layout");
