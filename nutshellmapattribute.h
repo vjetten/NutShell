@@ -63,7 +63,9 @@ public:
 	ATTRIBUTES *a;
 	MAP *m;
 	QString filename;
+    QString dirname;
 	bool makenewmap;
+    bool readyToClose;
 
 	int fill(QString name, bool newmap);
 	void OptNotSetAttr();
@@ -72,7 +74,9 @@ public:
 	void CreateMap();
 	void SetAndCloseMap();
 	void closeEvent(QCloseEvent *event);
+    void hideEvent(QHideEvent *event);
 	QString getMapAttributes(QString mapname);
+    bool checkMapAttrib();
 
 public slots:
 	void Accept();

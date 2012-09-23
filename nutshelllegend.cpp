@@ -149,8 +149,8 @@ void nutshellLegend::RemoveNumbers()
    {
       QModelIndex index = legendmodel->index(i, 1, QModelIndex());
       QString text = legendmodel->data(index, Qt::DisplayRole).toString();
-      int i = text.indexOf("]") + 1;
-      text.remove(0,i);
+      int j = text.indexOf("]") + 1;
+      text.remove(0,j);
       legendmodel->setData(index, text);
    }
 }

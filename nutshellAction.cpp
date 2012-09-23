@@ -129,7 +129,7 @@ void nutshellqt::PerformAction(int actiontype)
     bool isAguila = false;
 
     args.clear();
-    if(!selectionModel->currentIndex().isValid())
+    if(!selectionModel->currentIndex().isValid() && actiontype != ACTIONTYPEATTRIBUTENEW)
     {
         ErrorMsg("No file selected.");
         return;
@@ -275,6 +275,7 @@ void nutshellqt::PerformAction(int actiontype)
             }
         }
         else
+            if (mapattribute.fill(QString(currentPath+"/new.map"), true) == 0)
         {
             mapattribute.show();
             mapattribute.raise();
@@ -307,13 +308,13 @@ void nutshellqt::PerformAction(int actiontype)
         prog = PCRasterAppDirName + "gstat.exe";
         //actiontype = ACTIONTYPENONE;
         break;
-    case ACTIONTYPEMAPDISPLAY :
-        //      args << cmdl;
-        mapDisplay.mapDisplayNames = SelectedPathName;
-        mapDisplay.initMapPlot();
-        mapDisplay.show();
-        mapDisplay.ShowMap();
-        break;
+//    case ACTIONTYPEMAPDISPLAY :
+//        //      args << cmdl;
+//        mapDisplay.mapDisplayNames = SelectedPathName;
+//        mapDisplay.initMapPlot();
+//        mapDisplay.show();
+//        mapDisplay.ShowMap();
+//        break;
     case ACTIONTYPEWINDOWSCMD:
        // QDesktopServices::openUrl(QUrl("\""+cmdl+"\""));
        // break;

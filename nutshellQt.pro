@@ -7,7 +7,8 @@
 QT       += core gui
 TARGET = nutshell
 TEMPLATE = app
-QWTDIR = c:/Qt/qwt
+#QWTDIR = c:/Qt/qwt
+OLVC = 1
 SOURCES += main.cpp\
 	nutshellqt.cpp \
 	nutshellExplorer.cpp \
@@ -23,8 +24,7 @@ SOURCES += main.cpp\
     nutshellhelp.cpp \
     nutshelloptions.cpp \
     findreplaceform.cpp \
-    CsfMap.cpp \
-    nutshellmapdisplay.cpp
+    CsfMap.cpp
 HEADERS  += nutshellqt.h \
     csfattr.h \
     csfimpl.h \
@@ -38,8 +38,7 @@ HEADERS  += nutshellqt.h \
     nutshellhelp.h \
     nutshelloptions.h \
     findreplaceform.h \
-    CsfMap.h \
-    nutshellmapdisplay.h
+    CsfMap.h
 FORMS    += nutshellqt.ui \
     nutshelllegend.ui \
     nutshellmapattribute.ui \
@@ -48,30 +47,34 @@ FORMS    += nutshellqt.ui \
     findreplaceform.ui \
     nutshellmapdisplay.ui
 CONFIG(debug, debug|release) {
-    LIBS += -L"debug" \
-        -llibcsfd
-    LIBS += -L"$${QWTDIR}/lib" -lqwtd
+    LIBS += -L"debug" -llibcsfd
+  #  LIBS += -L"$${QWTDIR}/lib" -lqwtd
     DESTDIR = debug
 	 MOC_DIR = debug/moc
     OBJECTS_DIR= debug/objs
 	 UI_DIR= debug/ui
     RCC_DIR= debug/rcc
-}
-else {
-    LIBS += -L"release" \
-        -llibcsf
-    LIBS += -L"$${QWTDIR}/lib" -lqwt
+} else {
+   greaterThan(OLVC, 0) {
+    DEFINES += _CRT_SECURE_NO_WARNINGS
+    LIBS += -L"release/vc" -L"D:/prgc/libcsf/bin" -lcsfvc
+   # LIBS += -L"release/vc" -L"$${QWTDIR}/lib" -lqwtvc
+    DESTDIR = release/vc
+  } else {
+    LIBS += -L"release" -llibcsf
+    #LIBS += -L"$${QWTDIR}/lib" -lqwt
     DESTDIR = release
+  }
 	 MOC_DIR = release/moc
     OBJECTS_DIR= release/objs
 	 UI_DIR= release/ui
     RCC_DIR= release/rcc
 }
+
 RESOURCES += \
     nutshellqt.qrc
 RC_FILE = nutshellqt.rc
 CONFIG += precompile_header
 INCLUDEPATH += $${QWTDIR}/src
 PRECOMPILED_HEADER = stable.h
-
 

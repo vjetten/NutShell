@@ -6,7 +6,8 @@
 #include <QtGui>
 #include <QMainWindow>
 #include <QtGlobal>
-
+#include <QtGlobal>
+#include <QTreeWidget>
 
 #include "csf.h"
 
@@ -18,7 +19,7 @@
 #include "findreplaceform.h"
 #include "nutshellhelp.h"
 #include "nutshelloptions.h"
-#include "nutshellmapdisplay.h"
+//#include "nutshellmapdisplay.h"
 //#include "nutshelldragdrop.h"
 
 
@@ -123,6 +124,12 @@ public:
 };
 
 //---------------------------------------------------------------
+//class FileSystemModelFilterProxyModel : public QSortFilterProxyModel
+//{
+//protected:
+//    virtual bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const;
+//};
+////---------------------------------------------------------------
 
 class nutshellqt : public QMainWindow, private Ui::nutshellqt
 {
@@ -159,7 +166,7 @@ public:
     QMenu *formatMenu;
     //QMenu *filecontextMenu;
     QToolBar *pcrToolBar;
-    void contextMenuEvent(QContextMenuEvent *event);
+    //void contextMenuEvent(QContextMenuEvent *event);
 
     QString AguilaDirName;
     QString PCRasterDirName;
@@ -207,7 +214,7 @@ public:
     nutshellOptions nutOptions;
     QProgressBar statusBarProgress;
     QLabel statusLabel;
-    nutshellMapdisplay mapDisplay;
+    //nutshellMapdisplay mapDisplay;
 
     QList <filenameseries> fns;
     //int nrseries;
@@ -243,9 +250,10 @@ public:
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
+    void dragEnterEvent(QDragEnterEvent *event);
 
 public slots:
-
+void treeSelectionChanged(QModelIndex current, QModelIndex previous);
     //=========================
     //slots to run model script
     //=========================
@@ -263,6 +271,7 @@ public slots:
     void clearCommandList();
     void copyCommandList();
     void outputCommand();
+    void setCursorLast();
 
     //=====================
     //slots for main/editor
@@ -301,7 +310,8 @@ public slots:
     //slots for explorer
     //====================
     void selectFiles(const QModelIndex& index);
-    void showAttributes(const QModelIndex& index);
+   // void showAttributes(const QModelIndex& index);
+    void contextualMenu(const QPoint& point);
 
     // left horizontal toolbar file commands
     void goBack();
@@ -413,7 +423,7 @@ private:
     QFileSystemModel* fileModel;
     QItemSelectionModel *selectionModel;
     QItemSelectionModel *selectionDirModel;
-
+    QSortFilterProxyModel *fileSystemProxyModel;
 
     QString currentPath;
     QStack<QString> history;

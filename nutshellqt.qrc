@@ -78,9 +78,10 @@
         <file>resources/showmods2.png</file>
         <file>resources/editRedo.png</file>
         <file>resources/editUndo.png</file>
-        <file>resources/showpcr3.png</file>
         <file>resources/argsubs1.png</file>
         <file>resources/dir_del.png</file>
         <file>resources/dir_add.png</file>
+        <file>resources/showpcr4.png</file>
+        <file>resources/argsubs2.png</file>
     </qresource>
 </RCC>

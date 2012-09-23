@@ -6,12 +6,10 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     nutshellqt w;
 
-    //a.addLibraryPath("nutslibs");
-
-    w.setWindowTitle("nutShell Qt (version 3.5 beta [13 Mar 2012])");
+    w.setWindowTitle("nutShell (version 3.7 [23 Sep 2012])");
     w.showMaximized();
     w.show();
-	// a.setStyle("Cleanlooks");
+	//a.setStyle("Cleanlooks");
 
     return a.exec();
 }

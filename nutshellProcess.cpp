@@ -106,6 +106,8 @@ void nutshellqt::runModel()
     time_ms.start();
     statusBar()->addWidget(&statusLabel);
 
+    setCursorLast();
+
     if (tabWidget->currentIndex() < 0)
     {
         toolButton_startrun->setChecked(false);
@@ -167,11 +169,11 @@ void nutshellqt::runModel()
     commandWindow->appendPlainText(" ");
     commandWindow->appendPlainText(" ");
     // make room in the plainTextEdit for the pcrcalc counter
-
-    QCoreApplication::sendPostedEvents(this, 0);
+    //QCoreApplication::sendPostedEvents(this, 0);
 
     calcProcess->start(prog, args, QIODevice::ReadWrite);
 
+    setCursorLast();
 }
 //---------------------------------------------------------------
 void nutshellqt::suspendModel(bool pause)
@@ -278,6 +280,7 @@ void nutshellqt::onScreen(QString buffer)
             calcCursor.setPosition(commandWindow->toPlainText().size() - listb[last].size() - 1);
             cursorPosition = calcCursor.position();
             //save output cursor position
+            commandWindow->setTextCursor(calcCursor);
         }
         else
         {
@@ -385,16 +388,9 @@ void nutshellqt::finishedModel(int c)
         buf = calcProcess->readAllStandardError();
         onScreen(QString(buf));
     }
+    qDebug() << c;
 
-    QString output = commandWindow->toPlainText();
-    QStringList hop = output.split("\n");
-    if (hop[hop.count()-1].size() > 1)
-        output.append("\n");
-    commandWindow->setPlainText(output);
-
-    QTextCursor cur = commandWindow->textCursor();
-    cur.setPosition(output.size());
-    commandWindow->setTextCursor(cur);
+    setCursorLast();
 
     toolButton_startrun->setChecked(false);
 
@@ -405,7 +401,7 @@ void nutshellqt::finishedModel(int c)
 
     commandWindow->setFocus();
 
-//    QCoreApplication::sendPostedEvents(this, 0);
+    //    QCoreApplication::sendPostedEvents(this, 0);
 }
 //---------------------------------------------------------------
 void nutshellqt::toggleOldcalc(bool checked)

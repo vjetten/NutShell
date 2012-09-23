@@ -282,12 +282,6 @@
             <property name="headerHidden">
              <bool>true</bool>
             </property>
-            <attribute name="headerVisible">
-             <bool>false</bool>
-            </attribute>
-            <attribute name="headerStretchLastSection">
-             <bool>false</bool>
-            </attribute>
            </widget>
           </item>
          </layout>
@@ -417,7 +411,7 @@
                 </property>
                 <property name="icon">
                  <iconset resource="nutshellqt.qrc">
-                  <normaloff>:/resources/showpcr3.png</normaloff>:/resources/showpcr3.png</iconset>
+                  <normaloff>:/resources/showpcr4.png</normaloff>:/resources/showpcr4.png</iconset>
                 </property>
                 <property name="checkable">
                  <bool>true</bool>
@@ -462,7 +456,7 @@
               <item>
                <widget class="QToolButton" name="toolButton_showOutput">
                 <property name="toolTip">
-                 <string>Show current reported output</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show reported output of current script&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="text">
                  <string>...</string>
@@ -776,7 +770,7 @@
             </property>
             <property name="icon">
              <iconset resource="nutshellqt.qrc">
-              <normaloff>:/resources/argsubs1.png</normaloff>:/resources/argsubs1.png</iconset>
+              <normaloff>:/resources/argsubs2.png</normaloff>:/resources/argsubs2.png</iconset>
             </property>
             <property name="checkable">
              <bool>true</bool>

@@ -1,7 +1,7 @@
 #include "nutshellqt.h"
 
-#define MAX_DEG ((long double)360.0)
-#define M_PI            3.14159265358979323846
+#define MAX_DEG ((double)360.0)
+//#define M_PI            3.14159265358979323846
 #define M_2PI           ((double)(2*M_PI))
 
 
@@ -96,17 +96,15 @@ int nutshellmapattribute::fill(QString name, bool newmap)
     a = (ATTRIBUTES *)malloc(sizeof(ATTRIBUTES));
     OptNotSetAttr();
 
-
-
     makenewmap = newmap;
     filename = name;
 
-    lineEdit_mapname->setText("");
-    lineEdit_XUL->setText("");
-    lineEdit_YUL->setText("");
-    lineEdit_nrRows->setText("");
-    lineEdit_nrCols->setText("");
-    lineEdit_celllength->setText("");
+    lineEdit_mapname->setText("new.map");
+    lineEdit_XUL->setText("0");
+    lineEdit_YUL->setText("0");
+    lineEdit_nrRows->setText("1");
+    lineEdit_nrCols->setText("1");
+    lineEdit_celllength->setText("1");
     lineEdit_angle->setText("0");
     lineEdit_ID->setText("0");
     radioButton_YBotTop->setChecked(true);
@@ -132,73 +130,53 @@ int nutshellmapattribute::fill(QString name, bool newmap)
     lineEdit_ID->setEnabled(newmap);
     lineEdit_mapname->setEnabled(newmap);
 
+    lineEdit_mapname->setText(QFileInfo(filename).fileName());
     if (!newmap)
-        lineEdit_mapname->setText(QFileInfo(filename).fileName());
-    else
-        lineEdit_mapname->clear();
-
-    //	if (!newmap)
-    //	{
-    //		lineEdit_nrRows->setEnabled(false);
-    //		lineEdit_nrCols->setEnabled(false);
-    //		groupBox_datatype->setEnabled(false);
-    //		lineEdit_ID->setEnabled(false);
-    //		lineEdit_mapname->setText(QFileInfo(filename).fileName());
-    //		lineEdit_mapname->setEnabled(false);
-    //	}
-    //	else
-    //	{
-    //		lineEdit_mapname->clear();
-    //		lineEdit_nrRows->setEnabled(true);
-    //		lineEdit_nrCols->setEnabled(true);
-    //		groupBox_datatype->setEnabled(true);
-    //		lineEdit_ID->setEnabled(true);
-    //		groupBox_minmax->setEnabled(true);
-    //	}
-
-    if(m != NULL)
     {
-
         int ret = ReadAttr(true);
         if (ret == 1)
-            return 1;
-        QString s;
-        lineEdit_XUL->setText( s.setNum((double)a->xUL,'f',6));
-        lineEdit_YUL->setText( s.setNum((double)a->yUL,'f',6));
-        lineEdit_nrRows->setText( s.setNum((long)a->nrRows));
-        lineEdit_nrCols->setText( s.setNum((long)a->nrCols));
-        lineEdit_celllength->setText( s.setNum((double)a->cellSize,'g',6));
-        if (fabs(a->angle) < 1e-20)
-            a->angle = 0;
-        lineEdit_angle->setText( s.setNum((double)a->angle,'g',6));
-        switch (a->valueScale){
-        case VS_BOOLEAN : radioButton_boolean->setChecked(true); break;
-        case VS_NOMINAL : radioButton_nominal->setChecked(true); break;
-        case VS_ORDINAL : radioButton_ordinal->setChecked(true); break;
-        case VS_SCALAR  : radioButton_scalar->setChecked(true); break;
-        case VS_DIRECTION : radioButton_directional->setChecked(true); break;
-        case VS_LDD     : radioButton_ldd->setChecked(true); break;
-
-        case VS_CLASSIFIED : radioButton_nominal->setChecked(true); break;
-        case VS_CONTINUOUS :
-        case VS_NOTDETERMINED :
-        case VS_UNDEFINED : radioButton_scalar->setChecked(true); break;
-
-        }
-        if (a->projection == 0)
-            radioButton_YTopBot->setChecked(true);
-        else
-            radioButton_YBotTop->setChecked(true);
-        lineEdit_ID->setText( s.setNum(a->gisFileId));
-        //??????????????
-        label_minValue->setText( s.setNum((double)a->minVal,'f',6));
-        label_maxValue->setText( s.setNum((double)a->maxVal,'f',6));
-        if (newmap)
-        {
-            label_minValue->setText( s.setNum(0));
-            label_maxValue->setText( s.setNum(0));
-        }
+            DefaultAttr();
     }
+    else
+        DefaultAttr();
+
+    QString s;
+    lineEdit_XUL->setText( s.setNum((double)a->xUL,'f',6));
+    lineEdit_YUL->setText( s.setNum((double)a->yUL,'f',6));
+    lineEdit_nrRows->setText( s.setNum((long)a->nrRows));
+    lineEdit_nrCols->setText( s.setNum((long)a->nrCols));
+    lineEdit_celllength->setText( s.setNum((double)a->cellSize,'g',6));
+    if (fabs(a->angle) < 1e-20)
+        a->angle = 0;
+    lineEdit_angle->setText( s.setNum((double)a->angle,'g',6));
+    switch (a->valueScale){
+    case VS_BOOLEAN : radioButton_boolean->setChecked(true); break;
+    case VS_NOMINAL : radioButton_nominal->setChecked(true); break;
+    case VS_ORDINAL : radioButton_ordinal->setChecked(true); break;
+    case VS_SCALAR  : radioButton_scalar->setChecked(true); break;
+    case VS_DIRECTION : radioButton_directional->setChecked(true); break;
+    case VS_LDD     : radioButton_ldd->setChecked(true); break;
+
+    case VS_CLASSIFIED : radioButton_nominal->setChecked(true); break;
+    case VS_CONTINUOUS :
+    case VS_NOTDETERMINED :
+    case VS_UNDEFINED : radioButton_scalar->setChecked(true); break;
+
+    }
+    if (a->projection == 0)
+        radioButton_YTopBot->setChecked(true);
+    else
+        radioButton_YBotTop->setChecked(true);
+    lineEdit_ID->setText( s.setNum(a->gisFileId));
+    //??????????????
+    label_minValue->setText( s.setNum((double)a->minVal,'f',6));
+    label_maxValue->setText( s.setNum((double)a->maxVal,'f',6));
+    if (newmap)
+    {
+        label_minValue->setText( s.setNum(0));
+        label_maxValue->setText( s.setNum(0));
+    }
+
     Mclose(m); m = NULL;
     return 0;
 }
@@ -276,17 +254,17 @@ void nutshellmapattribute::DefaultAttr()
 {
     a->version    = 2;
     a->projection = PT_YINCT2B;
-    a->valueScale = VS_BOOLEAN;
-    a->cellRepr = CR_UINT1;
+    a->valueScale = VS_SCALAR;
+    a->cellRepr = CR_REAL4;
     a->xUL = 0;
     a->yUL = 0;
-    a->nrRows = MV_UINT4;
-    a->nrCols = MV_UINT4;
+    a->nrRows = 1;
+    a->nrCols = 1;
     a->cellSize = 1;
     a->angle = 0;
     a->gisFileId = 0;
-    a->minVal = 1.0;
-    a->maxVal = 1.0;
+    a->minVal = 0;
+    a->maxVal = 0;
     SET_MV_REAL8(&(a->minVal));
     SET_MV_REAL8(&(a->maxVal));
 }
@@ -446,24 +424,59 @@ void nutshellmapattribute::SetAndCloseMap()
 //---------------------------------------------------------------------------
 void nutshellmapattribute::Accept()
 {
-    if(lineEdit_mapname->text().isEmpty())
-    {
-        QMessageBox::warning(this,"NutShell new map",QString("Specify a map name to save"));
-        return;
-    }
 
+//    a->xUL = (REAL8) lineEdit_XUL->text().toDouble();
+//    a->yUL = (REAL8) lineEdit_YUL->text().toDouble();
+//    a->nrRows = (UINT4) lineEdit_nrRows->text().toInt();
+//    a->nrCols = (UINT4) lineEdit_nrCols->text().toInt();
+//    a->cellSize = (REAL8) lineEdit_celllength->text().toDouble();
+//    a->angle = (REAL8) lineEdit_angle->text().toDouble();
+
+////    if(lineEdit_mapname->text().isEmpty())
+////    {
+////        QMessageBox::warning(this,"NutShell new map",QString("Specify a map name to save"));
+////        readyToClose = false;
+////        return;
+////    }
+////    if (a->nrCols == 0 || a->nrRows == 0 || a->cellSize == 0)
+////    {
+////        readyToClose = false;
+////        QMessageBox::warning(this,"NutShell new map",QString("Number of Rows or Cols, or cellsize cannot be 0"));
+////        return;
+////    }
+
+//    if (radioButton_boolean->isChecked()) a->valueScale = VS_BOOLEAN;
+//    if (radioButton_nominal->isChecked()) a->valueScale = VS_NOMINAL;
+//    if (radioButton_ordinal->isChecked()) a->valueScale = VS_ORDINAL;
+//    if (radioButton_scalar->isChecked()) a->valueScale = VS_SCALAR;
+//    if (radioButton_directional->isChecked()) a->valueScale = VS_DIRECTION;
+//    if (radioButton_ldd->isChecked()) a->valueScale = VS_LDD;
+
+//    if (radioButton_YTopBot->isChecked()) a->projection = (CSF_PT)0;
+//    if	(radioButton_YBotTop->isChecked()) a->projection = (CSF_PT)1;
+
+//    a->gisFileId = (UINT4) lineEdit_ID->text().toInt();
+
+//    if (!makenewmap)
+//    {
+//        SetAndCloseMap();
+//    }
+//    else
+//    {
+//        CreateMap();
+//    }
+//    readyToClose = true;
+//    close();
+}
+//---------------------------------------------------------------------------
+bool nutshellmapattribute::checkMapAttrib()
+{
     a->xUL = (REAL8) lineEdit_XUL->text().toDouble();
     a->yUL = (REAL8) lineEdit_YUL->text().toDouble();
     a->nrRows = (UINT4) lineEdit_nrRows->text().toInt();
     a->nrCols = (UINT4) lineEdit_nrCols->text().toInt();
     a->cellSize = (REAL8) lineEdit_celllength->text().toDouble();
     a->angle = (REAL8) lineEdit_angle->text().toDouble();
-    if (a->nrCols == 0 || a->nrRows == 0 || a->cellSize == 0)
-    {
-        QMessageBox::warning(this,"NutShell new map",QString("Number of Rows or Cols, or cellsize cannot be 0"));
-        return;
-    }
-
     if (radioButton_boolean->isChecked()) a->valueScale = VS_BOOLEAN;
     if (radioButton_nominal->isChecked()) a->valueScale = VS_NOMINAL;
     if (radioButton_ordinal->isChecked()) a->valueScale = VS_ORDINAL;
@@ -476,16 +489,38 @@ void nutshellmapattribute::Accept()
 
     a->gisFileId = (UINT4) lineEdit_ID->text().toInt();
 
-    if (!makenewmap)
+    if(lineEdit_mapname->text().isEmpty())
     {
-        SetAndCloseMap();
+        QMessageBox::warning(this,"NutShell new map",QString("Specify a map name to save"));
+        return false;
+    }
+    if (a->nrCols == 0 || a->nrRows == 0 || a->cellSize == 0)
+    {
+        QMessageBox::warning(this,"NutShell new map",QString("Number of Rows or Cols, or cellsize cannot be 0"));
+        return false;
+    }
+    return true;
+}
+//---------------------------------------------------------------------------
+void nutshellmapattribute::hideEvent ( QHideEvent * event )
+{
+    if( !checkMapAttrib() )
+    {
+        event->ignore();
+        show();
     }
     else
     {
-        CreateMap();
+        event->accept();
+        if (!makenewmap)
+            SetAndCloseMap();
+        else
+            CreateMap();
+        if (a) {
+            free (a);
+            a = NULL;
+        }
     }
-
-    close();
 }
 //---------------------------------------------------------------------------
 void nutshellmapattribute::closeEvent(QCloseEvent *event)

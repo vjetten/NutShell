@@ -57,6 +57,8 @@ void nutshellqt::makeNewFile()
     newedit.syntax = 0;
 
     ET.append(newedit);
+    // ET defined as QList<editortabs> ET;
+
 
     tabWidget->addTab(tabWidg, newedit.fileName);
     tabWidget->setCurrentWidget(tabWidg);
@@ -75,12 +77,16 @@ void nutshellqt::openFile()
     dialog.setViewMode(QFileDialog::Detail);
     QString fileName = dialog.getOpenFileName(this,
                                               "Open model/script", currentPath, "*.mod *.txt;;*.*");
-
     if (!fileName.isEmpty())
     {
+#ifndef QT_NO_CURSOR
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+#endif
         AddModel(fileName, 1);
-    }
-}
+#ifndef QT_NO_CURSOR
+        QApplication::restoreOverrideCursor();
+#endif
+    }}
 //---------------------------------------------------------------
 bool nutshellqt::saveFile()
 {
@@ -148,10 +154,10 @@ void nutshellqt::AddModel(QString name, int syntax)
     ET[nr].filePath = name;
     ET[nr].fileName = QFileInfo(name).fileName();
     tabWidget->setTabText(nr, ET.at(nr).fileName);
-
-    ET[nr].syntax = 1;//syntax;
-    syntaxAct->setChecked(true);//syntax == 1);
-    showsyntax(true);//syntax == 1);
+    syntax = 1;
+    ET[nr].syntax = syntax;
+    syntaxAct->setChecked(syntax == 1);
+    showsyntax(syntax == 1);
 
 
     QTextStream in(&file);
@@ -409,9 +415,9 @@ void nutshellqt::showsyntax(bool doit)
 {
     if (tabWidget->currentIndex() == -1)
         return;
-
-    ETHighlighter->dosyntax = true;//doit;
-    ET[tabWidget->currentIndex()].syntax = 1;//doit ? 1:0;
+    doit = true;
+    ETHighlighter->dosyntax = doit;
+    ET[tabWidget->currentIndex()].syntax = (doit ? 1 : 0);
     ETHighlighter->rehighlight();
 }
 //---------------------------------------------------------------
@@ -563,6 +569,7 @@ void nutshellqt::showHelpOperation()
         return;
 
     QString helptxt = ETEditor->textCursor().selectedText();
+    qDebug() << helptxt;
     QString URL = "http://pcraster.geo.uu.nl/documentation/PCRaster/html/";
     QString found = "";
 
@@ -572,7 +579,7 @@ void nutshellqt::showHelpOperation()
         if (helptxt.contains("--"))
             found = QString("secimport.html#overview-of-global-options");
         else
-            if (helptxt.contains("#1"))
+            if (helptxt.contains("#!"))
                 found = QString("secimport.html#global-options");
             else
                 if (helptxt.toUpper() == "BINDING" ||
@@ -585,11 +592,14 @@ void nutshellqt::showHelpOperation()
                 {
                     if (helptxt.contains("lookup"))
                         helptxt = "lookup";
+                    // lookupscalar and so on
                     if (helptxt.contains("timeinput") && helptxt != "timeinput")
                         helptxt = "timeinput...";
+                    // timeinputscalar and so on, but not timrinput itself
                     found = QString("op_%1.html").arg(helptxt);
+                    // all the rest
                 }
-
+    qDebug() << QString(URL+found);
     QDesktopServices::openUrl(QUrl(URL+found));
 
     //help.helpurl = "";

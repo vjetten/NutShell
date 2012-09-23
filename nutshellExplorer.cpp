@@ -13,22 +13,13 @@
 //---------------------------------------------------------------
 void nutshellqt::setupExplorer()
 {
-    //   fns = new filenameseries[128];
-    //   for (int i = 0; i < 128; i++)
-    //   {
-    //      fns->name.isEmpty();
-    //      fns->base.isEmpty();
-    //      fns->begin.isEmpty();
-    //      fns->end.isEmpty();
-    //      fns->series.clear();
-    //   }
-    // structure to keep pcr fileseries info
     fns.clear();
 
     PCRProcess = new QProcess(this);
     PCRProcess->setProcessChannelMode(QProcess::MergedChannels);
     connect(PCRProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(outputCommand()) );
     // process for comamndwindow actions
+    //??WHY IS THIS DECLARED HERE ?? NOT LOGICAL
 
     baseFilters.clear();
     baseFilters << QString("*.mod;*.map;*.csf;*.tbl;*.tss;*.txt;*.dat;*.csv;*.pcr");
@@ -43,7 +34,6 @@ void nutshellqt::setupExplorer()
     dirModel = new QFileSystemModel(this);
     dirModel->setReadOnly(false); //true
     dirModel->setFilter ( QDir::AllDirs | QDir::NoDotAndDotDot);// | QDir::Drives );
-    // setting drives prevents trying to map disconnected network drives?
     dirModel->setNameFilterDisables(false);
     dirModel->setReadOnly(false);
 
@@ -56,19 +46,19 @@ void nutshellqt::setupExplorer()
     treeView->header()->setStretchLastSection(true);
     treeView->header()->setResizeMode(QHeaderView::ResizeToContents);
     treeView->setUniformRowHeights(true);
+
     treeView->setDragEnabled(true);
     treeView->setAcceptDrops(true);
+    treeView->setDropIndicatorShown(true);
+
     treeView->setIndentation(10);
     treeView->setHeaderHidden(false);
     treeView->hideColumn(1);
     treeView->setSortingEnabled(true);
     treeView->sortByColumn(1, Qt::AscendingOrder);
-
-    //   filterModel = new QSortFilterProxyModel(this);
-    //   filterModel->setSourceModel(fileModel);
-    //   filterModel->setFilterWildcard("*.*");
-    //filterModel->setFilterRegExp(QRegExp("*.*", Qt::CaseInsensitive,QRegExp::FixedString));
-    //filterModel->setFilterKeyColumn(1);
+    treeView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(treeView,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(contextualMenu(const QPoint &)));
+  //  connect(selectionDirModel, SIGNAL(currentChanged(QModelIndex, QModelIndex)), this, SLOT(treeSelectionChanged(QModelIndex, QModelIndex)));
 
     fileView->setModel(fileModel);
     fileView->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -90,6 +80,7 @@ void nutshellqt::setupExplorer()
     fileView->verticalHeader()->setDefaultSectionSize(16);
     fileView->setDragEnabled(true);
     fileView->setAcceptDrops(true);
+    fileView->setDropIndicatorShown(true);
 
     BDgate = new BlueDelegate();
     BDgate->setSeries(false);
@@ -101,7 +92,7 @@ void nutshellqt::setupExplorer()
     selectionDirModel = new QItemSelectionModel(dirModel);
     treeView->setSelectionModel(selectionDirModel);
 
-    connect(treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(setRootIndex(QModelIndex)));
+   // connect(treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(setRootIndex(QModelIndex)));
     connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(setRootIndex(QModelIndex)));
     connect(fileView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(selectFiles(QModelIndex)));
     //connect(fileView, SIGNAL(clicked(QModelIndex)), this, SLOT(showAttributes(QModelIndex)));
@@ -147,17 +138,48 @@ void nutshellqt::setupExplorer()
     ismapseries = true;
 }
 //---------------------------------------------------------------
+
+void nutshellqt::treeSelectionChanged(QModelIndex current, QModelIndex previous)
+{
+    QFileInfo fileInfo(fileModel->fileInfo(fileSystemProxyModel->mapToSource(current)));
+    if(!fileInfo.exists())
+        return;
+    //getActivePane()->moveTo(fileInfo.filePath());
+}
+
+//---------------------------------------------------------------
+void nutshellqt::dragEnterEvent(QDragEnterEvent *event)
+{
+    QModelIndex index = treeView->indexAt(event->pos());
+//    QModelIndex index1 = treeView->indexAbove(event->pos());
+
+    qDebug() << index;
+    //event->acceptProposedAction();
+}
+//---------------------------------------------------------------
+void nutshellqt::contextualMenu(const QPoint& point)
+{
+    QMenu *menu = new QMenu;
+    menu->addAction(newDirAct);
+//    QModelIndex index = treeView->currentIndex();
+//    QString fileName = dirModel->data(dirModel->index(index.row(), 0),0).toString();
+//    menu->addAction(QString("Import"), this, SLOT(test_slot()));
+//    menu->addAction(QString("Export"), this, SLOT(test_slot()));
+    menu->exec(QCursor::pos());
+}
+//---------------------------------------------------------------
 // function for double click or enter in file liset
 // Getactiontype is in nutshellaction.cpp
 void nutshellqt::selectFiles(const QModelIndex& index)
 {
+
     PerformAction(GetActionType());
 }
 //---------------------------------------------------------------
-void nutshellqt::showAttributes(const QModelIndex& index)
-{
-    PerformAction(ACTIONTYPEATTRIBUTE);
-}
+//void nutshellqt::showAttributes(const QModelIndex& index)
+//{
+//    PerformAction(ACTIONTYPEATTRIBUTE);
+//}
 //---------------------------------------------------------------
 void nutshellqt::setRootPath1(const QString& path)
 {
@@ -170,7 +192,6 @@ void nutshellqt::setRootIndex(const QModelIndex& index)
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     QModelIndex dir = index.sibling(index.row(), 0);
-
     if (dir != fileView->rootIndex())// && dirModel->isDir(dir))
     {
         //      if (remember)
@@ -301,7 +322,10 @@ void nutshellqt::showReport()
             BDgate->setSeries(true);
         }
     }
+    // find and remove 1st name of mapseries (001)
+
     list << resa.split(";");
+    // append allmapseries to the list
 
     fileModel->setNameFilters(list);
 }
@@ -320,20 +344,21 @@ void nutshellqt::changeFileFilter(int filterNr)
         return;
     }
 
-    // get the right base filter
     QString S = baseFilters[filterNr];
+    // get the right base filter from the hardcoded list
     _filternr = filterNr;
+    // set the global file filter
 
     currentFilter.clear();
 
     // if mapseries use created mapseries filter
-    // true for filter 0,
+    // true for filter setPCR and setSeries and setReport
     if (ismapseries)
         S = GetMapSeries();
     // qDebug() << "filter" << S;
 
     BDgate->setSeries(ismapseries);
-    // paint series blue or not
+    // paint series blue idf they are included
 
     // set current filter to base filter or mapseries
     currentFilter << S.split(";");
@@ -422,8 +447,6 @@ void nutshellqt::deleteScriptReport()
             list[i] = list[i] + "</br>";
             j = 0;
         }
-        //      else
-        //       list[i] = "<br>" + list[i] + "</br>";
     }
 
     QMessageBox::StandardButton reply =
@@ -694,16 +717,16 @@ void BlueDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     QStyledItemDelegate::paint(painter, hoi, index);
 }
 //---------------------------------------------------------------
-void nutshellqt::contextMenuEvent(QContextMenuEvent *event)
-{
-    QMenu menu(this);
-    //   menu.addAction(cutFileAct);
-    //   menu.addAction(copyFileAct);
-    //   menu.addAction(pasteFileAct);
-    menu.addAction(newDirAct);
+//void nutshellqt::contextMenuEvent(QContextMenuEvent *event)
+//{
+//    QMenu menu(this);
+//    //   menu.addAction(cutFileAct);
+//    //   menu.addAction(copyFileAct);
+//    //   menu.addAction(pasteFileAct);
+//    menu.addAction(newDirAct);
 
-    menu.exec(event->globalPos());
-}
+//    menu.exec(event->globalPos());
+//}
 //---------------------------------------------------------------
 void nutshellqt::cutFile()
 {

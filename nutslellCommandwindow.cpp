@@ -52,9 +52,6 @@ void nutshellqt::copyCommandList()
 void nutshellqt::parseCommand()
 {
 
-   QStringList lines;
-   QStringList args;
-   QString prog;
    QString all;
    all = commandWindow->toPlainText();
 
@@ -63,6 +60,9 @@ void nutshellqt::parseCommand()
       commandWindow->appendPlainText("\n");
       return;
    }
+   QStringList lines;
+   QStringList args;
+   QString prog;
 
    lines = all.split("\n");
    args = lines[lines.count()-1].split(" ");
@@ -103,10 +103,24 @@ void nutshellqt::parseCommand()
          PCRProcess->waitForReadyRead(10000);
          commandWindow->appendPlainText("");
       }
+   setCursorLast();
 
    comboBox_cmdlist->insertItem(0, lines[lines.count()-1]);
    commandcounter = -1;
    // add command to commandlist
+}
+//---------------------------------------------------------------
+void nutshellqt::setCursorLast()
+{
+    QString output = commandWindow->toPlainText();
+    QStringList hop = output.split("\n");
+    if (hop[hop.count()-1].size() > 1)
+        output.append("\n");
+    commandWindow->setPlainText(output);
+    QTextCursor cur = commandWindow->textCursor();
+    cur.setPosition(output.size());
+    commandWindow->setTextCursor(cur);
+    QCoreApplication::sendPostedEvents(this, 0);
 }
 //---------------------------------------------------------------
 void nutshellqt::outputCommand()
