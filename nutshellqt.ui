@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>924</width>
+    <width>926</width>
     <height>609</height>
    </rect>
   </property>
@@ -75,9 +75,35 @@
             <number>0</number>
            </property>
            <item>
+            <widget class="QToolButton" name="toolButton_returnWorkdir">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Return explorer to work directory</string>
+             </property>
+             <property name="text">
+              <string>...</string>
+             </property>
+             <property name="icon">
+              <iconset resource="nutshellqt.qrc">
+               <normaloff>:/resources/workdir.png</normaloff>:/resources/workdir.png</iconset>
+             </property>
+             <property name="autoRaise">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QToolButton" name="toolButton_workdir">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -260,29 +286,39 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QTreeView" name="treeView">
-            <property name="editTriggers">
-             <set>QAbstractItemView::EditKeyPressed</set>
-            </property>
-            <property name="tabKeyNavigation">
-             <bool>false</bool>
-            </property>
-            <property name="showDropIndicator" stdset="0">
-             <bool>false</bool>
-            </property>
-            <property name="rootIsDecorated">
-             <bool>false</bool>
-            </property>
-            <property name="uniformRowHeights">
-             <bool>true</bool>
-            </property>
-            <property name="sortingEnabled">
-             <bool>false</bool>
-            </property>
-            <property name="headerHidden">
-             <bool>true</bool>
-            </property>
-           </widget>
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <item>
+             <widget class="QTreeView" name="treeView">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="editTriggers">
+               <set>QAbstractItemView::EditKeyPressed</set>
+              </property>
+              <property name="tabKeyNavigation">
+               <bool>false</bool>
+              </property>
+              <property name="showDropIndicator" stdset="0">
+               <bool>false</bool>
+              </property>
+              <property name="rootIsDecorated">
+               <bool>false</bool>
+              </property>
+              <property name="uniformRowHeights">
+               <bool>true</bool>
+              </property>
+              <property name="sortingEnabled">
+               <bool>false</bool>
+              </property>
+              <property name="headerHidden">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -710,7 +746,7 @@
           <item>
            <widget class="QToolButton" name="toolButton_oldcalc">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="toolTip">
              <string>Use oldcalc instead of pcrcalc</string>
@@ -863,7 +899,6 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
-  <tabstop>treeView</tabstop>
   <tabstop>toolButton_showMaps</tabstop>
   <tabstop>toolButton_showPlot</tabstop>
   <tabstop>toolButton_showScript</tabstop>

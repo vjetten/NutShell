@@ -40,6 +40,7 @@
 #define SelectedSuffix   fileModel->fileInfo(selectionModel->currentIndex()).suffix()
 #define SelectedFileName fileModel->fileName(selectionModel->currentIndex())
 //#define SelectPatnNameIndexes(j) fileModel->fileInfo(indexes.at(j)).absoluteFilePath()
+#define getIndexwithPath()
 
 #define ACTIONTYPEUNDEFINED -1
 #define ACTIONTYPENONE       0
@@ -122,7 +123,15 @@ public:
         ismapseries = iss;
     }
 };
-
+//---------------------------------------------------------------------------------
+// Subclass QSortFilterProxyModel and override 'filterAcceptsRow' to only show
+// directories in tree and not files.
+//---------------------------------------------------------------------------------
+class mainTreeFilterProxyModel : public QSortFilterProxyModel
+{
+protected:
+    virtual bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const;
+};
 //---------------------------------------------------------------
 //class FileSystemModelFilterProxyModel : public QSortFilterProxyModel
 //{
@@ -154,7 +163,7 @@ public:
     void setupCommandwindow();
     void setNutshellIni();
     void getNutshellIni();
-    void getRegPCRaster();
+    void getRegPCRaster();    
 
     QList<editortabs> ET;
 
@@ -167,6 +176,7 @@ public:
     //QMenu *filecontextMenu;
     QToolBar *pcrToolBar;
     //void contextMenuEvent(QContextMenuEvent *event);
+    QToolBar *dirToolBar;
 
     QString AguilaDirName;
     QString PCRasterDirName;
@@ -198,6 +208,7 @@ public:
     int errorpos[2];
     void runModelCommandwindow(QString prog, QStringList args);
     bool runPaused;
+    void setButtons(bool one, bool two, bool three);
 
     //======================
     //Vars for editor
@@ -236,7 +247,6 @@ public:
     QString GetMapSeries();
     QString StripForNumber(QString S);
     QString StripForName(QString S);
-    void setRootPath1(const QString& path);
     QString getScriptReport();
     int getTimesteps();
     QTime time_ms;
@@ -246,7 +256,8 @@ public:
     bool isTSSfile(QString name);
     bool isExtentionInt(QString name);
 
-    QSortFilterProxyModel *filterModel;
+    QSortFilterProxyModel *fileFilterModel;
+    QSortFilterProxyModel *dirFilterModel;
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
@@ -285,6 +296,7 @@ void treeSelectionChanged(QModelIndex current, QModelIndex previous);
     bool saveFileName(const QString &fileName);
     void AddModel(QString name, int syntax);
     void setWorkdirectory();
+    void returnToWorkdirectory();
     void removeWorkdirectory();
     void setWorkdirectoryNr(int index);
     void findDialog();
@@ -310,7 +322,6 @@ void treeSelectionChanged(QModelIndex current, QModelIndex previous);
     //slots for explorer
     //====================
     void selectFiles(const QModelIndex& index);
-   // void showAttributes(const QModelIndex& index);
     void contextualMenu(const QPoint& point);
 
     // left horizontal toolbar file commands
@@ -364,15 +375,21 @@ private:
 
     //editor toolbar actions
     QAction *newDirAct;
+    QAction *nextDirAct;
+    QAction *prevDirAct;
+
     QAction *newfileAct;
     QAction *closefileAct;
     QAction *openfileAct;
     QAction *savefileAct;
     QAction *saveasfileAct;
+
     QAction *runmodelAct;
     QAction *pausemodelAct;
     QAction *killmodelAct;
     QAction *oldmodelAct;
+    QAction *argsubsAct;
+
     QAction *exitAct;
     QAction *cutAct;
     QAction *copyAct;
@@ -384,6 +401,10 @@ private:
     QAction *cutFileAct;
     QAction *copyFileAct;
     QAction *pasteFileAct;
+//    QAction *oldcalcAct;
+//    QAction *startrunAct;
+//    QAction *stoprunAct;
+//    QAction *pauserunAct;
 
     QAction *aguilaplusAct;
     QAction *aguila2DAct;
@@ -416,14 +437,13 @@ private:
     QAction *helppcrcalcAct;
     QAction *helpAguilaAct;
 
-
-
     // explorer variables
-    QFileSystemModel *dirModel;   //QDirModel *dirModel;
+    QFileSystemModel *dirModel;
     QFileSystemModel* fileModel;
     QItemSelectionModel *selectionModel;
     QItemSelectionModel *selectionDirModel;
     QSortFilterProxyModel *fileSystemProxyModel;
+    mainTreeFilterProxyModel *modelTree;
 
     QString currentPath;
     QStack<QString> history;

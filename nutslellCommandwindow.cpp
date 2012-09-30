@@ -12,6 +12,11 @@
 //---------------------------------------------------------------
 void nutshellqt::setupCommandwindow()
 {
+   PCRProcess = new QProcess(this);
+   PCRProcess->setProcessChannelMode(QProcess::MergedChannels);
+   connect(PCRProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(outputCommand()) );
+   // process called by command window, typing pcrcalc, or aguila or any other pcr prog
+
    commandWindow = new nutshelleditor(this, 1);
    commandWindow->document()->setDocumentMargin(2);
    verticalLayout_4->insertWidget(0, commandWindow);
@@ -22,10 +27,6 @@ void nutshellqt::setupCommandwindow()
 
    connect(toolButton_clearcmd, SIGNAL(clicked()), this, SLOT(clearCommandWindow()));
    connect(toolButton_cmdlist, SIGNAL(clicked()), this, SLOT(clearCommandList()));
-
-//   connect(fontAct, SIGNAL(triggered()), commandWindow, SLOT(fontSelect()));
-//   connect(fontIncreaseAct, SIGNAL(triggered()), commandWindow, SLOT(fontIncrease()));
-//   connect(fontDecreaseAct, SIGNAL(triggered()), commandWindow, SLOT(fontDecrease()));
 
    commandcounter = -1;
 }

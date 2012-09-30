@@ -7,8 +7,7 @@
 QT       += core gui
 TARGET = nutshell
 TEMPLATE = app
-#QWTDIR = c:/Qt/qwt
-OLVC = 1
+CONFIG += exceptions
 SOURCES += main.cpp\
 	nutshellqt.cpp \
 	nutshellExplorer.cpp \
@@ -47,34 +46,32 @@ FORMS    += nutshellqt.ui \
     findreplaceform.ui \
     nutshellmapdisplay.ui
 CONFIG(debug, debug|release) {
+  # debug build
     LIBS += -L"debug" -llibcsfd
-  #  LIBS += -L"$${QWTDIR}/lib" -lqwtd
     DESTDIR = debug
 	 MOC_DIR = debug/moc
     OBJECTS_DIR= debug/objs
 	 UI_DIR= debug/ui
     RCC_DIR= debug/rcc
 } else {
-   greaterThan(OLVC, 0) {
+  # release build
+  win32:win32-msvc2010{
+                 # compile release with MSVC 2010
     DEFINES += _CRT_SECURE_NO_WARNINGS
     LIBS += -L"release/vc" -L"D:/prgc/libcsf/bin" -lcsfvc
-   # LIBS += -L"release/vc" -L"$${QWTDIR}/lib" -lqwtvc
     DESTDIR = release/vc
   } else {
+                 # compile with mingw
     LIBS += -L"release" -llibcsf
-    #LIBS += -L"$${QWTDIR}/lib" -lqwt
     DESTDIR = release
   }
-	 MOC_DIR = release/moc
-    OBJECTS_DIR= release/objs
-	 UI_DIR= release/ui
-    RCC_DIR= release/rcc
+  MOC_DIR = release/moc
+  OBJECTS_DIR= release/objs
+  UI_DIR= release/ui
+  RCC_DIR= release/rcc
 }
-
-RESOURCES += \
-    nutshellqt.qrc
+RESOURCES += nutshellqt.qrc
 RC_FILE = nutshellqt.rc
 CONFIG += precompile_header
-INCLUDEPATH += $${QWTDIR}/src
 PRECOMPILED_HEADER = stable.h
 

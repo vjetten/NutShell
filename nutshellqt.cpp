@@ -17,6 +17,12 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     currentPath = "C:/";
 
+    setupActions();
+
+    setupToolBar();
+
+    setupMenu();
+
     setupCommandwindow();
 
     setupExplorer();
@@ -24,14 +30,6 @@ nutshellqt::nutshellqt(QWidget *parent) :
     setupEditor();
 
     setupModel();
-
-    STATUS("");
-
-    setupActions();
-
-    setupToolBar();
-
-    setupMenu();
 
     getNutshellIni();
 
@@ -45,25 +43,28 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     // present but not used
     toolButton_globaloptions->setVisible(false);
-    toolButton_oldcalc->setVisible(false);
+    //toolButton_oldcalc->setVisible(false);
     checkBox_argsubst->setVisible(false);
 
     // OBSOLETE
     //   toolButton_deletemapseries->setVisible(false);
-    //   toolButton_dirRemove->setVisible(false);
-    //   toolButton_dirup->setVisible(false);
-    //   toolButton_dirnext->setVisible(false);
-    //   toolButton_dirprev->setVisible(false);
-    //   toolButton_dirnew->setVisible(false);
+//       toolButton_dirRemove->setVisible(false);
+//       toolButton_dirup->setVisible(false);
+//       toolButton_dirnext->setVisible(false);
+//       toolButton_dirprev->setVisible(false);
+//       toolButton_dirnew->setVisible(false);
 
-    dirModel->setRootPath(QDir(currentPath).rootPath());
-    fileModel->setRootPath(QDir(currentPath).rootPath());
+//    dirModel->setRootPath(QDir(currentPath).rootPath());
+//    fileModel->setRootPath(QDir(currentPath).rootPath());
     setRootIndex(dirModel->index(currentPath));
-    setRootIndex(fileModel->index(currentPath));
+    //setRootIndex(fileModel->index(currentPath));
 
     setWorkdirectory();
 
+    STATUS("");
+
     commandcounter = -1;
+
 }
 //---------------------------------------------------------------
 nutshellqt::~nutshellqt()
@@ -85,12 +86,17 @@ void nutshellqt::setupActions()
     createExplorerActions();
     createContextMenuActions();
     // not needed
+
+    nextDirAct = new QAction(QIcon(":/resources/forward.png"),QString("Next Directory"), this);
+    prevDirAct = new QAction(QIcon(":/resources/back.png"),QString("Prev Directory"), this);
+
 }
 //---------------------------------------------------------------
 void nutshellqt::createModelActions()
 {
     // run model actions
     runmodelAct = new QAction(QIcon(":/resources/start1.png"), "&Run active model...", this);
+    runmodelAct->setCheckable (true);
     runmodelAct->setShortcut(Qt::CTRL+Qt::Key_R);
     runmodelAct->setToolTip("Run model script");
     connect(runmodelAct, SIGNAL(triggered()), this, SLOT(runModel()));
@@ -102,7 +108,7 @@ void nutshellqt::createModelActions()
 
     killmodelAct = new QAction(QIcon(":/resources/stop1.png"), "&Stop model...", this);
     killmodelAct->setCheckable (true);
-    //killmodelAct->setShortcut(Qt::CTRL+Qt::Key_C);
+    killmodelAct->setChecked (true);
     killmodelAct->setToolTip("Stop running");
     connect(killmodelAct, SIGNAL(triggered()), this, SLOT(killModel()));
 
@@ -111,6 +117,10 @@ void nutshellqt::createModelActions()
     oldmodelAct->setToolTip("Run model script with oldcalc");
     connect(oldmodelAct, SIGNAL(toggled(bool)), this, SLOT(toggleOldcalc(bool)));
 
+//    argsubsAct = new QAction(QIcon(":/resources/argsubs2.png"), "", this);
+//    argsubsAct->setCheckable (true);
+//    argsubsAct->setToolTip("use argument subsitution in script");
+//    connect(argsubsAct, SIGNAL(toggled(bool)), lineEdit_argsubst, SLOT(enabled(bool)));
 }
 //---------------------------------------------------------------
 void nutshellqt::createMainActions()
@@ -118,6 +128,7 @@ void nutshellqt::createMainActions()
     // main actions
     connect(toolButton_workdir, SIGNAL(clicked()), this, SLOT(setWorkdirectory()));
     connect(toolButton_delWorkdir, SIGNAL(clicked()), this, SLOT(removeWorkdirectory()));
+    connect(toolButton_returnWorkdir, SIGNAL(clicked()), this, SLOT(returnToWorkdirectory()));
     connect(comboBox_workdir, SIGNAL(currentIndexChanged(int)), this, SLOT(setWorkdirectoryNr(int)));
     //	connect(tabWidget, SIGNAL(currentChanged(int)),this, SLOT(changeSyntax(int)));
 
@@ -162,6 +173,7 @@ void nutshellqt::createMainActions()
 
     optionsAct = new QAction(QIcon(""), "&Options...", this);
     connect(optionsAct, SIGNAL(triggered()), this, SLOT(getDirectories()));
+
 }
 //---------------------------------------------------------------
 void nutshellqt::createEditorActions()
@@ -294,7 +306,7 @@ void nutshellqt::createContextMenuActions()
 //---------------------------------------------------------------
 void nutshellqt::setupToolBar()
 {
-    //   toolBar->addAction(newDirAct);
+   // toolBar->addAction(newDirAct);
     toolBar->addAction(newfileAct);
     toolBar->addAction(openfileAct);
     toolBar->addAction(savefileAct);
@@ -324,8 +336,17 @@ void nutshellqt::setupToolBar()
     toolBar->addAction(toggleHashAct);
     toolBar->addAction(toggleReportAct);
     toolBar->addSeparator ();
+//    toolBar->addAction(runmodelAct);
+//    toolBar->addAction(pausemodelAct);
+//    toolBar->addAction(killmodelAct);
+//    toolBar->addAction(oldmodelAct);
+//    toolBar->addAction(argsubsAct);
+//    toolBar->addSeparator ();
     toolBar->addAction(helppcrcalcAct);
     toolBar->addAction(helpWebAct);
+
+    toolBar->setAllowedAreas(Qt::RightToolBarArea | Qt::TopToolBarArea);
+    addToolBar(Qt::RightToolBarArea, toolBar);
 
     pcrToolBar = new QToolBar();
     horizontalLayout->insertWidget(0, pcrToolBar);
@@ -343,6 +364,11 @@ void nutshellqt::setupToolBar()
     pcrToolBar->addAction(mapeditAct      );
    // pcrToolBar->addAction(mapDisplayAct   );
 
+//    dirToolBar = new QToolBar();
+//    verticalLayout_6->insertWidget(0, dirToolBar);
+//    dirToolBar->setIconSize(QSize(16,16));
+//    dirToolBar->addAction(prevDirAct   );
+//    dirToolBar->addAction(nextDirAct     );
 }
 //---------------------------------------------------------------
 void nutshellqt::setupMenu( )
@@ -423,21 +449,27 @@ void nutshellqt::setWorkdirectory()
         comboBox_workdir->setCurrentIndex(place);
 }
 //---------------------------------------------------------------
+void nutshellqt::returnToWorkdirectory()
+{
+   //comboBox_workdir->setCurrentIndex(0);
+   setWorkdirectoryNr(0);
+//    setRootIndex(dirModel->index(currentPath));
+}
+//---------------------------------------------------------------
 void nutshellqt::setWorkdirectoryNr(int index)
 {
     QDir dir;
     currentPath = comboBox_workdir->currentText();
-
-    setRootPath1(currentPath);
+    // set current working path
+    setRootIndex(dirModel->index(currentPath));
+    // set the explorer to this path
     dir.setCurrent(currentPath);
-
-    //qDebug() << index;
+    // set the path in the operating system
 }
 //---------------------------------------------------------------
 // must return true is event stops in this function or false when it should continue
 bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
 {
-
     if (event->type() == QEvent::KeyPress)
     {
 
