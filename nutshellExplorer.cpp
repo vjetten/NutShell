@@ -35,22 +35,14 @@ void nutshellqt::setupExplorer()
    dirModel->setReadOnly(false); //true
    dirModel->setFilter ( QDir::AllDirs | QDir::NoDotAndDotDot);// | QDir::Drives );
    dirModel->setNameFilterDisables(false);
-   dirModel->setReadOnly(false);
-
-   //   modelTree = new mainTreeFilterProxyModel();
-   //   modelTree->setSourceModel(dirModel);
-   //   modelTree->setSortCaseSensitivity(Qt::CaseInsensitive);
-
 
    fileModel = new QFileSystemModel(this);
    fileModel->setReadOnly(false);
    fileModel->setFilter( QDir::Files | QDir::NoDotAndDotDot);
    fileModel->setNameFilterDisables(false);
 
-   //   fileFilterModel = new QSortFilterProxyModel();
-   //   QSortFilterProxyModel *dirFilterModel;
-   //   fileFilterModel->setSourceModel(fileModel);
-
+//   dirModel = new QSortFilterProxyModel();
+//   dirModel->setSourceModel(fileModel);
 
    treeView->setModel(dirModel);
    treeView->header()->setStretchLastSection(true);
@@ -68,10 +60,10 @@ void nutshellqt::setupExplorer()
    treeView->sortByColumn(1, Qt::AscendingOrder);
    treeView->setContextMenuPolicy(Qt::CustomContextMenu);
    connect(treeView,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(contextualMenu(const QPoint &)));
-   //  connect(selectionDirModel, SIGNAL(currentChanged(QModelIndex, QModelIndex)), this, SLOT(treeSelectionChanged(QModelIndex, QModelIndex)));
-   selectionDirModel = new QItemSelectionModel(dirModel);
-   treeView->setSelectionModel(selectionDirModel);
-
+// not needed:
+//   selectionDirModel = new QItemSelectionModel(dirModel);
+//   treeView->setSelectionModel(selectionDirModel);
+//   connect(selectionDirModel, SIGNAL(currentChanged(QModelIndex, QModelIndex)), this, SLOT(treeSelectionChanged(QModelIndex, QModelIndex)));
 
    fileView->setModel(fileModel);
    fileView->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -103,7 +95,6 @@ void nutshellqt::setupExplorer()
    selectionModel = new QItemSelectionModel(fileModel);
    fileView->setSelectionModel(selectionModel);
 
-   // connect(treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(setRootIndex(QModelIndex)));
    connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(setRootIndex(QModelIndex)));
    connect(fileView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(selectFiles(QModelIndex)));
    // double clicked activate pcraster stuff
@@ -225,6 +216,11 @@ void nutshellqt::setRootIndex(const QModelIndex& index)
 void nutshellqt::setRootIndex(const QModelIndex& index)
 {
    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+//   QModelIndex dir = index.sibling(index.row(), 0);
+//   if (!fileModel->isDir(dir))
+//      dir = dir.parent();
+//   currentPath = fileModel->filePath(dir);
 
    currentPath = dirModel->filePath(index);
    // set the current path
@@ -589,139 +585,6 @@ void nutshellqt::deleteFiles()
       }
 }
 //---------------------------------------------------------------
-// delete one or multiple files and file series
-/*
-void nutshellqt::deleteFiles()
-{
-   QFile file;
-   QModelIndexList indexes = selectionModel->selectedIndexes();
-   QModelIndex index;
-
-//   if (calcProcess && calcProcess->state() == QProcess::Running)
-//   {
-//      toolButton_startrun->setChecked(false);
-//      ErrorMsg("pcrcalc is active, wait until it is finished or press stop first");
-//      return;
-//   }
-
-   // each file has 4 indexes (name, date, type, size)
-   bool start = true;
-   bool doall = false;
-   int k = 0;
-   QMessageBox::StandardButton reply;
-
-   GetMapSeries();
-//   fns[i].name.isEmpty();
-//   fns[i].base.isEmpty();
-//   fns[i].begin.isEmpty();
-//   fns[i].end.isEmpty();
-//   fns[i].series.clear();
-
-   statusLabel.setText("Deleting: ");
-   statusBarProgress.setMaximum(indexes.count()/4);
-   statusBar()->addWidget(&statusLabel);
-   statusBar()->addWidget(&statusBarProgress);
-   statusBarProgress.show();
-   statusLabel.show();
-
-   foreach (index, indexes)
-      if (index.column() == 0)
-      {
-         // if not single files displayed treat a numbered file as a series
-         if (isExtentionInt(fileModel->fileName(index)))
-         {
-            if (currentFilter[0] != "*.*")
-            {
-               QString base = StripForName(fileModel->filePath(index));
-               if(!doall)
-               {
-                  QMessageBox::StandardButton reply =
-                        WarningAllMsg(QString("Delete highlighted map series ?\n"
-                                              "If you want to delete single files form a series select the \"*.*\" file filter"));
-                  if (reply == QMessageBox::Yes)// || reply == QMessageBox::YesToAll)
-                  {
-                     for(int i = 0; i < nrseries; i++)
-                        if (base == fns[i].base)
-                        {
-                           statusLabel.setText("Deleting: ");
-                           statusBarProgress.setMaximum(fns[i].series.count());
-                           statusBar()->addWidget(&statusLabel);
-                           statusBar()->addWidget(&statusBarProgress);
-                           statusBarProgress.show();
-                           statusLabel.show();
-                           for (int k = 0; k < fns[i].series.count(); k++)
-                           {
-                              file.setFileName(fns[i].series[k]);
-                              file.remove();
-                              statusBarProgress.setValue(k);
-                           }
-                        }
-                     doall = true;//reply == QMessageBox::YesToAll;
-                  }
-                  else
-                     break; // answer no to delete go on with next file
-               }
-               else // yes to all
-               {
-                  for(int i = 0; i < nrseries; i++)
-                     if (base == fns[i].base)
-                     {
-                        statusLabel.setText("Deleting: ");
-                        statusBarProgress.setMaximum(fns[i].series.count());
-                        statusBar()->addWidget(&statusLabel);
-                        statusBar()->addWidget(&statusBarProgress);
-                        statusBarProgress.show();
-                        statusLabel.show();
-                        for (int k = 0; k < fns[i].series.count(); k++)
-                        {
-                           file.setFileName(fns[i].series[k]);
-                           file.remove();
-                           statusBarProgress.setValue(k);
-                        }
-                     }
-
-               }
-            }
-            else
-            {
-               if (!doall)
-               {
-                  reply = WarningAllMsg(QString("Delete highlighted file(s)?"));
-                  if (reply == QMessageBox::Yes)// || reply == QMessageBox::YesToAll)
-                  {
-                     file.setFileName(fileModel->filePath(index));
-                     file.remove();
-                     doall = true;//reply == QMessageBox::YesToAll;
-                  }
-               }
-               else // yes to all
-               {
-                  file.setFileName(fileModel->filePath(index));
-                  file.remove();
-                  statusBarProgress.setValue(k);
-                  k++;
-               }
-            }
-         }
-         else
-         {
-            //delete a single or multiple selected file, one warning
-            if (start)
-               reply = WarningMsg(QString("Delete highlighted file(s)?"));
-            if (reply == QMessageBox::Yes)
-               start = false;
-            if (!start)
-            {
-               file.setFileName(fileModel->filePath(index));
-               file.remove();
-            }
-         }
-      }
-   statusBar()->removeWidget(&statusBarProgress);
-   statusBar()->removeWidget(&statusLabel);
-}
-*/
-//---------------------------------------------------------------
 void BlueDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
                          const QModelIndex &index) const
 {
@@ -765,6 +628,7 @@ void nutshellqt::copyFile()
 //---------------------------------------------------------------
 void nutshellqt::pasteFile()
 {
+   /*
    QStringList sourceFiles = fileNamesToCopy.split(";");
    QString str;
    foreach(str, sourceFiles)
@@ -816,10 +680,12 @@ void nutshellqt::pasteFile()
       statusBar()->removeWidget(&statusLabel);
    }
    changeFileFilter(_filternr);
+   */
 }
 //---------------------------------------------------------------
 void nutshellqt::newDirectory()
 {
+   /*
    QString path;// = currentPath + QDir::separator() + "New folder";
    QModelIndex index = dirModel->index(currentPath);
    treeView->expand(index);
@@ -838,6 +704,7 @@ void nutshellqt::newDirectory()
    index = dirModel->index(currentPath);
    dirModel->mkdir(index,QDir(path).dirName());
    setRootIndex(index);
+   */
 }
 //---------------------------------------------------------------
 //from http://john.nachtimwald.com/2010/06/08/qt-remove-directory-and-its-contents/
@@ -868,6 +735,7 @@ bool nutshellqt::removeDirectory(const QString &dirName)
 //---------------------------------------------------------------
 bool nutshellqt::deleteDirectory()
 {
+   /*
    QModelIndex index = selectionDirModel->currentIndex();
    QString dirName = dirModel->fileInfo(index).absoluteFilePath();
 
@@ -890,4 +758,6 @@ bool nutshellqt::deleteDirectory()
       ErrorMsg(QString("Could not delete %1").arg(dirName));
       return false;
    }
+   */
+   return false;
 }

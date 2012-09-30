@@ -442,7 +442,7 @@ private:
     QFileSystemModel* fileModel;
     QItemSelectionModel *selectionModel;
     QItemSelectionModel *selectionDirModel;
-    QSortFilterProxyModel *fileSystemProxyModel;
+    //QSortFilterProxyModel *dirModel;
     mainTreeFilterProxyModel *modelTree;
 
     QString currentPath;

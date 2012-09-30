@@ -54,10 +54,10 @@ nutshellqt::nutshellqt(QWidget *parent) :
 //       toolButton_dirprev->setVisible(false);
 //       toolButton_dirnew->setVisible(false);
 
-//    dirModel->setRootPath(QDir(currentPath).rootPath());
-//    fileModel->setRootPath(QDir(currentPath).rootPath());
+    dirModel->setRootPath(QDir(currentPath).rootPath());
     setRootIndex(dirModel->index(currentPath));
-    //setRootIndex(fileModel->index(currentPath));
+//    fileModel->setRootPath(QDir(currentPath).rootPath());
+//    setRootIndex(fileModel->index(currentPath));
 
     setWorkdirectory();
 
@@ -346,7 +346,7 @@ void nutshellqt::setupToolBar()
     toolBar->addAction(helpWebAct);
 
     toolBar->setAllowedAreas(Qt::RightToolBarArea | Qt::TopToolBarArea);
-    addToolBar(Qt::RightToolBarArea, toolBar);
+  //  addToolBar(Qt::RightToolBarArea, toolBar);
 
     pcrToolBar = new QToolBar();
     horizontalLayout->insertWidget(0, pcrToolBar);
@@ -478,7 +478,8 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
         {
             changeFileFilter(_filternr);
             QCoreApplication::sendPostedEvents(this, 0);
-            fileModel->setRootPath(QDir(currentPath).rootPath());
+            //fileModel->setRootPath(QDir(currentPath).rootPath());
+            setRootIndex(dirModel->index(currentPath));
             return true;
         }
     }
