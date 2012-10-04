@@ -82,5 +82,7 @@
         <file>resources/dir_add.png</file>
         <file>resources/showpcr4.png</file>
         <file>resources/argsubs2.png</file>
+        <file>resources/dir_delete.png</file>
+        <file>resources/dir_reset.png</file>
     </qresource>
 </RCC>

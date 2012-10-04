@@ -1,6 +1,6 @@
 /*
  * NutShellExplorer,
- * v 1.0
+ * v 1.x
  * adapted from the extended explorer example in Qt wiki:
  * http://www.qtcentre.org/wiki/index.php?title=Extended_Dir_View_example
  * Author: VJ 100814
@@ -9,8 +9,73 @@
 
 #include "nutshellqt.h"
 
+/*! the explorer part is an extended version of
+ *  http://www.qtcentre.org/wiki/index.php?title=Extended_Dir_View_example
+ */
+//---------------------------------------------------------------
+/*!
+ * \brief nutshellqt::setupExplorer Setup explorer with TWO QFileSystemModel models for file and dir
+ */
 
 //---------------------------------------------------------------
+myTreeView::myTreeView(QTreeView *parent)
+   : QTreeView(parent)
+{
+}
+/*!
+ * \brief myTreeView::dropEvent Reimplementation of the droevent to handle renaming
+ * \param event
+ */
+void myTreeView::dropEvent(QDropEvent *event)
+{
+   QModelIndex index = indexAt(event->pos());
+   // the dir moved into
+
+   QFileSystemModel *m = static_cast<QFileSystemModel*>(model());
+   // cast the linked model to myTreeView as a filesystem model
+
+   QDir dir(m->filePath(index));
+
+   if (event->keyboardModifiers() == Qt::ControlModifier)
+      event->setDropAction(Qt::CopyAction);
+   else
+      event->setDropAction(Qt::MoveAction);
+
+   foreach(QUrl url, event->mimeData()->urls())
+   {
+      QFileInfo fi = QFileInfo(url.toLocalFile());
+      // the filepath that is moved
+
+      QString filePath = m->filePath(index) + "/" + fi.fileName();
+      QString newFilePath = m->filePath(index) + "/" + fi.fileName();
+      // make the drop filepath to check if it exists
+
+      while(QFileInfo(newFilePath).exists())
+      {
+         newFilePath = dir.absolutePath() + "/" + QFileInfo(newFilePath).baseName() + "_copy." + fi.suffix();
+      }
+      // add _copy as long as it exists
+
+      if (QFileInfo(filePath).exists())   // if the file exists in the new directory
+      {
+         dir.rename(filePath,filePath+"tmpqt");
+         // rename the old file to a temp name
+
+         QTreeView::dropEvent(event);
+         // continue to execute the drop event
+
+         dir.rename(filePath,newFilePath);
+         // rename the new file to the one with _copy in it
+         dir.rename(filePath+"tmpqt",filePath);
+         // rename the temp name back to the original
+      }
+      else
+         QTreeView::dropEvent(event);
+   }
+
+}
+//---------------------------------------------------------------
+
 void nutshellqt::setupExplorer()
 {
    fns.clear();
@@ -30,19 +95,25 @@ void nutshellqt::setupExplorer()
    baseFilters << QString("Map Series");
    baseFilters << QString("*.*");
    _filternr = 0;
+   // predefined filters to show PCRaster relevant files
 
    dirModel = new QFileSystemModel(this);
    dirModel->setReadOnly(false); //true
    dirModel->setFilter ( QDir::AllDirs | QDir::NoDotAndDotDot);// | QDir::Drives );
    dirModel->setNameFilterDisables(false);
+   // directory tree view model, show only dirs
 
    fileModel = new QFileSystemModel(this);
    fileModel->setReadOnly(false);
    fileModel->setFilter( QDir::Files | QDir::NoDotAndDotDot);
    fileModel->setNameFilterDisables(false);
+   // file list view model, show only files
 
-//   dirModel = new QSortFilterProxyModel();
-//   dirModel->setSourceModel(fileModel);
+   //   dirModel = new QSortFilterProxyModel();
+   //   dirModel->setSourceModel(fileModel);
+
+   treeView = new myTreeView();
+   verticalLayout_6->insertWidget(0, treeView);
 
    treeView->setModel(dirModel);
    treeView->header()->setStretchLastSection(true);
@@ -60,10 +131,6 @@ void nutshellqt::setupExplorer()
    treeView->sortByColumn(1, Qt::AscendingOrder);
    treeView->setContextMenuPolicy(Qt::CustomContextMenu);
    connect(treeView,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(contextualMenu(const QPoint &)));
-// not needed:
-//   selectionDirModel = new QItemSelectionModel(dirModel);
-//   treeView->setSelectionModel(selectionDirModel);
-//   connect(selectionDirModel, SIGNAL(currentChanged(QModelIndex, QModelIndex)), this, SLOT(treeSelectionChanged(QModelIndex, QModelIndex)));
 
    fileView->setModel(fileModel);
    fileView->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -94,6 +161,8 @@ void nutshellqt::setupExplorer()
 
    selectionModel = new QItemSelectionModel(fileModel);
    fileView->setSelectionModel(selectionModel);
+   selectionDirModel = new QItemSelectionModel(dirModel);
+   treeView->setSelectionModel(selectionDirModel);
 
    connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(setRootIndex(QModelIndex)));
    connect(fileView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(selectFiles(QModelIndex)));
@@ -141,16 +210,6 @@ void nutshellqt::setupExplorer()
    ismapseries = true;
 }
 //---------------------------------------------------------------
-// NOT USED
-void nutshellqt::treeSelectionChanged(QModelIndex current, QModelIndex previous)
-{
-   //   QFileInfo fileInfo(fileModel->fileInfo(fileSystemProxyModel->mapToSource(current)));
-   //   if(!fileInfo.exists())
-   //      return;
-   //getActivePane()->moveTo(fileInfo.filePath());
-}
-
-//---------------------------------------------------------------
 void nutshellqt::dragEnterEvent(QDragEnterEvent *event)
 {
    QModelIndex index = treeView->indexAt(event->pos());
@@ -164,6 +223,7 @@ void nutshellqt::contextualMenu(const QPoint& point)
 {
    QMenu *menu = new QMenu;
    menu->addAction(newDirAct);
+   menu->addAction(delDirAct);
    //    QModelIndex index = treeView->currentIndex();
    //    QString fileName = dirModel->data(dirModel->index(index.row(), 0),0).toString();
    //    menu->addAction(QString("Import"), this, SLOT(test_slot()));
@@ -213,14 +273,16 @@ void nutshellqt::setRootIndex(const QModelIndex& index)
 }
 */
 //---------------------------------------------------------------
+//! simplified stes rootindex of filelist based on treeview click
+//! treeview click is always a dir so no need to check
 void nutshellqt::setRootIndex(const QModelIndex& index)
 {
    QApplication::setOverrideCursor(Qt::WaitCursor);
 
-//   QModelIndex dir = index.sibling(index.row(), 0);
-//   if (!fileModel->isDir(dir))
-//      dir = dir.parent();
-//   currentPath = fileModel->filePath(dir);
+   //   QModelIndex dir = index.sibling(index.row(), 0);
+   //   if (!fileModel->isDir(dir))
+   //      dir = dir.parent();
+   //   currentPath = fileModel->filePath(dir);
 
    currentPath = dirModel->filePath(index);
    // set the current path
@@ -236,41 +298,6 @@ void nutshellqt::setRootIndex(const QModelIndex& index)
    // to update getmapseries when changing dir with mouseclick
 
    QApplication::restoreOverrideCursor();
-}
-//---------------------------------------------------------------
-//OBSOLETE
-void nutshellqt::goBack()
-{
-   future.push(currentPath);
-   currentPath = history.pop();
-   remember = false;
-   setRootIndex(dirModel->index(currentPath));
-}
-//---------------------------------------------------------------
-//OBSOLETE
-void nutshellqt::goForward()
-{
-   history.push(currentPath);
-   currentPath = future.pop();
-   remember = false;
-   setRootIndex(dirModel->index(currentPath));
-}
-//---------------------------------------------------------------
-//OBSOLETE
-void nutshellqt::goUp()
-{
-   history.push(currentPath);
-   remember = true;
-   QModelIndex  index = dirModel->index(currentPath).parent();
-   if (index.column() >= 0 && index.row() >= 0)
-      setRootIndex(index);
-}
-//---------------------------------------------------------------
-//OBSOLETE
-void nutshellqt::goHome()
-{
-   remember = true;
-   setRootIndex(dirModel->index(QDir::homePath()));
 }
 //---------------------------------------------------------------
 // the following show actions trigger fileFilterChange(QString S)
@@ -685,7 +712,6 @@ void nutshellqt::pasteFile()
 //---------------------------------------------------------------
 void nutshellqt::newDirectory()
 {
-   /*
    QString path;// = currentPath + QDir::separator() + "New folder";
    QModelIndex index = dirModel->index(currentPath);
    treeView->expand(index);
@@ -704,11 +730,11 @@ void nutshellqt::newDirectory()
    index = dirModel->index(currentPath);
    dirModel->mkdir(index,QDir(path).dirName());
    setRootIndex(index);
-   */
+
 }
 //---------------------------------------------------------------
-//from http://john.nachtimwald.com/2010/06/08/qt-remove-directory-and-its-contents/
-
+//! from http://john.nachtimwald.com/2010/06/08/qt-remove-directory-and-its-contents/
+//! called from deletedirectory
 bool nutshellqt::removeDirectory(const QString &dirName)
 { 
    bool result = true;
@@ -733,9 +759,9 @@ bool nutshellqt::removeDirectory(const QString &dirName)
    return result;
 }
 //---------------------------------------------------------------
+//! called from eventfilter when del key is pressed
 bool nutshellqt::deleteDirectory()
 {
-   /*
    QModelIndex index = selectionDirModel->currentIndex();
    QString dirName = dirModel->fileInfo(index).absoluteFilePath();
 
@@ -758,6 +784,42 @@ bool nutshellqt::deleteDirectory()
       ErrorMsg(QString("Could not delete %1").arg(dirName));
       return false;
    }
-   */
+
    return false;
 }
+//---------------------------------------------------------------
+//OBSOLETE
+void nutshellqt::goBack()
+{
+   future.push(currentPath);
+   currentPath = history.pop();
+   remember = false;
+   setRootIndex(dirModel->index(currentPath));
+}
+//---------------------------------------------------------------
+//OBSOLETE
+void nutshellqt::goForward()
+{
+   history.push(currentPath);
+   currentPath = future.pop();
+   remember = false;
+   setRootIndex(dirModel->index(currentPath));
+}
+//---------------------------------------------------------------
+//OBSOLETE
+void nutshellqt::goUp()
+{
+   history.push(currentPath);
+   remember = true;
+   QModelIndex  index = dirModel->index(currentPath).parent();
+   if (index.column() >= 0 && index.row() >= 0)
+      setRootIndex(index);
+}
+//---------------------------------------------------------------
+//OBSOLETE
+void nutshellqt::goHome()
+{
+   remember = true;
+   setRootIndex(dirModel->index(QDir::homePath()));
+}
+//---------------------------------------------------------------

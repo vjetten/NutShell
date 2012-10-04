@@ -1,6 +1,6 @@
 /*
  * nutshelLinenumber
- * v 1.0
+ * v 1.x
  * PCRaster editor,
  * adapted from linenumbers are from the codeeditor example in QT examples
  *	\Qt\4.6.2\examples\widgets\codeeditor

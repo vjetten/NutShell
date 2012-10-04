@@ -13,6 +13,8 @@ nutshellqt::nutshellqt(QWidget *parent) :
 {
     setupUi(this);
 
+    treeView1->setVisible(false);
+
     getRegPCRaster();
 
     currentPath = "C:/";
@@ -64,7 +66,7 @@ nutshellqt::nutshellqt(QWidget *parent) :
     STATUS("");
 
     commandcounter = -1;
-
+    draginprogress = false;
 }
 //---------------------------------------------------------------
 nutshellqt::~nutshellqt()
@@ -297,11 +299,13 @@ void nutshellqt::createContextMenuActions()
     //    copyFileAct = new QAction(tr("Copy"), this);
     //    pasteFileAct = new QAction(tr("Paste"), this);
     newDirAct = new QAction(QIcon(":/resources/dirnew.png"),QString("Create Directory"), this);
+    delDirAct = new QAction(QIcon(":/resources/dir_delete.png"),QString("Delete Directory"), this);
 
     //    connect(cutFileAct, SIGNAL(triggered()), this, SLOT(cutFile()));
     //    connect(copyFileAct, SIGNAL(triggered()), this, SLOT(copyFile()));
     //    connect(pasteFileAct, SIGNAL(triggered()), this, SLOT(pasteFile()));
     connect(newDirAct, SIGNAL(triggered()), this, SLOT(newDirectory()));
+    connect(delDirAct, SIGNAL(triggered()), this, SLOT(deleteDirectory()));
 }
 //---------------------------------------------------------------
 void nutshellqt::setupToolBar()
@@ -465,111 +469,6 @@ void nutshellqt::setWorkdirectoryNr(int index)
     // set the explorer to this path
     dir.setCurrent(currentPath);
     // set the path in the operating system
-}
-//---------------------------------------------------------------
-// must return true is event stops in this function or false when it should continue
-bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
-{
-    if (event->type() == QEvent::KeyPress)
-    {
-
-        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-        if (keyEvent->key() == Qt::Key_F5)
-        {
-            changeFileFilter(_filternr);
-            QCoreApplication::sendPostedEvents(this, 0);
-            //fileModel->setRootPath(QDir(currentPath).rootPath());
-            setRootIndex(dirModel->index(currentPath));
-            return true;
-        }
-    }
-
-//        if (event->type() == QEvent::DragEnter)
-//        {
-//            QModelIndex index = treeView->indexAt(QCursor::pos());
-//            qDebug() << "hoi" << index;
-//        }
-    if (obj == treeView)
-    {
-        if (event->type() == QEvent::KeyPress)
-        {
-            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-
-            if (keyEvent->key() == Qt::Key_Delete)
-            {
-                return(deleteDirectory());
-            }
-        }
-    }
-    if (obj == fileView)
-    {
-        if (event->type() == QEvent::KeyPress)
-        {
-            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-            if (keyEvent->key() == Qt::Key_Return)
-            {
-                PerformAction(GetActionType());
-                return true;
-            }
-            if (keyEvent->key() == Qt::Key_Delete)
-            {
-                deleteFiles();
-                return true;
-            }
-        }
-    }
-    if (obj == commandWindow)
-    {
-        if (event->type() == QEvent::KeyPress)
-        {
-            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-
-            if (calcProcess && calcProcess->state() == QProcess::Running)
-                return true;
-
-            if (keyEvent->key() == Qt::Key_Return)
-            {
-                parseCommand();
-                commandcounter = -1;
-                return true;
-            }
-            if (keyEvent->key() == Qt::Key_Up)
-            {
-                prevCommand();
-                return true;
-            }
-            if (keyEvent->key() == Qt::Key_Down)
-            {
-                nextCommand();
-                return true;
-            }
-            if (keyEvent->key() == Qt::Key_Backspace)
-            {
-                int bsize = commandWindow->document()->lastBlock().text().count();
-                if (bsize == 0)
-                    return true;
-            }
-            if (keyEvent->key() == Qt::Key_Escape)
-            {
-                //delete last line
-                commandWindow->moveCursor( QTextCursor::End, QTextCursor::MoveAnchor );
-                commandWindow->moveCursor( QTextCursor::StartOfLine, QTextCursor::MoveAnchor );
-                commandWindow->moveCursor( QTextCursor::End, QTextCursor::KeepAnchor );
-                commandWindow->textCursor().removeSelectedText();
-                return true;
-            }
-        }
-    }
-    if (obj == comboBox_cmdlist->lineEdit())
-    {
-        if (event->type() == QEvent::MouseButtonDblClick)
-        {
-            copyCommandList();
-            return true;
-        }
-    }
-
-    return QMainWindow::eventFilter(obj, event);
 }
 //---------------------------------------------------------------
 void nutshellqt::setNutshellIni()

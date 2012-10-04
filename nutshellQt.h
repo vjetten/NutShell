@@ -8,6 +8,7 @@
 #include <QtGlobal>
 #include <QtGlobal>
 #include <QTreeWidget>
+#include <QStyledItemDelegate>
 
 #include "csf.h"
 
@@ -19,10 +20,6 @@
 #include "findreplaceform.h"
 #include "nutshellhelp.h"
 #include "nutshelloptions.h"
-//#include "nutshellmapdisplay.h"
-//#include "nutshelldragdrop.h"
-
-
 
 //---------------------------------------------------------------
 
@@ -72,7 +69,7 @@
 #define Delay(x) Sleeper::msleep(x);
 
 //---------------------------------------------------------------
-
+//! structure to keep relevant data of all mapseries in a directry
 typedef struct filenameseries{
     QString name;
     QString base;
@@ -80,7 +77,7 @@ typedef struct filenameseries{
     QString end;
     QStringList series;
 } _fns;
-
+//! list of editor tabs and corrsponding filenames
 typedef struct editortabs{
     nutshelleditor *editor;
     Highlighter *highlighter;
@@ -88,9 +85,6 @@ typedef struct editortabs{
     QString fileName;
     int syntax;
 } _editortab;
-
-
-
 
 //---------------------------------------------------------------
 // used to create a millisecond delay in output
@@ -105,9 +99,7 @@ public:
 };
 
 //---------------------------------------------------------------
-// used to paint map series blue in file viewer
-#include <QStyledItemDelegate>
-
+//! used to paint first instance of map series in blue in file viewer
 class BlueDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
@@ -140,6 +132,22 @@ protected:
 //};
 ////---------------------------------------------------------------
 
+class QDragEnterEvent;
+class QDropEvent;
+
+class myTreeView : public QTreeView
+{
+public:
+    myTreeView(QTreeView *parent = 0);
+//    virtual bool dropMimeData(QTreeViewItem *parent, int index, const QMimeData *data, Qt::DropAction action);
+//    QStringList mimeTypes() const;
+//    Qt::DropActions supportedDropActions () const;
+
+protected:
+//    void dragEnterEvent(QDragEnterEvent *event);
+    void dropEvent(QDropEvent *event);
+};
+
 class nutshellqt : public QMainWindow, private Ui::nutshellqt
 {
     Q_OBJECT
@@ -147,6 +155,8 @@ class nutshellqt : public QMainWindow, private Ui::nutshellqt
 public:
     nutshellqt(QWidget *parent = 0);
     ~nutshellqt();
+
+    myTreeView *treeView;
 
     void setupActions();
     void createMainActions();
@@ -219,6 +229,8 @@ public:
     //======================
     //Vars for explorer
     //======================
+
+bool draginprogress;
     nutshellLegend maplegend;
     nutshellmapattribute mapattribute;
     nutshellHelp help;
@@ -264,7 +276,7 @@ protected:
     void dragEnterEvent(QDragEnterEvent *event);
 
 public slots:
-void treeSelectionChanged(QModelIndex current, QModelIndex previous);
+
     //=========================
     //slots to run model script
     //=========================
@@ -375,6 +387,7 @@ private:
 
     //editor toolbar actions
     QAction *newDirAct;
+    QAction *delDirAct;
     QAction *nextDirAct;
     QAction *prevDirAct;
 
@@ -442,8 +455,6 @@ private:
     QFileSystemModel* fileModel;
     QItemSelectionModel *selectionModel;
     QItemSelectionModel *selectionDirModel;
-    //QSortFilterProxyModel *dirModel;
-    mainTreeFilterProxyModel *modelTree;
 
     QString currentPath;
     QStack<QString> history;

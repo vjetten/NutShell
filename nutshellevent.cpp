@@ -1,0 +1,176 @@
+/*
+ * NutShellEvent,
+ * v 1.x
+ * separate file with event catching at application level
+ * Author: VJ 121002
+ */
+
+
+#include "nutshellqt.h"
+
+
+
+
+//---------------------------------------------------------------
+/*!
+ * \brief nutshellqt::eventFilter Catches events at application level for general tasks and
+ * PCRaster action (aguila etc)
+ * \param obj
+ * \param event
+ * \return return true if event stops here, or false when it continues withd efault event handling
+ */
+bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
+{
+   if (event->type() == QEvent::KeyPress)
+   {
+
+      QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+      if (keyEvent->key() == Qt::Key_F5)
+      {
+         changeFileFilter(_filternr);
+         QCoreApplication::sendPostedEvents(this, 0);
+         setRootIndex(dirModel->index(currentPath));
+         return true;
+      }
+   }
+
+//   if (event->type() == QEvent::DragEnter) {
+//      QDragEnterEvent* dee = static_cast<QDragEnterEvent*>(event);
+//      dee->acceptProposedAction();
+
+//      qDebug() << "dragenter" << dee->mimeData()->text();
+//      return true;
+//   }
+//   else
+//      if (event->type() == QEvent::DragMove)
+//      {
+//         QDragMoveEvent* dee = static_cast<QDragMoveEvent*>(event);
+//         dee->acceptProposedAction();
+
+//         qDebug() << "dragmove" << dee->mimeData()->text();;
+
+//         return true;
+//      }
+//      else
+//         if (event->type() == QEvent::DragLeave)
+//         {
+
+//            QString S = fileModel->filePath(fileView->selectionModel()->currentIndex());
+
+//            draginprogress = true;
+//            qDebug() << "dragleave" <<   S;
+
+//            return true;
+
+//         }
+
+//         if (event->type() == QEvent::Drop)
+//            {
+//               QDropEvent* dee = static_cast<QDropEvent*>(event);
+//               dee->acceptProposedAction();
+
+//               QString S = fileModel->filePath(fileView->selectionModel()->currentIndex());
+
+//               draginprogress = true;
+//               qDebug() << "drop" <<   S << dee;
+
+//               return true;
+
+//            }
+
+//   if (event->type() == QEvent::ChildRemoved)
+//   {
+//      QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
+//      QModelIndex index = fileView->selectionModel()->currentIndex();
+//      QModelIndex indexd = treeView->indexAt(QCursor().pos());
+
+//      draginprogress = false;
+//      qDebug() << "mouse" << draginprogress  << indexd << dirModel->filePath(indexd) << fileModel->filePath(index);
+
+//      return true;
+//   }
+
+   if (obj == treeView)
+   {
+      if (event->type() == QEvent::KeyPress)
+      {
+         QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+
+         if (keyEvent->key() == Qt::Key_Delete)
+         {
+            return(deleteDirectory());
+         }
+      }
+   }
+   if (obj == fileView)
+   {
+      if (event->type() == QEvent::KeyPress)
+      {
+         QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+         if (keyEvent->key() == Qt::Key_Return)
+         {
+            PerformAction(GetActionType());
+            return true;
+         }
+         if (keyEvent->key() == Qt::Key_Delete)
+         {
+            deleteFiles();
+            return true;
+         }
+      }
+   }
+   if (obj == commandWindow)
+   {
+      if (event->type() == QEvent::KeyPress)
+      {
+         QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+
+         if (calcProcess && calcProcess->state() == QProcess::Running)
+            return true;
+
+         if (keyEvent->key() == Qt::Key_Return)
+         {
+            parseCommand();
+            commandcounter = -1;
+            return true;
+         }
+         if (keyEvent->key() == Qt::Key_Up)
+         {
+            prevCommand();
+            return true;
+         }
+         if (keyEvent->key() == Qt::Key_Down)
+         {
+            nextCommand();
+            return true;
+         }
+         if (keyEvent->key() == Qt::Key_Backspace)
+         {
+            int bsize = commandWindow->document()->lastBlock().text().count();
+            if (bsize == 0)
+               return true;
+         }
+         if (keyEvent->key() == Qt::Key_Escape)
+         {
+            //delete last line
+            commandWindow->moveCursor( QTextCursor::End, QTextCursor::MoveAnchor );
+            commandWindow->moveCursor( QTextCursor::StartOfLine, QTextCursor::MoveAnchor );
+            commandWindow->moveCursor( QTextCursor::End, QTextCursor::KeepAnchor );
+            commandWindow->textCursor().removeSelectedText();
+            return true;
+         }
+      }
+   }
+   if (obj == comboBox_cmdlist->lineEdit())
+   {
+      if (event->type() == QEvent::MouseButtonDblClick)
+      {
+         copyCommandList();
+         return true;
+      }
+   }
+
+   return QMainWindow::eventFilter(obj, event);
+}
+
+//---------------------------------------------------------------

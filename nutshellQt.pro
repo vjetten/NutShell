@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     nutshellhelp.cpp \
     nutshelloptions.cpp \
     findreplaceform.cpp \
-    CsfMap.cpp
+    CsfMap.cpp \
+    nutshellevent.cpp
 HEADERS  += nutshellqt.h \
     csfattr.h \
     csfimpl.h \
@@ -47,8 +48,15 @@ FORMS    += nutshellqt.ui \
     nutshellmapdisplay.ui
 CONFIG(debug, debug|release) {
   # debug build
+  win32:win32-msvc2010{
+                 # compile release with MSVC 2010
+    DEFINES += _CRT_SECURE_NO_WARNINGS
+    LIBS += -L"debug/vc" -L"D:/prgc/libcsf/debug" -lcsfvcd
+    DESTDIR = debug/vc
+  } else {
     LIBS += -L"debug" -llibcsfd
     DESTDIR = debug
+  }
 	 MOC_DIR = debug/moc
     OBJECTS_DIR= debug/objs
 	 UI_DIR= debug/ui

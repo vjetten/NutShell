@@ -1,11 +1,14 @@
 /*
  * NutshellEditor
- * v 1.0
+ * v 1.x
  * functions to create and delete editor PlainTextEdit in tabWidget
  * author: VJ 100814
  */
 
 #include "nutshellqt.h"
+
+/*! nutshelleditor
+*/
 
 
 //---------------------------------------------------------------

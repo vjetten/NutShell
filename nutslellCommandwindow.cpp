@@ -1,6 +1,6 @@
 /*
  * NutshellCommandwindow
- * v 1.0
+ * v 1.x
  * functions to deal with commands given in commandwindow and cmd list
  * author: VJ 100814
  */

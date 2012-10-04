@@ -1,12 +1,12 @@
 /*
  * NutShellHighlighter
- * v 1.0
+ * v 1.x
  * Syntax highlighting for PCRaster, adapted from highlighter example of Qt
- * Author: VJ 100814
+ * Author: VJ 121002
  */
 
 #include "nutshellqt.h"
-
+//! Synax highlighter rules for pcraster operations and sections
 //---------------------------------------------------------------
 Highlighter::Highlighter(QTextDocument *parent)
    : QSyntaxHighlighter(parent)
@@ -64,6 +64,7 @@ Highlighter::Highlighter(QTextDocument *parent)
    keywordFormat.setFontWeight(QFont::Bold);
    QStringList keywordPatterns;
    // PCRaster function name followed by 0 or more whitespaces and a '('
+   // checked against omine operations list 02 10 2012
    keywordPatterns  <<
                        "\\ble\\b"<<
                        "\\b<=\\b"<<
