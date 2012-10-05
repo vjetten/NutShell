@@ -84,5 +84,6 @@
         <file>resources/argsubs2.png</file>
         <file>resources/dir_delete.png</file>
         <file>resources/dir_reset.png</file>
+        <file>resources/aguilareport.png</file>
     </qresource>
 </RCC>

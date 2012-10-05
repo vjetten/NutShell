@@ -86,6 +86,12 @@ typedef struct editortabs{
     int syntax;
 } _editortab;
 
+typedef struct reportrecord{
+    QString reportName;
+    QString fileName;
+    bool isSeries;
+} _reportrecord;
+
 //---------------------------------------------------------------
 // used to create a millisecond delay in output
 #include <QThread>
@@ -115,36 +121,16 @@ public:
         ismapseries = iss;
     }
 };
-//---------------------------------------------------------------------------------
-// Subclass QSortFilterProxyModel and override 'filterAcceptsRow' to only show
-// directories in tree and not files.
-//---------------------------------------------------------------------------------
-class mainTreeFilterProxyModel : public QSortFilterProxyModel
-{
-protected:
-    virtual bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const;
-};
 //---------------------------------------------------------------
-//class FileSystemModelFilterProxyModel : public QSortFilterProxyModel
-//{
-//protected:
-//    virtual bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const;
-//};
-////---------------------------------------------------------------
 
-class QDragEnterEvent;
 class QDropEvent;
 
 class myTreeView : public QTreeView
 {
 public:
     myTreeView(QTreeView *parent = 0);
-//    virtual bool dropMimeData(QTreeViewItem *parent, int index, const QMimeData *data, Qt::DropAction action);
-//    QStringList mimeTypes() const;
-//    Qt::DropActions supportedDropActions () const;
 
 protected:
-//    void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
 };
 
@@ -230,7 +216,6 @@ public:
     //Vars for explorer
     //======================
 
-bool draginprogress;
     nutshellLegend maplegend;
     nutshellmapattribute mapattribute;
     nutshellHelp help;
@@ -251,7 +236,8 @@ bool draginprogress;
     QString SAguilaBase; //obsolete
     QString plus;
     QStringList FNall; // list of all names containing integer extentions
-    //QComboBox *fileMaskBox;
+    QList <reportrecord> reportNames;
+
     int insertType;
     int _filternr;
 
@@ -259,7 +245,8 @@ bool draginprogress;
     QString GetMapSeries();
     QString StripForNumber(QString S);
     QString StripForName(QString S);
-    QString getScriptReport();
+    bool getScriptReport();
+    QStringList getReportFilter();
     int getTimesteps();
     QTime time_ms;
     int totalsteps;
@@ -273,7 +260,6 @@ bool draginprogress;
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
-    void dragEnterEvent(QDragEnterEvent *event);
 
 public slots:
 
@@ -325,7 +311,7 @@ public slots:
     void doIndent(bool back);
     void showsyntax(bool doit);
     void changeSyntax(int index);
-    void displayVar(QPoint point);
+    void displayVar();//(QPoint point);
     void getDirectories();
     void clearNutshellIni();
 
@@ -443,6 +429,7 @@ private:
     QAction *increaseIndentAct;
     QAction *toggleHashAct;
     QAction *toggleReportAct;
+    QAction *displayvarAct;
     QAction *syntaxAct;
     //QAction *displayvarAct;
     QAction *helpAct;

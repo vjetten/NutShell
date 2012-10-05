@@ -34,62 +34,6 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
       }
    }
 
-//   if (event->type() == QEvent::DragEnter) {
-//      QDragEnterEvent* dee = static_cast<QDragEnterEvent*>(event);
-//      dee->acceptProposedAction();
-
-//      qDebug() << "dragenter" << dee->mimeData()->text();
-//      return true;
-//   }
-//   else
-//      if (event->type() == QEvent::DragMove)
-//      {
-//         QDragMoveEvent* dee = static_cast<QDragMoveEvent*>(event);
-//         dee->acceptProposedAction();
-
-//         qDebug() << "dragmove" << dee->mimeData()->text();;
-
-//         return true;
-//      }
-//      else
-//         if (event->type() == QEvent::DragLeave)
-//         {
-
-//            QString S = fileModel->filePath(fileView->selectionModel()->currentIndex());
-
-//            draginprogress = true;
-//            qDebug() << "dragleave" <<   S;
-
-//            return true;
-
-//         }
-
-//         if (event->type() == QEvent::Drop)
-//            {
-//               QDropEvent* dee = static_cast<QDropEvent*>(event);
-//               dee->acceptProposedAction();
-
-//               QString S = fileModel->filePath(fileView->selectionModel()->currentIndex());
-
-//               draginprogress = true;
-//               qDebug() << "drop" <<   S << dee;
-
-//               return true;
-
-//            }
-
-//   if (event->type() == QEvent::ChildRemoved)
-//   {
-//      QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
-//      QModelIndex index = fileView->selectionModel()->currentIndex();
-//      QModelIndex indexd = treeView->indexAt(QCursor().pos());
-
-//      draginprogress = false;
-//      qDebug() << "mouse" << draginprogress  << indexd << dirModel->filePath(indexd) << fileModel->filePath(index);
-
-//      return true;
-//   }
-
    if (obj == treeView)
    {
       if (event->type() == QEvent::KeyPress)

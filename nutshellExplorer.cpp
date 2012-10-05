@@ -23,7 +23,7 @@ myTreeView::myTreeView(QTreeView *parent)
 {
 }
 /*!
- * \brief myTreeView::dropEvent Reimplementation of the droevent to handle renaming
+ * \brief myTreeView::dropEvent Reimplementation of the QDropEvent for file handling
  * \param event
  */
 void myTreeView::dropEvent(QDropEvent *event)
@@ -47,14 +47,12 @@ void myTreeView::dropEvent(QDropEvent *event)
       // the filepath that is moved
 
       QString filePath = m->filePath(index) + "/" + fi.fileName();
-      QString newFilePath = m->filePath(index) + "/" + fi.fileName();
       // make the drop filepath to check if it exists
 
+      QString newFilePath = filePath;
       while(QFileInfo(newFilePath).exists())
-      {
          newFilePath = dir.absolutePath() + "/" + QFileInfo(newFilePath).baseName() + "_copy." + fi.suffix();
-      }
-      // add _copy as long as it exists
+      // make rename filepath and add "_copy" is necessary
 
       if (QFileInfo(filePath).exists())   // if the file exists in the new directory
       {
@@ -65,14 +63,13 @@ void myTreeView::dropEvent(QDropEvent *event)
          // continue to execute the drop event
 
          dir.rename(filePath,newFilePath);
-         // rename the new file to the one with _copy in it
+         // rename the new file to the one with _copy(s) in it
          dir.rename(filePath+"tmpqt",filePath);
          // rename the temp name back to the original
       }
       else
          QTreeView::dropEvent(event);
    }
-
 }
 //---------------------------------------------------------------
 
@@ -99,7 +96,7 @@ void nutshellqt::setupExplorer()
 
    dirModel = new QFileSystemModel(this);
    dirModel->setReadOnly(false); //true
-   dirModel->setFilter ( QDir::AllDirs | QDir::NoDotAndDotDot);// | QDir::Drives );
+   dirModel->setFilter ( QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Drives );
    dirModel->setNameFilterDisables(false);
    // directory tree view model, show only dirs
 
@@ -109,11 +106,8 @@ void nutshellqt::setupExplorer()
    fileModel->setNameFilterDisables(false);
    // file list view model, show only files
 
-   //   dirModel = new QSortFilterProxyModel();
-   //   dirModel->setSourceModel(fileModel);
-
    treeView = new myTreeView();
-   verticalLayout_6->insertWidget(0, treeView);
+   verticalLayout_tree->insertWidget(0, treeView);
 
    treeView->setModel(dirModel);
    treeView->header()->setStretchLastSection(true);
@@ -208,15 +202,6 @@ void nutshellqt::setupExplorer()
    // so we use a character like ! to split and create the separate arguments
 
    ismapseries = true;
-}
-//---------------------------------------------------------------
-void nutshellqt::dragEnterEvent(QDragEnterEvent *event)
-{
-   QModelIndex index = treeView->indexAt(event->pos());
-   //    QModelIndex index1 = treeView->indexAbove(event->pos());
-
-   //    qDebug() << index;
-   //event->acceptProposedAction();
 }
 //---------------------------------------------------------------
 void nutshellqt::contextualMenu(const QPoint& point)
@@ -331,87 +316,56 @@ void nutshellqt::showSeries()
    changeFileFilter(4);
 }
 //---------------------------------------------------------------
-void nutshellqt::showReport()
-{
-   QString res, resa;
-   QStringList list;
-
-   _filternr = 6;
-
-   ismapseries = false;
-
-   res = getScriptReport();
-   // get all filenames reported,
-   // swap binding names with real names,
-   // series only as base name
-
-   if (res.isEmpty())
-   {
-      // ErrorMsg(QString("No reported variables to show."));
-      STATUS("No reported variables to show.")
-            return;
-   }
-
-   resa = GetMapSeries();
-   // get mapseries
-
-   list = res.split("\n");
-
-   for(int i = 0; i < list.count(); i++)
-   {
-      if (!list[i].contains(".")) // mapseries
-      {
-         list.removeAt(i);
-         ismapseries = true;
-         BDgate->setSeries(true);
-      }
-   }
-   // find and remove 1st name of mapseries (001)
-
-   list << resa.split(";");
-   // append allmapseries to the list
-
-   fileModel->setNameFilters(list);
-}
-//---------------------------------------------------------------
 void nutshellqt::showAll()
 {
    ismapseries = false;
    changeFileFilter(5);
 }
 //---------------------------------------------------------------
-void nutshellqt::changeFileFilter(int filterNr)
+void nutshellqt::showReport()
 {
-   if (filterNr == 6)
+   changeFileFilter(6);
+}
+//---------------------------------------------------------------
+QStringList nutshellqt::getReportFilter()
+{
+   QStringList filter;
+
+   ismapseries = false;
+
+   // get all filenames reported,
+   // swap binding names with real names,
+   // series only as base name
+   if (!getScriptReport())
    {
-      showReport();
-      return;
+      STATUS("No reported variables to show.");
+      return filter;
    }
 
-   QString S = baseFilters[filterNr];
-   // get the right base filter from the hardcoded list
-   _filternr = filterNr;
-   // set the global file filter
+   for(int i = 0; i < reportNames.count(); i++)
+      filter << reportNames[i].fileName;
 
-   currentFilter.clear();
+   for(int i = 0; i < reportNames.count(); i++)
+   {
+      if (reportNames[i].isSeries) // mapseries
+         ismapseries = true;
+   }
+   // find and remove 1st name of mapseries (001)
 
-   // if mapseries use created mapseries filter
-   // true for filter setPCR and setSeries and setReport
    if (ismapseries)
-      S = GetMapSeries();
-   // qDebug() << "filter" << S;
+   {
+      QString series = GetMapSeries();
+      filter << series.split(";");
+   }
+   // append allmapseries to the list
 
-   BDgate->setSeries(ismapseries);
-   // paint series blue idf they are included
-
-   // set current filter to base filter or mapseries
-   currentFilter << S.split(";");
-
-   // add basefilter 0 (PCR files) to mapseries
-   if (filterNr == 0)
-      currentFilter << baseFilters[0].split(";");
-
-   fileModel->setNameFilters(currentFilter);
+   return filter;
+}
+//---------------------------------------------------------------
+void nutshellqt::changeFileFilter(int filterNr)
+{
+   _filternr = filterNr;
+   // set the global file filter nr
 
    switch(filterNr){
    case 0: toolButton_showPCR->setChecked(true); break;
@@ -421,6 +375,31 @@ void nutshellqt::changeFileFilter(int filterNr)
    case 4: toolButton_showSeries->setChecked(true); break;
    case 5: toolButton_showAll->setChecked(true); break;
    }
+
+   currentFilter.clear();
+   // clear the display file filter
+
+   if (filterNr == 6)
+      currentFilter = getReportFilter();
+   //currentFilter is set here to script reported output
+   else
+   {
+      currentFilter << baseFilters[filterNr].split(";");
+      // get the right base filter from the hardcoded list
+      if (ismapseries)
+         currentFilter << GetMapSeries().split(";");
+      // if mapseries use created mapseries filter
+      // is already done in showReport
+      // becomes true for filter setPCR and setSeries and setReport
+   }
+   //qDebug() << "filter" << currentFilter << filterNr;
+
+   BDgate->setSeries(ismapseries);
+   // paint series blue idf they are included
+
+   fileModel->setNameFilters(currentFilter);
+   // set the file model to the filtered output
+
 }
 //---------------------------------------------------------------
 //! OBSOLETE this function is not used anymore
@@ -469,20 +448,19 @@ void nutshellqt::deleteScriptReport()
       return;
    }
 
-   res = getScriptReport();
-
-   if (res.isEmpty())
+   if (!getScriptReport())
    {
       ErrorMsg(QString("No reported variables to delete."));
       return;
    }
-   list = res.split("\n");
 
    int j = 0;
-   for(int i = 0; i < list.count(); i++)
+   for(int i = 0; i < reportNames.count(); i++)
    {
-      if (!list[i].contains('.'))
+      list << reportNames[i].fileName;
+      if (reportNames[i].isSeries) // mapseries
          list[i] = "<i><font color=\"blue\">" + list[i] + "</font></i>";
+
       if (j == 0)
          list[i] = "<br>" + list[i];
       j++;
@@ -502,7 +480,9 @@ void nutshellqt::deleteScriptReport()
    if (reply == QMessageBox::No)
       return;
 
-   list = res.split("\n");
+   for(int i = 0; i < reportNames.count(); i++)
+      list << reportNames[i].fileName;
+
    // get map series and put in a separate QstringList
    for(int i = 0; i < list.count(); i++)
    {
@@ -560,6 +540,112 @@ void nutshellqt::deleteScriptReport()
 
    changeFileFilter(_filternr);
 }
+//---------------------------------------------------------------
+//void nutshellqt::deleteScriptReport()
+//{
+//   QString res;
+//   QStringList list, series;
+//   QDir dir = QDir(currentPath);
+//   QFile file;
+
+//   if (calcProcess && calcProcess->state() == QProcess::Running)
+//   {
+//      toolButton_startrun->setChecked(false);
+//      ErrorMsg("pcrcalc is active, wait until it is finished or press stop first");
+//      return;
+//   }
+
+//   res = getScriptReport();
+
+//   if (res.isEmpty())
+//   {
+//      ErrorMsg(QString("No reported variables to delete."));
+//      return;
+//   }
+//   list = res.split("\n");
+
+//   int j = 0;
+//   for(int i = 0; i < list.count(); i++)
+//   {
+//      if (!list[i].contains('.'))
+//         list[i] = "<i><font color=\"blue\">" + list[i] + "</font></i>";
+//      if (j == 0)
+//         list[i] = "<br>" + list[i];
+//      j++;
+//      if (j == 3)
+//      {
+//         list[i] = list[i] + "</br>";
+//         j = 0;
+//      }
+//   }
+
+//   QMessageBox::StandardButton reply =
+//         QuestionMsg(QString("<p>Delete all <b><font color=\"red\">reported</font></b> variables of script"
+//                             "<br><b>%1</b></br></p>"
+//                             "<p><i>WARNING: if you report INPUT variables these will be ALSO deleted!</i></p>"
+//                             "%2"
+//                             "<p>Continue?</p>").arg(ETfileName).arg(list.join("; ")));
+//   if (reply == QMessageBox::No)
+//      return;
+
+//   list = res.split("\n");
+//   // get map series and put in a separate QstringList
+//   for(int i = 0; i < list.count(); i++)
+//   {
+//      if (!list[i].contains(".")) // mapseries
+//      {
+//         for(int j = 0; j < fns.count(); j++)//nrseries; j++)
+//            if (list[i] == fns[j].base)
+//               series << fns[j].series;
+//      }
+//   }
+
+//   for(int i = 0; i < list.count(); i++)
+//   {
+//      list[i].insert(0, currentPath + QDir::separator());
+//      list[i] = QDir::fromNativeSeparators(list[i]);
+//   }
+
+//   // delete mapseries basename from report list
+//   for(int i = 0; i < list.count(); i++)
+//      if (!list[i].contains(".")) // mapseries
+//         list.removeAt(i);
+
+//   // add full map series
+//   list << series;
+
+//   // check if there exists anything to delete
+//   bool nothing = true;
+//   foreach (QString str, list)
+//      if (dir.exists(str))
+//      {
+//         nothing = false;
+//         break;
+//      }
+//   if (nothing)
+//   {
+//      ErrorMsg(QString("Reported variables not found."));
+//      return;
+//   }
+
+//   statusLabel.setText("Deleting reported files: ");
+//   statusBarProgress.setMaximum(list.count());
+//   statusBar()->addWidget(&statusLabel);
+//   statusBar()->addWidget(&statusBarProgress);
+//   statusBarProgress.show();
+//   statusLabel.show();
+//   int k = 0;
+//   foreach (QString str, list)
+//   {
+//      file.setFileName(str);
+//      file.remove();
+//      statusBarProgress.setValue(k++);
+//   }
+//   statusBar()->removeWidget(&statusBarProgress);
+//   statusBar()->removeWidget(&statusLabel);
+
+//   changeFileFilter(_filternr);
+//}
 //---------------------------------------------------------------
 // delete one or multiple files and file series
 void nutshellqt::deleteFiles()

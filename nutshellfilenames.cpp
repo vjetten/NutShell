@@ -191,27 +191,29 @@ QString nutshellqt::MakeFileListString()
 // get all filenames reported,
 // swap binding names with real names,
 // series only as base name
-QString nutshellqt::getScriptReport()
+//QString
+bool nutshellqt::getScriptReport()
 {
     if (tabWidget->currentIndex() >= 0)
     {
 
-        QString all;
-        QStringList SL;
-        QStringList reports;
-        QStringList binding;
-        QStringList timer;
-        bool go = false;
+        QStringList SL;      // all strings in document
+        QStringList reports; // all reports
+        QStringList binding; // binding lines
+        QStringList timer;   // timer lines
+        bool go;
+        reportrecord reportRec;
 
-        all = ETPlainText;
-        SL = all.split("\n");
+        reportNames.clear();
+
+        SL = ETPlainText.split("\n");
 
         binding.clear();
         reports.clear();
         timer.clear();
 
         bool checksubs = false;
-        // strip trailing spaces
+        // strip trailing spaces and check arg substitution
         for(int i = 0; i < SL.count(); i++)
         {
             //SL[i].remove(QRegExp("^\\s+|\\s+$"));
@@ -232,14 +234,12 @@ QString nutshellqt::getScriptReport()
                     for (int j = 0; j < subs.count(); j++)
                     {
                         QString repl = QString("$%1").arg(j+1);
-//                        if(checkBox_argsubst->isChecked() && !lineEdit_argsubst->text().isEmpty())
                         if (toolButton_argSubs->isChecked() && !lineEdit_argsubst->text().isEmpty())
                             SL[i].replace(repl, subs[j]);
                         else
                             SL[i].replace(repl, "");
                         repl = QString("${%1}").arg(j+1);
                         if (toolButton_argSubs->isChecked() && !lineEdit_argsubst->text().isEmpty())
-//                        if(checkBox_argsubst->isChecked() && !lineEdit_argsubst->text().isEmpty())
                             SL[i].replace(repl, subs[j]);
                         else
                             SL[i].replace(repl, "");
@@ -247,7 +247,8 @@ QString nutshellqt::getScriptReport()
             }
         }
 
-        // get the binding section, only lines with = in them and no comments
+        // get the binding section, only lines with = in them and not starting with comments
+        go = false;
         foreach (QString str, SL)
         {
             if (str.indexOf("binding") == 0)
@@ -269,8 +270,9 @@ QString nutshellqt::getScriptReport()
                     binding << line;
             }
         }
-        // qDebug() << binding;
+         //qDebug() << binding;
 
+        // check the timer section, to find out counter for series
         go = false;
         foreach (QString str, SL)
         {
@@ -293,17 +295,17 @@ QString nutshellqt::getScriptReport()
         }
         timer << "endtime";
         //qDebug() << "timer" << timer;
+
         // get all reports
-        QStringList name;
-        name.clear();
         go = false;
         foreach (QString str, SL)
         {
-            if (str.indexOf("report") == 0)
+            if (str.indexOf("report") == 0)  // string is found
             {
                 foreach (QString stra, timer)
                     str.remove(stra);
-                // strip keywords under timer
+                // strip keywords under timer, reports only in initial and dynamic
+
                 str.remove(QRegExp("\\([^\\)]*\\)"));
                 //strip report (...)
                 str.remove(str.indexOf("="),str.count()+10);
@@ -313,22 +315,49 @@ QString nutshellqt::getScriptReport()
                 str.remove(" ");
                 //strip spaces
 
+                reportRec.reportName = str;
+                reportRec.fileName = str;
+                reportRec.isSeries = false;
+
+                //reportName << str;
+                //reportFileName << str;
                 foreach(QString stra, binding)
                 {
                     QStringList bind = stra.split("=");
                     if (str == bind[0])
-                        str = bind[1];
+                       reportRec.fileName = bind[1];
+                    // give report name the file name from binding
+                    // if no dot in the filename it is a series
                 }
-                reports << str;//currentPath+"/"+str;
+                if(!reportRec.fileName.contains("."))
+                   reportRec.isSeries = true;
+                reportNames << reportRec;
             }
         }
 
-        all = reports.join("\n");
-        //qDebug() << "all" << all;
-        return all;
+        QStringList strtmp;
+
+        for (int i = 0; i < reportNames.count(); i++)
+           strtmp << reportNames[i].reportName;
+
+        foreach(QString stra, binding)
+        {
+           QStringList bind = stra.split("=");
+           if (!strtmp.contains(bind[0]))
+           {
+              reportrecord rr;
+              rr.reportName = bind[0];
+              rr.fileName = bind[1];
+              rr.isSeries = !bind[1].contains(".");
+              reportNames << rr;
+           }
+        }
+
+//           for (int i = 0; i < reportNames.count(); i++)
+  //     qDebug() << reportNames[i].fileName << reportNames[i].reportName << reportNames[i].isSeries;
     }
 
-    return QString("");
+    return (reportNames.count() > 0);
 }
 //---------------------------------------------------------------------------
 int nutshellqt::getTimesteps()

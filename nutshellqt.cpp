@@ -66,7 +66,6 @@ nutshellqt::nutshellqt(QWidget *parent) :
     STATUS("");
 
     commandcounter = -1;
-    draginprogress = false;
 }
 //---------------------------------------------------------------
 nutshellqt::~nutshellqt()
@@ -233,21 +232,25 @@ void nutshellqt::createEditorActions()
     fontDecreaseAct = new QAction(QIcon(":/resources/fontsmaller.png"), "&Decrease font size", this);
     connect(fontDecreaseAct, SIGNAL(triggered()), this, SLOT(fontDecrease()));
 
-    decreaseIndentAct = new QAction(QIcon(":/resources/editnoindent.png"), "&Decrease block indent 1 space", this);
+    decreaseIndentAct = new QAction(QIcon(":/resources/editnoindent.png"), "&Decrease block indent 1 space (Ctrl-U)", this);
     decreaseIndentAct->setShortcut(Qt::CTRL+Qt::Key_U);
     connect(decreaseIndentAct, SIGNAL(triggered()), this, SLOT(decreaseIndent()));
 
-    increaseIndentAct = new QAction(QIcon(":/resources/editindent.png"), "&Increase block indent 1 space", this);
+    increaseIndentAct = new QAction(QIcon(":/resources/editindent.png"), "&Increase block indent 1 space (Ctrl-I)", this);
     increaseIndentAct->setShortcut(Qt::CTRL+Qt::Key_I);
     connect(increaseIndentAct, SIGNAL(triggered()), this, SLOT(increaseIndent()));
 
-    toggleHashAct = new QAction(QIcon(":/resources/edithash.png"), "&Toggle block comment ##...", this);
+    toggleHashAct = new QAction(QIcon(":/resources/edithash.png"), "&Toggle block comment ## (Alt-3)", this);
     toggleHashAct->setShortcut(Qt::ALT+Qt::Key_3);
     connect(toggleHashAct, SIGNAL(triggered()), this, SLOT(increaseHash()));
 
-    toggleReportAct = new QAction(QIcon(":/resources/editreport.png"), "&Toggle report...", this);
+    toggleReportAct = new QAction(QIcon(":/resources/editreport.png"), "&Toggle report (Alt-5)", this);
     toggleReportAct->setShortcut(Qt::ALT+Qt::Key_5);
     connect(toggleReportAct, SIGNAL(triggered()), this, SLOT(increaseReport()));
+
+    displayvarAct = new QAction(QIcon(":/resources/aguilareport.png"), "&Show selected script variable (F4)", this);
+    displayvarAct->setShortcut(Qt::Key_F4);
+    connect(displayvarAct, SIGNAL(triggered()), this, SLOT(displayVar()));
 
 }
 //---------------------------------------------------------------
@@ -339,6 +342,7 @@ void nutshellqt::setupToolBar()
     toolBar->addAction(increaseIndentAct);
     toolBar->addAction(toggleHashAct);
     toolBar->addAction(toggleReportAct);
+    toolBar->addAction(displayvarAct);
     toolBar->addSeparator ();
 //    toolBar->addAction(runmodelAct);
 //    toolBar->addAction(pausemodelAct);
