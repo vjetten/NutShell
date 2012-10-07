@@ -185,7 +185,7 @@ void FindReplaceForm::_find(bool next)
 		showError("");
 	} else {
 		showError(tr("no match found"));
-		// VJ moved this to he m,ain app, don't know if that is necesary?
+		// VJ moved this to he main app, don't know if that is necesary?
 
 		// move to the beginning or end (!) of the document for the next or prev find
 		/* move to the main application, this blocked the main textEdit and until

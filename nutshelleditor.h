@@ -27,15 +27,17 @@ public:
 	bool doerror;
 	int errorline;
 	void clearerror();
-	bool dodisplay;
+   bool doReport;
 
 protected:
 	void resizeEvent(QResizeEvent *event);
+   void mouseDoubleClickEvent ( QMouseEvent * event );
 
 public slots:
 	void updateLineNumberAreaWidth(int newBlockCount);
 	void highlightCurrentLine();
 	void updateLineNumberArea(const QRect &, int);
+   //void displayVar();
 
 signals:
 	void showVar(QPoint point);//QTextCursor);

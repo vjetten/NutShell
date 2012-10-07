@@ -61,6 +61,7 @@
 #define ETEditor ET[tabWidget->currentIndex()].editor
 #define ETHighlighter ET[tabWidget->currentIndex()].highlighter
 #define ETPlainText ET[tabWidget->currentIndex()].editor->toPlainText()
+#define ETthis ET[tabWidget->currentIndex()]
 
 #define INSERTSPACE  0
 #define INSERTHASH   1
@@ -85,11 +86,13 @@ typedef struct editortabs{
     QString fileName;
     int syntax;
 } _editortab;
-
+//! variables reported or in the binding of a script
 typedef struct reportrecord{
     QString reportName;
     QString fileName;
     bool isSeries;
+    bool isBinding;
+    //int lineNumber;
 } _reportrecord;
 
 //---------------------------------------------------------------
@@ -212,20 +215,20 @@ public:
     FindReplaceForm *m_findReplaceDialog;
     bool dosyntax;
 
+
     //======================
     //Vars for explorer
     //======================
 
     nutshellLegend maplegend;
     nutshellmapattribute mapattribute;
-    nutshellHelp help;
+    //nutshellHelp help;
     nutshellOptions nutOptions;
     QProgressBar statusBarProgress;
     QLabel statusLabel;
     //nutshellMapdisplay mapDisplay;
 
     QList <filenameseries> fns;
-    //int nrseries;
     bool ismapseries;
     BlueDelegate *BDgate;   // display series in blue
     QStringList currentFilter;
@@ -241,7 +244,7 @@ public:
     int insertType;
     int _filternr;
 
-    QString MakeFileListString();
+    QString getFileListString();
     QString GetMapSeries();
     QString StripForNumber(QString S);
     QString StripForName(QString S);
@@ -255,8 +258,9 @@ public:
     bool isTSSfile(QString name);
     bool isExtentionInt(QString name);
 
-    QSortFilterProxyModel *fileFilterModel;
-    QSortFilterProxyModel *dirFilterModel;
+
+//    QSortFilterProxyModel *fileFilterModel;
+//    QSortFilterProxyModel *dirFilterModel;
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
@@ -311,7 +315,7 @@ public slots:
     void doIndent(bool back);
     void showsyntax(bool doit);
     void changeSyntax(int index);
-    void displayVar();//(QPoint point);
+    void displayVar();
     void getDirectories();
     void clearNutshellIni();
 
@@ -368,6 +372,9 @@ public slots:
     void changeFileFilter(int filterNr);
 
     void setRootIndex(const QModelIndex& index);
+
+    void getScriptLinks();
+
 
 private:
 
@@ -431,7 +438,7 @@ private:
     QAction *toggleReportAct;
     QAction *displayvarAct;
     QAction *syntaxAct;
-    //QAction *displayvarAct;
+    QAction *getdisplayvarAct;
     QAction *helpAct;
     QAction *helpWebAct;
     QAction *helppcrcalcAct;

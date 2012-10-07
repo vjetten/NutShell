@@ -14,12 +14,10 @@ nutshellLegend::nutshellLegend(QWidget *parent) :
 
    theLegend = NULL;
    legendmodel = NULL;
-
 }
 //---------------------------------------------------------------------------
 nutshellLegend::~nutshellLegend()
 {
-
 }
 //---------------------------------------------------------------------------
 int nutshellLegend::CountClasses(MAP *in)
@@ -63,6 +61,8 @@ void nutshellLegend::makelegend(QString name)
 
    filename = name;
 
+   QApplication::setOverrideCursor(Qt::WaitCursor);
+
    MAP *legendmap = Mopen(name.toAscii().data(),M_READ);
 
    if (legendmap == NULL)
@@ -80,8 +80,9 @@ void nutshellLegend::makelegend(QString name)
       sizel = sizel1+1; //add one for the map title
 
    theLegend = (CSF_LEGEND *)malloc(sizeof(CSF_LEGEND)*sizel);
-   //new CSF_LEGEND[sizel];
    memset(theLegend, 0, sizeof(CSF_LEGEND)*sizel);
+
+   QApplication::restoreOverrideCursor();
 
    if (!empty && !MgetLegend(legendmap, theLegend))
    {
@@ -115,22 +116,6 @@ void nutshellLegend::makelegend(QString name)
    legendView->setModel(legendmodel);
 }
 //---------------------------------------------------------------------------
-void nutshellLegend::closeEvent(QCloseEvent *event)
-{/*
-   if (legendmodel) {
-      delete legendmodel;
-      legendmodel = NULL;
-   }
-
-   if (theLegend)
-   {
-      free(theLegend); //delete[] theLegend;
-      theLegend = NULL;
-   }
-   */
-}
-//---------------------------------------------------------------------------
-
 void nutshellLegend::AddNumbers()
 {
    for (int i = 0; i < sizel-1; i++)
@@ -168,8 +153,6 @@ void nutshellLegend::ClearAll()
 //---------------------------------------------------------------------------
 void nutshellLegend::Accept()
 {
-
-   //	bool empty = false;
    MAP *in;
 
    //copy the header
@@ -197,14 +180,21 @@ void nutshellLegend::Accept()
    MputLegend(in, theLegend, sizel);
    Mclose(in);
 
-   //	if (theLegend)
-   //	free(theLegend);
-
    close();
 }
 //---------------------------------------------------------------------------
 void nutshellLegend::Cancel()
 {
    close();
+}
+//---------------------------------------------------------------------------
+void nutshellLegend::closeEvent(QCloseEvent *event)
+{
+   //qDebug() << theLegend;
+   if (theLegend)
+   {
+      free(theLegend);
+      theLegend = NULL;
+   }
 }
 //---------------------------------------------------------------------------

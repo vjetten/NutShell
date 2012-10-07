@@ -58,6 +58,16 @@ void nutshelleditor::resizeEvent(QResizeEvent *e)
 	lineNumberArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
 }
 //---------------------------------------------------------------
+void nutshelleditor::mouseDoubleClickEvent ( QMouseEvent * event )
+{
+   QTextCursor cur = textCursor();
+   cur.select(QTextCursor::WordUnderCursor);
+   qDebug() << cur.selectedText();
+   //displayVar();
+
+   QPlainTextEdit::mouseDoubleClickEvent ( event );
+}
+//---------------------------------------------------------------
 void nutshelleditor::highlightCurrentLine()
 {
 	if (cursor > 0)
@@ -156,31 +166,7 @@ void nutshelleditor::clearerror()
 {
 	doerror = false;
 	errorline = 0;
-    highlightCurrentLine();
+   highlightCurrentLine();
 	repaint();
 }
 //---------------------------------------------------------------
-//void nutshelleditor::mouseReleaseEvent(QMouseEvent *evt)
-//{
-//	if (evt->modifiers() == Qt::ControlModifier &&
-//		 evt->button() == Qt::LeftButton)
-//		emit showVar(evt->pos());
-//	else
-//	{
-//		QPlainTextEdit::textCursor().clearSelection();
-//		QPlainTextEdit::mouseReleaseEvent(evt);
-//	}
-//}
-////---------------------------------------------------------------
-//void nutshelleditor::mousePressEvent(QMouseEvent *evt)
-//{
-//	if (evt->modifiers() == Qt::ControlModifier &&
-//		 evt->button() == Qt::LeftButton)
-//		emit showVar(evt->pos());
-//	else
-//	{
-//		QPlainTextEdit::textCursor().clearSelection();
-//		QPlainTextEdit::mousePressEvent(evt);
-//	}
-//}
-////---------------------------------------------------------------

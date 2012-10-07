@@ -1,5 +1,7 @@
 #ifndef NUTSHELLHELP_H
 #define NUTSHELLHELP_H
+/*
+ *     NOT USED, all help is online docs via iexplorer, firefox etc
 
 #include <QDialog>
 //#include <QtWebKit>
@@ -25,5 +27,6 @@ public:
 private:
     Ui::nutshellHelp *ui;
 };
+*/
 
 #endif // NUTSHELLHELP_H

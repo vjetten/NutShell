@@ -114,6 +114,7 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
       }
    }
 
+
    return QMainWindow::eventFilter(obj, event);
 }
 

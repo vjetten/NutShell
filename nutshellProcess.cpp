@@ -118,8 +118,6 @@ void nutshellqt::runModel()
 
    if (tabWidget->currentIndex() < 0)
    {
-//      toolButton_startrun->setChecked(false);
-//      startrunAct->setChecked(false);
       setButtons(false, false, true);
       ErrorMsg("No model\\script to run");
       return;
@@ -149,7 +147,6 @@ void nutshellqt::runModel()
    args << QString("-f") <<  ETfilePath;
    argsscreen << QString("-f") <<  ETfileName;
 
-   //    if (checkBox_argsubst->isChecked())
    if (toolButton_argSubs->isChecked())
    {
       QStringList subs;
@@ -407,6 +404,11 @@ void nutshellqt::finishedModel(int c)
    commandWindow->setFocus();
 
    //    QCoreApplication::sendPostedEvents(this, 0);
+   if(ETEditor->doReport)
+   {
+   getScriptLinks();
+   getScriptLinks();
+   }
 }
 //---------------------------------------------------------------
 void nutshellqt::toggleOldcalc(bool checked)

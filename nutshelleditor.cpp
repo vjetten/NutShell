@@ -24,6 +24,7 @@ void nutshellqt::setupEditor()
    connect(tabWidget, SIGNAL(currentChanged(int)),this, SLOT(changeSyntax(int)));
 
    dosyntax = true;
+
 }
 //---------------------------------------------------------------
 void nutshellqt::makeNewFile()
@@ -55,15 +56,14 @@ void nutshellqt::makeNewFile()
    newedit.filePath.isEmpty();
    newedit.highlighter = new Highlighter(myeditor->document());
    newedit.syntax = 0;
+   newedit.editor->doReport = false;
 
    ET.append(newedit);
    // ET defined as QList<editortabs> ET;
 
-
    tabWidget->addTab(tabWidg, newedit.fileName);
    tabWidget->setCurrentWidget(tabWidg);
    tabWidget->currentWidget()->setLayout(tabLayout);
-
 }
 //---------------------------------------------------------------
 void nutshellqt::closeFile()
@@ -78,15 +78,8 @@ void nutshellqt::openFile()
    QString fileName = dialog.getOpenFileName(this,
                                              "Open model/script", currentPath, "*.mod *.txt;;*.*");
    if (!fileName.isEmpty())
-   {
-#ifndef QT_NO_CURSOR
-      QApplication::setOverrideCursor(Qt::WaitCursor);
-#endif
       AddModel(fileName, 1);
-#ifndef QT_NO_CURSOR
-      QApplication::restoreOverrideCursor();
-#endif
-   }}
+}
 //---------------------------------------------------------------
 bool nutshellqt::saveFile()
 {
@@ -125,14 +118,7 @@ bool nutshellqt::saveFileName(const QString &fileName)
    }
 
    QTextStream out(&file);
-#ifndef QT_NO_CURSOR
-   QApplication::setOverrideCursor(Qt::WaitCursor);
-#endif
    out << ETPlainText;
-#ifndef QT_NO_CURSOR
-   QApplication::restoreOverrideCursor();
-#endif
-
    STATUS("File saved");
    return true;
 }
@@ -212,6 +198,7 @@ void nutshellqt::findNextfind()
 
    if (!cur.hasSelection())
       cur.select(QTextCursor::WordUnderCursor);
+
    ETEditor->setTextCursor(cur);
    // set the selection to word the cursor is in
 
@@ -429,14 +416,22 @@ void nutshellqt::changeSyntax(int index)
 }
 //---------------------------------------------------------------
 void nutshellqt::displayVar()
-{  
+{
+
+   if (tabWidget->currentIndex() < 0)
+      return;
+   if (!ETEditor->hasFocus())
+      return;
+
    QTextCursor cur = ETEditor->textCursor();
+   cur.select(QTextCursor::WordUnderCursor);
 
    QString var = cur.selectedText();
 
    if (!getScriptReport())
    {
-      QMessageBox::StandardButton reply = WarningMsg(QString("No reported or binding variable found in this directory."));      return;
+      QMessageBox::warning(this,"NutShell",QString("Selection not found in directory."));
+      return;
    }
 
    // expand selection if cursor is on a word
@@ -445,11 +440,10 @@ void nutshellqt::displayVar()
       bool dotone = false;
       bool dottwo = false;
 
-      cur.select(QTextCursor::WordUnderCursor);
-      QString word = cur.selectedText();
+      //cur.select(QTextCursor::WordUnderCursor);
+      //QString word = cur.selectedText();
       int a = cur.selectionStart();
       int p = cur.selectionEnd();
-      qDebug() << word;
       QString text = ETPlainText;
 
       if (a > 0 && text.data()[a-1] == '.')
@@ -477,16 +471,31 @@ void nutshellqt::displayVar()
       var = cur.selectedText();
 
    }
+   ETEditor->setTextCursor(cur);
 
-  int nr = 0;
-  for (int i = 0; i < reportNames.count(); i++)
-  {
-     if (var == reportNames[i].reportName)
-     {
-        var = reportNames[i].fileName;
-        nr = i;
-     }
-  }
+   if (var.isEmpty())
+   {
+      QMessageBox::warning(this,"NutShell",QString("Selection not found in directory."));
+      return;
+   }
+
+   int nr = 0;
+   for (int i = 0; i < reportNames.count(); i++)
+   {
+      if (var == reportNames[i].reportName)
+      {
+         var = reportNames[i].fileName;
+         nr = i;
+         break;
+      }
+   }
+   if (nr == 0)
+   {
+      QMessageBox::warning(this,"NutShell",QString("Variable not reported or in binding."));
+      return;
+   }
+
+
    if (reportNames[nr].isSeries)
    {
       var = var + "00000000";
@@ -503,80 +512,80 @@ void nutshellqt::displayVar()
       PerformAction(GetActionType());
    }
    else
-      QMessageBox::warning(this,"NutShell",QString("No reported or binding variable found in this directory."));
-      //QMessageBox::StandardButton reply = WarningMsg(QString("No reported or binding variable found in this directory."));      return;
-
-//      STATUS("Not an existing file.");
+      QMessageBox::warning(this,"NutShell",QString("Selection not found in directory."));
 
 }
-//---------------------------------------------------------------
-void nutshellqt::showHelp()
+//---------------------------------------------------------------------------
+void nutshellqt::getScriptLinks()
 {
-   QDesktopServices::openUrl(QUrl("file:///"+PCRasterDocDirName + "index.html"));
-}
-//---------------------------------------------------------------
-void nutshellqt::showWebHelp()
-{
-   QDesktopServices::openUrl(QUrl("http://pcraster.geo.uu.nl/documentation/PCRaster/html/index.html"));
-}
-//---------------------------------------------------------------
-void nutshellqt::showAguilaHelp()
-{
-   QDesktopServices::openUrl(QUrl("http://pcraster.geo.uu.nl/documentation/Aguila/Aguila.pdf"));
-}
-//---------------------------------------------------------------
-void nutshellqt::showHelpOperation()
-{
-   if (tabWidget->currentIndex() < 0)
-      return;
+   if (tabWidget->currentIndex() >= 0)
+   {
+      QTextCharFormat UL;
+      QTextCursor cur = ETEditor->textCursor();
 
-   QString helptxt = ETEditor->textCursor().selectedText();
-   qDebug() << helptxt;
-   QString URL = "http://pcraster.geo.uu.nl/documentation/PCRaster/html/";
-   QString found = "";
+      ETEditor->doReport = !ETEditor->doReport;
+      getdisplayvarAct->setChecked(ETEditor->doReport);
 
-   if (helptxt.contains("$"))
-      found = QString("secpcrcalcscriptfeatures.html#substitution-of-arguments");
-   else
-      if (helptxt.contains("--"))
-         found = QString("secimport.html#overview-of-global-options");
-      else
-         if (helptxt.contains("#!"))
-            found = QString("secimport.html#global-options");
-         else
-            if (helptxt.toUpper() == "BINDING" ||
-                helptxt.toUpper() == "INITIAL" ||
-                helptxt.toUpper() == "TIMER" ||
-                helptxt.toUpper() == "AREAMAP" ||
-                helptxt.toUpper() == "DYNAMIC")
-               found = QString("secdyn.html#%1-section").arg(helptxt);
-            else
+      // get a list of reported words
+      if (!getScriptReport())
+      {
+         STATUS("No reported variables to show.");
+         ETEditor->doReport = false;
+         return;
+      }
+
+      if(ETEditor->doReport)
+      {
+         QApplication::setOverrideCursor(Qt::WaitCursor);
+
+         UL.setBackground(QColor(255,255,164,255));
+
+         for(int i = 0; i < reportNames.count(); i++)
+         {
+            const QString &search = reportNames[i].reportName;
+            cur = ETEditor->document()->find(search, 0, QTextDocument::FindCaseSensitively | QTextDocument::FindWholeWords);
+
+            QString S = cur.block().text();
+            if (S.indexOf("#",0) < 0 || S.indexOf("#",0) > cur.positionInBlock ())
             {
-               if (helptxt.contains("lookup"))
-                  helptxt = "lookup";
-               // lookupscalar and so on
-               if (helptxt.contains("timeinput") && helptxt != "timeinput")
-                  helptxt = "timeinput...";
-               // timeinputscalar and so on, but not timrinput itself
-               found = QString("op_%1.html").arg(helptxt);
-               // all the rest
+               cur.setCharFormat(UL);
+               ETEditor->setTextCursor(cur);
             }
-   qDebug() << QString(URL+found);
-   QDesktopServices::openUrl(QUrl(URL+found));
+            //find first occurence and set cursor if not commented out
 
-   //help.helpurl = "";
-   //   help.findOperation(cur.selectedText());
-   //   if (!help.helpurl.isEmpty())
-   //      QDesktopServices::openUrl(QUrl("file:///"+PCRasterDocDirName + help.helpurl));
-   //   else
-   //      STATUS("No help found.");
-   //	if (!help.helpurl.isEmpty())
-   //	{
-   //		help.show();
-   //		help.helpView->load(QUrl("file:///"+PCRasterDocDirName + help.helpurl));
-   //	}
-   //	else
-   //		STATUS("No help found.");
+            // find other occurences
+            for(;;)
+            {
+               cur = ETEditor->document()->find(search, cur, QTextDocument::FindCaseSensitively | QTextDocument::FindWholeWords);
+               if (cur.isNull())
+                  break;
+               QString S = cur.block().text();
+               if (S.indexOf("#",0) < 0 || S.indexOf("#",0) > cur.positionInBlock())
+               {
+                  cur.setCharFormat(UL);
+                  ETEditor->setTextCursor(cur);
+               }
+            }
 
+         }
+         cur = ETEditor->textCursor();
+         cur.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
+         ETEditor->setTextCursor(cur);
+         QApplication::restoreOverrideCursor();
+      }
+      else
+      {
+         UL.setBackground(QColor(255,255,255,255));
+         cur = ETEditor->textCursor();
+         cur.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
+         cur.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
+         cur.setCharFormat(UL);
+
+         cur.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
+
+         ETEditor->setTextCursor(cur);
+
+      }
+   }
 }
 //---------------------------------------------------------------

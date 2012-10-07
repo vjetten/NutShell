@@ -19,7 +19,6 @@ nutshellmapattribute::nutshellmapattribute(QWidget *parent) :
 //---------------------------------------------------------------------------
 nutshellmapattribute::~nutshellmapattribute()
 {
-
 }
 //---------------------------------------------------------------------------
 double ScaleDeg(double x)
@@ -29,8 +28,8 @@ double ScaleDeg(double x)
     x = fmod(x, MAX_DEG);
 #ifdef _DEBUG
     {
-        double y = neg ? (MAX_DEG-x) : x;
-        //POSTCOND(0 <= y && y < MAX_DEG);
+//        double y = neg ? (MAX_DEG-x) : x;
+//        POSTCOND(0 <= y && y < MAX_DEG);
     }
 #endif
     return neg ? (MAX_DEG-x) : x;
@@ -45,8 +44,8 @@ double ScaleRad(double x)
     x = fmod(x, M_2PI);
 #ifdef _DEBUG
     {
-        double y = neg ? (M_2PI-x) : x;
-       // POSTCOND(0 <= y && y < M_2PI);
+//        double y = neg ? (M_2PI-x) : x;
+//        POSTCOND(0 <= y && y < M_2PI);
     }
 #endif
     return neg ? (M_2PI-x) : x;
@@ -59,8 +58,8 @@ double Rad2Deg(double x) /* value in radians */
     x = ScaleRad(x);
 #ifdef _DEBUG
     {
-        double y = ((x)/M_2PI) * MAX_DEG;
-        //POSTCOND(0 <= y && y < MAX_DEG);
+//        double y = ((x)/M_2PI) * MAX_DEG;
+//        POSTCOND(0 <= y && y < MAX_DEG);
     }
 #endif
     return (double)((((long double)(x))/(2*((long double)M_PI))) * MAX_DEG);
@@ -73,8 +72,8 @@ double Deg2Rad(double x) /* value in degrees */
     x = ScaleDeg(x);
 #ifdef _DEBUG
     {
-        double y = ((x)/MAX_DEG) * M_2PI;
-        //POSTCOND(0 <= y && y < M_2PI);
+//        double y = ((x)/MAX_DEG) * M_2PI;
+//        POSTCOND(0 <= y && y < M_2PI);
     }
 #endif
     return ((x)/MAX_DEG) * M_2PI;

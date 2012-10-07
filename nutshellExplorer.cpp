@@ -343,12 +343,16 @@ QStringList nutshellqt::getReportFilter()
    }
 
    for(int i = 0; i < reportNames.count(); i++)
-      filter << reportNames[i].fileName;
+      if (!reportNames[i].isBinding)
+         filter << reportNames[i].fileName;
 
    for(int i = 0; i < reportNames.count(); i++)
    {
       if (reportNames[i].isSeries) // mapseries
+      {
          ismapseries = true;
+         break;
+      }
    }
    // find and remove 1st name of mapseries (001)
 
@@ -357,7 +361,7 @@ QStringList nutshellqt::getReportFilter()
       QString series = GetMapSeries();
       filter << series.split(";");
    }
-   // append allmapseries to the list
+   // append all mapseries to the list
 
    return filter;
 }
@@ -392,7 +396,7 @@ void nutshellqt::changeFileFilter(int filterNr)
       // is already done in showReport
       // becomes true for filter setPCR and setSeries and setReport
    }
-   //qDebug() << "filter" << currentFilter << filterNr;
+   qDebug() << "filter" << currentFilter << filterNr;
 
    BDgate->setSeries(ismapseries);
    // paint series blue idf they are included
@@ -456,20 +460,21 @@ void nutshellqt::deleteScriptReport()
 
    int j = 0;
    for(int i = 0; i < reportNames.count(); i++)
-   {
-      list << reportNames[i].fileName;
-      if (reportNames[i].isSeries) // mapseries
-         list[i] = "<i><font color=\"blue\">" + list[i] + "</font></i>";
-
-      if (j == 0)
-         list[i] = "<br>" + list[i];
-      j++;
-      if (j == 3)
+      if (!reportNames[i].isBinding)
       {
-         list[i] = list[i] + "</br>";
-         j = 0;
+         list << reportNames[i].fileName;
+         if (reportNames[i].isSeries) // mapseries
+            list[i] = "<i><font color=\"blue\">" + list[i] + "</font></i>";
+
+         if (j == 0)
+            list[i] = "<br>" + list[i];
+         j++;
+         if (j == 3)
+         {
+            list[i] = list[i] + "</br>";
+            j = 0;
+         }
       }
-   }
 
    QMessageBox::StandardButton reply =
          QuestionMsg(QString("<p>Delete all <b><font color=\"red\">reported</font></b> variables of script"
@@ -481,9 +486,20 @@ void nutshellqt::deleteScriptReport()
       return;
 
    for(int i = 0; i < reportNames.count(); i++)
-      list << reportNames[i].fileName;
+      if (!reportNames[i].isBinding)// && !reportNames[i].isSeries)
+         list << reportNames[i].fileName;
 
-   // get map series and put in a separate QstringList
+    //get map series and put in a separate QstringList
+//   for(int i = 0; i < reportNames.count(); i++)
+//      if (reportNames[i].isSeries)
+//      {
+//         for(int j = 0; j < fns.count(); j++)
+//            if (reportNames[i].reportName == fns[j].base)
+//            {
+//               qDebug() << reportNames[i].reportName << fns[j].base;
+//               series << fns[j].series;
+//            }
+//      }
    for(int i = 0; i < list.count(); i++)
    {
       if (!list[i].contains(".")) // mapseries
@@ -728,14 +744,14 @@ void BlueDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 void nutshellqt::cutFile()
 {
    QString res = GetMapSeries();
-   fileNamesToCopy = MakeFileListString().replace(plus,";");
+   fileNamesToCopy = getFileListString().replace(plus,";");
    fileCutCopy = true;
 }
 //---------------------------------------------------------------
 void nutshellqt::copyFile()
 {
    QString res = GetMapSeries();
-   fileNamesToCopy = MakeFileListString().replace(plus,";");
+   fileNamesToCopy = getFileListString().replace(plus,";");
    fileCutCopy = false;
 }
 //---------------------------------------------------------------

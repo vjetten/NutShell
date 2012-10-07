@@ -85,5 +85,7 @@
         <file>resources/dir_delete.png</file>
         <file>resources/dir_reset.png</file>
         <file>resources/aguilareport.png</file>
+        <file>resources/allreport.png</file>
+        <file>resources/allreport1.png</file>
     </qresource>
 </RCC>

@@ -36,7 +36,8 @@ nutshellqt::nutshellqt(QWidget *parent) :
     getNutshellIni();
 
     // setup help html adresses and keywords in StringList
-    help.setuphelp(PCRasterDocDirName);
+    // NOT USED, all help is online docs via iexplorer, firefox etc
+    //help.setuphelp(PCRasterDocDirName);
 
     // initialize alternative for aguila
     //mapDisplay.setupMapPlot();
@@ -203,7 +204,7 @@ void nutshellqt::createEditorActions()
 
     // the rest is done here3
     syntaxAct = new QAction(QIcon(":/resources/syntax.png"), "&Show syntax", this);
-    syntaxAct->setCheckable (true);
+    syntaxAct->setCheckable(true);
     syntaxAct->setChecked(true);
     connect(syntaxAct , SIGNAL(toggled(bool)), this, SLOT(showsyntax(bool)));
 
@@ -251,6 +252,11 @@ void nutshellqt::createEditorActions()
     displayvarAct = new QAction(QIcon(":/resources/aguilareport.png"), "&Show selected script variable (F4)", this);
     displayvarAct->setShortcut(Qt::Key_F4);
     connect(displayvarAct, SIGNAL(triggered()), this, SLOT(displayVar()));
+
+    getdisplayvarAct = new QAction(QIcon(":/resources/allreport.png"), "&Show all reported variables in script (F6)", this);
+    getdisplayvarAct->setShortcut(Qt::Key_F6);
+    getdisplayvarAct->setCheckable(true);
+    connect(getdisplayvarAct, SIGNAL(triggered()), this, SLOT(getScriptLinks()));
 
 }
 //---------------------------------------------------------------
@@ -343,6 +349,7 @@ void nutshellqt::setupToolBar()
     toolBar->addAction(toggleHashAct);
     toolBar->addAction(toggleReportAct);
     toolBar->addAction(displayvarAct);
+    toolBar->addAction(getdisplayvarAct);
     toolBar->addSeparator ();
 //    toolBar->addAction(runmodelAct);
 //    toolBar->addAction(pausemodelAct);

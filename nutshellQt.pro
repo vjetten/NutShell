@@ -41,11 +41,11 @@ HEADERS  += nutshellqt.h \
     CsfMap.h
 FORMS    += nutshellqt.ui \
     nutshelllegend.ui \
-    nutshellmapattribute.ui \
-    nutshellhelp.ui \
+    nutshellmapattribute.ui \    
     nutshelloptions.ui \
     findreplaceform.ui \
     nutshellmapdisplay.ui
+    # nutshellhelp.ui
 CONFIG(debug, debug|release) {
   # debug build
   win32:win32-msvc2010{

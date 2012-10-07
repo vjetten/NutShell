@@ -139,7 +139,7 @@ void nutshellqt::PerformAction(int actiontype)
             actiontype != ACTIONTYPEATTRIBUTE &&
             actiontype != ACTIONTYPELEGEND &&
             actiontype != ACTIONTYPENONE)
-        cmdl = MakeFileListString();
+        cmdl = getFileListString();
  //   qDebug() << cmdl;
     // also makes mapseries if needed
 
