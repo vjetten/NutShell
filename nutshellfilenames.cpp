@@ -7,7 +7,16 @@
 
 
 #include "nutshellqt.h"
-
+/*
+ *QString nutshellqt::StripForName(QString S)
+ *QString nutshellqt::StripForNumber(QString S)
+ *QString nutshellqt::GetMapSeries()
+ *QString nutshellqt::getFileListString()
+ *bool nutshellqt::getScriptReport()
+ *int nutshellqt::getTimesteps()
+ *bool nutshellqt::isTSSfile(QString name)
+ *bool nutshellqt::isExtentionInt(QString name)
+*/
 
 //---------------------------------------------------------------------------
 //! Find the number part of a map series and delete it for the base name
@@ -48,8 +57,9 @@ QString nutshellqt::StripForNumber(QString S)
 // also fills FNall with all series filenames
 QString nutshellqt::GetMapSeries()
 {
-   //empty series structure
+   //empty series structure and its treeview copy
    fns.clear();
+   treeView->fns.clear();
 
    QDir currentD = QDir(currentPath);
    QFileInfoList allfiles = currentD.entryInfoList(QStringList("*.*"), QDir::Files, QDir::Name);
@@ -95,7 +105,8 @@ QString nutshellqt::GetMapSeries()
          }
 
          // start new timeserie by adding last name = first of new series
-         if (!singleserie)
+         // unless new name is last in the series, then it is a single name
+         if (!singleserie  && i+2 != FNall.count())
             FNts.append(lastname);
       }
 
@@ -131,7 +142,7 @@ QString nutshellqt::GetMapSeries()
          ofn.series << allfiles[j].absoluteFilePath();
 
       fns.append(ofn);
-
+      treeView->fns.append(ofn);
    }
    return Sres;
 }

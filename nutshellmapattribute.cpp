@@ -14,11 +14,17 @@ nutshellmapattribute::nutshellmapattribute(QWidget *parent) :
     connect(buttonBox, SIGNAL(accepted()), this, SLOT(Accept()));
     connect(buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 
-    a = NULL;
+    a = (ATTRIBUTES *)malloc(sizeof(ATTRIBUTES));
+
 }
 //---------------------------------------------------------------------------
 nutshellmapattribute::~nutshellmapattribute()
 {
+   if (a)
+   {
+      free (a);
+      a = NULL;
+   }
 }
 //---------------------------------------------------------------------------
 double ScaleDeg(double x)
@@ -92,7 +98,7 @@ int nutshellmapattribute::fill(QString name, bool newmap)
         label_header->setText("Map header information");
     }
 
-    a = (ATTRIBUTES *)malloc(sizeof(ATTRIBUTES));
+   // a = (ATTRIBUTES *)malloc(sizeof(ATTRIBUTES));
     OptNotSetAttr();
 
     makenewmap = newmap;
@@ -129,15 +135,17 @@ int nutshellmapattribute::fill(QString name, bool newmap)
     lineEdit_ID->setEnabled(newmap);
     lineEdit_mapname->setEnabled(newmap);
 
-    lineEdit_mapname->setText(QFileInfo(filename).fileName());
     if (!newmap)
-    {
+       lineEdit_mapname->setText(QFileInfo(filename).fileName());
+//    if (!newmap)
+//    {
+//      lineEdit_mapname->setText(QFileInfo(filename).fileName());
         int ret = ReadAttr(true);
         if (ret == 1)
             DefaultAttr();
-    }
-    else
-        DefaultAttr();
+//    }
+//    else
+//        DefaultAttr();
 
     QString s;
     lineEdit_XUL->setText( s.setNum((double)a->xUL,'f',6));
@@ -187,7 +195,7 @@ QString nutshellmapattribute::getMapAttributes(QString mapname)
     if (!filename.isEmpty() && m == NULL)
         return "";
 
-    a = (ATTRIBUTES *)malloc(sizeof(ATTRIBUTES));
+//    a = (ATTRIBUTES *)malloc(sizeof(ATTRIBUTES));
     OptNotSetAttr();
 
 
@@ -226,10 +234,10 @@ QString nutshellmapattribute::getMapAttributes(QString mapname)
         str << QString("Max <font color=\"green\"><i>%1</i></font>]").arg((double)a->maxVal);
     }
     Mclose(m); m = NULL;
-    if (a) {
-        free (a);
-        a = NULL;
-    }
+//    if (a) {
+//        free (a);
+//        a = NULL;
+//    }
     return str.join(" ");
 }
 //---------------------------------------------------------------------------
@@ -415,7 +423,7 @@ void nutshellmapattribute::SetAndCloseMap()
     m = NULL;
     if (Merrno)
     {
-        ErrorMsg("Map header write error");
+        ErrorMsg(QString("Map write error %1").arg(Merrno));
         return;
     }
 }
@@ -515,19 +523,19 @@ void nutshellmapattribute::hideEvent ( QHideEvent * event )
             SetAndCloseMap();
         else
             CreateMap();
-        if (a) {
-            free (a);
-            a = NULL;
-        }
+//        if (a) {
+//            free (a);
+//            a = NULL;
+//        }
     }
 }
 //---------------------------------------------------------------------------
 void nutshellmapattribute::closeEvent(QCloseEvent *event)
 {
-    if (a) {
-        free (a);
-        a = NULL;
-    }
+//    if (a) {
+//        free (a);
+//        a = NULL;
+//    }
 }
 //---------------------------------------------------------------------------
 

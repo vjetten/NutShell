@@ -37,7 +37,6 @@
 #define SelectedSuffix   fileModel->fileInfo(selectionModel->currentIndex()).suffix()
 #define SelectedFileName fileModel->fileName(selectionModel->currentIndex())
 //#define SelectPatnNameIndexes(j) fileModel->fileInfo(indexes.at(j)).absoluteFilePath()
-#define getIndexwithPath()
 
 #define ACTIONTYPEUNDEFINED -1
 #define ACTIONTYPENONE       0
@@ -61,7 +60,6 @@
 #define ETEditor ET[tabWidget->currentIndex()].editor
 #define ETHighlighter ET[tabWidget->currentIndex()].highlighter
 #define ETPlainText ET[tabWidget->currentIndex()].editor->toPlainText()
-#define ETthis ET[tabWidget->currentIndex()]
 
 #define INSERTSPACE  0
 #define INSERTHASH   1
@@ -132,6 +130,9 @@ class myTreeView : public QTreeView
 {
 public:
     myTreeView(QTreeView *parent = 0);
+    QList <filenameseries> fns;
+    QString StripForName(QString S);
+
 
 protected:
     void dropEvent(QDropEvent *event);
@@ -215,7 +216,6 @@ public:
     FindReplaceForm *m_findReplaceDialog;
     bool dosyntax;
 
-
     //======================
     //Vars for explorer
     //======================
@@ -226,8 +226,6 @@ public:
     nutshellOptions nutOptions;
     QProgressBar statusBarProgress;
     QLabel statusLabel;
-    //nutshellMapdisplay mapDisplay;
-
     QList <filenameseries> fns;
     bool ismapseries;
     BlueDelegate *BDgate;   // display series in blue
@@ -257,10 +255,6 @@ public:
     void PerformAction(int actiontype);
     bool isTSSfile(QString name);
     bool isExtentionInt(QString name);
-
-
-//    QSortFilterProxyModel *fileFilterModel;
-//    QSortFilterProxyModel *dirFilterModel;
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
@@ -318,7 +312,6 @@ public slots:
     void displayVar();
     void getDirectories();
     void clearNutshellIni();
-
 
     //====================
     //slots for explorer
@@ -407,10 +400,6 @@ private:
     QAction *cutFileAct;
     QAction *copyFileAct;
     QAction *pasteFileAct;
-//    QAction *oldcalcAct;
-//    QAction *startrunAct;
-//    QAction *stoprunAct;
-//    QAction *pauserunAct;
 
     QAction *aguilaplusAct;
     QAction *aguila2DAct;

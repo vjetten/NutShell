@@ -22,6 +22,19 @@ myTreeView::myTreeView(QTreeView *parent)
    : QTreeView(parent)
 {
 }
+//! strip number from basename in map series
+QString myTreeView::StripForName(QString S)
+{
+   QString Ss;
+   Ss = QFileInfo(S).baseName();
+
+   int i = Ss.length()-1;
+   while (i > 0 && int(Ss.toAscii()[i]) >= 48 && int(Ss.toAscii()[i]) <= 57)
+      i--;
+   Ss = Ss.remove(i+1, 256);
+
+   return(Ss);
+}
 /*!
  * \brief myTreeView::dropEvent Reimplementation of the QDropEvent for file handling
  * \param event
@@ -41,34 +54,111 @@ void myTreeView::dropEvent(QDropEvent *event)
    else
       event->setDropAction(Qt::MoveAction);
 
+
    foreach(QUrl url, event->mimeData()->urls())
    {
       QFileInfo fi = QFileInfo(url.toLocalFile());
       // the filepath that is moved
+      bool isSeries = false;
 
-      QString filePath = m->filePath(index) + "/" + fi.fileName();
-      // make the drop filepath to check if it exists
-
-      QString newFilePath = filePath;
-      while(QFileInfo(newFilePath).exists())
-         newFilePath = dir.absolutePath() + "/" + QFileInfo(newFilePath).baseName() + "_copy." + fi.suffix();
-      // make rename filepath and add "_copy" is necessary
-
-      if (QFileInfo(filePath).exists())   // if the file exists in the new directory
+      QString bn = StripForName(fi.fileName());
+      QStringList series;
+      for (int i = 0; i < fns.count(); i++)
+         if (bn == fns[i].base)
+         {
+            series << fns[i].series;
+            isSeries = true;
+         }
+      // copy/move a series. Only 0.001 is shown so only that file is in
+      // the mimedata. Dropevent is called for all files in the series
+      // but mimedata isn't there so must be copied/moved directly
+      if (isSeries)
       {
-         dir.rename(filePath,filePath+"tmpqt");
-         // rename the old file to a temp name
+         bool first = true;
+         QString sss;
+         if (event->dropAction() == (Qt::CopyAction))
+            sss ="Copying: " + bn;
+         else
+            sss = "Moving: " + bn;
+         QProgressDialog *bar = new QProgressDialog(sss, "Cancel", 1, series.count());
+         bar->setCancelButton(0);
+         int k = 0;
+         foreach(QString str, series)
+         {
+            QString filePath = m->filePath(index) + "/" + QFileInfo(str).fileName();
 
-         QTreeView::dropEvent(event);
-         // continue to execute the drop event
+            // make the drop filepath to check if it exists
+            QString newFilePath = filePath;
+            while(QFileInfo(newFilePath).exists())
+               newFilePath = dir.absolutePath() + "/" + QFileInfo(newFilePath).baseName() + "_copy." + QFileInfo(newFilePath).suffix();
+            // make rename filepath and add "_copy" is necessary
 
-         dir.rename(filePath,newFilePath);
-         // rename the new file to the one with _copy(s) in it
-         dir.rename(filePath+"tmpqt",filePath);
-         // rename the temp name back to the original
+            if (QFileInfo(filePath).exists())   // if the file exists in the new directory
+            {
+               dir.rename(filePath,filePath+"tmpqt");
+               // rename the old file to a temp name
+//               if (first)
+//               {
+//                  QTreeView::dropEvent(event);
+//                  first = false;
+//               }
+//               else
+//               {
+                  QFile(str).copy(filePath);
+                  if (event->dropAction() == (Qt::MoveAction))
+                     QFile(str).remove();
+             //  }
+
+               // continue to execute the drop event
+               dir.rename(filePath,newFilePath);
+               // rename the new file to the one with _copy(s) in it
+               dir.rename(filePath+"tmpqt",filePath);
+               // rename the temp name back to the original
+            }
+            else
+            {
+//               if (first)
+//               {
+//                  QTreeView::dropEvent(event);
+//                  first = false;
+//               }
+//               else
+//               {
+                  QFile(str).copy(filePath);
+                  if (event->dropAction() == (Qt::MoveAction))
+                     QFile(str).remove();
+             //  }
+            }
+            bar->setValue(k++);
+         }
+         bar->close();
       }
       else
-         QTreeView::dropEvent(event);
+      {
+         QString filePath = m->filePath(index) + "/" + fi.fileName();
+         // make the drop filepath to check if it exists
+
+         QString newFilePath = filePath;
+         while(QFileInfo(newFilePath).exists())
+            newFilePath = dir.absolutePath() + "/" + QFileInfo(newFilePath).baseName() + "_copy." + fi.suffix();
+         // make rename filepath and add "_copy" is necessary
+
+         if (QFileInfo(filePath).exists())   // if the file exists in the new directory
+         {
+            dir.rename(filePath,filePath+"tmpqt");
+            // rename the old file to a temp name
+
+            QTreeView::dropEvent(event);
+            // continue to execute the drop event
+
+            dir.rename(filePath,newFilePath);
+            // rename the new file to the one with _copy(s) in it
+            dir.rename(filePath+"tmpqt",filePath);
+            // rename the temp name back to the original
+         }
+         else
+            QTreeView::dropEvent(event);
+      }
    }
 }
 //---------------------------------------------------------------
@@ -157,7 +247,7 @@ void nutshellqt::setupExplorer()
    fileView->setSelectionModel(selectionModel);
    selectionDirModel = new QItemSelectionModel(dirModel);
    treeView->setSelectionModel(selectionDirModel);
-
+   treeView->setEditTriggers(QAbstractItemView::NoEditTriggers | QAbstractItemView::EditKeyPressed);
    connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(setRootIndex(QModelIndex)));
    connect(fileView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(selectFiles(QModelIndex)));
    // double clicked activate pcraster stuff
@@ -396,7 +486,7 @@ void nutshellqt::changeFileFilter(int filterNr)
       // is already done in showReport
       // becomes true for filter setPCR and setSeries and setReport
    }
-   qDebug() << "filter" << currentFilter << filterNr;
+   //qDebug() << "filter" << currentFilter << filterNr;
 
    BDgate->setSeries(ismapseries);
    // paint series blue idf they are included
@@ -489,17 +579,17 @@ void nutshellqt::deleteScriptReport()
       if (!reportNames[i].isBinding)// && !reportNames[i].isSeries)
          list << reportNames[i].fileName;
 
-    //get map series and put in a separate QstringList
-//   for(int i = 0; i < reportNames.count(); i++)
-//      if (reportNames[i].isSeries)
-//      {
-//         for(int j = 0; j < fns.count(); j++)
-//            if (reportNames[i].reportName == fns[j].base)
-//            {
-//               qDebug() << reportNames[i].reportName << fns[j].base;
-//               series << fns[j].series;
-//            }
-//      }
+   //get map series and put in a separate QstringList
+   //   for(int i = 0; i < reportNames.count(); i++)
+   //      if (reportNames[i].isSeries)
+   //      {
+   //         for(int j = 0; j < fns.count(); j++)
+   //            if (reportNames[i].reportName == fns[j].base)
+   //            {
+   //               qDebug() << reportNames[i].reportName << fns[j].base;
+   //               series << fns[j].series;
+   //            }
+   //      }
    for(int i = 0; i < list.count(); i++)
    {
       if (!list[i].contains(".")) // mapseries
