@@ -1,0 +1,17 @@
+nutshell for PCRaster version 4.0
+========================================
+programmed in Qt and compiled with MSVC2010
+
+Changes since 3.5:
+- link variables in script to filenames and show directly (F4 and F6)
+- show only reported files 
+- delete all reports from current script
+- drag and drop functionality (defaultmove or ctrl-mouse copy), including map series
+- integration of mapseries in regular explorer
+- delete mapseries by pressing delete
+- save a list of workdirectories
+- editing: toggle "##", "report", un/indent
+- better argument substitution functionality
+- small bug fixes
+
+Date: 12 Oct 2012
