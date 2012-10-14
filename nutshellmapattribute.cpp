@@ -431,49 +431,12 @@ void nutshellmapattribute::SetAndCloseMap()
 //---------------------------------------------------------------------------
 void nutshellmapattribute::Accept()
 {
+   // store or save new with button ok
+   if (!makenewmap)
+       SetAndCloseMap();
+   else
+       CreateMap();
 
-//    a->xUL = (REAL8) lineEdit_XUL->text().toDouble();
-//    a->yUL = (REAL8) lineEdit_YUL->text().toDouble();
-//    a->nrRows = (UINT4) lineEdit_nrRows->text().toInt();
-//    a->nrCols = (UINT4) lineEdit_nrCols->text().toInt();
-//    a->cellSize = (REAL8) lineEdit_celllength->text().toDouble();
-//    a->angle = (REAL8) lineEdit_angle->text().toDouble();
-
-////    if(lineEdit_mapname->text().isEmpty())
-////    {
-////        QMessageBox::warning(this,"NutShell new map",QString("Specify a map name to save"));
-////        readyToClose = false;
-////        return;
-////    }
-////    if (a->nrCols == 0 || a->nrRows == 0 || a->cellSize == 0)
-////    {
-////        readyToClose = false;
-////        QMessageBox::warning(this,"NutShell new map",QString("Number of Rows or Cols, or cellsize cannot be 0"));
-////        return;
-////    }
-
-//    if (radioButton_boolean->isChecked()) a->valueScale = VS_BOOLEAN;
-//    if (radioButton_nominal->isChecked()) a->valueScale = VS_NOMINAL;
-//    if (radioButton_ordinal->isChecked()) a->valueScale = VS_ORDINAL;
-//    if (radioButton_scalar->isChecked()) a->valueScale = VS_SCALAR;
-//    if (radioButton_directional->isChecked()) a->valueScale = VS_DIRECTION;
-//    if (radioButton_ldd->isChecked()) a->valueScale = VS_LDD;
-
-//    if (radioButton_YTopBot->isChecked()) a->projection = (CSF_PT)0;
-//    if	(radioButton_YBotTop->isChecked()) a->projection = (CSF_PT)1;
-
-//    a->gisFileId = (UINT4) lineEdit_ID->text().toInt();
-
-//    if (!makenewmap)
-//    {
-//        SetAndCloseMap();
-//    }
-//    else
-//    {
-//        CreateMap();
-//    }
-//    readyToClose = true;
-//    close();
 }
 //---------------------------------------------------------------------------
 bool nutshellmapattribute::checkMapAttrib()
@@ -511,31 +474,17 @@ bool nutshellmapattribute::checkMapAttrib()
 //---------------------------------------------------------------------------
 void nutshellmapattribute::hideEvent ( QHideEvent * event )
 {
+   // catch hide in case attribute problem, stay open
     if( !checkMapAttrib() )
     {
         event->ignore();
         show();
     }
-    else
-    {
-        event->accept();
-        if (!makenewmap)
-            SetAndCloseMap();
-        else
-            CreateMap();
-//        if (a) {
-//            free (a);
-//            a = NULL;
-//        }
-    }
 }
 //---------------------------------------------------------------------------
 void nutshellmapattribute::closeEvent(QCloseEvent *event)
 {
-//    if (a) {
-//        free (a);
-//        a = NULL;
-//    }
+   //nothing, no save because cancel is pressed
 }
 //---------------------------------------------------------------------------
 

@@ -28,6 +28,14 @@ public:
 	int errorline;
 	void clearerror();
    bool doReport;
+   void scriptFold(int section);
+   int scriptFindSectionBlock(QString str);
+   bool fold_binding;
+   bool fold_areamap;
+   bool fold_timer;
+   bool fold_initial;
+   bool fold_dynamic;
+
 
 protected:
 	void resizeEvent(QResizeEvent *event);
@@ -44,24 +52,7 @@ signals:
 
 private:
 	QWidget *lineNumberArea;
-// actions themselves are defined in the main class
-//    QAction *cutAct;
-//    QAction *copyAct;
-//    QAction *pasteAct;
-//    QAction *undoAct;
-//    QAction *redoAct;
-//    QAction *actionFind;
-//    QAction *actionReplace;
-//    QAction *actionFindNext;
-//    QAction *actionFindPrev;
-//    QAction *fontAct;
-//    QAction *fontIncreaseAct;
-//    QAction *fontDecreaseAct;
-//    QAction *decreaseIndentAct;
-//    QAction *increaseIndentAct;
-//    QAction *toggleHashAct;
-//    QAction *toggleReportAct;
-//    QAction *syntaxAct;
+
 
 };
 

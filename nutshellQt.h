@@ -4,14 +4,11 @@
 //---------------------------------------------------------------
 
 #include <QtGui>
-#include <QMainWindow>
-#include <QtGlobal>
-#include <QtGlobal>
-#include <QTreeWidget>
+//#include <QMainWindow>
+//#include <QtGlobal>
 #include <QStyledItemDelegate>
 
 #include "csf.h"
-
 #include "ui_nutshellqt.h"
 #include "nutshelllegend.h"
 #include "nutshellmapattribute.h"
@@ -60,6 +57,8 @@
 #define ETEditor ET[tabWidget->currentIndex()].editor
 #define ETHighlighter ET[tabWidget->currentIndex()].highlighter
 #define ETPlainText ET[tabWidget->currentIndex()].editor->toPlainText()
+#define ETExists (tabWidget->currentIndex() >= 0)
+
 
 #define INSERTSPACE  0
 #define INSERTHASH   1
@@ -76,6 +75,7 @@ typedef struct filenameseries{
     QString end;
     QStringList series;
 } _fns;
+//---------------------------------------------------------------
 //! list of editor tabs and corrsponding filenames
 typedef struct editortabs{
     nutshelleditor *editor;
@@ -84,6 +84,7 @@ typedef struct editortabs{
     QString fileName;
     int syntax;
 } _editortab;
+//---------------------------------------------------------------
 //! variables reported or in the binding of a script
 typedef struct reportrecord{
     QString reportName;
@@ -92,7 +93,6 @@ typedef struct reportrecord{
     bool isBinding;
     //int lineNumber;
 } _reportrecord;
-
 //---------------------------------------------------------------
 // used to create a millisecond delay in output
 #include <QThread>
@@ -123,7 +123,6 @@ public:
     }
 };
 //---------------------------------------------------------------
-
 class QDropEvent;
 
 class myTreeView : public QTreeView
@@ -137,7 +136,7 @@ public:
 protected:
     void dropEvent(QDropEvent *event);
 };
-
+//---------------------------------------------------------------
 class nutshellqt : public QMainWindow, private Ui::nutshellqt
 {
     Q_OBJECT
@@ -255,6 +254,7 @@ public:
     void PerformAction(int actiontype);
     bool isTSSfile(QString name);
     bool isExtentionInt(QString name);
+    void scriptFold(int section);
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
@@ -312,6 +312,8 @@ public slots:
     void displayVar();
     void getDirectories();
     void clearNutshellIni();
+    void findScriptReport();
+
 
     //====================
     //slots for explorer
@@ -361,6 +363,7 @@ public slots:
     void showWebHelp();
     void showAguilaHelp();
     void showHelpOperation();
+    void showNutshellHelp();
 
     void changeFileFilter(int filterNr);
 
@@ -432,6 +435,7 @@ private:
     QAction *helpWebAct;
     QAction *helppcrcalcAct;
     QAction *helpAguilaAct;
+    QAction *helpNutshellAct;
 
     // explorer variables
     QFileSystemModel *dirModel;

@@ -3,7 +3,7 @@
  * v 1.x
  * perform an action on the explorer selection (aguia2D, aguila 3D etc)
  * valid strings are made in nutshellfilenames.cpp
- * Author: VJ 100814
+ * Author: VJ 121012
  */
 
 
@@ -222,6 +222,7 @@ void nutshellqt::PerformAction(int actiontype)
         break;
     case ACTIONTYPETIMEPLOT :
         args << "-t" << cmdl.split("!");
+        qDebug() << args;
         prog = AguilaDirName + "aguila.exe";
         isAguila = true;
         break;

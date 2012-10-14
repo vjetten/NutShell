@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     nutshelloptions.cpp \
     findreplaceform.cpp \
     CsfMap.cpp \
-    nutshellevent.cpp
+    nutshellevent.cpp \
+    nutshelltreeview.cpp
 HEADERS  += nutshellqt.h \
     csfattr.h \
     csfimpl.h \
@@ -43,8 +44,7 @@ FORMS    += nutshellqt.ui \
     nutshelllegend.ui \
     nutshellmapattribute.ui \    
     nutshelloptions.ui \
-    findreplaceform.ui \
-    nutshellmapdisplay.ui
+    findreplaceform.ui
     # nutshellhelp.ui
 CONFIG(debug, debug|release) {
   # debug build

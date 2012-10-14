@@ -3,6 +3,19 @@
 
 
 //---------------------------------------------------------------
+void nutshellqt::showNutshellHelp()
+{
+   QDialog *box = new QDialog();
+
+   QLabel *label = new QLabel();
+   label->setPixmap(QPixmap(":/resources/nutshellhelp.png"));
+
+   QHBoxLayout *horizontalLayout = new QHBoxLayout(box);
+   horizontalLayout->addWidget(label);
+
+   box->show();
+}
+//---------------------------------------------------------------
 void nutshellqt::showHelp()
 {
    QDesktopServices::openUrl(QUrl("file:///"+PCRasterDocDirName + "index.html"));
@@ -20,7 +33,7 @@ void nutshellqt::showAguilaHelp()
 //---------------------------------------------------------------
 void nutshellqt::showHelpOperation()
 {
-   if (tabWidget->currentIndex() < 0)
+   if (!ETExists)
       return;
 
    QString helptxt = ETEditor->textCursor().selectedText();

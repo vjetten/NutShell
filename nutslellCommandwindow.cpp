@@ -2,7 +2,7 @@
  * NutshellCommandwindow
  * v 1.x
  * functions to deal with commands given in commandwindow and cmd list
- * author: VJ 100814
+ * author: VJ 121012
  */
 
 

@@ -2,7 +2,7 @@
  * NutshellEditor
  * v 1.x
  * functions to create and delete editor PlainTextEdit in tabWidget
- * author: VJ 100814
+ * author: VJ 121012
  */
 
 #include "nutshellqt.h"
@@ -57,6 +57,12 @@ void nutshellqt::makeNewFile()
    newedit.highlighter = new Highlighter(myeditor->document());
    newedit.syntax = 0;
    newedit.editor->doReport = false;
+   newedit.editor->fold_binding = false;
+   newedit.editor->fold_areamap = false;
+   newedit.editor->fold_timer = false;
+   newedit.editor->fold_initial = false;
+   newedit.editor->fold_dynamic = false;
+
 
    ET.append(newedit);
    // ET defined as QList<editortabs> ET;
@@ -172,7 +178,7 @@ void nutshellqt::closeTab(int index)
 //---------------------------------------------------------------
 void nutshellqt::findDialog()
 {
-   if (tabWidget->currentIndex() < 0)
+   if (!ETExists)
       return;
    m_findReplaceDialog->hideReplaceWidgets(false);
    m_findReplaceDialog->setTextEdit(ETEditor);
@@ -181,7 +187,7 @@ void nutshellqt::findDialog()
 //---------------------------------------------------------------
 void nutshellqt::findReplaceDialog()
 {
-   if (tabWidget->currentIndex() < 0)
+   if (!ETExists)
       return;
 
    m_findReplaceDialog->hideReplaceWidgets(true);
@@ -191,7 +197,7 @@ void nutshellqt::findReplaceDialog()
 //---------------------------------------------------------------
 void nutshellqt::findNextfind()
 {
-   if (tabWidget->currentIndex() < 0)
+   if (!ETExists)
       return;
 
    QTextCursor cur = ETEditor->textCursor();
@@ -214,7 +220,7 @@ void nutshellqt::findNextfind()
 //---------------------------------------------------------------
 void nutshellqt::findPrevfind()
 {
-   if (tabWidget->currentIndex() < 0)
+   if (!ETExists)
       return;
 
    QTextCursor cur = ETEditor->textCursor();
@@ -236,7 +242,7 @@ void nutshellqt::findPrevfind()
 //---------------------------------------------------------------
 void nutshellqt::fontSelect()
 {
-   if (tabWidget->currentIndex() == -1)
+   if (!ETExists)
       return;
 
    if (commandWindow->hasFocus())
@@ -257,7 +263,7 @@ void nutshellqt::fontDecrease()
       commandWindow->setFont(f);
    }
    else
-      if (tabWidget->currentIndex() >= 0)
+      if (ETExists)
       {
          QFont f = ETEditor->font();
          int size = f.pointSize();
@@ -280,7 +286,7 @@ void nutshellqt::fontIncrease()
       commandWindow->setFont(f);
    }
    else
-      if (tabWidget->currentIndex() >= 0)
+      if (ETExists)
       {
          QFont f = ETEditor->font();
          int size = f.pointSize();
@@ -317,7 +323,7 @@ void nutshellqt::increaseReport()
 //---------------------------------------------------------------
 void nutshellqt::doIndent(bool back)
 {
-   if (tabWidget->currentIndex() == -1)
+   if (!ETExists)
       return;
 
    QTextCursor cur = ETEditor->textCursor();
@@ -401,7 +407,7 @@ void nutshellqt::doIndent(bool back)
 //---------------------------------------------------------------
 void nutshellqt::showsyntax(bool doit)
 {
-   if (tabWidget->currentIndex() == -1)
+   if (!ETExists)
       return;
    doit = true;
    ETHighlighter->dosyntax = doit;
@@ -418,7 +424,7 @@ void nutshellqt::changeSyntax(int index)
 void nutshellqt::displayVar()
 {
 
-   if (tabWidget->currentIndex() < 0)
+   if (!ETExists)
       return;
    if (!ETEditor->hasFocus())
       return;
@@ -426,9 +432,10 @@ void nutshellqt::displayVar()
    QTextCursor cur = ETEditor->textCursor();
    cur.select(QTextCursor::WordUnderCursor);
 
-   QString var = cur.selectedText();
+   QString var = cur.selectedText().simplified();
 
    if (!getScriptReport())
+   //if (!ETEditor->getScriptReport(lineEdit_argsubst->text()))
    {
       QMessageBox::warning(this,"NutShell",QString("Selection not found in directory."));
       return;
@@ -475,23 +482,25 @@ void nutshellqt::displayVar()
 
    if (var.isEmpty())
    {
-      QMessageBox::warning(this,"NutShell",QString("Selection not found in directory."));
+     // QMessageBox::warning(this,"NutShell",QString("Selection not valid."));
       return;
    }
 
    int nr = 0;
+   bool found = false;
    for (int i = 0; i < reportNames.count(); i++)
    {
       if (var == reportNames[i].reportName)
       {
          var = reportNames[i].fileName;
          nr = i;
+         found = true;
          break;
       }
    }
-   if (nr == 0)
+   if (!found)
    {
-      QMessageBox::warning(this,"NutShell",QString("Variable not reported or in binding."));
+      //QMessageBox::warning(this,"NutShell",QString("Selected variable not reported and not in binding."));
       return;
    }
 
@@ -512,13 +521,13 @@ void nutshellqt::displayVar()
       PerformAction(GetActionType());
    }
    else
-      QMessageBox::warning(this,"NutShell",QString("Selection not found in directory."));
+      QMessageBox::warning(this,"NutShell",QString("Selected variable not found in directory."));
 
 }
 //---------------------------------------------------------------------------
 void nutshellqt::getScriptLinks()
 {
-   if (tabWidget->currentIndex() >= 0)
+   if (ETExists)
    {
       QTextCharFormat UL;
       QTextCursor cur = ETEditor->textCursor();
@@ -526,17 +535,20 @@ void nutshellqt::getScriptLinks()
       ETEditor->doReport = !ETEditor->doReport;
       getdisplayvarAct->setChecked(ETEditor->doReport);
 
-      // get a list of reported words
-      if (!getScriptReport())
-      {
-         STATUS("No reported variables to show.");
-         ETEditor->doReport = false;
-         return;
-      }
-
       if(ETEditor->doReport)
       {
          QApplication::setOverrideCursor(Qt::WaitCursor);
+
+         // get a list of reported words
+         if (!getScriptReport())
+         {
+            STATUS("No reported variables to show.");
+            ETEditor->doReport = false;
+            QApplication::restoreOverrideCursor();
+
+            return;
+         }
+
 
          UL.setBackground(QColor(255,255,164,255));
 
@@ -587,5 +599,6 @@ void nutshellqt::getScriptLinks()
 
       }
    }
+   ETEditor->document()->setModified(false);
 }
 //---------------------------------------------------------------

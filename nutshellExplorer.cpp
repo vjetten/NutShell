@@ -3,7 +3,7 @@
  * v 1.x
  * adapted from the extended explorer example in Qt wiki:
  * http://www.qtcentre.org/wiki/index.php?title=Extended_Dir_View_example
- * Author: VJ 100814
+ * Author: VJ 121012
  */
 
 
@@ -18,151 +18,6 @@
  */
 
 //---------------------------------------------------------------
-myTreeView::myTreeView(QTreeView *parent)
-   : QTreeView(parent)
-{
-}
-//! strip number from basename in map series
-QString myTreeView::StripForName(QString S)
-{
-   QString Ss;
-   Ss = QFileInfo(S).baseName();
-
-   int i = Ss.length()-1;
-   while (i > 0 && int(Ss.toAscii()[i]) >= 48 && int(Ss.toAscii()[i]) <= 57)
-      i--;
-   Ss = Ss.remove(i+1, 256);
-
-   return(Ss);
-}
-/*!
- * \brief myTreeView::dropEvent Reimplementation of the QDropEvent for file handling
- * \param event
- */
-void myTreeView::dropEvent(QDropEvent *event)
-{
-   QModelIndex index = indexAt(event->pos());
-   // the dir moved into
-
-   QFileSystemModel *m = static_cast<QFileSystemModel*>(model());
-   // cast the linked model to myTreeView as a filesystem model
-
-   QDir dir(m->filePath(index));
-
-   if (event->keyboardModifiers() == Qt::ControlModifier)
-      event->setDropAction(Qt::CopyAction);
-   else
-      event->setDropAction(Qt::MoveAction);
-
-
-   foreach(QUrl url, event->mimeData()->urls())
-   {
-      QFileInfo fi = QFileInfo(url.toLocalFile());
-      // the filepath that is moved
-      bool isSeries = false;
-
-      QString bn = StripForName(fi.fileName());
-      QStringList series;
-      for (int i = 0; i < fns.count(); i++)
-         if (bn == fns[i].base)
-         {
-            series << fns[i].series;
-            isSeries = true;
-         }
-      // copy/move a series. Only 0.001 is shown so only that file is in
-      // the mimedata. Dropevent is called for all files in the series
-      // but mimedata isn't there so must be copied/moved directly
-      if (isSeries)
-      {
-         bool first = true;
-         QString sss;
-         if (event->dropAction() == (Qt::CopyAction))
-            sss ="Copying: " + bn;
-         else
-            sss = "Moving: " + bn;
-         QProgressDialog *bar = new QProgressDialog(sss, "Cancel", 1, series.count());
-         bar->setCancelButton(0);
-         int k = 0;
-         foreach(QString str, series)
-         {
-            QString filePath = m->filePath(index) + "/" + QFileInfo(str).fileName();
-
-            // make the drop filepath to check if it exists
-            QString newFilePath = filePath;
-            while(QFileInfo(newFilePath).exists())
-               newFilePath = dir.absolutePath() + "/" + QFileInfo(newFilePath).baseName() + "_copy." + QFileInfo(newFilePath).suffix();
-            // make rename filepath and add "_copy" is necessary
-
-            if (QFileInfo(filePath).exists())   // if the file exists in the new directory
-            {
-               dir.rename(filePath,filePath+"tmpqt");
-               // rename the old file to a temp name
-//               if (first)
-//               {
-//                  QTreeView::dropEvent(event);
-//                  first = false;
-//               }
-//               else
-//               {
-                  QFile(str).copy(filePath);
-                  if (event->dropAction() == (Qt::MoveAction))
-                     QFile(str).remove();
-             //  }
-
-               // continue to execute the drop event
-               dir.rename(filePath,newFilePath);
-               // rename the new file to the one with _copy(s) in it
-               dir.rename(filePath+"tmpqt",filePath);
-               // rename the temp name back to the original
-            }
-            else
-            {
-//               if (first)
-//               {
-//                  QTreeView::dropEvent(event);
-//                  first = false;
-//               }
-//               else
-//               {
-                  QFile(str).copy(filePath);
-                  if (event->dropAction() == (Qt::MoveAction))
-                     QFile(str).remove();
-             //  }
-            }
-            bar->setValue(k++);
-         }
-         bar->close();
-      }
-      else
-      {
-         QString filePath = m->filePath(index) + "/" + fi.fileName();
-         // make the drop filepath to check if it exists
-
-         QString newFilePath = filePath;
-         while(QFileInfo(newFilePath).exists())
-            newFilePath = dir.absolutePath() + "/" + QFileInfo(newFilePath).baseName() + "_copy." + fi.suffix();
-         // make rename filepath and add "_copy" is necessary
-
-         if (QFileInfo(filePath).exists())   // if the file exists in the new directory
-         {
-            dir.rename(filePath,filePath+"tmpqt");
-            // rename the old file to a temp name
-
-            QTreeView::dropEvent(event);
-            // continue to execute the drop event
-
-            dir.rename(filePath,newFilePath);
-            // rename the new file to the one with _copy(s) in it
-            dir.rename(filePath+"tmpqt",filePath);
-            // rename the temp name back to the original
-         }
-         else
-            QTreeView::dropEvent(event);
-      }
-   }
-}
-//---------------------------------------------------------------
-
 void nutshellqt::setupExplorer()
 {
    fns.clear();
@@ -426,7 +281,8 @@ QStringList nutshellqt::getReportFilter()
    // get all filenames reported,
    // swap binding names with real names,
    // series only as base name
-   if (!getScriptReport())
+   //if (!ETEditor->getScriptReport(lineEdit_argsubst->text()))
+         if (!getScriptReport())
    {
       STATUS("No reported variables to show.");
       return filter;
@@ -542,6 +398,7 @@ void nutshellqt::deleteScriptReport()
       return;
    }
 
+//   if (!ETEditor->getScriptReport(lineEdit_argsubst->text()))
    if (!getScriptReport())
    {
       ErrorMsg(QString("No reported variables to delete."));
@@ -646,112 +503,6 @@ void nutshellqt::deleteScriptReport()
 
    changeFileFilter(_filternr);
 }
-//---------------------------------------------------------------
-//void nutshellqt::deleteScriptReport()
-//{
-//   QString res;
-//   QStringList list, series;
-//   QDir dir = QDir(currentPath);
-//   QFile file;
-
-//   if (calcProcess && calcProcess->state() == QProcess::Running)
-//   {
-//      toolButton_startrun->setChecked(false);
-//      ErrorMsg("pcrcalc is active, wait until it is finished or press stop first");
-//      return;
-//   }
-
-//   res = getScriptReport();
-
-//   if (res.isEmpty())
-//   {
-//      ErrorMsg(QString("No reported variables to delete."));
-//      return;
-//   }
-//   list = res.split("\n");
-
-//   int j = 0;
-//   for(int i = 0; i < list.count(); i++)
-//   {
-//      if (!list[i].contains('.'))
-//         list[i] = "<i><font color=\"blue\">" + list[i] + "</font></i>";
-//      if (j == 0)
-//         list[i] = "<br>" + list[i];
-//      j++;
-//      if (j == 3)
-//      {
-//         list[i] = list[i] + "</br>";
-//         j = 0;
-//      }
-//   }
-
-//   QMessageBox::StandardButton reply =
-//         QuestionMsg(QString("<p>Delete all <b><font color=\"red\">reported</font></b> variables of script"
-//                             "<br><b>%1</b></br></p>"
-//                             "<p><i>WARNING: if you report INPUT variables these will be ALSO deleted!</i></p>"
-//                             "%2"
-//                             "<p>Continue?</p>").arg(ETfileName).arg(list.join("; ")));
-//   if (reply == QMessageBox::No)
-//      return;
-
-//   list = res.split("\n");
-//   // get map series and put in a separate QstringList
-//   for(int i = 0; i < list.count(); i++)
-//   {
-//      if (!list[i].contains(".")) // mapseries
-//      {
-//         for(int j = 0; j < fns.count(); j++)//nrseries; j++)
-//            if (list[i] == fns[j].base)
-//               series << fns[j].series;
-//      }
-//   }
-
-//   for(int i = 0; i < list.count(); i++)
-//   {
-//      list[i].insert(0, currentPath + QDir::separator());
-//      list[i] = QDir::fromNativeSeparators(list[i]);
-//   }
-
-//   // delete mapseries basename from report list
-//   for(int i = 0; i < list.count(); i++)
-//      if (!list[i].contains(".")) // mapseries
-//         list.removeAt(i);
-
-//   // add full map series
-//   list << series;
-
-//   // check if there exists anything to delete
-//   bool nothing = true;
-//   foreach (QString str, list)
-//      if (dir.exists(str))
-//      {
-//         nothing = false;
-//         break;
-//      }
-//   if (nothing)
-//   {
-//      ErrorMsg(QString("Reported variables not found."));
-//      return;
-//   }
-
-//   statusLabel.setText("Deleting reported files: ");
-//   statusBarProgress.setMaximum(list.count());
-//   statusBar()->addWidget(&statusLabel);
-//   statusBar()->addWidget(&statusBarProgress);
-//   statusBarProgress.show();
-//   statusLabel.show();
-//   int k = 0;
-//   foreach (QString str, list)
-//   {
-//      file.setFileName(str);
-//      file.remove();
-//      statusBarProgress.setValue(k++);
-//   }
-//   statusBar()->removeWidget(&statusBarProgress);
-//   statusBar()->removeWidget(&statusLabel);
-
-//   changeFileFilter(_filternr);
-//}
 //---------------------------------------------------------------
 // delete one or multiple files and file series
 void nutshellqt::deleteFiles()

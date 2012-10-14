@@ -87,5 +87,7 @@
         <file>resources/aguilareport.png</file>
         <file>resources/allreport.png</file>
         <file>resources/allreport1.png</file>
+        <file>resources/nutshellhelp.png</file>
+        <file>resources/helpnutshell.png</file>
     </qresource>
 </RCC>

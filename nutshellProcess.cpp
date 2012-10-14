@@ -31,7 +31,7 @@ void nutshellqt::setupModel()
    calcProcess = new QProcess(this);
    calcProcess->setReadChannel ( QProcess::StandardError );
    // pcrcalc outputs on the error channel
-   calcProcess->setTextModeEnabled (true);
+   //calcProcess->setTextModeEnabled (true);
    connect(calcProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderr()) );
    connect(calcProcess, SIGNAL(finished(int)),this, SLOT(finishedModel(int)) );
    connect(PCRProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderr()) );
@@ -116,7 +116,7 @@ void nutshellqt::runModel()
 
    setCursorLast();
 
-   if (tabWidget->currentIndex() < 0)
+   if (!ETExists)
    {
       setButtons(false, false, true);
       ErrorMsg("No model\\script to run");
@@ -406,8 +406,8 @@ void nutshellqt::finishedModel(int c)
    //    QCoreApplication::sendPostedEvents(this, 0);
    if(ETEditor->doReport)
    {
-   getScriptLinks();
-   getScriptLinks();
+      getScriptLinks();
+      getScriptLinks();
    }
 }
 //---------------------------------------------------------------

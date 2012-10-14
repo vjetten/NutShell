@@ -525,6 +525,29 @@
                </widget>
               </item>
               <item>
+               <widget class="QToolButton" name="toolButton_deletereport">
+                <property name="toolTip">
+                 <string>Delete all reported output in active script</string>
+                </property>
+                <property name="text">
+                 <string>...</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="nutshellqt.qrc">
+                  <normaloff>:/resources/deletereport5.png</normaloff>:/resources/deletereport5.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>16</width>
+                  <height>16</height>
+                 </size>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
                <widget class="QToolButton" name="toolButton_showAll">
                 <property name="toolTip">
                  <string>Show all files</string>
@@ -548,29 +571,6 @@
                 <attribute name="buttonGroup">
                  <string notr="true">buttonGroup</string>
                 </attribute>
-               </widget>
-              </item>
-              <item>
-               <widget class="QToolButton" name="toolButton_deletereport">
-                <property name="toolTip">
-                 <string>Delete all reported output in active script</string>
-                </property>
-                <property name="text">
-                 <string>...</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="nutshellqt.qrc">
-                  <normaloff>:/resources/deletereport5.png</normaloff>:/resources/deletereport5.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>16</width>
-                  <height>16</height>
-                 </size>
-                </property>
-                <property name="autoRaise">
-                 <bool>true</bool>
-                </property>
                </widget>
               </item>
               <item>

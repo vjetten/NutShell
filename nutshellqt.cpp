@@ -13,8 +13,6 @@ nutshellqt::nutshellqt(QWidget *parent) :
 {
     setupUi(this);
 
-    treeView1->setVisible(false);
-
     getRegPCRaster();
 
     currentPath = "C:/";
@@ -44,6 +42,8 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     showPCR();
 
+    // present but for now replaced by mytreeview
+    treeView1->setVisible(false);
     // present but not used
     toolButton_globaloptions->setVisible(false);
     //toolButton_oldcalc->setVisible(false);
@@ -160,6 +160,7 @@ void nutshellqt::createMainActions()
 
     helpWebAct = new QAction(QIcon(":/resources/help.png"), "&Help: latest on the web", this);
     helpWebAct->setShortcut(QKeySequence::HelpContents);
+    helpWebAct->setToolTip("Help, latest PCRaster webpages (F1)");
     connect(helpWebAct, SIGNAL(triggered()), this, SLOT(showWebHelp()));
 
     helpAguilaAct = new QAction(QIcon(":/resources/help.png"), "Aguila manual (pdf, web)", this);
@@ -167,8 +168,13 @@ void nutshellqt::createMainActions()
 
     helppcrcalcAct = new QAction(QIcon(":/resources/helpoperation.png"), "Context sensitive help (web)", this);
     helppcrcalcAct->setShortcut(Qt::CTRL+Qt::Key_F1);
-    helppcrcalcAct->setToolTip("Context sensitive help");
+    helppcrcalcAct->setToolTip("Context sensitive help (Ctrl-F1)");
     connect(helppcrcalcAct, SIGNAL(triggered()), this, SLOT(showHelpOperation()));
+
+    helpNutshellAct = new QAction(QIcon(":/resources/helpnutshell.png"), "Nutshell main commands", this);
+    helpNutshellAct->setShortcut(Qt::ALT+Qt::Key_F1);
+    helpNutshellAct->setToolTip("Nutshell main commands (Alt-F1)");
+    connect(helpNutshellAct, SIGNAL(triggered()), this, SLOT(showNutshellHelp()));
 
     clearOptionsAct = new QAction(QIcon(""), "&Clear nutshell.ini...", this);
     connect(clearOptionsAct, SIGNAL(triggered()), this, SLOT(clearNutshellIni()));
@@ -245,8 +251,8 @@ void nutshellqt::createEditorActions()
     toggleHashAct->setShortcut(Qt::ALT+Qt::Key_3);
     connect(toggleHashAct, SIGNAL(triggered()), this, SLOT(increaseHash()));
 
-    toggleReportAct = new QAction(QIcon(":/resources/editreport.png"), "&Toggle report (Alt-5)", this);
-    toggleReportAct->setShortcut(Qt::ALT+Qt::Key_5);
+    toggleReportAct = new QAction(QIcon(":/resources/editreport.png"), "&Toggle report (Alt-4)", this);
+    toggleReportAct->setShortcut(Qt::ALT+Qt::Key_4);
     connect(toggleReportAct, SIGNAL(triggered()), this, SLOT(increaseReport()));
 
     displayvarAct = new QAction(QIcon(":/resources/aguilareport.png"), "&Show selected script variable (F4)", this);
@@ -350,15 +356,11 @@ void nutshellqt::setupToolBar()
     toolBar->addAction(toggleReportAct);
     toolBar->addAction(displayvarAct);
     toolBar->addAction(getdisplayvarAct);
+
     toolBar->addSeparator ();
-//    toolBar->addAction(runmodelAct);
-//    toolBar->addAction(pausemodelAct);
-//    toolBar->addAction(killmodelAct);
-//    toolBar->addAction(oldmodelAct);
-//    toolBar->addAction(argsubsAct);
-//    toolBar->addSeparator ();
     toolBar->addAction(helppcrcalcAct);
     toolBar->addAction(helpWebAct);
+    toolBar->addAction(helpNutshellAct);
 
     toolBar->setAllowedAreas(Qt::RightToolBarArea | Qt::TopToolBarArea);
   //  addToolBar(Qt::RightToolBarArea, toolBar);
@@ -439,6 +441,7 @@ void nutshellqt::setupMenu( )
     helpMenu->addAction(helpWebAct);
     helpMenu->addAction(helpAguilaAct);
     helpMenu->addAction(helppcrcalcAct);
+    helpMenu->addAction(helpNutshellAct);
 }
 //---------------------------------------------------------------
 void nutshellqt::removeWorkdirectory()

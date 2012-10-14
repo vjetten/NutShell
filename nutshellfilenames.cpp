@@ -143,6 +143,7 @@ QString nutshellqt::GetMapSeries()
 
       fns.append(ofn);
       treeView->fns.append(ofn);
+
    }
    return Sres;
 }
@@ -197,20 +198,28 @@ QString nutshellqt::getFileListString()
    return(Sfilelist);
 }
 //---------------------------------------------------------------------------
+void nutshellqt::findScriptReport()
+{
+   qDebug()<< "find";
+//   if (!ETEditor->getScriptReport(lineEdit_argsubst->text()))
+   if (!getScriptReport())
+   {
+      ErrorMsg(QString("No reported variables to delete."));
+   }
+}
+//---------------------------------------------------------------------------
 // get all filenames reported,
 // swap binding names with real names, series only as base name
 bool nutshellqt::getScriptReport()
 {
-   if (tabWidget->currentIndex() >= 0)
+   if (ETExists)
    {
-
       QStringList SL;      // all strings in document
       QStringList reports; // all reports
       QStringList binding; // binding lines
       QStringList timer;   // timer lines
       bool go;
       reportrecord reportRec;
-      QList <reportrecord > tmp;
 
       reportNames.clear();
 
@@ -300,7 +309,6 @@ bool nutshellqt::getScriptReport()
             QString line;
             line = str;
             line.remove(str.indexOf("="),str.count()+10);
-            //line.remove(QRegExp("^\\s+|\\s+$"));
             line = line.simplified();
             timer << line;
          }
@@ -376,37 +384,15 @@ bool nutshellqt::getScriptReport()
 
       }
 
-//      for (int i = 0; i < reportNames.count(); i++)
-//      {
-//         if (reportNames[i].isSeries)
-//         {
-//            reportNames[i].fileName = reportNames[i].fileName + "00000000";
-//            reportNames[i].fileName.remove(8,100);
-//            reportNames[i].fileName = reportNames[i].fileName + ".001";
-//            //qDebug() << reportNames[i].fileName;
-//         }
-//      }
-
-
-//      tmp.clear();
-//      QDir dir(currentPath);
-//      for (int i = 0; i < reportNames.count(); i++)
-//         if (dir.exists(reportNames[i].fileName))
-//            tmp << reportNames[i];
-
-//      reportNames.clear();
-//      reportNames = tmp;
-//      tmp.clear();
-
-//      for (int i = 0; i < reportNames.count(); i++)
-//         qDebug() << reportNames[i].fileName << reportNames[i].reportName << reportNames[i].isSeries << reportNames[i].isBinding;
+      //for (int i = 0; i < reportNames.count(); i++)
+        // qDebug() << reportNames[i].fileName << reportNames[i].reportName << reportNames[i].isSeries << reportNames[i].isBinding;
    }
    return (reportNames.count() > 0);
 }
 //---------------------------------------------------------------------------
 int nutshellqt::getTimesteps()
 {
-   if (tabWidget->currentIndex() >= 0)
+   if (ETExists)
    {
       bool go;
       bool nothing = true;
@@ -475,6 +461,9 @@ bool nutshellqt::isTSSfile(QString name)
    while (!in.atEnd())
    {
       line = in.readLine();
+      // skip empty lines
+      if (line.simplified().isEmpty())
+         continue;
       QStringList vals;
       vals = line.split(QRegExp("\\s"),QString::SkipEmptyParts);
       if (vals.count() != nr )
@@ -489,5 +478,32 @@ bool nutshellqt::isExtentionInt(QString name)
    long val = QFileInfo(name).suffix().toInt(&ok, 10);
    return (val > 0 && ok);
 }
-//---------------------------------------------------------------
+//---------------------------------------------------------------------------
+// get all filenames reported,
+// swap binding names with real names, series only as base name
+void nutshellqt::scriptFold(int section)
+{
+      QStringList SL;      // all strings in document
+      QStringList binding; // binding lines
+      QStringList areamap;   // areamap lines
+      QStringList timer;   // timer lines
+      QStringList initial;   // initial lines
+      QStringList dynamic;   // dynamic lines
 
+      QTextCursor cur;
+      cur = ETEditor->document()->find("binding", 0, QTextDocument::FindWholeWords);
+      int ln = cur.block().position();
+
+      QTextBlock startBlock = ETEditor->document()->findBlockByNumber(ln);
+      qDebug() << startBlock.text();
+
+
+
+      binding.clear();
+      initial.clear();
+      timer.clear();
+      areamap.clear();
+      dynamic.clear();
+
+}
+//---------------------------------------------------------------------------
