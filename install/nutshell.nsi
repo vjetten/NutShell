@@ -10,8 +10,8 @@
 ;--------------------------------
 ;General
 
-   !define VERSION "4.0"
-   !define DATE "[121012]"
+   !define VERSION "4.1"
+   !define DATE "[121014]"
 
   ;Name and file
   Name "NutShell  ${VERSION} for PCRaster"
@@ -55,7 +55,7 @@
 
   !insertmacro MUI_PAGE_INSTFILES
   !define MUI_FINISHPAGE_NOAUTOCLOSE
-  !define MUI_FINISHPAGE_SHOWREADME "nutshell.chm"
+  !define MUI_FINISHPAGE_SHOWREADME "nutshellhelp.pdf"
   !insertmacro MUI_PAGE_FINISH
 
   
@@ -75,6 +75,8 @@ Section "Main files" SecDummy
   ;ADD YOUR OWN FILES HERE...
   File d:\prgc\nutshell\release\vc\nutshell.exe
   File d:\prgc\nutshell\release\vc\*.dll
+  File d:\prgc\nutshell\install\nutshellhelp.pdf
+  File d:\prgc\nutshell\install\README
 
 ;  SetOutPath "$INSTDIR\"
   File d:\prgc\nutshell\install\mapedit.exe

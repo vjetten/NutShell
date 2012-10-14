@@ -1,13 +1,9 @@
-nutshell for PCRaster version 4.1 
+nutshell for PCRaster version 4.0
 ========================================
 programmed in Qt and compiled with MSVC2010
 Opensource on request and can be compiled in linux (not tried yet!)
 
-Default install location:  /pcraster/apps/nutshell
-Do NOT install in the pcraster/apps directory!
-
 Changes since 3.5:
-- Added graphical NutShellhelp (ALt-F1)
 Script editor:
 - context sensitive help when connected to the web.
 - Improved find (Ctrl-F) and find-repace (Ctrl-H): press F3 and the word under the cursor will be found, F3 for next and Shift-F3 for previous
