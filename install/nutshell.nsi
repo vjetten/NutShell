@@ -10,12 +10,12 @@
 ;--------------------------------
 ;General
 
-   !define VERSION "4.1"
-   !define DATE "[121014]"
+   !define VERSION "4.5"
+   !define DATE "[130310]"
 
   ;Name and file
   Name "NutShell  ${VERSION} for PCRaster"
-  OutFile "d:\prgc\nutshell\install\nutshell${VERSION}setup.exe"
+  OutFile "D:\prgc\PCR\pcraster-nutshell\install\nutshell${VERSION}setup.exe"
   
   ;Default installation folder
   InstallDir $PROGRAMFILES\pcraster\apps\
@@ -37,12 +37,12 @@
   !define MUI_ICON "nutshell1.ico"
 	!define MUI_WELCOMEFINISHPAGE_BITMAP "nutshell1.bmp"
 	!define MUI_WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
-  !define MUI_WELCOMEPAGE_TEXT "Installation of NutShell version ${VERSION}, compile date ${DATE} for PCRaster. Contains also mapedit version 1.11.\
-  NutShell is a windows shell for the PCRaster environmental modelling language and raster GIS\
-  PCRaster has to be installed seperately from http://pcraster.geo.uu.nl"
+  !define MUI_WELCOMEPAGE_TEXT "Installation of NutShell version ${VERSION}, compile date ${DATE} for PCRaster. Contains also mapedit version 1.11. \
+  NutShell is a windows shell for the freeware PCRaster environmental modelling language and raster GIS. \
+  The PCRaster software can be found here: http://pcraster.geo.uu.nl"
 
   !insertmacro MUI_PAGE_WELCOME
-  !insertmacro MUI_PAGE_LICENSE licence.txt
+  !insertmacro MUI_PAGE_LICENSE license.txt
   !define MUI_DIRECTORYPAGE_TEXT_TOP "Please select the PCRaster applications folder. NutShell will be copied in a subdirectory nutshell."
   !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_DIRECTORY
@@ -55,7 +55,8 @@
 
   !insertmacro MUI_PAGE_INSTFILES
   !define MUI_FINISHPAGE_NOAUTOCLOSE
-  !define MUI_FINISHPAGE_SHOWREADME "nutshellhelp.pdf"
+  !define MUI_FINISHPAGE_SHOWREADME "README.txt" ;nutshellhelp.pdf"
+  !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
   !insertmacro MUI_PAGE_FINISH
 
   
@@ -73,16 +74,16 @@ Section "Main files" SecDummy
   SetOutPath "$INSTDIR\nutshell\"
   
   ;ADD YOUR OWN FILES HERE...
-  File d:\prgc\nutshell\release\vc\nutshell.exe
-  File d:\prgc\nutshell\release\vc\*.dll
-  File d:\prgc\nutshell\install\nutshellhelp.pdf
-  File d:\prgc\nutshell\install\README
+  File D:\prgc\PCR\pcraster-nutshell\release\vc\nutshell.exe
+  File d:\prgc\PCR\pcraster-nutshell\release\vc\*.dll
+  File d:\prgc\PCR\pcraster-nutshell\install\nutshellhelp.pdf
+  File d:\prgc\PCR\pcraster-nutshell\install\README.txt
 
 ;  SetOutPath "$INSTDIR\"
-  File d:\prgc\nutshell\install\mapedit.exe
+  File mapedit.exe
 
   
-  ;CopyFiles "$PROFILE\application data\nutshell\nutshell.ini" "$PROFILE\application data\nutshell\nutshell.${VERSION}"
+  CopyFiles "$PROFILE\application data\nutshell\nutshell.ini" "$PROFILE\application data\nutshell\nutshell.${VERSION}"
   
   CreateShortCut "$DESKTOP\PCRaster NutShell.lnk" "$INSTDIR\nutshell\NutShell.exe"
   
@@ -90,12 +91,11 @@ SectionEnd
 
 Section /o "Delete ini" SecDummy1
 
-  SetOutPath "$INSTDIR\nutshell\"
-  
+  SetOutPath "$INSTDIR\nutshell\"  
 
   CopyFiles "$PROFILE\application data\nutshell\nutshell.ini" "$PROFILE\application data\nutshell\nutshell.${VERSION}"
   
-  CreateShortCut "$DESKTOP\PCRaster NutShell.lnk" "$INSTDIR\NutShell.exe"
+  CreateShortCut "$DESKTOP\PCRaster NutShell.lnk" "$INSTDIR\nutshell\NutShell.exe"
   
 SectionEnd
 

@@ -9,10 +9,13 @@ nutshellLegend::nutshellLegend(QWidget *parent) :
    connect(toolButton_clearall, SIGNAL(clicked()), this, SLOT(ClearAll()));
    connect(toolButton_deletenrs, SIGNAL(clicked()), this, SLOT(RemoveNumbers()));
    connect(toolButton_addnrs, SIGNAL(clicked()), this, SLOT(AddNumbers()));
-   connect(pushButton_accept, SIGNAL(clicked()), this, SLOT(Accept()));
-   connect(pushButton_cancel, SIGNAL(clicked()), this, SLOT(close()));
+//   connect(pushButton_accept, SIGNAL(clicked()), this, SLOT(Accept()));
+  // connect(pushButton_cancel, SIGNAL(clicked()), this, SLOT(close()));
+   //connect(buttonBox, SIGNAL(rejected()), this, SLOT(close()));
+   connect(buttonBox, SIGNAL(accepted()), this, SLOT(Accept()));
+   connect(buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 
-   theLegend = NULL;
+//   theLegend = NULL;
    legendmodel = NULL;
 }
 //---------------------------------------------------------------------------
@@ -26,6 +29,7 @@ int nutshellLegend::CountClasses(MAP *in)
    INT4 *Data;
    int nrCols = (int)RgetNrCols(in);
    int nrRows = (int)RgetNrRows(in);
+
    RuseAs(in, CR_INT4);
    Data = new INT4[(int)RgetNrCols(in)];
 
@@ -53,6 +57,8 @@ void nutshellLegend::makelegend(QString name)
 {
    int sizel1;
    bool empty;
+   CSF_LEGEND *theLegend;
+
    theLegend = NULL;
 
    legendmodel = new QStandardItemModel(0, 2, this);
@@ -79,8 +85,10 @@ void nutshellLegend::makelegend(QString name)
    if (empty)
       sizel = sizel1+1; //add one for the map title
 
-   theLegend = (CSF_LEGEND *)malloc(sizeof(CSF_LEGEND)*sizel);
+//   theLegend = (CSF_LEGEND *)malloc(sizeof(CSF_LEGEND)*sizel);
+   theLegend = new CSF_LEGEND[sizel];
    memset(theLegend, 0, sizeof(CSF_LEGEND)*sizel);
+
 
    QApplication::restoreOverrideCursor();
 
@@ -114,6 +122,12 @@ void nutshellLegend::makelegend(QString name)
    }
    prevrowcount = legendmodel->rowCount();
    legendView->setModel(legendmodel);
+
+   if (theLegend)
+   {
+       delete[] theLegend;
+       theLegend = NULL;
+   }
 }
 //---------------------------------------------------------------------------
 void nutshellLegend::AddNumbers()
@@ -154,11 +168,17 @@ void nutshellLegend::ClearAll()
 void nutshellLegend::Accept()
 {
    MAP *in;
+   CSF_LEGEND *theLegend;
+//   theLegend = (CSF_LEGEND *)malloc(sizeof(CSF_LEGEND)*sizel);
+   theLegend = new CSF_LEGEND[sizel];
 
-   //copy the header
+   memset(theLegend, 0, sizeof(CSF_LEGEND)*sizel);
+
+   //copy the header to theLegend
    strncpy(theLegend[0].descr,legendTitle->text().toAscii(),63);
    theLegend[0].nr = 0;
 
+   //copy the entries to theLegend
    for (int i = 0; i < sizel-1; i++)
    {
       QModelIndex index = legendmodel->index(i, 1, QModelIndex());
@@ -169,32 +189,36 @@ void nutshellLegend::Accept()
       theLegend[i+1].nr = legendmodel->data(index, Qt::DisplayRole).toInt();
    }
 
-   in = Mopen(filename.toAscii().data(),M_WRITE);
+   // put theLegend in the map
+   in = Mopen(filename.toAscii().data(),M_READ_WRITE);
    if (in == NULL)
    {
-      ErrorMsg("Cannot write new header");
-      close();
+      ErrorMsg("Cannot write legend to map");
+//      if (theLegend)
+//      {
+//          delete[] theLegend;
+//          theLegend = NULL;
+//      }
       return;
    }
 
    MputLegend(in, theLegend, sizel);
    Mclose(in);
+//   if (theLegend)
+//   {
+//       delete[] theLegend; //free(theLegend);
+//       theLegend = NULL;
+//   }
+hide();
+}
 
-   close();
-}
-//---------------------------------------------------------------------------
-void nutshellLegend::Cancel()
-{
-   close();
-}
 //---------------------------------------------------------------------------
 void nutshellLegend::closeEvent(QCloseEvent *event)
 {
-   //qDebug() << theLegend;
-   if (theLegend)
-   {
-      free(theLegend);
-      theLegend = NULL;
-   }
+//
 }
 //---------------------------------------------------------------------------
+void nutshellLegend::hideEvent(QHideEvent *event)
+{
+//
+}

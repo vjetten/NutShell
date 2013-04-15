@@ -60,12 +60,10 @@ void myTreeView::dropEvent(QDropEvent *event)
       int thisnr;
 
       QString bn = StripForName(fi.fileName());
-      //QStringList series;
       for (int i = 0; i < fns.count(); i++)
-         if (bn == fns[i].base)
+         if (bn.compare(fns[i].base, Qt::CaseInsensitive) == 0)
          {
             thisnr = i;
-//            series << fns[i].series;
             isSeries = true;
             break;
          }

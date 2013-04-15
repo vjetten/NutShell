@@ -92,7 +92,7 @@ void nutshelleditor::highlightCurrentLine()
    setExtraSelections(extraSelections);
 
 }
-//---------------------------------------------------------------
+
 void nutshelleditor::lineNumberAreaPaintEvent(QPaintEvent *event)
 {
    QPainter painter(lineNumberArea);
@@ -180,11 +180,11 @@ void nutshelleditor::mouseDoubleClickEvent ( QMouseEvent * event )
             else
                if (cur.selectedText().simplified() == "dynamic")
                   scriptFold(5);
-               else
-               {
-                  QKeyEvent key(QEvent::KeyPress, Qt::Key_F4, Qt::NoModifier);
-                  QApplication::sendEvent(this, &key);
-               }
+//               else
+//               {
+//                  QKeyEvent key(QEvent::KeyPress, Qt::Key_F4, Qt::NoModifier);
+//                  QApplication::sendEvent(this, &key);
+//               }
 
    QPlainTextEdit::mouseDoubleClickEvent(event);
 }
@@ -218,13 +218,12 @@ void nutshelleditor::scriptFold(int section)
 
    int lnbinding = scriptFindSectionBlock("binding");
    int lnareamap = scriptFindSectionBlock("areamap");
-   int lntimer = scriptFindSectionBlock("timer");
+   int lntimer   = scriptFindSectionBlock("timer");
    int lninitial = scriptFindSectionBlock("initial");
    int lndynamic = scriptFindSectionBlock("dynamic");
 
    int lnfrom, lnto;
    bool do_fold = false;
-  // qDebug() << lnbinding << lnareamap << lntimer << lninitial << lndynamic;
 
    if (section == 1)
    {
@@ -292,7 +291,6 @@ void nutshelleditor::scriptFold(int section)
    QTextBlock startBlock = document()->findBlockByNumber(lnfrom+1);
    QTextBlock endBlock = document()->findBlockByNumber(lnto);
    QTextBlock block = startBlock.previous();
-  // qDebug() << block.position() << block.text() << document()->findBlockByNumber(lnfrom).text() << lnfrom << endBlock.text() << lnto;
 
    while (startBlock < endBlock)
    {

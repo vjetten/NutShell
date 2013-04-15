@@ -128,6 +128,8 @@ void nutshellqt::PerformAction(int actiontype)
     bool fileIsMap = true;
     bool isAguila = false;
 
+    changeFileFilter(_filternr);
+
     args.clear();
     if(!selectionModel->currentIndex().isValid() && actiontype != ACTIONTYPEATTRIBUTENEW)
     {
@@ -140,7 +142,6 @@ void nutshellqt::PerformAction(int actiontype)
             actiontype != ACTIONTYPELEGEND &&
             actiontype != ACTIONTYPENONE)
         cmdl = getFileListString();
- //   qDebug() << cmdl;
     // also makes mapseries if needed
 
     m = Mopen(SelectedPathName.toAscii().data(),M_READ);
@@ -222,7 +223,6 @@ void nutshellqt::PerformAction(int actiontype)
         break;
     case ACTIONTYPETIMEPLOT :
         args << "-t" << cmdl.split("!");
-        qDebug() << args;
         prog = AguilaDirName + "aguila.exe";
         isAguila = true;
         break;
@@ -256,6 +256,7 @@ void nutshellqt::PerformAction(int actiontype)
             {
                 maplegend.makelegend(SelectedPathName);
                 maplegend.show();
+                //maplegend.raise();
             }
             else
                 ErrorMsg("Only nominal, ordinal or boolean maps can have a legend.");
@@ -276,7 +277,7 @@ void nutshellqt::PerformAction(int actiontype)
             }
         }
         else
-            if (mapattribute.fill(QString(currentPath+"/new.map"), true) == 0)
+            if (mapattribute.fill(QString(currentPath+"/new.map_vj"), true) == 0)
         {
             mapattribute.show();
             mapattribute.raise();

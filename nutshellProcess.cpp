@@ -34,7 +34,7 @@ void nutshellqt::setupModel()
    //calcProcess->setTextModeEnabled (true);
    connect(calcProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderr()) );
    connect(calcProcess, SIGNAL(finished(int)),this, SLOT(finishedModel(int)) );
-   connect(PCRProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderr()) );
+   //connect(PCRProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderr()) );
    useOldCalc = false;
 
    connect(toolButton_oldcalc, SIGNAL(toggled(bool)), this, SLOT(toggleOldcalc(bool)));
@@ -173,8 +173,8 @@ void nutshellqt::runModel()
    }
 
    commandWindow->appendPlainText("starting... ");
-   commandWindow->appendPlainText(" ");
-   commandWindow->appendPlainText(" ");
+   commandWindow->appendPlainText("");
+   commandWindow->appendPlainText("");
    // make room in the plainTextEdit for the pcrcalc counter
    //QCoreApplication::sendPostedEvents(this, 0);
 
@@ -298,7 +298,6 @@ void nutshellqt::onScreen(QString buffer)
                commandWindow->setTextCursor(calcCursor);
                //set cursor at the end
                SStep = listb[j];
-               //qDebug() << SStep;
                if (totalsteps > 0)
                {
                   SStep = listb[j].remove(0, 19);
@@ -347,6 +346,8 @@ void nutshellqt::doRunErrorMessage(QString buffer)
 {
    QString hoi;
    QStringList list;
+   errorpos[0] = 0;
+   errorpos[1] = 0;
 
    list = buffer.split(":");
    int i = 0;
@@ -358,7 +359,12 @@ void nutshellqt::doRunErrorMessage(QString buffer)
          i++;
       }
    }
+
    ETEditor->doerror = true;
+   if (errorpos[0] == 0)
+       return;
+   // in case a typing error
+
    ETEditor->errorline = errorpos[0];
 
    hoi= ETPlainText;
@@ -389,7 +395,6 @@ void nutshellqt::finishedModel(int c)
       buf = calcProcess->readAllStandardError();
       onScreen(QString(buf));
    }
-   qDebug() << c;
 
    setCursorLast();
 

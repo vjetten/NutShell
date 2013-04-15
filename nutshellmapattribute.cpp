@@ -101,8 +101,12 @@ int nutshellmapattribute::fill(QString name, bool newmap)
    // a = (ATTRIBUTES *)malloc(sizeof(ATTRIBUTES));
     OptNotSetAttr();
 
+    bool isMap = !(name.contains(".map_vj"));
+
     makenewmap = newmap;
     filename = name;
+    if (newmap && !isMap)
+        filename = name.remove(name.count()-3,3);
 
     lineEdit_mapname->setText("new.map");
     lineEdit_XUL->setText("0");
@@ -117,14 +121,15 @@ int nutshellmapattribute::fill(QString name, bool newmap)
     label_minValue->text().setNum(0);
     label_maxValue->text().setNum(0);
 
-    m = Mopen(filename.toAscii().data(),M_READ_WRITE);
-    if (!filename.isEmpty() && m == NULL &&!newmap)
-    {
-        Mclose(m); m = NULL;
-        ErrorMsg("Could not open file as PCRaster map.")
-                close();
-        return 1;
-    }
+    if (isMap)
+        m = Mopen(filename.toAscii().data(),M_READ_WRITE);
+//    if (!filename.isEmpty() && m == NULL &&!newmap)
+//    {
+//        Mclose(m); m = NULL;
+//        ErrorMsg("Could not open file as PCRaster map.")
+//                close();
+//        return 1;
+//    }
 
     //the map exists, OR it doesn't and newmap
 
@@ -135,17 +140,21 @@ int nutshellmapattribute::fill(QString name, bool newmap)
     lineEdit_ID->setEnabled(newmap);
     lineEdit_mapname->setEnabled(newmap);
 
-    if (!newmap)
-       lineEdit_mapname->setText(QFileInfo(filename).fileName());
 //    if (!newmap)
-//    {
-//      lineEdit_mapname->setText(QFileInfo(filename).fileName());
+//       lineEdit_mapname->setText(QFileInfo(filename).fileName());
+    if (!newmap && isMap)
+    {
+        lineEdit_mapname->setText(QFileInfo(filename).fileName());
         int ret = ReadAttr(true);
         if (ret == 1)
             DefaultAttr();
-//    }
-//    else
-//        DefaultAttr();
+    }
+    else
+    {
+        DefaultAttr();
+        if (isMap)
+           ReadAttr(true);
+    }
 
     QString s;
     lineEdit_XUL->setText( s.setNum((double)a->xUL,'f',6));
@@ -420,12 +429,12 @@ void nutshellmapattribute::SetAndCloseMap()
         MputGisFileId(m,a->gisFileId);
 
     Mclose(m);
-    m = NULL;
-    if (Merrno)
-    {
-        ErrorMsg(QString("Map write error %1").arg(Merrno));
-        return;
-    }
+//    m = NULL;
+//    if (Merrno)
+//    {
+//        ErrorMsg(QString("Map write error %1").arg(Merrno));
+//        return;
+//    }
 }
 
 //---------------------------------------------------------------------------
@@ -472,7 +481,7 @@ bool nutshellmapattribute::checkMapAttrib()
     return true;
 }
 //---------------------------------------------------------------------------
-void nutshellmapattribute::hideEvent ( QHideEvent * event )
+void nutshellmapattribute::hideEvent (QHideEvent *event)
 {
    // catch hide in case attribute problem, stay open
     if( !checkMapAttrib() )

@@ -37,7 +37,6 @@ void nutshellqt::showHelpOperation()
       return;
 
    QString helptxt = ETEditor->textCursor().selectedText();
-   //qDebug() << helptxt;
    QString URL = "http://pcraster.geo.uu.nl/documentation/PCRaster/html/";
    QString found = "";
 
@@ -100,7 +99,7 @@ nutshellHelp::nutshellHelp(QWidget *parent) :
 }
 
 nutshellHelp::~nutshellHelp()
-{	
+{
 }
 
 void nutshellHelp::seturl(QString url)

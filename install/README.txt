@@ -1,9 +1,37 @@
-nutshell for PCRaster version 4.0
-========================================
-programmed in Qt and compiled with MSVC2010
+==============================================================================================================
+nutshell for PCRaster version 4.5
+==============================================================================================================
+Date: 10 mar 2013
+Author: Victor Jetten
+programmed in Qt (http://qt-project.org) and compiled with MSVC 2010 (freeware)
 Opensource on request and can be compiled in linux (not tried yet!)
 
-Changes since 3.5:
+Default install location(!):  ../pcraster/apps/nutshell
+Do *NOT* install in the pcraster/apps directory, nutshell uses Qt dlls that are more recnt than PCRaster
+If you are blocked because of admin rights, NutShell can be installed anywhere else.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Changes since 4.5:
+- Fixed error causing a crash when wrong command is typed
+- command resulting in file not found now gives back an error (e.g. typing pcralc instead of pcrcalc)
+- Command causing a windows error no longer added to the commandlist
+- Fixed bug removing directories form the workdir list
+- TODO: legend editing sometimes still gives crashes
+
+Changes since 4.4 - 4.2:
+- Double click no longer displays variable (too irritating), only F4
+- Bug fixes report script variable and delete files and series
+- Bug fixes display variables from script
+
+Changes since 4.2 - 4.1:
+- Double click in editor nolonger displays variable (use F4)
+- Ctrl-D or Ctrl-Y deletes line in editor
+- Fixed bug in map attributes and new map
+- Fixed bug in accidentally deleting wrong mapseries
+- Added highlighting repeat-until loops (blue)
+
+Changes 3.5 - 4.1:
+- Added graphical NutShellhelp (ALt-F1)
 Script editor:
 - context sensitive help when connected to the web.
 - Improved find (Ctrl-F) and find-repace (Ctrl-H): press F3 and the word under the cursor will be found, F3 for next and Shift-F3 for previous
@@ -19,4 +47,3 @@ Explorer:
 - save a list of workdirectories
 - numerous small bug fixes
 
-Date: 14 Oct 2012

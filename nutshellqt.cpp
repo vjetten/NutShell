@@ -51,22 +51,24 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     // OBSOLETE
     //   toolButton_deletemapseries->setVisible(false);
-//       toolButton_dirRemove->setVisible(false);
-//       toolButton_dirup->setVisible(false);
-//       toolButton_dirnext->setVisible(false);
-//       toolButton_dirprev->setVisible(false);
-//       toolButton_dirnew->setVisible(false);
+    //       toolButton_dirRemove->setVisible(false);
+    //       toolButton_dirup->setVisible(false);
+    //       toolButton_dirnext->setVisible(false);
+    //       toolButton_dirprev->setVisible(false);
+    //       toolButton_dirnew->setVisible(false);
 
     dirModel->setRootPath(QDir(currentPath).rootPath());
     setRootIndex(dirModel->index(currentPath));
-//    fileModel->setRootPath(QDir(currentPath).rootPath());
-//    setRootIndex(fileModel->index(currentPath));
+    //    fileModel->setRootPath(QDir(currentPath).rootPath());
+    //    setRootIndex(fileModel->index(currentPath));
 
     setWorkdirectory();
 
     STATUS("");
 
     commandcounter = -1;
+
+    changeName = false;
 }
 //---------------------------------------------------------------
 nutshellqt::~nutshellqt()
@@ -119,10 +121,10 @@ void nutshellqt::createModelActions()
     oldmodelAct->setToolTip("Run model script with oldcalc");
     connect(oldmodelAct, SIGNAL(toggled(bool)), this, SLOT(toggleOldcalc(bool)));
 
-//    argsubsAct = new QAction(QIcon(":/resources/argsubs2.png"), "", this);
-//    argsubsAct->setCheckable (true);
-//    argsubsAct->setToolTip("use argument subsitution in script");
-//    connect(argsubsAct, SIGNAL(toggled(bool)), lineEdit_argsubst, SLOT(enabled(bool)));
+    //    argsubsAct = new QAction(QIcon(":/resources/argsubs2.png"), "", this);
+    //    argsubsAct->setCheckable (true);
+    //    argsubsAct->setToolTip("use argument subsitution in script");
+    //    connect(argsubsAct, SIGNAL(toggled(bool)), lineEdit_argsubst, SLOT(enabled(bool)));
 }
 //---------------------------------------------------------------
 void nutshellqt::createMainActions()
@@ -207,6 +209,12 @@ void nutshellqt::createEditorActions()
     redoAct = new QAction(QIcon(":/resources/editRedo.png"), tr("&Redo edit"), this);
     redoAct->setShortcuts(QKeySequence::Redo);
     redoAct->setStatusTip(tr("Redo"));
+
+    wheelAct = new QAction(this);
+
+    deleteLineAct = new QAction(QIcon(":/resources/table_delete_row.png"), "&Delete Line", this);
+    deleteLineAct->setShortcut(Qt::CTRL+Qt::Key_D);
+    connect(deleteLineAct, SIGNAL(triggered()), this, SLOT(deleteLine()));
 
     // the rest is done here3
     syntaxAct = new QAction(QIcon(":/resources/syntax.png"), "&Show syntax", this);
@@ -325,7 +333,7 @@ void nutshellqt::createContextMenuActions()
 //---------------------------------------------------------------
 void nutshellqt::setupToolBar()
 {
-   // toolBar->addAction(newDirAct);
+    // toolBar->addAction(newDirAct);
     toolBar->addAction(newfileAct);
     toolBar->addAction(openfileAct);
     toolBar->addAction(savefileAct);
@@ -363,7 +371,7 @@ void nutshellqt::setupToolBar()
     toolBar->addAction(helpNutshellAct);
 
     toolBar->setAllowedAreas(Qt::RightToolBarArea | Qt::TopToolBarArea);
-  //  addToolBar(Qt::RightToolBarArea, toolBar);
+    //  addToolBar(Qt::RightToolBarArea, toolBar);
 
     pcrToolBar = new QToolBar();
     horizontalLayout->insertWidget(0, pcrToolBar);
@@ -379,13 +387,13 @@ void nutshellqt::setupToolBar()
     pcrToolBar->addAction(mapattributeAct );
     pcrToolBar->addAction(mapnewAct       );
     pcrToolBar->addAction(mapeditAct      );
-   // pcrToolBar->addAction(mapDisplayAct   );
+    // pcrToolBar->addAction(mapDisplayAct   );
 
-//    dirToolBar = new QToolBar();
-//    verticalLayout_6->insertWidget(0, dirToolBar);
-//    dirToolBar->setIconSize(QSize(16,16));
-//    dirToolBar->addAction(prevDirAct   );
-//    dirToolBar->addAction(nextDirAct     );
+    //    dirToolBar = new QToolBar();
+    //    verticalLayout_6->insertWidget(0, dirToolBar);
+    //    dirToolBar->setIconSize(QSize(16,16));
+    //    dirToolBar->addAction(prevDirAct   );
+    //    dirToolBar->addAction(nextDirAct     );
 }
 //---------------------------------------------------------------
 void nutshellqt::setupMenu( )
@@ -416,6 +424,8 @@ void nutshellqt::setupMenu( )
     editMenu->addAction(cutAct);
     editMenu->addAction(copyAct);
     editMenu->addAction(pasteAct);
+    editMenu->addAction(wheelAct);
+
     editMenu->addSeparator ();
 
     findMenu = menuBar()->addMenu(tr("&Find"));
@@ -435,6 +445,8 @@ void nutshellqt::setupMenu( )
     formatMenu->addAction(increaseIndentAct);
     formatMenu->addAction(toggleHashAct);
     formatMenu->addAction(toggleReportAct);
+    formatMenu->addAction(deleteLineAct);
+
 
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(helpAct);
@@ -448,10 +460,16 @@ void nutshellqt::removeWorkdirectory()
 {
     int place = comboBox_workdir->findText(currentPath);
     comboBox_workdir->removeItem(place);
-    if (place > comboBox_workdir->count()-1)
-        comboBox_workdir->setCurrentIndex(place-1);
-    else
-        comboBox_workdir->setCurrentIndex(place);
+    if (currentPath == "")
+    {
+        currentPath = "C:/";
+        //setWorkdirectory();
+    }
+    //    comboBox_workdir->setCurrentIndex(0);
+    //    if (place > comboBox_workdir->count()-1)
+    //        comboBox_workdir->setCurrentIndex(place-1);
+    //    else
+    //        comboBox_workdir->setCurrentIndex(place);
 }
 //---------------------------------------------------------------
 void nutshellqt::setWorkdirectory()
@@ -469,9 +487,9 @@ void nutshellqt::setWorkdirectory()
 //---------------------------------------------------------------
 void nutshellqt::returnToWorkdirectory()
 {
-   //comboBox_workdir->setCurrentIndex(0);
-   setWorkdirectoryNr(0);
-//    setRootIndex(dirModel->index(currentPath));
+    //comboBox_workdir->setCurrentIndex(0);
+    setWorkdirectoryNr(0);
+    //    setRootIndex(dirModel->index(currentPath));
 }
 //---------------------------------------------------------------
 void nutshellqt::setWorkdirectoryNr(int index)
@@ -561,7 +579,8 @@ void nutshellqt::getNutshellIni()
     QStringList dirs;
     for (int i = 0; i < keys.count(); i++)
     {
-        QString str = settings.value(keys[i]).toString();
+        QString str = settings.value(keys[i]).toString().simplified();
+
         if (!str.isEmpty())
         {
             if(str.contains("<"))
@@ -569,6 +588,9 @@ void nutshellqt::getNutshellIni()
                 str.remove(str.size()-1,1);
                 currentworkdir = i;
             }
+            //            if (str.simplified() == "")
+            //                currentworkdir = 0;
+            //            else
             dirs << str;
         }
     }
@@ -649,7 +671,7 @@ void nutshellqt::getRegPCRaster()
     PCRasterAppDirName = PCRasterDirName + "apps" + cs;
     PCRasterDocDirName = PCRasterDirName + "doc" + cs + "pcrman" + cs;
     AguilaDirName = PCRasterAppDirName;
-    MapeditDirName = PCRasterAppDirName;
+    MapeditDirName = PCRasterAppDirName + "nutshell" + cs;
 }
 //---------------------------------------------------------------
 void nutshellqt::getDirectories()

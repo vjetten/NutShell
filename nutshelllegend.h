@@ -8,30 +8,30 @@
 
 class nutshellLegend : public QDialog, private Ui::nutshellLegend
 {
-	Q_OBJECT
-
-	QStandardItemModel *legendmodel;
+    Q_OBJECT
 
 public:
-	explicit nutshellLegend(QWidget *parent = 0);
-	~nutshellLegend();
+    explicit nutshellLegend(QWidget *parent = 0);
+    ~nutshellLegend();
 
-   int sizel;
-  	CSF_LEGEND *theLegend;
-	QString filename;
-	QList<long> list;
-	int prevrowcount;
+    QStandardItemModel *legendmodel;
+    int sizel;
+    //CSF_LEGEND *theLegend;
+    QString filename;
+    QList<long> list;
+    int prevrowcount;
 
-	void makelegend(QString name);
-	int CountClasses(MAP *legendmap);
-	void closeEvent(QCloseEvent *event);
+    void makelegend(QString name);
+    int CountClasses(MAP *legendmap);
+    void closeEvent(QCloseEvent *event);
+    void hideEvent(QHideEvent *event);
 
 public slots:
-	void AddNumbers();
-	void RemoveNumbers();
-	void ClearAll();
-	void Accept();
-	void Cancel();
+    void AddNumbers();
+    void RemoveNumbers();
+    void ClearAll();
+    void Accept();
+//	void Cancel();
 };
 
 #endif // NUTSHELLLEGEND_H

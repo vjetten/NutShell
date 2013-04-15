@@ -57,6 +57,19 @@ Highlighter::Highlighter(QTextDocument *parent)
    }
    keywordFormat.clearBackground();
 
+   keywordFormat.setForeground(QColor(80,130,190,255));
+   keywordFormat.setFontWeight(QFont::Bold);
+   QStringList loopPatterns;
+   loopPatterns  << "\\brepeat\\b"
+                    << "\\buntil\\b";
+   foreach (const QString &pattern, loopPatterns) {
+      rule.pattern = QRegExp(pattern);
+      rule.format = keywordFormat;
+      highlightingRules.append(rule);
+   }
+   keywordFormat.clearBackground();
+
+
    // all pcrcalc functions
    //keywordFormat.setForeground(Qt::darkBlue);
    //keywordFormat.setFontWeight(QFont::Black);
@@ -184,6 +197,7 @@ Highlighter::Highlighter(QTextDocument *parent)
                        "\\bplancurv+\\s*(?=\\()"<<
                        "\\bpred+\\s*(?=\\()"<<
                        "\\bprofcurv+\\s*(?=\\()"<<
+                       //"\\brepeat+\\s*(?=\\()"<<
                        "\\brounddown+\\s*(?=\\()"<<
                        "\\broundoff+\\s*(?=\\()"<<
                        "\\broundup+\\s*(?=\\()"<<
@@ -218,6 +232,7 @@ Highlighter::Highlighter(QTextDocument *parent)
                        "\\btimeslice+\\s*(?=\\()"<<
                        "\\buniform+\\s*(?=\\()"<<
                        "\\buniqueid+\\s*(?=\\()"<<
+                       //"\\buntil+\\s*(?=\\()"<<
                        "\\bupstream+\\s*(?=\\()"<<
                        "\\bview+\\s*(?=\\()"<<
                        "\\bwindow4total+\\s*(?=\\()"<<

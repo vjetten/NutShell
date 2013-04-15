@@ -5,12 +5,13 @@
 #-------------------------------------------------
 
 QT       += core gui
+#QTDIR = C:/Qt/5.0.1/5.0.1/msvc2010
 TARGET = nutshell
 TEMPLATE = app
 CONFIG += exceptions
 SOURCES += main.cpp\
-	nutshellqt.cpp \
-	nutshellExplorer.cpp \
+        nutshellqt.cpp \
+        nutshellExplorer.cpp \
     nutshellAction.cpp \
     nutshelllegend.cpp \
     nutshellmapattribute.cpp \
@@ -30,7 +31,7 @@ HEADERS  += nutshellqt.h \
     csfattr.h \
     csfimpl.h \
     csftypes.h \
-	 csf.h \
+         csf.h \
     nutshelllegend.h \
     nutshellmapattribute.h \
     nutshelleditor.h \
@@ -42,31 +43,31 @@ HEADERS  += nutshellqt.h \
     CsfMap.h
 FORMS    += nutshellqt.ui \
     nutshelllegend.ui \
-    nutshellmapattribute.ui \    
+    nutshellmapattribute.ui \
     nutshelloptions.ui \
     findreplaceform.ui
-    # nutshellhelp.ui
+INCLUDEPATH+=$${QTDIR}/lib
 CONFIG(debug, debug|release) {
   # debug build
   win32:win32-msvc2010{
-                 # compile release with MSVC 2010
+   # compile release with MSVC 2010
     DEFINES += _CRT_SECURE_NO_WARNINGS
-    LIBS += -L"debug/vc" -L"D:/prgc/libcsf/debug" -lcsfvcd
+    LIBS += -L"debug/vc"  -L"debug/vc/static" -lcsfvcd
     DESTDIR = debug/vc
   } else {
     LIBS += -L"debug" -llibcsfd
     DESTDIR = debug
   }
-	 MOC_DIR = debug/moc
-    OBJECTS_DIR= debug/objs
-	 UI_DIR= debug/ui
-    RCC_DIR= debug/rcc
+  MOC_DIR = debug/moc
+  OBJECTS_DIR= debug/objs
+  UI_DIR= debug/ui
+  RCC_DIR= debug/rcc
 } else {
   # release build
   win32:win32-msvc2010{
                  # compile release with MSVC 2010
     DEFINES += _CRT_SECURE_NO_WARNINGS
-    LIBS += -L"release/vc" -L"D:/prgc/libcsf/bin" -lcsfvc
+    LIBS += -L"release/vc" -L"release/vc/static" -lcsfvc
     DESTDIR = release/vc
   } else {
                  # compile with mingw

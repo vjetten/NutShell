@@ -4,9 +4,7 @@
 //---------------------------------------------------------------
 
 #include <QtGui>
-//#include <QMainWindow>
-//#include <QtGlobal>
-#include <QStyledItemDelegate>
+//#include <QStyledItemDelegate>
 
 #include "csf.h"
 #include "ui_nutshellqt.h"
@@ -162,7 +160,7 @@ public:
     void setupCommandwindow();
     void setNutshellIni();
     void getNutshellIni();
-    void getRegPCRaster();    
+    void getRegPCRaster();
 
     QList<editortabs> ET;
 
@@ -242,10 +240,10 @@ public:
     int _filternr;
 
     QString getFileListString();
-    QString GetMapSeries();
+    QString getMapSeries();
     QString StripForNumber(QString S);
     QString StripForName(QString S);
-    bool getScriptReport();
+    bool getScriptReport(bool addBinding);
     QStringList getReportFilter();
     int getTimesteps();
     QTime time_ms;
@@ -255,6 +253,7 @@ public:
     bool isTSSfile(QString name);
     bool isExtentionInt(QString name);
     void scriptFold(int section);
+    bool changeName;
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
@@ -278,6 +277,7 @@ public slots:
     void clearCommandList();
     void copyCommandList();
     void outputCommand();
+    void errorCommand();
     void setCursorLast();
 
     //=====================
@@ -312,8 +312,8 @@ public slots:
     void displayVar();
     void getDirectories();
     void clearNutshellIni();
-    void findScriptReport();
-
+   // void findScriptReport();
+    void deleteLine();
 
     //====================
     //slots for explorer
@@ -398,6 +398,8 @@ private:
     QAction *pasteAct;
     QAction *undoAct;
     QAction *redoAct;
+    QAction *wheelAct;
+
     QAction *clearOptionsAct;
     QAction *optionsAct;
     QAction *cutFileAct;
@@ -426,6 +428,7 @@ private:
     QAction *fontDecreaseAct;
     QAction *decreaseIndentAct;
     QAction *increaseIndentAct;
+    QAction *deleteLineAct;
     QAction *toggleHashAct;
     QAction *toggleReportAct;
     QAction *displayvarAct;
@@ -448,6 +451,7 @@ private:
     QStack<QString> future;
 
     QProcess *PCRProcess;
+    bool processError;
     QProcess *calcProcess;
 
 };

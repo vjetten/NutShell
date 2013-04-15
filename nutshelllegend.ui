@@ -99,16 +99,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_accept">
-       <property name="text">
-        <string>Accept</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_cancel">
-       <property name="text">
-        <string>Cancel</string>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
        </property>
       </widget>
      </item>

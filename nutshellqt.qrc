@@ -89,5 +89,6 @@
         <file>resources/allreport1.png</file>
         <file>resources/nutshellhelp.png</file>
         <file>resources/helpnutshell.png</file>
+        <file>resources/table_delete_row.png</file>
     </qresource>
 </RCC>
