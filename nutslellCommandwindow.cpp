@@ -106,8 +106,9 @@ void nutshellqt::parseCommand()
         {
             args.removeAt(0);
             PCRProcess->start(prog, args);
-            PCRProcess->waitForReadyRead(10000);
-            commandWindow->appendPlainText("");
+       //     PCRProcess->waitForReadyRead(10000);
+            PCRProcess->waitForFinished(120000);
+          //  commandWindow->appendPlainText("");
         }
     setCursorLast();
     if (!processError)

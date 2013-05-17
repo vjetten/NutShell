@@ -57,8 +57,8 @@ nutshellqt::nutshellqt(QWidget *parent) :
     //       toolButton_dirprev->setVisible(false);
     //       toolButton_dirnew->setVisible(false);
 
-    dirModel->setRootPath(QDir(currentPath).rootPath());
-    setRootIndex(dirModel->index(currentPath));
+    _dirModel->setRootPath(QDir(currentPath).rootPath());
+    setRootIndex(_dirModel->index(currentPath));
     //    fileModel->setRootPath(QDir(currentPath).rootPath());
     //    setRootIndex(fileModel->index(currentPath));
 
@@ -458,18 +458,12 @@ void nutshellqt::setupMenu( )
 //---------------------------------------------------------------
 void nutshellqt::removeWorkdirectory()
 {
-    int place = comboBox_workdir->findText(currentPath);
-    comboBox_workdir->removeItem(place);
-    if (currentPath == "")
-    {
-        currentPath = "C:/";
-        //setWorkdirectory();
-    }
-    //    comboBox_workdir->setCurrentIndex(0);
-    //    if (place > comboBox_workdir->count()-1)
-    //        comboBox_workdir->setCurrentIndex(place-1);
-    //    else
-    //        comboBox_workdir->setCurrentIndex(place);
+//    int place = comboBox_workdir->findText(currentPath);
+    comboBox_workdir->removeItem(comboBox_workdir->currentIndex());
+//    if (currentPath == "")
+//    {
+//        currentPath = "C:/";
+//    }
 }
 //---------------------------------------------------------------
 void nutshellqt::setWorkdirectory()
@@ -497,7 +491,7 @@ void nutshellqt::setWorkdirectoryNr(int index)
     QDir dir;
     currentPath = comboBox_workdir->currentText();
     // set current working path
-    setRootIndex(dirModel->index(currentPath));
+    setRootIndex(_dirModel->index(currentPath));
     // set the explorer to this path
     dir.setCurrent(currentPath);
     // set the path in the operating system

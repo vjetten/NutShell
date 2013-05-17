@@ -194,7 +194,6 @@ public:
     QTextCursor calcCursor;
     int cursorPosition;
 
-
     //========================
     //Vars for pcrcalc process
     //========================
@@ -259,6 +258,8 @@ protected:
     bool eventFilter(QObject *obj, QEvent *event);
 
 public slots:
+    //void doSomething(QProcess::ProcessState hoi);
+
 
     //=========================
     //slots to run model script
@@ -441,10 +442,11 @@ private:
     QAction *helpNutshellAct;
 
     // explorer variables
-    QFileSystemModel *dirModel;
+    QFileSystemModel *_dirModel;
     QFileSystemModel* fileModel;
     QItemSelectionModel *selectionModel;
     QItemSelectionModel *selectionDirModel;
+    QSortFilterProxyModel* dirModel;
 
     QString currentPath;
     QStack<QString> history;

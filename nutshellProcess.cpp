@@ -35,6 +35,8 @@ void nutshellqt::setupModel()
    connect(calcProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderr()) );
    connect(calcProcess, SIGNAL(finished(int)),this, SLOT(finishedModel(int)) );
    //connect(PCRProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderr()) );
+   //connect(PCRProcess, SIGNAL(stateChanged(QProcess::ProcessState)),this, SLOT(doSomething(QProcess::ProcessState)) );
+
    useOldCalc = false;
 
    connect(toolButton_oldcalc, SIGNAL(toggled(bool)), this, SLOT(toggleOldcalc(bool)));

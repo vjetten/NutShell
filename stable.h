@@ -12,10 +12,5 @@
 
 #include <qfile.h>
 #include <qdir.h>
-#include "nutshellmapattribute.h"
-#include "nutshelllegend.h"
-#include "nutshellhighlighter.h"
-#include "nutshelleditor.h"
-#include "findreplaceform.h"
 #endif
 #endif // STABLE_H

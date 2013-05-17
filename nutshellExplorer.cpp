@@ -39,10 +39,10 @@ void nutshellqt::setupExplorer()
     _filternr = 0;
     // predefined filters to show PCRaster relevant files
 
-    dirModel = new QFileSystemModel(this);
-    dirModel->setReadOnly(false); //true
-    dirModel->setFilter ( QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Drives );
-    dirModel->setNameFilterDisables(false);
+    _dirModel = new QFileSystemModel(this);
+    _dirModel->setReadOnly(false); //true
+    _dirModel->setFilter ( QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Drives );
+    _dirModel->setNameFilterDisables(false);
     // directory tree view model, show only dirs
 
     fileModel = new QFileSystemModel(this);
@@ -54,7 +54,11 @@ void nutshellqt::setupExplorer()
     treeView = new myTreeView();
     verticalLayout_tree->insertWidget(0, treeView);
 
-    treeView->setModel(dirModel);
+    //    dirModel = new QSortFilterProxyModel(treeView);
+    //    dirModel->setSourceModel(_dirModel);
+    //    treeView->setModel(dirModel);
+
+    treeView->setModel(_dirModel);
     treeView->header()->setStretchLastSection(true);
     treeView->header()->setResizeMode(QHeaderView::ResizeToContents);
     treeView->setUniformRowHeights(true);
@@ -65,9 +69,10 @@ void nutshellqt::setupExplorer()
 
     treeView->setIndentation(10);
     treeView->setHeaderHidden(false);
-    treeView->hideColumn(1);
+    //treeView->hideColumn(1);
     treeView->setSortingEnabled(true);
-    treeView->sortByColumn(1, Qt::AscendingOrder);
+    //treeView->sortByColumn(0, Qt::AscendingOrder);
+
     treeView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(treeView,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(contextualMenu(const QPoint &)));
 
@@ -100,7 +105,7 @@ void nutshellqt::setupExplorer()
 
     selectionModel = new QItemSelectionModel(fileModel);
     fileView->setSelectionModel(selectionModel);
-    selectionDirModel = new QItemSelectionModel(dirModel);
+    selectionDirModel = new QItemSelectionModel(_dirModel);
     treeView->setSelectionModel(selectionDirModel);
     treeView->setEditTriggers(QAbstractItemView::NoEditTriggers | QAbstractItemView::EditKeyPressed);
     connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(setRootIndex(QModelIndex)));
@@ -108,14 +113,11 @@ void nutshellqt::setupExplorer()
     // double clicked activate pcraster stuff
 
     // OBSOLETE:
-    //connect(toolButton_dirprev, SIGNAL(clicked()), this, SLOT(goBack()));
-    //connect(toolButton_dirnext, SIGNAL(clicked()), this, SLOT(goForward()));
+    connect(toolButton_dirprev, SIGNAL(clicked()), this, SLOT(goBack()));
+    connect(toolButton_dirnext, SIGNAL(clicked()), this, SLOT(goForward()));
     //    connect(toolButton_dirup, SIGNAL(clicked()), this, SLOT(goUp()));
     //    connect(toolButton_dirnew, SIGNAL(clicked()), this, SLOT(newDirectory()));
     //    connect(toolButton_dirRemove, SIGNAL(clicked()), this, SLOT(removeDirectory()));
-    remember = true;
-    history.clear();
-    future.clear();
 
     // vertical tool buttons to show selections of files
     connect(toolButton_showAll, SIGNAL(clicked()), this, SLOT(showAll()));
@@ -147,6 +149,9 @@ void nutshellqt::setupExplorer()
     // so we use a character like ! to split and create the separate arguments
 
     ismapseries = true;
+    history.clear();
+    future.clear();
+
 }
 //---------------------------------------------------------------
 void nutshellqt::contextualMenu(const QPoint& point)
@@ -214,7 +219,9 @@ void nutshellqt::setRootIndex(const QModelIndex& index)
     //      dir = dir.parent();
     //   currentPath = fileModel->filePath(dir);
 
-    currentPath = dirModel->filePath(index);
+    QString oldpath = currentPath;
+
+    currentPath = _dirModel->filePath(index);
     // set the current path
     treeView->setCurrentIndex(index);
     // set the treeview to the current index
@@ -226,6 +233,14 @@ void nutshellqt::setRootIndex(const QModelIndex& index)
 
     changeFileFilter(_filternr);
     // to update getMapSeries when changing dir with mouseclick
+    if(oldpath != currentPath)
+    {
+        future.clear();
+        history.push(currentPath);
+    }
+
+    toolButton_dirprev->setEnabled(!history.isEmpty());
+    toolButton_dirnext->setEnabled(!future.isEmpty());
 
     QApplication::restoreOverrideCursor();
 }
@@ -641,22 +656,23 @@ void nutshellqt::pasteFile()
 void nutshellqt::newDirectory()
 {
     QString path;// = currentPath + QDir::separator() + "New folder";
-    QModelIndex index = dirModel->index(currentPath);
+    QModelIndex index = _dirModel->index(currentPath);
     treeView->expand(index);
 
     int i = 1;
-    while (dirModel->fileInfo(index).exists())
+    while (_dirModel->fileInfo(index).exists())
     {
         if (i == 1)
             path = "New folder";
         else
             path = QString("New folder(%2)").arg(i);
-        index = dirModel->index(currentPath + QDir::separator() + path);
+        index = _dirModel->index(currentPath + QDir::separator() + path);
         i++;
     }
 
-    index = dirModel->index(currentPath);
-    dirModel->mkdir(index,QDir(path).dirName());
+    index = _dirModel->index(currentPath);
+    _dirModel->mkdir(index,QDir(path).dirName());
+    treeView->setModel(dirModel);
     setRootIndex(index);
 
 }
@@ -691,7 +707,7 @@ bool nutshellqt::removeDirectory(const QString &dirName)
 bool nutshellqt::deleteDirectory()
 {
     QModelIndex index = selectionDirModel->currentIndex();
-    QString dirName = dirModel->fileInfo(index).absoluteFilePath();
+    QString dirName = _dirModel->fileInfo(index).absoluteFilePath();
 
     QMessageBox::StandardButton reply = WarningMsg(QString("Delete directory and all its contents: %1\n Continue?").arg(dirName));
     if (reply == QMessageBox::No)
@@ -703,8 +719,8 @@ bool nutshellqt::deleteDirectory()
             setRootIndex(index.parent());
         else
             setRootIndex(treeView->indexAbove(index));
-        currentPath = dirModel->fileInfo(treeView->indexAbove(index)).absoluteFilePath();
-        setRootIndex(dirModel->index(currentPath));
+        currentPath = _dirModel->fileInfo(treeView->indexAbove(index)).absoluteFilePath();
+        setRootIndex(_dirModel->index(currentPath));
         return true;
     }
     else
@@ -716,22 +732,24 @@ bool nutshellqt::deleteDirectory()
     return false;
 }
 //---------------------------------------------------------------
-//OBSOLETE
 void nutshellqt::goBack()
 {
     future.push(currentPath);
     currentPath = history.pop();
-    remember = false;
-    setRootIndex(dirModel->index(currentPath));
+    setRootIndex(_dirModel->index(currentPath));
+    int place = comboBox_workdir->findText(currentPath);
+    if(place > -1)
+        comboBox_workdir->setCurrentIndex(place);
 }
 //---------------------------------------------------------------
-//OBSOLETE
 void nutshellqt::goForward()
 {
     history.push(currentPath);
     currentPath = future.pop();
-    remember = false;
-    setRootIndex(dirModel->index(currentPath));
+    setRootIndex(_dirModel->index(currentPath));
+    int place = comboBox_workdir->findText(currentPath);
+    if(place > -1)
+        comboBox_workdir->setCurrentIndex(place);
 }
 //---------------------------------------------------------------
 //OBSOLETE
@@ -739,7 +757,7 @@ void nutshellqt::goUp()
 {
     history.push(currentPath);
     remember = true;
-    QModelIndex  index = dirModel->index(currentPath).parent();
+    QModelIndex  index = _dirModel->index(currentPath).parent();
     if (index.column() >= 0 && index.row() >= 0)
         setRootIndex(index);
 }
@@ -748,6 +766,6 @@ void nutshellqt::goUp()
 void nutshellqt::goHome()
 {
     remember = true;
-    setRootIndex(dirModel->index(QDir::homePath()));
+    setRootIndex(_dirModel->index(QDir::homePath()));
 }
 //---------------------------------------------------------------
