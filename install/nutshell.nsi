@@ -10,8 +10,8 @@
 ;--------------------------------
 ;General
 
-   !define VERSION "4.5"
-   !define DATE "[130310]"
+   !define VERSION "4.81"
+   !define DATE "[131206]"
 
   ;Name and file
   Name "NutShell  ${VERSION} for PCRaster"

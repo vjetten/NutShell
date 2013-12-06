@@ -284,7 +284,8 @@ public slots:
     //=====================
     //slots for main/editor
     //=====================
-    void makeNewFile();
+    void makeNewFile(bool script =  false);
+    void makeNewScriptFile();
     void closeFile();
     void closeTab(int index);
     void openFile();
@@ -382,6 +383,7 @@ private:
     QAction *prevDirAct;
 
     QAction *newfileAct;
+    QAction *newfileScriptAct;
     QAction *closefileAct;
     QAction *openfileAct;
     QAction *savefileAct;

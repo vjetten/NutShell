@@ -30,7 +30,7 @@ void nutshellqt::setupExplorer()
     // MVED TO SETUP COMMANDWINDOW
 
     baseFilters.clear();
-    baseFilters << QString("*.mod;*.map;*.csf;*.tbl;*.tss;*.txt;*.dat;*.csv;*.pcr");
+    baseFilters << QString("*.mod;*.map;*.csf;*.tbl;*.tss;*.txt;*.dat;*.csv;*.pcr;*.cmd;*.bat");
     baseFilters << QString("*.map");
     baseFilters << QString("*.tss;*.tbl;*.txt;*.dat;*.csv;*.xls");
     baseFilters << QString("*.mod");
@@ -79,19 +79,21 @@ void nutshellqt::setupExplorer()
     fileView->setModel(fileModel);
     fileView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     fileView->setSelectionBehavior(QAbstractItemView::SelectRows);
+
     fileView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
-    // fileView->horizontalHeader()->setDefaultSectionSize(112);
-    //fileView->horizontalHeader()->setStretchLastSection(true);
+    fileView->horizontalHeader()->setStretchLastSection(true);
+    fileView->horizontalHeader()->setMovable(true);
+
     fileView->resizeColumnToContents(0);
     fileView->verticalHeader()->hide();
     fileView->setShowGrid(false);
     fileView->setSortingEnabled(true);
-    fileView->sortByColumn(0, Qt::AscendingOrder);
     fileView->setWordWrap(false);
     fileView->setColumnWidth (0, 156);
-    fileView->setColumnWidth (1, 72);
-    fileView->setColumnWidth (2, 72);
-    fileView->setColumnWidth (3, 128);
+    fileView->setColumnWidth (1, 64);
+    fileView->setColumnWidth (2, 64);
+//    fileView->setColumnWidth (3, 128);
+    fileView->sortByColumn(0, Qt::AscendingOrder);
     //fileView->setIconSize(QSize(0,0));
     fileView->verticalHeader()->setDefaultSectionSize(16);
     fileView->setDragEnabled(true);
@@ -241,6 +243,10 @@ void nutshellqt::setRootIndex(const QModelIndex& index)
 
     toolButton_dirprev->setEnabled(!history.isEmpty());
     toolButton_dirnext->setEnabled(!future.isEmpty());
+
+//    fileView->resizeColumnToContents(0);
+//    fileView->sortByColumn(3, Qt::AscendingOrder);
+//    fileView->sortByColumn(0, Qt::AscendingOrder);
 
     QApplication::restoreOverrideCursor();
 }
@@ -672,7 +678,7 @@ void nutshellqt::newDirectory()
 
     index = _dirModel->index(currentPath);
     _dirModel->mkdir(index,QDir(path).dirName());
-    treeView->setModel(dirModel);
+    treeView->setModel(_dirModel);
     setRootIndex(index);
 
 }

@@ -27,7 +27,12 @@ void nutshellqt::setupEditor()
 
 }
 //---------------------------------------------------------------
-void nutshellqt::makeNewFile()
+void nutshellqt::makeNewScriptFile()
+{
+    makeNewFile(true);
+}
+//---------------------------------------------------------------
+void nutshellqt::makeNewFile(bool script)
 {
     QWidget *tabWidg = new QWidget;
     QHBoxLayout *tabLayout = new QHBoxLayout;
@@ -65,6 +70,20 @@ void nutshellqt::makeNewFile()
     newedit.editor->fold_initial = false;
     newedit.editor->fold_dynamic = false;
 
+    if (script)
+    {
+        newedit.editor->appendPlainText("############################################");
+        newedit.editor->appendPlainText("# Model:                                   #");
+        newedit.editor->appendPlainText("# Date:                                    #");
+        newedit.editor->appendPlainText("# Version: 1.0                             #");
+        newedit.editor->appendPlainText("# Author:                                  #");
+        newedit.editor->appendPlainText("############################################\n\n");
+        newedit.editor->appendPlainText("binding\n\n");
+        newedit.editor->appendPlainText("areamap\n\n");
+        newedit.editor->appendPlainText("timer\n1 10 1;\n\n");
+        newedit.editor->appendPlainText("initial\n\n");
+        newedit.editor->appendPlainText("dynamic\n\n");
+    }
 
     ET.append(newedit);
     // ET defined as QList<editortabs> ET;
@@ -97,6 +116,12 @@ void nutshellqt::openFile()
 //---------------------------------------------------------------
 bool nutshellqt::saveFile()
 {
+    if (!ETExists)
+    {
+        QMessageBox::StandardButton reply = ErrorMsg(QString("You do not have script a file to save!"));
+        return false;
+    }
+
     if (ETfilePath.isEmpty()) {
         return saveasFile();
     } else {
@@ -108,6 +133,12 @@ bool nutshellqt::saveFile()
 //---------------------------------------------------------------
 bool nutshellqt::saveasFile()
 {
+    if (!ETExists)
+    {
+        QMessageBox::StandardButton reply = ErrorMsg(QString("You do not have script a file to save!"));
+        return false;
+    }
+
     QString fileName = QFileDialog::getSaveFileName(this, QString("Save File As"),ETfileName);
     if (fileName.isEmpty())
         return false;
@@ -624,7 +655,7 @@ void nutshellqt::deleteLine()
 
         cur.removeSelectedText();
 
-       // cur.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
+        // cur.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
     }
 }
 //---------------------------------------------------------------

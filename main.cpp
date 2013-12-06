@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     nutshellqt w;
 
-    w.setWindowTitle("NutShell (version 4.8 [15 May 2013])");
+    w.setWindowTitle("NutShell (version 4.81 [6 Dec 2013])");
     w.showMaximized();
     w.show();
     //a.setStyle("Cleanlooks");

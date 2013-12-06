@@ -90,5 +90,7 @@
         <file>resources/nutshellhelp.png</file>
         <file>resources/helpnutshell.png</file>
         <file>resources/table_delete_row.png</file>
+        <file>resources/add_16.png</file>
+        <file>resources/filenewscript.png</file>
     </qresource>
 </RCC>

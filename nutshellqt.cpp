@@ -136,9 +136,13 @@ void nutshellqt::createMainActions()
     connect(comboBox_workdir, SIGNAL(currentIndexChanged(int)), this, SLOT(setWorkdirectoryNr(int)));
     //	connect(tabWidget, SIGNAL(currentChanged(int)),this, SLOT(changeSyntax(int)));
 
-    newfileAct = new QAction(QIcon(":/resources/filenew.png"), "&New script file...", this);
+    newfileAct = new QAction(QIcon(":/resources/filenew.png"), "&New empty file...", this);
     newfileAct->setShortcuts(QKeySequence::New);
     connect(newfileAct, SIGNAL(triggered()), this, SLOT(makeNewFile()));
+
+    newfileScriptAct = new QAction(QIcon(":/resources/filenewscript.png"), "&New script file...", this);
+    newfileScriptAct->setShortcuts(QKeySequence::New);
+    connect(newfileScriptAct, SIGNAL(triggered()), this, SLOT(makeNewScriptFile()));
 
     openfileAct = new QAction(QIcon(":/resources/fileopen.png"), "&Open script file...", this);
     openfileAct->setShortcuts(QKeySequence::Open);
@@ -278,37 +282,36 @@ void nutshellqt::createExplorerActions()
 {
     // explorer actions on toolbar
 
-    aguilaplusAct   = new QAction(QIcon(":/resources/plus-button.png"), "", this);
+    aguilaplusAct   = new QAction(QIcon(":/resources/add_16.png"), "Aguila +: show maps stacked or in seperate windows", this);
     aguilaplusAct->setCheckable (true);
     aguilaplusAct->setChecked(true);
-    aguilaplusAct->setToolTip ("Show maps on top of each other or in parallel windows");
     connect(aguilaplusAct,   SIGNAL(toggled(bool)), this, SLOT(actionplusaguila(bool)));
 
-    aguila2DAct = new QAction(QIcon(":/resources/aguila2d.png"), "", this);
+    aguila2DAct = new QAction(QIcon(":/resources/aguila2d.png"), "Aguila 2D", this);
     connect(aguila2DAct,     SIGNAL(triggered()), this, SLOT(actionaguila2D()));
 
-    aguila3DAct = new QAction(QIcon(":/resources/aguila.png"), "", this);
+    aguila3DAct = new QAction(QIcon(":/resources/aguila.png"), "Aguila 3D single map", this);
     connect(aguila3DAct,     SIGNAL(triggered()), this, SLOT(actionaquila3D()));
 
-    aguila3DrapeAct = new QAction(QIcon(":/resources/aguila3d.png"), "", this);
+    aguila3DrapeAct = new QAction(QIcon(":/resources/aguila3d.png"), "Aguila 3D stacked maps", this);
     connect(aguila3DrapeAct, SIGNAL(triggered()), this, SLOT(actionaguila3Drape()));
 
-    aguilaplotAct   = new QAction(QIcon(":/resources/timeplot.png"), "", this);
+    aguilaplotAct   = new QAction(QIcon(":/resources/timeplot.png"), "Aguila timeplot", this);
     connect(aguilaplotAct,   SIGNAL(triggered()), this, SLOT(actionaguilaplot()));
 
-    legendAct   = new QAction(QIcon(":/resources/maplegend1.png"), "", this);
+    legendAct   = new QAction(QIcon(":/resources/maplegend1.png"), "CLassified map legend", this);
     connect(legendAct,       SIGNAL(triggered()), this, SLOT(actionlegend()));
 
-    editorAct   = new QAction(QIcon(":/resources/editmodel.png"), "", this);
+    editorAct   = new QAction(QIcon(":/resources/editmodel.png"), "Script editor", this);
     connect(editorAct,       SIGNAL(triggered()), this, SLOT(actioneditor()));
 
-    mapattributeAct = new QAction(QIcon(":/resources/header1.png"), "", this);
+    mapattributeAct = new QAction(QIcon(":/resources/header1.png"), "Look at map attributes", this);
     connect(mapattributeAct, SIGNAL(triggered()), this, SLOT(actionmapattribute()));
 
-    mapnewAct   = new QAction(QIcon(":/resources/mapnew.png"), "", this);
+    mapnewAct   = new QAction(QIcon(":/resources/mapnew.png"), "Make a new empty map", this);
     connect(mapnewAct,       SIGNAL(triggered()), this, SLOT(actionmapnew()));
 
-    mapeditAct  = new QAction(QIcon(":/resources/mapedit.png"), "", this);
+    mapeditAct  = new QAction(QIcon(":/resources/mapedit.png"), "Map edit", this);
     connect(mapeditAct,      SIGNAL(triggered()), this, SLOT(actionmapedit()));
 
     mapDisplayAct  = new QAction(QIcon(":/resources/aguila2d.png"), "", this);
@@ -335,6 +338,7 @@ void nutshellqt::setupToolBar()
 {
     // toolBar->addAction(newDirAct);
     toolBar->addAction(newfileAct);
+    toolBar->addAction(newfileScriptAct);
     toolBar->addAction(openfileAct);
     toolBar->addAction(savefileAct);
     toolBar->addAction(saveasfileAct);
@@ -401,6 +405,7 @@ void nutshellqt::setupMenu( )
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(newDirAct);
     fileMenu->addAction(newfileAct);
+    fileMenu->addAction(newfileScriptAct);
     fileMenu->addAction(openfileAct);
     fileMenu->addAction(savefileAct);
     fileMenu->addAction(saveasfileAct);
@@ -595,11 +600,11 @@ void nutshellqt::getNutshellIni()
     currentPath = comboBox_workdir->itemText(currentworkdir);
     settings.endGroup();
 
-    settings.beginGroup("layout");
-    splitter->restoreState(settings.value("splitter1").toByteArray());
-    splitter_2->restoreState(settings.value("splitter2").toByteArray());
-    splitter_3->restoreState(settings.value("splitter3").toByteArray());
-    settings.endGroup();
+//    settings.beginGroup("layout");
+//    splitter->restoreState(settings.value("splitter1").toByteArray());
+//    splitter_2->restoreState(settings.value("splitter2").toByteArray());
+//    splitter_3->restoreState(settings.value("splitter3").toByteArray());
+//    settings.endGroup();
 
     settings.beginGroup("models");
     keys = settings.childKeys();
