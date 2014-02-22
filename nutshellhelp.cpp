@@ -5,82 +5,93 @@
 //---------------------------------------------------------------
 void nutshellqt::showNutshellHelp()
 {
-   QDialog *box = new QDialog();
+    QDialog *box = new QDialog();
 
-   QLabel *label = new QLabel();
-   label->setPixmap(QPixmap(":/resources/nutshellhelp.png"));
+    QLabel *label = new QLabel();
+    label->setPixmap(QPixmap(":/resources/nutshellhelp.png"));
 
-   QHBoxLayout *horizontalLayout = new QHBoxLayout(box);
-   horizontalLayout->addWidget(label);
+    QHBoxLayout *horizontalLayout = new QHBoxLayout(box);
+    horizontalLayout->addWidget(label);
 
-   box->show();
+    box->show();
 }
 //---------------------------------------------------------------
 void nutshellqt::showHelp()
 {
-   QDesktopServices::openUrl(QUrl("file:///"+PCRasterDocDirName + "index.html"));
+    if (QFileInfo(PCRasterDocDirName+"index.html").exists())
+        QDesktopServices::openUrl(QUrl("file:///"+PCRasterDocDirName + "index.html"));
+    else
+        showWebHelp();
 }
 //---------------------------------------------------------------
 void nutshellqt::showWebHelp()
 {
-   QDesktopServices::openUrl(QUrl("http://pcraster.geo.uu.nl/documentation/PCRaster/html/index.html"));
+    QDesktopServices::openUrl(QUrl("http://pcraster.geo.uu.nl/documentation/PCRaster/html/index.html"));
 }
 //---------------------------------------------------------------
 void nutshellqt::showAguilaHelp()
 {
-   QDesktopServices::openUrl(QUrl("http://pcraster.geo.uu.nl/documentation/Aguila/Aguila.pdf"));
+    QDesktopServices::openUrl(QUrl("http://pcraster.geo.uu.nl/documentation/Aguila/Aguila.pdf"));
 }
 //---------------------------------------------------------------
 void nutshellqt::showHelpOperation()
 {
-   if (!ETExists)
-      return;
+    if (!ETExists)
+        return;
 
-   QString helptxt = ETEditor->textCursor().selectedText();
-   QString URL = "http://pcraster.geo.uu.nl/documentation/PCRaster/html/";
-   QString found = "";
+    QString helptxt = ETEditor->textCursor().selectedText();
+    QString URL;
 
-   if (helptxt.contains("$"))
-      found = QString("secpcrcalcscriptfeatures.html#substitution-of-arguments");
-   else
-      if (helptxt.contains("--"))
-         found = QString("secimport.html#overview-of-global-options");
-      else
-         if (helptxt.contains("#!"))
-            found = QString("secimport.html#global-options");
-         else
-            if (helptxt.toUpper() == "BINDING" ||
-                helptxt.toUpper() == "INITIAL" ||
-                helptxt.toUpper() == "TIMER" ||
-                helptxt.toUpper() == "AREAMAP" ||
-                helptxt.toUpper() == "DYNAMIC")
-               found = QString("secdyn.html#%1-section").arg(helptxt);
+    URL = "file:///"+PCRasterDocDirName;
+    if (!QFileInfo(PCRasterDocDirName+"index.html").exists())
+        URL = "http://pcraster.geo.uu.nl/documentation/PCRaster/html/";
+
+    QString found = "";
+
+    if (helptxt.contains("$"))
+        found = QString("secpcrcalcscriptfeatures.html#substitution-of-arguments");
+    else
+        if (helptxt.contains("report"))
+            found = QString("secpcrcalcscriptfeatures.html#index-3");
+        else
+            if (helptxt.contains("--"))
+                found = QString("secimport.html#overview-of-global-options");
             else
-            {
-               if (helptxt.contains("lookup"))
-                  helptxt = "lookup";
-               // lookupscalar and so on
-               if (helptxt.contains("timeinput") && helptxt != "timeinput")
-                  helptxt = "timeinput...";
-               // timeinputscalar and so on, but not timrinput itself
-               found = QString("op_%1.html").arg(helptxt);
-               // all the rest
-            }
-   QDesktopServices::openUrl(QUrl(URL+found));
+                if (helptxt.contains("#!"))
+                    found = QString("secimport.html#global-options");
+                else
+                    if (helptxt.toUpper() == "BINDING" ||
+                            helptxt.toUpper() == "INITIAL" ||
+                            helptxt.toUpper() == "TIMER" ||
+                            helptxt.toUpper() == "AREAMAP" ||
+                            helptxt.toUpper() == "DYNAMIC")
+                        found = QString("secdyn.html#%1-section").arg(helptxt);
+                    else
+                    {
+                        if (helptxt.contains("lookup"))
+                            helptxt = "lookup";
+                        // lookupscalar and so on
+                        if (helptxt.contains("timeinput") && helptxt != "timeinput")
+                            helptxt = "timeinput...";
+                        // timeinputscalar and so on, but not timrinput itself
+                        found = QString("op_%1.html").arg(helptxt);
+                        // all the rest
+                    }
+    QDesktopServices::openUrl(QUrl(URL+found));
 
-   //help.helpurl = "";
-   //   help.findOperation(cur.selectedText());
-   //   if (!help.helpurl.isEmpty())
-   //      QDesktopServices::openUrl(QUrl("file:///"+PCRasterDocDirName + help.helpurl));
-   //   else
-   //      STATUS("No help found.");
-   //	if (!help.helpurl.isEmpty())
-   //	{
-   //		help.show();
-   //		help.helpView->load(QUrl("file:///"+PCRasterDocDirName + help.helpurl));
-   //	}
-   //	else
-   //		STATUS("No help found.");
+    //help.helpurl = "";
+    //   help.findOperation(cur.selectedText());
+    //   if (!help.helpurl.isEmpty())
+    //      QDesktopServices::openUrl(QUrl("file:///"+PCRasterDocDirName + help.helpurl));
+    //   else
+    //      STATUS("No help found.");
+    //	if (!help.helpurl.isEmpty())
+    //	{
+    //		help.show();
+    //		help.helpView->load(QUrl("file:///"+PCRasterDocDirName + help.helpurl));
+    //	}
+    //	else
+    //		STATUS("No help found.");
 
 }
 //---------------------------------------------------------------

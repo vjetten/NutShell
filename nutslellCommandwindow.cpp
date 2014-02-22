@@ -1,8 +1,8 @@
 /*
  * NutshellCommandwindow
- * v 1.x
+
  * functions to deal with commands given in commandwindow and cmd list
- * author: VJ 121012
+ * Author: VJ 140222
  */
 
 
@@ -22,7 +22,7 @@ void nutshellqt::setupCommandwindow()
 
     commandWindow = new nutshelleditor(this, 1);
     commandWindow->document()->setDocumentMargin(2);
-    verticalLayout_4->insertWidget(0, commandWindow);
+    verticalLayoutCmdlist->insertWidget(0, commandWindow);
     commandWindow->installEventFilter(this);
     commandWindow->document()->setDefaultFont(QFont("Consolas", 10));
     //commandWindow->document()->setDefaultFont(QFont("Courier New", 10));

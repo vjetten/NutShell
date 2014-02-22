@@ -1,6 +1,6 @@
 /*
  * csfmap: used in the NutSHhell Explorer
- * v 1.x
+
  * Author: VJ 1210112
  */
 

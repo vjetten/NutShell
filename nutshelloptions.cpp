@@ -40,11 +40,13 @@ void nutshellOptions::findPcrcalcDir()
 {
 	QString dir;
 	QString olddir = lineEdit_pcrcalcDir->text();
-	dir = setExistingDirectory("pcrcalc.exe dir (/PCRaster/apps)",baseDirs[0]);
+    dir = setExistingDirectory("pcrcalc dir",baseDirs[0]);
 	if (!dir.endsWith(QDir::separator()))
 		dir = dir + QDir::separator();
 	if (QFileInfo(dir+"pcrcalc.exe").exists())
+    {
 		lineEdit_pcrcalcDir->setText(dir);
+    }
 	else
 	{
 		lineEdit_pcrcalcDir->setText(olddir);
@@ -56,7 +58,7 @@ void nutshellOptions::findAguilaDir()
 {
 	QString dir;
 	QString olddir = lineEdit_pcrcalcDir->text();
-	dir = setExistingDirectory("Aguila dir",baseDirs[1]);
+    dir = setExistingDirectory("aguila dir",baseDirs[1]);
 	if (!dir.endsWith(QDir::separator()))
 		dir = dir + QDir::separator();
 	if (QFileInfo(dir+"aguila.exe").exists())
@@ -72,7 +74,7 @@ void nutshellOptions::findMapeditDir()
 {
 	QString dir;
 	QString olddir = lineEdit_pcrcalcDir->text();
-	dir = setExistingDirectory("Mapedit dir",baseDirs[2]);
+    dir = setExistingDirectory("mapedit dir",baseDirs[2]);
 	if (!dir.endsWith(QDir::separator()))
 		dir = dir + QDir::separator();
 	if (QFileInfo(dir+"mapedit.exe").exists())

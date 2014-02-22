@@ -1,8 +1,8 @@
 /*
  * NutShelltreeview,
- * v 1.x
+
  * based on Qtreeview but capture dragevent
- * Author: VJ 121012
+ * Author: VJ 140222
  */
 
 

@@ -1,8 +1,9 @@
 /*
  * nutshellqt.cp
- * main functions, key events, init of main app
+ * main functions, actions, key events, init of main app
  * registry and ini files
  *
+ * Author: VJ 140222
  */
 
 #include "nutshellqt.h"
@@ -11,7 +12,7 @@
 nutshellqt::nutshellqt(QWidget *parent) :
     QMainWindow(parent)
 {
-    setupUi(this);
+    setupUi(this);    
 
     getRegPCRaster();
 
@@ -19,7 +20,7 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     setupActions();
 
-    setupToolBar();
+    setupToolBars();
 
     setupMenu();
 
@@ -33,21 +34,14 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     getNutshellIni();
 
-    // setup help html adresses and keywords in StringList
-    // NOT USED, all help is online docs via iexplorer, firefox etc
-    //help.setuphelp(PCRasterDocDirName);
-
-    // initialize alternative for aguila
-    //mapDisplay.setupMapPlot();
+    setPCRasterDirectories();
 
     showPCR();
+    // set display filter to all PCR type files
 
-    // present but for now replaced by mytreeview
-    treeView1->setVisible(false);
     // present but not used
     toolButton_globaloptions->setVisible(false);
     //toolButton_oldcalc->setVisible(false);
-    checkBox_argsubst->setVisible(false);
 
     // OBSOLETE
     //   toolButton_deletemapseries->setVisible(false);
@@ -59,8 +53,6 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     _dirModel->setRootPath(QDir(currentPath).rootPath());
     setRootIndex(_dirModel->index(currentPath));
-    //    fileModel->setRootPath(QDir(currentPath).rootPath());
-    //    setRootIndex(fileModel->index(currentPath));
 
     setWorkdirectory();
 
@@ -121,10 +113,6 @@ void nutshellqt::createModelActions()
     oldmodelAct->setToolTip("Run model script with oldcalc");
     connect(oldmodelAct, SIGNAL(toggled(bool)), this, SLOT(toggleOldcalc(bool)));
 
-    //    argsubsAct = new QAction(QIcon(":/resources/argsubs2.png"), "", this);
-    //    argsubsAct->setCheckable (true);
-    //    argsubsAct->setToolTip("use argument subsitution in script");
-    //    connect(argsubsAct, SIGNAL(toggled(bool)), lineEdit_argsubst, SLOT(enabled(bool)));
 }
 //---------------------------------------------------------------
 void nutshellqt::createMainActions()
@@ -164,10 +152,10 @@ void nutshellqt::createMainActions()
     helpAct = new QAction(QIcon(":/resources/help.png"), "&Help files", this);
     connect(helpAct, SIGNAL(triggered()), this, SLOT(showHelp()));
 
-    helpWebAct = new QAction(QIcon(":/resources/help.png"), "&Help: latest on the web", this);
-    helpWebAct->setShortcut(QKeySequence::HelpContents);
-    helpWebAct->setToolTip("Help, latest PCRaster webpages (F1)");
-    connect(helpWebAct, SIGNAL(triggered()), this, SLOT(showWebHelp()));
+    //    helpWebAct = new QAction(QIcon(":/resources/help.png"), "&Help: latest on the web", this);
+    //    helpWebAct->setShortcut(QKeySequence::HelpContents);
+    //    helpWebAct->setToolTip("Help, latest PCRaster webpages (F1)");
+    //    connect(helpWebAct, SIGNAL(triggered()), this, SLOT(showWebHelp()));
 
     helpAguilaAct = new QAction(QIcon(":/resources/help.png"), "Aguila manual (pdf, web)", this);
     connect(helpAguilaAct, SIGNAL(triggered()), this, SLOT(showAguilaHelp()));
@@ -334,7 +322,7 @@ void nutshellqt::createContextMenuActions()
     connect(delDirAct, SIGNAL(triggered()), this, SLOT(deleteDirectory()));
 }
 //---------------------------------------------------------------
-void nutshellqt::setupToolBar()
+void nutshellqt::setupToolBars()
 {
     // toolBar->addAction(newDirAct);
     toolBar->addAction(newfileAct);
@@ -371,14 +359,14 @@ void nutshellqt::setupToolBar()
 
     toolBar->addSeparator ();
     toolBar->addAction(helppcrcalcAct);
-    toolBar->addAction(helpWebAct);
+    toolBar->addAction(helpAct);
     toolBar->addAction(helpNutshellAct);
 
     toolBar->setAllowedAreas(Qt::RightToolBarArea | Qt::TopToolBarArea);
     //  addToolBar(Qt::RightToolBarArea, toolBar);
 
     pcrToolBar = new QToolBar();
-    horizontalLayout->insertWidget(0, pcrToolBar);
+    horizontalLayoutPCRbuttons->insertWidget(0, pcrToolBar);
     pcrToolBar->setIconSize(QSize(16,16));
     pcrToolBar->addAction(aguilaplusAct   );
     //pcrToolBar->addWidget(fileMaskBox);
@@ -391,13 +379,14 @@ void nutshellqt::setupToolBar()
     pcrToolBar->addAction(mapattributeAct );
     pcrToolBar->addAction(mapnewAct       );
     pcrToolBar->addAction(mapeditAct      );
-    // pcrToolBar->addAction(mapDisplayAct   );
 
-    //    dirToolBar = new QToolBar();
-    //    verticalLayout_6->insertWidget(0, dirToolBar);
-    //    dirToolBar->setIconSize(QSize(16,16));
-    //    dirToolBar->addAction(prevDirAct   );
-    //    dirToolBar->addAction(nextDirAct     );
+    pcrToolBar->setSizePolicy (QSizePolicy::Expanding,QSizePolicy::Fixed);
+
+//        dirToolBar = new QToolBar();
+//        verticalLayout_tree->insertWidget(0, dirToolBar);
+//        dirToolBar->setIconSize(QSize(16,16));
+//        dirToolBar->addAction(prevDirAct   );
+//        dirToolBar->addAction(nextDirAct     );
 }
 //---------------------------------------------------------------
 void nutshellqt::setupMenu( )
@@ -455,7 +444,7 @@ void nutshellqt::setupMenu( )
 
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(helpAct);
-    helpMenu->addAction(helpWebAct);
+    //  helpMenu->addAction(helpWebAct);
     helpMenu->addAction(helpAguilaAct);
     helpMenu->addAction(helppcrcalcAct);
     helpMenu->addAction(helpNutshellAct);
@@ -463,12 +452,7 @@ void nutshellqt::setupMenu( )
 //---------------------------------------------------------------
 void nutshellqt::removeWorkdirectory()
 {
-//    int place = comboBox_workdir->findText(currentPath);
     comboBox_workdir->removeItem(comboBox_workdir->currentIndex());
-//    if (currentPath == "")
-//    {
-//        currentPath = "C:/";
-//    }
 }
 //---------------------------------------------------------------
 void nutshellqt::setWorkdirectory()
@@ -486,9 +470,7 @@ void nutshellqt::setWorkdirectory()
 //---------------------------------------------------------------
 void nutshellqt::returnToWorkdirectory()
 {
-    //comboBox_workdir->setCurrentIndex(0);
     setWorkdirectoryNr(0);
-    //    setRootIndex(dirModel->index(currentPath));
 }
 //---------------------------------------------------------------
 void nutshellqt::setWorkdirectoryNr(int index)
@@ -500,177 +482,6 @@ void nutshellqt::setWorkdirectoryNr(int index)
     // set the explorer to this path
     dir.setCurrent(currentPath);
     // set the path in the operating system
-}
-//---------------------------------------------------------------
-void nutshellqt::setNutshellIni()
-{
-    QSettings settings(QSettings::IniFormat,QSettings::UserScope,"NutSHell","NutSHellQt");
-    settings.clear();
-    //   settings.setValue("workDirectory", currentPath);
-    settings.setValue("PCRasterDirectory", PCRasterDirName);
-    settings.setValue("pcrcalcDirectory", PCRasterAppDirName);
-    settings.setValue("aguilaDirectory", AguilaDirName);
-    settings.setValue("mapeditDirectory", MapeditDirName);
-
-    //settings.setValue(QString("workdir/current"),comboBox_workdir->currentIndex());
-    for (int i = 0; i < comboBox_workdir->count(); i++)
-    {
-        if (i == comboBox_workdir->currentIndex())
-            settings.setValue(QString("workdir/workdir%1").arg(i),comboBox_workdir->itemText(i)+"<");
-        else
-            settings.setValue(QString("workdir/workdir%1").arg(i),comboBox_workdir->itemText(i));
-    }
-
-    //settings.setValue(QString("modelnr/active"),tabWidget->currentIndex());
-    settings.setValue("models/current",tabWidget->currentIndex());
-    //    settings.setValue("models/arg_substitute_do",checkBox_argsubst->isChecked());
-    settings.setValue("models/arg_substitute_do",toolButton_argSubs->isChecked());
-    settings.setValue("models/arg_substitute",lineEdit_argsubst->text());
-    for (int i = 0; i < ET.count(); i++)
-    {
-        if (!ETfileName.contains("empty"))
-            settings.setValue(QString("models/Script%1").arg(i),
-                              QString("%1<%2").arg(ET[i].filePath).arg("1"));//.arg(ET[i].syntax));
-    }
-
-    for (int i = 0; i < comboBox_cmdlist->count(); i++)
-    {
-        settings.setValue(QString("cmdlist/Command%1").arg(i),comboBox_cmdlist->itemText(i));
-    }
-
-    settings.setValue("layout/splitter1", splitter->saveState());
-    settings.setValue("layout/splitter2", splitter_2->saveState());
-    settings.setValue("layout/splitter3", splitter_3->saveState());
-
-}
-//---------------------------------------------------------------
-void nutshellqt::clearNutshellIni()
-{
-    QSettings settings(QSettings::IniFormat,QSettings::UserScope,"NutSHell","NutSHellQt");
-    settings.clear();
-}
-//---------------------------------------------------------------
-void nutshellqt::getNutshellIni()
-{
-
-    QSettings settings(QSettings::IniFormat,QSettings::UserScope,"NutSHell","NutSHellQt");
-
-    //   currentPath = settings.value("workDirectory").toString();
-
-    QChar cs = QDir::separator();
-    QString str = settings.value("PCRasterDirectory").toString();
-    if (!str.isEmpty())
-        PCRasterDirName = str;
-    str = settings.value("pcrcalcDirectory").toString();
-    if (!str.isEmpty())
-        PCRasterAppDirName = str;
-    str = settings.value("aguilaDirectory").toString();
-    if (!str.isEmpty())
-        AguilaDirName = str;
-    str = settings.value("mapeditDirectory").toString();
-    if (!str.isEmpty())
-        MapeditDirName = str;
-
-    settings.beginGroup("workdir");
-    QStringList keys = settings.childKeys();
-    int currentworkdir = 0;
-    comboBox_workdir->setInsertPolicy(QComboBox::InsertAtBottom);
-    QStringList dirs;
-    for (int i = 0; i < keys.count(); i++)
-    {
-        QString str = settings.value(keys[i]).toString().simplified();
-
-        if (!str.isEmpty())
-        {
-            if(str.contains("<"))
-            {
-                str.remove(str.size()-1,1);
-                currentworkdir = i;
-            }
-            //            if (str.simplified() == "")
-            //                currentworkdir = 0;
-            //            else
-            dirs << str;
-        }
-    }
-    comboBox_workdir->clear();
-    comboBox_workdir->addItems(dirs);
-
-    comboBox_workdir->setCurrentIndex(currentworkdir);
-    currentPath = comboBox_workdir->itemText(currentworkdir);
-    settings.endGroup();
-
-//    settings.beginGroup("layout");
-//    splitter->restoreState(settings.value("splitter1").toByteArray());
-//    splitter_2->restoreState(settings.value("splitter2").toByteArray());
-//    splitter_3->restoreState(settings.value("splitter3").toByteArray());
-//    settings.endGroup();
-
-    settings.beginGroup("models");
-    keys = settings.childKeys();
-    int currentmodel = 0;
-    for (int i = 0; i < keys.count(); i++)
-    {
-        if (keys[i] == "current")
-        {
-            int nr = settings.value(keys[i]).toInt();
-            if (nr >= 0)
-                currentmodel = nr;
-        }
-        else
-            if (keys[i] == "arg_substitute")
-                lineEdit_argsubst->setText(settings.value(keys[i]).toString());
-            else
-                if (keys[i] == "arg_substitute_do")
-                    //            checkBox_argsubst->setChecked(settings.value(keys[i]).toBool());
-                    toolButton_argSubs->setChecked(settings.value(keys[i]).toBool());
-                else
-                {
-                    QString name = settings.value(keys[i]).toString();
-                    QStringList list = name.split("<");
-                    AddModel(list[0],1);// list[1].toInt());
-                }
-    }
-    tabWidget->setCurrentIndex(currentmodel);
-    settings.endGroup();
-
-    settings.beginGroup("cmdlist");
-    keys = settings.childKeys();
-    for (int i = 0; i < keys.count(); i++)
-    {
-        comboBox_cmdlist->addItem(settings.value(keys[i]).toString());
-    }
-    settings.endGroup();
-}
-//---------------------------------------------------------------
-void nutshellqt::getRegPCRaster()
-{
-    QSettings rsettings(QSettings::SystemScope,"PCRaster","PCRaster");
-    //SystemScope = HKEY_LOCAL_MACHINE
-
-    PCRasterDirName = rsettings.value("Default", "").toString();
-    QDir dir(PCRasterDirName);
-
-    if (!dir.exists() || PCRasterDirName.isEmpty())
-    {
-        QSettings settings(QSettings::SystemScope,"PCRaster","Install");
-        //try old registry
-        PCRasterDirName = settings.value("Default", "").toString();
-    }
-
-    dir.setPath(PCRasterDirName);
-
-    if (!dir.exists() || PCRasterDirName.isEmpty())
-    {
-        ErrorMsg(QString("PCRaster directory not found: %1\nSet dirs in File->Options").arg(PCRasterDirName));
-        return;
-    }
-    QChar cs = QDir::separator();
-    PCRasterDirName = PCRasterDirName + cs;
-    PCRasterAppDirName = PCRasterDirName + "apps" + cs;
-    PCRasterDocDirName = PCRasterDirName + "doc" + cs + "pcrman" + cs;
-    AguilaDirName = PCRasterAppDirName;
-    MapeditDirName = PCRasterAppDirName + "nutshell" + cs;
 }
 //---------------------------------------------------------------
 void nutshellqt::getDirectories()
@@ -688,5 +499,12 @@ void nutshellqt::getDirectories()
         PCRasterAppDirName = tempdirs[0];
         AguilaDirName = tempdirs[1];
         MapeditDirName = tempdirs[2];
+        PCRasterDirName = PCRasterAppDirName + "../";
+        PCRasterDirName = QDir(PCRasterDirName).absolutePath() + "/";
+
+        PCRasterDocDirName = PCRasterDirName + "doc/pcrman/";
+        if (!QFileInfo(PCRasterDocDirName+"index.html").exists())
+            PCRasterDocDirName = PCRasterDirName + "doc/manual/";
     }
 }
+//---------------------------------------------------------------

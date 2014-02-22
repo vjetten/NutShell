@@ -1,10 +1,10 @@
 /*
  * nutshelLinenumber
- * v 1.x
+
  * PCRaster editor,
  * adapted from linenumbers are from the codeeditor example in QT examples
  *	\Qt\4.6.2\examples\widgets\codeeditor
- * author: VJ 121012
+ * Author: VJ 140222
  */
 
 

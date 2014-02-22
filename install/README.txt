@@ -1,19 +1,22 @@
 ==============================================================================================================
-nutshell for PCRaster version 4.8
+nutshell for PCRaster version 4.82
 ==============================================================================================================
 Date: 20 may 2013
 Author: Victor Jetten
 programmed in Qt (http://qt-project.org) and compiled with MSVC 2010 (freeware)
 Opensource on request and can be compiled in linux (not tried yet!)
 
-Default install location(!):  ../pcraster/apps/nutshell
+Default install location(!):  ../pcraster4.0.0/bin/nutshell
 Do *NOT* install in the pcraster/apps directory, nutshell uses Qt dlls that are more recnt than PCRaster
 If you are blocked because of admin rights, NutShell can be installed anywhere else.
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Changes 4.82
+- free window movement
+- nutshell.ini at pcraster location
+
 Changes 4.6-4.8:
 - Added cmd file to list of pcraster files
 - Added open new script with basic key words
-- 
 
 Changes 4.5:
 - Fixed error causing a crash when wrong command is typed

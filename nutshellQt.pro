@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     findreplaceform.cpp \
     CsfMap.cpp \
     nutshellevent.cpp \
-    nutshelltreeview.cpp
+    nutshelltreeview.cpp \
+    nutshellIni.cpp
 HEADERS  += nutshellqt.h \
     csfattr.h \
     csfimpl.h \

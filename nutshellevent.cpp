@@ -1,8 +1,8 @@
 /*
  * NutShellEvent,
- * v 1.x
+
  * separate file with event catching at application level
- * Author: VJ 121002
+ * Author: VJ 140222
  */
 
 

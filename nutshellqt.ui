@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>926</width>
-    <height>609</height>
+    <width>1124</width>
+    <height>650</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -32,7 +32,7 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
-     <widget class="QSplitter" name="splitter_3">
+     <widget class="QSplitter" name="splitterEditor">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
         <horstretch>0</horstretch>
@@ -60,7 +60,10 @@
       <property name="handleWidth">
        <number>5</number>
       </property>
-      <widget class="QSplitter" name="splitter_2">
+      <property name="childrenCollapsible">
+       <bool>true</bool>
+      </property>
+      <widget class="QSplitter" name="splitterCommandwindow">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -70,9 +73,9 @@
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <widget class="QFrame" name="frame">
+       <widget class="QFrame" name="frameCommand">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -88,7 +91,7 @@
           <number>0</number>
          </property>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <layout class="QHBoxLayout" name="horizontalLayoutWorkdir">
            <property name="spacing">
             <number>0</number>
            </property>
@@ -248,9 +251,9 @@
           </layout>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
+          <layout class="QVBoxLayout" name="verticalLayoutCmdlist">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <layout class="QHBoxLayout" name="horizontalLayoutCmdlist">
              <property name="spacing">
               <number>1</number>
              </property>
@@ -332,7 +335,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QSplitter" name="splitter">
+       <widget class="QSplitter" name="splitterExplorer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -354,46 +357,11 @@
            <number>0</number>
           </property>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_tree">
-            <item>
-             <widget class="QTreeView" name="treeView1">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="editTriggers">
-               <set>QAbstractItemView::EditKeyPressed</set>
-              </property>
-              <property name="tabKeyNavigation">
-               <bool>false</bool>
-              </property>
-              <property name="showDropIndicator" stdset="0">
-               <bool>false</bool>
-              </property>
-              <property name="rootIsDecorated">
-               <bool>false</bool>
-              </property>
-              <property name="uniformRowHeights">
-               <bool>true</bool>
-              </property>
-              <property name="sortingEnabled">
-               <bool>false</bool>
-              </property>
-              <property name="headerHidden">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <layout class="QVBoxLayout" name="verticalLayout_tree"/>
           </item>
          </layout>
         </widget>
-        <widget class="QFrame" name="frame">
+        <widget class="QFrame" name="frameFileview">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -411,7 +379,7 @@
            <number>0</number>
           </property>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout">
+           <layout class="QHBoxLayout" name="horizontalLayoutPCRbuttons">
             <property name="spacing">
              <number>0</number>
             </property>
@@ -421,7 +389,7 @@
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <layout class="QHBoxLayout" name="horizontalLayoutFileView">
             <property name="spacing">
              <number>0</number>
             </property>
@@ -729,9 +697,9 @@
         </widget>
        </widget>
       </widget>
-      <widget class="QFrame" name="frame">
+      <widget class="QFrame" name="frameEditor">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -747,7 +715,7 @@
          <number>0</number>
         </property>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <layout class="QHBoxLayout" name="horizontalLayoutRunbuttons">
           <property name="spacing">
            <number>1</number>
           </property>
@@ -852,7 +820,7 @@
           <item>
            <widget class="QToolButton" name="toolButton_globaloptions">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text">
              <string>...</string>
@@ -863,19 +831,6 @@
             </property>
             <property name="autoRaise">
              <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="checkBox_argsubst">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;list of arguments substituted in active script, separate with space&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Arg.Subst.:</string>
             </property>
            </widget>
           </item>
@@ -994,22 +949,6 @@
   <include location="nutshellqt.qrc"/>
  </resources>
  <connections>
-  <connection>
-   <sender>checkBox_argsubst</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>lineEdit_argsubst</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>770</x>
-     <y>42</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>912</x>
-     <y>44</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>toolButton_argSubs</sender>
    <signal>toggled(bool)</signal>

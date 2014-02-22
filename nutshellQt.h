@@ -152,7 +152,7 @@ public:
     void createContextMenuActions();
     void createModelActions();
 
-    void setupToolBar();
+    void setupToolBars();
     void setupMenu();
     void setupModel();
     void setupExplorer();
@@ -161,6 +161,7 @@ public:
     void setNutshellIni();
     void getNutshellIni();
     void getRegPCRaster();
+    void setPCRasterDirectories();
 
     QList<editortabs> ET;
 
@@ -393,7 +394,6 @@ private:
     QAction *pausemodelAct;
     QAction *killmodelAct;
     QAction *oldmodelAct;
-    QAction *argsubsAct;
 
     QAction *exitAct;
     QAction *cutAct;

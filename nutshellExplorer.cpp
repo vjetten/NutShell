@@ -1,9 +1,9 @@
 /*
  * NutShellExplorer,
- * v 1.x
+
  * adapted from the extended explorer example in Qt wiki:
  * http://www.qtcentre.org/wiki/index.php?title=Extended_Dir_View_example
- * Author: VJ 121012
+ * Author: VJ 140222
  */
 
 
@@ -71,7 +71,7 @@ void nutshellqt::setupExplorer()
     treeView->setHeaderHidden(false);
     //treeView->hideColumn(1);
     treeView->setSortingEnabled(true);
-    //treeView->sortByColumn(0, Qt::AscendingOrder);
+    treeView->sortByColumn(0, Qt::AscendingOrder);
 
     treeView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(treeView,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(contextualMenu(const QPoint &)));
@@ -87,15 +87,16 @@ void nutshellqt::setupExplorer()
     fileView->resizeColumnToContents(0);
     fileView->verticalHeader()->hide();
     fileView->setShowGrid(false);
-    fileView->setSortingEnabled(true);
+    fileView->setSortingEnabled(false);
     fileView->setWordWrap(false);
-    fileView->setColumnWidth (0, 156);
+    fileView->setColumnWidth (0, 200);
     fileView->setColumnWidth (1, 64);
     fileView->setColumnWidth (2, 64);
 //    fileView->setColumnWidth (3, 128);
     fileView->sortByColumn(0, Qt::AscendingOrder);
     //fileView->setIconSize(QSize(0,0));
-    fileView->verticalHeader()->setDefaultSectionSize(16);
+    fileView->setSortingEnabled(true);
+    fileView->verticalHeader()->setDefaultSectionSize(20);
     fileView->setDragEnabled(true);
     fileView->setAcceptDrops(true);
     fileView->setDropIndicatorShown(true);

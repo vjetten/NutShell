@@ -1,8 +1,8 @@
 /*
  * NutShellHighlighter
- * v 1.x
+
  * Syntax highlighting for PCRaster, adapted from highlighter example of Qt
- * Author: VJ 121002
+ * Author: VJ 140222
  */
 
 #include "nutshellqt.h"
