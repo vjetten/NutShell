@@ -71,9 +71,9 @@ void nutshellqt::setNutshellIni()
     }
 
     //settings.setValue(QString("modelnr/active"),tabWidget->currentIndex());
-    settings.setValue("models1/current",tabWidget->currentIndex());
-    settings.setValue("models1/arg_substitute_do",toolButton_argSubs->isChecked());
-    settings.setValue("models1/arg_substitute",lineEdit_argsubst->text());
+    settings.setValue("models/current",tabWidget->currentIndex());
+    settings.setValue("models/arg_substitute_do",toolButton_argSubs->isChecked());
+    settings.setValue("models/arg_substitute",lineEdit_argsubst->text());
     for (int i = 0; i < ET.count(); i++)
     {
         if (!ETfileName.contains("empty"))

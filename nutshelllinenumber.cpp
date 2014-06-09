@@ -115,7 +115,7 @@ void nutshelleditor::lineNumberAreaPaintEvent(QPaintEvent *event)
          number = " ";
          if (cursor == 1)
          {
-            number = "->";
+            number = ">>";
          }
          else
             if (cursor == 2)

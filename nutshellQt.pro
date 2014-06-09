@@ -20,14 +20,14 @@ SOURCES += main.cpp\
     nutshelllinenumber.cpp \
     nutshellhighligter.cpp \
     nutshellProcess.cpp \
-    nutslellCommandwindow.cpp \
     nutshellhelp.cpp \
     nutshelloptions.cpp \
     findreplaceform.cpp \
     CsfMap.cpp \
     nutshellevent.cpp \
     nutshelltreeview.cpp \
-    nutshellIni.cpp
+    nutshellIni.cpp \
+    nutshellCommandwindow.cpp
 HEADERS  += nutshellqt.h \
     csfattr.h \
     csfimpl.h \

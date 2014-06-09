@@ -130,7 +130,6 @@ public:
     QList <filenameseries> fns;
     QString StripForName(QString S);
 
-
 protected:
     void dropEvent(QDropEvent *event);
 };
@@ -144,7 +143,6 @@ public:
     ~nutshellqt();
 
     myTreeView *treeView;
-
     void setupActions();
     void createMainActions();
     void createEditorActions();
@@ -158,6 +156,7 @@ public:
     void setupExplorer();
     void setupEditor();
     void setupCommandwindow();
+
     void setNutshellIni();
     void getNutshellIni();
     void getRegPCRaster();
@@ -261,7 +260,7 @@ protected:
 public slots:
     //void doSomething(QProcess::ProcessState hoi);
 
-
+    void initExplorer(QString path);
     //=========================
     //slots to run model script
     //=========================
@@ -315,7 +314,7 @@ public slots:
     void displayVar();
     void getDirectories();
     void clearNutshellIni();
-   // void findScriptReport();
+    // void findScriptReport();
     void deleteLine();
 
     //====================
@@ -373,7 +372,6 @@ public slots:
     void setRootIndex(const QModelIndex& index);
 
     void getScriptLinks();
-
 
 private:
 
@@ -444,11 +442,10 @@ private:
     QAction *helpNutshellAct;
 
     // explorer variables
-    QFileSystemModel *_dirModel;
+    QFileSystemModel *dirModel;
     QFileSystemModel* fileModel;
     QItemSelectionModel *selectionModel;
     QItemSelectionModel *selectionDirModel;
-    QSortFilterProxyModel* dirModel;
 
     QString currentPath;
     QStack<QString> history;

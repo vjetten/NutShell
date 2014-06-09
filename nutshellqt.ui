@@ -339,15 +339,15 @@
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
-        <widget class="QFrame" name="frame">
+        <widget class="QFrame" name="frameTreeview">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::NoFrame</enum>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <property name="spacing">
@@ -485,7 +485,7 @@
               <item>
                <widget class="QToolButton" name="toolButton_showScript">
                 <property name="toolTip">
-                 <string>Show scripts</string>
+                 <string>Show model scripts</string>
                 </property>
                 <property name="text">
                  <string>...</string>
@@ -537,7 +537,7 @@
               <item>
                <widget class="QToolButton" name="toolButton_showOutput">
                 <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show reported output of current script&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>Show reported output of current script</string>
                 </property>
                 <property name="text">
                  <string>...</string>
@@ -562,6 +562,12 @@
               </item>
               <item>
                <widget class="QToolButton" name="toolButton_deletereport">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="toolTip">
                  <string>Delete all reported output in active script</string>
                 </property>
@@ -635,6 +641,12 @@
               <property name="toolTip">
                <string/>
               </property>
+              <property name="frameShape">
+               <enum>QFrame::NoFrame</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Plain</enum>
+              </property>
               <property name="horizontalScrollBarPolicy">
                <enum>Qt::ScrollBarAlwaysOn</enum>
               </property>
@@ -706,6 +718,9 @@
        </property>
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <property name="spacing">

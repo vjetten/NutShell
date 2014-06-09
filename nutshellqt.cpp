@@ -12,11 +12,7 @@
 nutshellqt::nutshellqt(QWidget *parent) :
     QMainWindow(parent)
 {
-    setupUi(this);    
-
-    getRegPCRaster();
-
-    currentPath = "C:/";
+    setupUi(this);
 
     setupActions();
 
@@ -24,20 +20,24 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     setupMenu();
 
-    setupCommandwindow();
-
-    setupExplorer();
+    setupModel();
 
     setupEditor();
 
-    setupModel();
+    setupExplorer();
+
+    showPCR();
+    // set display filter to all PCR type files
+
+    setupCommandwindow();
+
+    getRegPCRaster();
+
+    currentPath = "C:/";
 
     getNutshellIni();
 
     setPCRasterDirectories();
-
-    showPCR();
-    // set display filter to all PCR type files
 
     // present but not used
     toolButton_globaloptions->setVisible(false);
@@ -51,8 +51,8 @@ nutshellqt::nutshellqt(QWidget *parent) :
     //       toolButton_dirprev->setVisible(false);
     //       toolButton_dirnew->setVisible(false);
 
-    _dirModel->setRootPath(QDir(currentPath).rootPath());
-    setRootIndex(_dirModel->index(currentPath));
+    dirModel->setRootPath(QDir(currentPath).rootPath());
+    setRootIndex(dirModel->index(currentPath));
 
     setWorkdirectory();
 
@@ -61,6 +61,8 @@ nutshellqt::nutshellqt(QWidget *parent) :
     commandcounter = -1;
 
     changeName = false;
+
+    fileView->horizontalHeader()->moveSection(3, 2);
 }
 //---------------------------------------------------------------
 nutshellqt::~nutshellqt()
@@ -382,11 +384,11 @@ void nutshellqt::setupToolBars()
 
     pcrToolBar->setSizePolicy (QSizePolicy::Expanding,QSizePolicy::Fixed);
 
-//        dirToolBar = new QToolBar();
-//        verticalLayout_tree->insertWidget(0, dirToolBar);
-//        dirToolBar->setIconSize(QSize(16,16));
-//        dirToolBar->addAction(prevDirAct   );
-//        dirToolBar->addAction(nextDirAct     );
+    //        dirToolBar = new QToolBar();
+    //        verticalLayout_tree->insertWidget(0, dirToolBar);
+    //        dirToolBar->setIconSize(QSize(16,16));
+    //        dirToolBar->addAction(prevDirAct   );
+    //        dirToolBar->addAction(nextDirAct     );
 }
 //---------------------------------------------------------------
 void nutshellqt::setupMenu( )
@@ -448,40 +450,6 @@ void nutshellqt::setupMenu( )
     helpMenu->addAction(helpAguilaAct);
     helpMenu->addAction(helppcrcalcAct);
     helpMenu->addAction(helpNutshellAct);
-}
-//---------------------------------------------------------------
-void nutshellqt::removeWorkdirectory()
-{
-    comboBox_workdir->removeItem(comboBox_workdir->currentIndex());
-}
-//---------------------------------------------------------------
-void nutshellqt::setWorkdirectory()
-{
-    int place = comboBox_workdir->findText(currentPath);
-    //check if dir exists already, if not insert it on top, else select it
-    if(place == -1)
-    {
-        comboBox_workdir->insertItem(0,currentPath);
-        comboBox_workdir->setCurrentIndex(0);
-    }
-    else
-        comboBox_workdir->setCurrentIndex(place);
-}
-//---------------------------------------------------------------
-void nutshellqt::returnToWorkdirectory()
-{
-    setWorkdirectoryNr(0);
-}
-//---------------------------------------------------------------
-void nutshellqt::setWorkdirectoryNr(int index)
-{
-    QDir dir;
-    currentPath = comboBox_workdir->currentText();
-    // set current working path
-    setRootIndex(_dirModel->index(currentPath));
-    // set the explorer to this path
-    dir.setCurrent(currentPath);
-    // set the path in the operating system
 }
 //---------------------------------------------------------------
 void nutshellqt::getDirectories()

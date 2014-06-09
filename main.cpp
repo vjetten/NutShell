@@ -12,16 +12,16 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     nutshellqt w;
 
-    qApp->setStyleSheet(
-                "QSplitter::handle {background-color : #fff;\
-                border: 1px solid #aaa;\
-              width: 1px;\
-              height: 1px;\
-    margin-top: 1px;\
-    margin-bottom: 1px;\
-    border-radius: 2px;}");
+//    qApp->setStyleSheet(
+//                "QSplitter::handle {background-color : #fff;\
+//                border: 1px solid #aaa;\
+//              width: 1px;\
+//              height: 1px;\
+//    margin-top: 1px;\
+//    margin-bottom: 1px;\
+//    border-radius: 2px;}");
 
-    w.setWindowTitle("NutShell (version 4.83 [18 Feb 2014])");
+    w.setWindowTitle("NutShell (version 4.84 [23 Feb 2014])");
     w.showMaximized();
     w.show();
     //a.setStyle("Cleanlooks");
