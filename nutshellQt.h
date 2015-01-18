@@ -57,10 +57,20 @@
 #define ETPlainText ET[tabWidget->currentIndex()].editor->toPlainText()
 #define ETExists (tabWidget->currentIndex() >= 0)
 
-
 #define INSERTSPACE  0
 #define INSERTHASH   1
 #define INSERTREPORT 2
+
+
+#define fPCR 0
+#define fMaps 1
+#define fPlot 2
+#define fScript 3
+#define fSeries 4
+#define freport 5
+#define fdelreport 6
+#define fTIFF 7
+#define fall 8
 
 #define Delay(x) Sleeper::msleep(x);
 
@@ -180,6 +190,8 @@ public:
     QString PCRasterAppDirName;
     QString PCRasterDocDirName;
     QString MapeditDirName;
+    QString GDALDirName;
+
 
 
     //======================
@@ -198,9 +210,10 @@ public:
     //Vars for pcrcalc process
     //========================
     int xlast;
+    bool processDone;
     void doRunErrorMessage(QString buffer);
     void onScreen(QString buffer);
-    bool useOldCalc;
+  //  bool useOldCalc;
     int errorpos[2];
     void runModelCommandwindow(QString prog, QStringList args);
     bool runPaused;
@@ -267,8 +280,8 @@ public slots:
     void runModel();
     void killModel();
     void suspendModel(bool pause);
-    void finishedModel(int c);
-    void toggleOldcalc(bool checked);
+    void finishedModel(int);
+    //void toggleOldcalc(bool checked);
     void readFromStderr();
 
     //=======================
@@ -343,6 +356,8 @@ public slots:
     void showPlot();
     void showSeries();
     void showReport();
+    void showDelReport();
+    void showTIF();
 
     // right horizontal toolbar PCR commands
     void actionplusaguila(bool check);

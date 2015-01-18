@@ -10,7 +10,8 @@ nutshellOptions::nutshellOptions(QWidget *parent) :
 	connect(toolButton_1, SIGNAL(clicked()), this, SLOT(findPcrcalcDir()));
 	connect(toolButton_2, SIGNAL(clicked()), this, SLOT(findAguilaDir()));
 	connect(toolButton_3, SIGNAL(clicked()), this, SLOT(findMapeditDir()));
-	//	connect(pushButton_ok, SIGNAL(clicked()), this, SLOT(closew()));
+    connect(toolButton_4, SIGNAL(clicked()), this, SLOT(findGDALDir()));
+    //	connect(pushButton_ok, SIGNAL(clicked()), this, SLOT(closew()));
 	//	connect(pushButton_cancel, SIGNAL(clicked()), this, SLOT(close()));
 
 	baseDirs.clear();
@@ -26,13 +27,16 @@ void nutshellOptions::setupOptions(QStringList SL)
 	lineEdit_pcrcalcDir->setText(SL[0]);
 	lineEdit_aguilaDir->setText(SL[1]);
 	lineEdit_mapeditDir->setText(SL[2]);
+    lineEdit_GDALDir->setText(SL[3]);
 }
 //---------------------------------------------------------------------------
 QStringList nutshellOptions::getOptions()
 {
 	baseDirs.clear();
 	baseDirs << lineEdit_pcrcalcDir->text()
-			<< lineEdit_aguilaDir->text() << lineEdit_mapeditDir->text();
+            << lineEdit_aguilaDir->text()
+            << lineEdit_mapeditDir->text()
+            << lineEdit_GDALDir->text();
 	return baseDirs;
 }
 //---------------------------------------------------------------------------
@@ -40,12 +44,23 @@ void nutshellOptions::findPcrcalcDir()
 {
 	QString dir;
 	QString olddir = lineEdit_pcrcalcDir->text();
-    dir = setExistingDirectory("pcrcalc dir",baseDirs[0]);
+
+    dir = setExistingDirectory("pcrcalc dir (bin)",baseDirs[0]);
+
 	if (!dir.endsWith(QDir::separator()))
 		dir = dir + QDir::separator();
 	if (QFileInfo(dir+"pcrcalc.exe").exists())
     {
+        if (!dir.endsWith(QDir::separator()))
+            dir = dir + QDir::separator();
 		lineEdit_pcrcalcDir->setText(dir);
+        baseDirs[0] = dir;
+
+        if (QFileInfo(dir+"aguila.exe").exists())
+        {
+            lineEdit_aguilaDir->setText(dir);
+            baseDirs[1] = dir;
+        }
     }
 	else
 	{
@@ -58,11 +73,17 @@ void nutshellOptions::findAguilaDir()
 {
 	QString dir;
 	QString olddir = lineEdit_pcrcalcDir->text();
-    dir = setExistingDirectory("aguila dir",baseDirs[1]);
+    dir = setExistingDirectory("aguila dir (bin)",baseDirs[1]);
 	if (!dir.endsWith(QDir::separator()))
 		dir = dir + QDir::separator();
+    qDebug() << baseDirs << dir+"aguila.exe";
 	if (QFileInfo(dir+"aguila.exe").exists())
-		lineEdit_aguilaDir->setText(dir);
+    {
+        if (!dir.endsWith(QDir::separator()))
+            dir = dir + QDir::separator();
+        lineEdit_aguilaDir->setText(dir);
+        baseDirs[1] = dir;
+    }
 	else
 	{
 		lineEdit_aguilaDir->setText(olddir);
@@ -72,13 +93,17 @@ void nutshellOptions::findAguilaDir()
 //---------------------------------------------------------------------------
 void nutshellOptions::findMapeditDir()
 {
-	QString dir;
+    QString dir = baseDirs[0];
 	QString olddir = lineEdit_pcrcalcDir->text();
-    dir = setExistingDirectory("mapedit dir",baseDirs[2]);
+    dir = setExistingDirectory("mapedit dir",dir);//baseDirs[2]);
 	if (!dir.endsWith(QDir::separator()))
 		dir = dir + QDir::separator();
 	if (QFileInfo(dir+"mapedit.exe").exists())
+    {
+        if (!dir.endsWith(QDir::separator()))
+            dir = dir + QDir::separator();
 		lineEdit_mapeditDir->setText(dir);
+    }
 	else
 	{
 		lineEdit_mapeditDir->setText(olddir);
@@ -86,11 +111,31 @@ void nutshellOptions::findMapeditDir()
 	}
 }
 //---------------------------------------------------------------------------
+void nutshellOptions::findGDALDir()
+{
+    QString dir;
+    QString olddir = lineEdit_GDALDir->text();
+    dir = setExistingDirectory("GDAL dir (bin)",baseDirs[3]);
+    if (!dir.endsWith(QDir::separator()))
+        dir = dir + QDir::separator();
+    if (QFileInfo(dir+"gdal/apps/gdal_translate.exe").exists())
+    {
+        if (!dir.endsWith(QDir::separator()))
+            dir = dir + QDir::separator();
+        lineEdit_GDALDir->setText(dir);
+    }
+    else
+    {
+        lineEdit_GDALDir->setText(olddir);
+        ErrorMsg("GDAL executables not found.");
+    }
+}
+//---------------------------------------------------------------------------
 QString nutshellOptions::setExistingDirectory(QString title, QString bd)
 {
-	QFileDialog::Options options = QFileDialog::DontResolveSymlinks | QFileDialog::ShowDirsOnly;
+    QFileDialog::Options options = QFileDialog::DontResolveSymlinks | QFileDialog::ShowDirsOnly;
 	QString directory =
-			QFileDialog::getExistingDirectory(this, title, bd, options);
+            QFileDialog::getExistingDirectory(this, title, bd);//, options);
 	if (!directory.isEmpty())
 		return(directory);
 	else

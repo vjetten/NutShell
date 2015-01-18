@@ -10,6 +10,7 @@
 # error new include file used while CSF_V1 is defined
 #endif
 
+#define CPU_LITTLE_ENDIAN
 
 /* MACHINE AND OPERATING SYSTEM DEPENDENT SECTION:
  * (LOOK AND CONFIGURE YOUR MACHINE/OS) 

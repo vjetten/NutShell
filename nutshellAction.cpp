@@ -79,7 +79,7 @@ int nutshellqt::GetActionType()
 
     MAP *m = Mopen(SelectedPathName.toAscii(),M_READ);
     //	MAP *m = Mopen(name.toAscii(),M_READ);
-    if (m != NULL)
+    if (m != NULL || ext.toUpper() == "TIF")
     {
         at = ACTIONTYPEAGUILA2D; //ACTIONTYPEDISPLAY;
         Mclose(m);
@@ -127,6 +127,7 @@ void nutshellqt::PerformAction(int actiontype)
     MAP *m = NULL;
     bool fileIsMap = true;
     bool isAguila = false;
+    bool isTIFF = false;
 
     changeFileFilter(_filternr);
 
@@ -150,8 +151,11 @@ void nutshellqt::PerformAction(int actiontype)
     else
         Mclose(m);
 
+    isTIFF = QFileInfo(SelectedPathName).suffix().toUpper() == "TIF";
+    // geotiff file only from extension
+
     // check if selection is a pcraster map
-    if (!fileIsMap && (
+    if (!fileIsMap && !isTIFF && (
                 actiontype == ACTIONTYPEDISPLAY ||
                 actiontype == ACTIONTYPEAGUILA3D ||
                 actiontype == ACTIONTYPEAGUILA2D ||

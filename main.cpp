@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 //    margin-bottom: 1px;\
 //    border-radius: 2px;}");
 
-    w.setWindowTitle("NutShell (version 4.84 [23 Feb 2014])");
+    w.setWindowTitle("NutShell (version 4.86 [18 Jan 2015])");
     w.showMaximized();
     w.show();
     //a.setStyle("Cleanlooks");

@@ -49,11 +49,14 @@ void nutshellqt::setupExplorer()
 {
     fns.clear();
     baseFilters.clear();
-    baseFilters << QString("*.mod;*.map;*.csf;*.tbl;*.tss;*.txt;*.dat;*.csv;*.pcr;*.cmd;*.bat");
+    baseFilters << QString("*.mod;*.map;*.csf;*.tbl;*.tss;*.txt;*.dat;*.csv;*.pcr;*.cmd;*.bat;*.tif");
     baseFilters << QString("*.map");
     baseFilters << QString("*.tss;*.tbl;*.txt;*.dat;*.csv;*.xls");
     baseFilters << QString("*.mod");
     baseFilters << QString("Map Series");
+    baseFilters << QString("*.*");
+    baseFilters << QString("*.*");
+    baseFilters << QString("*.tif");
     baseFilters << QString("*.*");
     _filternr = 0;
     // predefined filters to show PCRaster relevant files
@@ -78,7 +81,8 @@ void nutshellqt::setupExplorer()
     treeView->setIndentation(10);
     treeView->setHeaderHidden(false);
     treeView->setSortingEnabled(true);
-    treeView->sortByColumn(0, Qt::AscendingOrder);
+ //   treeView->sortByColumn(0, Qt::AscendingOrder);
+ //   treeView->sortByColumn(1, Qt::AscendingOrder);
     //   treeView->setDragEnabled(true);
     treeView->setAcceptDrops(true);
     treeView->setDropIndicatorShown(true);
@@ -135,13 +139,14 @@ void nutshellqt::setupExplorer()
 
     // vertical tool buttons to show selections of files
     connect(toolButton_showAll, SIGNAL(clicked()), this, SLOT(showAll()));
+    connect(toolButton_showTIF, SIGNAL(clicked()), this, SLOT(showTIF()));
     connect(toolButton_showMaps, SIGNAL(clicked()), this, SLOT(showMaps()));
     connect(toolButton_showPCR, SIGNAL(clicked()), this, SLOT(showPCR()));
     connect(toolButton_showScript, SIGNAL(clicked()), this, SLOT(showScript()));
     connect(toolButton_showPlot, SIGNAL(clicked()), this, SLOT(showPlot()));
     connect(toolButton_showSeries, SIGNAL(clicked()), this, SLOT(showSeries()));
     connect(toolButton_showOutput, SIGNAL(clicked()), this, SLOT(showReport()));
-    connect(toolButton_deletereport, SIGNAL(clicked()), this, SLOT(deleteScriptReport()));
+    connect(toolButton_deletereport, SIGNAL(clicked()), this, SLOT(showDelReport())); //deleteScriptReport()));
 
     statusBarProgress.setMaximum(100);
     statusBarProgress.setValue(0);
@@ -220,42 +225,53 @@ void nutshellqt::setRootIndex(const QModelIndex& index)
 void nutshellqt::showPCR()
 {
     ismapseries = true;
-    changeFileFilter(0);
+    changeFileFilter(fPCR);
 }
 //---------------------------------------------------------------
 void nutshellqt::showMaps()
 {
     ismapseries = false;
-    changeFileFilter(1);
+    changeFileFilter(fMaps);
 }
 //---------------------------------------------------------------
 void nutshellqt::showPlot()
 {
     ismapseries = false;
-    changeFileFilter(2);
+    changeFileFilter(fPlot);
 }
 //---------------------------------------------------------------
 void nutshellqt::showScript()
 {
     ismapseries = false;
-    changeFileFilter(3);
+    changeFileFilter(fScript);
 }
 //---------------------------------------------------------------
 void nutshellqt::showSeries()
 {
     ismapseries = true;
-    changeFileFilter(4);
+    changeFileFilter(fSeries);
 }
 //---------------------------------------------------------------
 void nutshellqt::showAll()
 {
     ismapseries = false;
-    changeFileFilter(5);
+    changeFileFilter(fall);
 }
 //---------------------------------------------------------------
 void nutshellqt::showReport()
 {
-    changeFileFilter(6);
+    changeFileFilter(freport);
+}
+//---------------------------------------------------------------
+void nutshellqt::showDelReport()
+{
+    changeFileFilter(fdelreport);
+}
+//---------------------------------------------------------------
+void nutshellqt::showTIF()
+{
+    ismapseries = false;
+    changeFileFilter(fTIFF);
 }
 //---------------------------------------------------------------
 // get all filenames reported, series as first occurence: name0000.001
@@ -302,22 +318,28 @@ void nutshellqt::changeFileFilter(int filterNr)
     // set the global file filter nr
 
     switch(filterNr){
-    case 0: toolButton_showPCR->setChecked(true); break;
-    case 1: toolButton_showMaps->setChecked(true); break;
-    case 2: toolButton_showPlot->setChecked(true); break;
-    case 3: toolButton_showScript->setChecked(true); break;
-    case 4: toolButton_showSeries->setChecked(true); break;
-    case 5: toolButton_showAll->setChecked(true); break;
+    case fPCR: toolButton_showPCR->setChecked(true); break;
+    case fMaps: toolButton_showMaps->setChecked(true); break;
+    case fPlot: toolButton_showPlot->setChecked(true); break;
+    case fScript: toolButton_showScript->setChecked(true); break;
+    case fSeries: toolButton_showSeries->setChecked(true); break;
+    case freport: toolButton_showOutput->setChecked(true); break;
+    case fdelreport: toolButton_deletereport->setChecked(true); break;
+    case fTIFF: toolButton_showTIF->setChecked(true); break;
+    case fall: toolButton_showAll->setChecked(true); break;
     }
 
     currentFilter.clear();
     // clear the display file filter
-
-    if (filterNr == 6)
+    if (filterNr == freport)
         currentFilter << getReportFilter();
     //currentFilter is set here to script reported output
     else
+        if (filterNr == fdelreport)
+            deleteScriptReport();
+    else
     {
+
         currentFilter << baseFilters[filterNr].split(";");
         // get the right base filter from the hardcoded list
         if (ismapseries)
@@ -328,7 +350,7 @@ void nutshellqt::changeFileFilter(int filterNr)
     }
 
     BDgate->setSeries(ismapseries);
-    // paint series blue idf they are included
+    // paint series blue if they are included in the filter
 
     if (currentFilter.count() == 0)
         currentFilter << " ";
@@ -375,6 +397,8 @@ void nutshellqt::deleteScriptReport()
 {
     QStringList list, series;
     QFile file;
+
+    toolButton_deletereport->setChecked(true);
 
     if (calcProcess && calcProcess->state() == QProcess::Running)
     {
@@ -468,7 +492,7 @@ void nutshellqt::deleteScriptReport()
     }
     statusBar()->removeWidget(&statusBarProgress);
     statusBar()->removeWidget(&statusLabel);
-
+    toolButton_deletereport->setChecked(false);
     changeFileFilter(_filternr);
     // update explorer
 }
@@ -755,6 +779,11 @@ void nutshellqt::setWorkdirectoryNr(int index)
 
     currentPath = comboBox_workdir->currentText();
     // set current working path
+
+//    QString root = QDir(currentPath).rootPath();
+//    setRootIndex(dirModel->index(root));
+//    treeView->sortByColumn(0, Qt::AscendingOrder);
+
     setRootIndex(dirModel->index(currentPath));
     // set the explorer to this path
     dir.setCurrent(currentPath);

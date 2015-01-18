@@ -11,8 +11,6 @@
 
 
 //---------------------------------------------------------------
-
-
 void nutshellqt::setPCRasterDirectories()
 {
     if(!PCRasterDirName.isEmpty())
@@ -59,6 +57,7 @@ void nutshellqt::setNutshellIni()
     settings.setValue("aguilaDirectory", AguilaDirName);
     settings.setValue("mapeditDirectory", MapeditDirName);
     settings.setValue("docDirectory", PCRasterDocDirName);
+    settings.setValue("GDALDirectory", GDALDirName);
 
     //settings.setValue(QString("workdir/current"),comboBox_workdir->currentIndex());
     for (int i = 0; i < comboBox_workdir->count(); i++)
@@ -108,19 +107,23 @@ void nutshellqt::getNutshellIni()
     QChar cs = QDir::separator();
     QString str = settings.value("PCRasterDirectory").toString();
     if (!str.isEmpty())
-        PCRasterDirName = str;
-    str = settings.value("pcrcalcDirectory").toString();
+        PCRasterDirName = (str.endsWith(QDir::separator())?str:str + QDir::separator());
+    str = settings.value("pcrcalcDirectory").toString();   
     if (!str.isEmpty())
-        PCRasterAppDirName = str;
+        PCRasterAppDirName = (str.endsWith(QDir::separator())?str:str + QDir::separator());
     str = settings.value("aguilaDirectory").toString();
     if (!str.isEmpty())
-        AguilaDirName = str;
+        AguilaDirName = (str.endsWith(QDir::separator())?str:str + QDir::separator());
     str = settings.value("mapeditDirectory").toString();
     if (!str.isEmpty())
-        MapeditDirName = str;
+        MapeditDirName = (str.endsWith(QDir::separator())?str:str + QDir::separator());
     str = settings.value("docDirectory").toString();
     if (!str.isEmpty())
-        PCRasterDocDirName = str;
+        PCRasterDocDirName = (str.endsWith(QDir::separator())?str:str + QDir::separator());
+    str = settings.value("GDALDirectory").toString();
+    if (!str.isEmpty())
+        GDALDirName = (str.endsWith(QDir::separator())?str:str + QDir::separator());
+
     if (!PCRasterAppDirName.isEmpty() && !QFileInfo(PCRasterAppDirName + "/pcrcalc.exe").exists())
     {
         PCRasterDirName = "";
@@ -128,7 +131,11 @@ void nutshellqt::getNutshellIni()
         AguilaDirName = "";
         MapeditDirName = "";
         PCRasterDocDirName = "";
+
     }
+
+    if (!GDALDirName.isEmpty() && !QFileInfo(GDALDirName + "gdal/apps/gdal_translate.exe").exists())
+        GDALDirName = "";
 
 
     settings.beginGroup("workdir");
@@ -232,14 +239,14 @@ void nutshellqt::getRegPCRaster()
     if (!regv3 && !regv2)
         return;
 
-    WarningMsg(QString("Old PCRaster version found. This will probably work but you should upgrade to version 4:? pcraster.geo.uu.nl"));
+//    if (!dir.exists() || PCRasterDirName.isEmpty())
+//    {
+//        ErrorMsg(QString("PCRaster directory not found: %1\nSet dirs in File->Options").arg(PCRasterDirName));
+//        return;
+//    }
+
+    WarningMsg(QString("Old PCRaster version found. This will probably work but you should upgrade to version 4.0.x @ pcraster.geo.uu.nl"));
 
     QDir dir(PCRasterDirName);
-
-    if (!dir.exists() || PCRasterDirName.isEmpty())
-    {
-        ErrorMsg(QString("PCRaster directory not found: %1\nSet dirs in File->Options").arg(PCRasterDirName));
-        return;
-    }
 }
 //---------------------------------------------------------------

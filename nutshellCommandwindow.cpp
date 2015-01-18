@@ -23,7 +23,7 @@ void nutshellqt::setupCommandwindow()
     commandWindow = new nutshelleditor(this, 1);
     commandWindow->document()->setDocumentMargin(2);
     commandWindow->setFrameShape(QFrame::StyledPanel);
-   // commandWindow->setFrameStyle(QFrame::Sunken);
+    // commandWindow->setFrameStyle(QFrame::Sunken);
 
     verticalLayoutCmdlist->insertWidget(0, commandWindow);
     commandWindow->installEventFilter(this);
@@ -83,39 +83,58 @@ void nutshellqt::parseCommand()
         return;
     }
 
-    if ((args[0].toUpper() == "PCRCALC" || args[0].toUpper() == "OLDCALC")
+    if ((args[0].toUpper() == "PCRCALC")// || args[0].toUpper() == "OLDCALC")
             && (calcProcess && calcProcess->state() == QProcess::Running))
     {
         ErrorMsg("pcrcalc is active, wait until it is finished or press stop first");
         return;
     }
-
+    //qDebug() << args.count() << args;
     prog = PCRasterAppDirName + args[0] +".exe";
 
-    if ((args[0].toUpper() == "PCRCALC" || args[0].toUpper() == "OLDCALC")
+    if (args[0].contains("gdal", Qt::CaseInsensitive))
+        prog = GDALDirName + "gdal/apps/" + args[0] +".exe";
+
+    if ((args[0].toUpper() == "PCRCALC")// || args[0].toUpper() == "OLDCALC")
             && (args1 && args[1].indexOf("-f",Qt::CaseInsensitive) == 0))
     {
         args.removeAt(0);
         runModelCommandwindow(prog, args);
     }
     else
-        if (args[0].toUpper() == "AGUILA")
+        if (args[0].toUpper() == "AGUILA")// || args[0].contains("gdal", Qt::CaseInsensitive))// || (args[0].toUpper() == "RESAMPLE" && args.count() > 1))
         {
             args.removeAt(0);
             PCRProcess->startDetached(prog, args);
             commandWindow->appendPlainText("");
         }
         else
-        {
-            args.removeAt(0);
-            PCRProcess->start(prog, args);
-       //     PCRProcess->waitForReadyRead(10000);
-            PCRProcess->waitForFinished(120000);
-          //  commandWindow->appendPlainText("");
-        }
+            if (args[0].contains("gdal", Qt::CaseInsensitive))
+            {
+                args.removeAt(0);
+                QStringList env;
+                env << QString("PATH=" + GDALDirName);
+                PCRProcess->setEnvironment(env);
+                PCRProcess->start(prog, args);
+            }
+            else
+                //            if (args[0].toUpper() == "RESAMPLE" && args.count() > 1)
+                //            {
+                //                args.removeAt(0);
+                //                PCRProcess->startDetached(prog, args);
+                //                commandWindow->appendPlainText("");
+                //            }
+                //            else
+            {
+                args.removeAt(0);
+                PCRProcess->start(prog, args);
+                //     PCRProcess->waitForReadyRead(10000);
+
+                PCRProcess->waitForFinished(-1);
+            }
     setCursorLast();
-    if (!processError)
-        comboBox_cmdlist->insertItem(0, lines[lines.count()-1]);
+    //  if (!processError)
+    comboBox_cmdlist->insertItem(0, lines[lines.count()-1]);
     commandcounter = -1;
     // add command to commandlist
 }

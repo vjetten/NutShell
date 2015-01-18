@@ -51,8 +51,8 @@ nutshellqt::nutshellqt(QWidget *parent) :
     //       toolButton_dirprev->setVisible(false);
     //       toolButton_dirnew->setVisible(false);
 
-    dirModel->setRootPath(QDir(currentPath).rootPath());
-    setRootIndex(dirModel->index(currentPath));
+//    dirModel->setRootPath(QDir(currentPath).rootPath());
+//    setRootIndex(dirModel->index(currentPath));
 
     setWorkdirectory();
 
@@ -110,10 +110,10 @@ void nutshellqt::createModelActions()
     killmodelAct->setToolTip("Stop running");
     connect(killmodelAct, SIGNAL(triggered()), this, SLOT(killModel()));
 
-    oldmodelAct = new QAction(QIcon(":/resources/oldcalc1.png"), "&Use oldcalc...", this);
-    oldmodelAct->setCheckable (true);
-    oldmodelAct->setToolTip("Run model script with oldcalc");
-    connect(oldmodelAct, SIGNAL(toggled(bool)), this, SLOT(toggleOldcalc(bool)));
+//    oldmodelAct = new QAction(QIcon(":/resources/oldcalc1.png"), "&Use oldcalc...", this);
+//    oldmodelAct->setCheckable (true);
+//    oldmodelAct->setToolTip("Run model script with oldcalc");
+//    connect(oldmodelAct, SIGNAL(toggled(bool)), this, SLOT(toggleOldcalc(bool)));
 
 }
 //---------------------------------------------------------------
@@ -151,7 +151,8 @@ void nutshellqt::createMainActions()
     connect(closefileAct, SIGNAL(triggered()), this, SLOT(closeFile()));
 
 
-    helpAct = new QAction(QIcon(":/resources/help.png"), "&Help files", this);
+    helpAct = new QAction(QIcon(":/resources/help.png"), "&PCRaster help", this);
+    helpAct->setShortcut(Qt::Key_F1);
     connect(helpAct, SIGNAL(triggered()), this, SLOT(showHelp()));
 
     //    helpWebAct = new QAction(QIcon(":/resources/help.png"), "&Help: latest on the web", this);
@@ -360,8 +361,8 @@ void nutshellqt::setupToolBars()
     toolBar->addAction(getdisplayvarAct);
 
     toolBar->addSeparator ();
-    toolBar->addAction(helppcrcalcAct);
     toolBar->addAction(helpAct);
+    toolBar->addAction(helppcrcalcAct);
     toolBar->addAction(helpNutshellAct);
 
     toolBar->setAllowedAreas(Qt::RightToolBarArea | Qt::TopToolBarArea);
@@ -411,7 +412,7 @@ void nutshellqt::setupMenu( )
     runMenu->addAction(runmodelAct);
     runMenu->addAction(pausemodelAct);
     runMenu->addAction(killmodelAct);
-    runMenu->addAction(oldmodelAct);
+ //   runMenu->addAction(oldmodelAct);
 
     editMenu = menuBar()->addMenu(tr("&Edit"));
     editMenu->addAction(undoAct);
@@ -456,7 +457,7 @@ void nutshellqt::getDirectories()
 {
     QStringList tempdirs;
     tempdirs.clear();
-    tempdirs << PCRasterAppDirName << AguilaDirName << MapeditDirName;
+    tempdirs << PCRasterAppDirName << AguilaDirName << MapeditDirName << GDALDirName;
 
     nutOptions.setupOptions(tempdirs);
     nutOptions.setModal(true);
@@ -467,6 +468,8 @@ void nutshellqt::getDirectories()
         PCRasterAppDirName = tempdirs[0];
         AguilaDirName = tempdirs[1];
         MapeditDirName = tempdirs[2];
+        GDALDirName = tempdirs[3];
+
         PCRasterDirName = PCRasterAppDirName + "../";
         PCRasterDirName = QDir(PCRasterDirName).absolutePath() + "/";
 

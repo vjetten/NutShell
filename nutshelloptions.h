@@ -21,6 +21,7 @@ public slots:
 	 void findPcrcalcDir();
 	 void findAguilaDir();
 	 void findMapeditDir();
+     void findGDALDir();
  };
 
 #endif // NUTSHELLOPTIONS_H

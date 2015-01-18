@@ -9,6 +9,7 @@ QT       += core gui
 TARGET = nutshell
 TEMPLATE = app
 CONFIG += exceptions
+#CONFIG += static
 SOURCES += main.cpp\
         nutshellqt.cpp \
         nutshellExplorer.cpp \
@@ -53,10 +54,10 @@ CONFIG(debug, debug|release) {
   win32:win32-msvc2010{
    # compile release with MSVC 2010
     DEFINES += _CRT_SECURE_NO_WARNINGS
-    LIBS += -L"debug/vc"  -L"debug/vc/static" -lcsfvcd
+    LIBS += -L"debug/vc/static" -lcsfvcd
     DESTDIR = debug/vc
   } else {
-    LIBS += -L"debug" -llibcsfd
+    LIBS += -L"debug/vc/static" -llibcsfd
     DESTDIR = debug
   }
   MOC_DIR = debug/moc
@@ -72,8 +73,8 @@ CONFIG(debug, debug|release) {
     DESTDIR = release/vc
   } else {
                  # compile with mingw
-    LIBS += -L"release" -llibcsf
-    DESTDIR = release
+    LIBS += -L"release/csf" -llibcsf
+
   }
   MOC_DIR = release/moc
   OBJECTS_DIR= release/objs

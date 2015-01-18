@@ -37,9 +37,9 @@ void nutshellqt::setupModel()
     //connect(PCRProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderr()) );
     //connect(PCRProcess, SIGNAL(stateChanged(QProcess::ProcessState)),this, SLOT(doSomething(QProcess::ProcessState)) );
 
-    useOldCalc = false;
+    //    useOldCalc = false;
 
-    connect(toolButton_oldcalc, SIGNAL(toggled(bool)), this, SLOT(toggleOldcalc(bool)));
+    //    connect(toolButton_oldcalc, SIGNAL(toggled(bool)), this, SLOT(toggleOldcalc(bool)));
     connect(toolButton_startrun, SIGNAL(clicked()), this, SLOT(runModel()));
     connect(toolButton_stoprun, SIGNAL(clicked()), this, SLOT(killModel()));
     connect(toolButton_pauserun, SIGNAL(toggled(bool)), this, SLOT(suspendModel(bool)));
@@ -50,31 +50,11 @@ void nutshellqt::setupModel()
 
 }
 //---------------------------------------------------------------
+// called from command window, only if option -f
 void nutshellqt::runModelCommandwindow(QString prog, QStringList args)
 {
     ETEditor->clearerror();
     statusBar()->clearMessage();
-
-    if (!QFileInfo(prog).exists())
-    {
-        ErrorMsg("pcrcalc not found. Specify directory in File->Options.");
-        return;
-    }
-
-    if (!runPaused && calcProcess && calcProcess->state() == QProcess::Running)
-    {
-        ErrorMsg("pcrcalc is active, wait until it is finished or press stop first");
-        return;
-    }
-
-    totalsteps = getTimesteps();
-    time_ms.start();
-    statusBar()->addWidget(&statusLabel);
-
-    commandWindow->appendPlainText("starting... ");
-    commandWindow->appendPlainText(" ");
-    commandWindow->appendPlainText(" ");
-    // make room in the plainTextEdit for the pcrcalc counter
 
     QString ext = QFileInfo(prog).suffix();
     if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
@@ -85,12 +65,35 @@ void nutshellqt::runModelCommandwindow(QString prog, QStringList args)
     }
     // run a batch file by passing it on to the system
 
+    if (!QFileInfo(prog).exists())
+    {
+        ErrorMsg("pcrcalc not found. Specify directory in File->Options.");
+        return;
+    }
+
+    if (!runPaused && calcProcess && calcProcess->state() == QProcess::Running)
+    {
+        ErrorMsg("Another pcrcalc process is active, wait until it is finished or press stop first");
+        return;
+    }
+
+    totalsteps = getTimesteps();
+    time_ms.start();
+    statusBar()->addWidget(&statusLabel);
+    processDone = false;
+
+    commandWindow->appendPlainText("Starting ... ");
+    commandWindow->appendPlainText(" ");
+    commandWindow->appendPlainText(" ");
+    // make room in the plainTextEdit for the pcrcalc counter
+
     calcProcess->start(prog, args, QIODevice::ReadWrite);
 
     runPaused = false;
 
 }
 //---------------------------------------------------------------
+// called from pressing start speed buttons
 void nutshellqt::runModel()
 {
     QStringList args, argsscreen;
@@ -98,25 +101,36 @@ void nutshellqt::runModel()
 
     ETEditor->clearerror();
     statusBar()->clearMessage();
+    setButtons(true, false, false);
+
+    QString ext = QFileInfo(ETfilePath).suffix();
+    if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
+    {
+        STATUS("Opening file in operating system");
+        QDesktopServices::openUrl(QUrl("\""+ETfilePath+"\""));
+        return;
+    }
+    // run a batch file by passing it on to the system
 
     if (!runPaused && calcProcess && calcProcess->state() == QProcess::Running)
     {
-        ErrorMsg("pcrcalc is active, wait until it is finished or press stop first");
+        ErrorMsg("Another pcrcalc process is active, wait until it is finished or press stop first");
+        setButtons(false, false, true);
         return;
     }
     if (runPaused)
     {
         suspendModel(false);
+        setButtons(true, false, false);
         return;
     }
+    // check if something is running
 
-    setButtons(true, false, false);
+//    totalsteps = getTimesteps();
+//    time_ms.start();
+//    statusBar()->addWidget(&statusLabel);
 
-    totalsteps = getTimesteps();
-    time_ms.start();
-    statusBar()->addWidget(&statusLabel);
-
-    setCursorLast();
+//    setCursorLast();
 
     if (!ETExists)
     {
@@ -136,19 +150,16 @@ void nutshellqt::runModel()
         ErrorMsg("The model\\script is modified, save first");
         return;
     }
+    // check the script stuff
 
-    QString ext = QFileInfo(ETfilePath).suffix();
-    if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
-    {
-        STATUS("Opening file in operating system");
-        QDesktopServices::openUrl(QUrl("\""+ETfilePath+"\""));
-        return;
-    }
-    // run a batch file by passing it on to the system
+    totalsteps = getTimesteps();
+    time_ms.start();
+    // get timer info
+    statusBar()->addWidget(&statusLabel);
+    setCursorLast();
 
     args << QString("-f") <<  ETfilePath;
     argsscreen << QString("-f") <<  ETfileName;
-
     if (toolButton_argSubs->isChecked())
     {
         QStringList subs;
@@ -156,27 +167,23 @@ void nutshellqt::runModel()
         args << subs;
         argsscreen << subs;
     }
+    // make argument list
 
-    if (useOldCalc)
-    {
-        prog = PCRasterAppDirName + "oldcalc.exe";
-        commandWindow->appendPlainText("oldcalc "+argsscreen.join(" "));
-    }
-    else
-    {
-        prog = PCRasterAppDirName + "pcrcalc.exe";
-        commandWindow->appendPlainText("pcrcalc "+argsscreen.join(" "));
-    }
+    prog = PCRasterAppDirName + "pcrcalc.exe";
+    commandWindow->appendPlainText("pcrcalc "+argsscreen.join(" "));
 
     if (!QFileInfo(prog).exists())
     {
         ErrorMsg("pcrcalc not found. Specify directory in File->Options.");
         return;
     }
+    //check is pcrcalc can be found
 
-    commandWindow->appendPlainText("starting... ");
-    commandWindow->appendPlainText("");
-    commandWindow->appendPlainText("");
+    processDone = false;
+
+    commandWindow->appendPlainText("starting ... ");
+    commandWindow->appendPlainText(" ");
+    commandWindow->appendPlainText(" ");
     // make room in the plainTextEdit for the pcrcalc counter
     //QCoreApplication::sendPostedEvents(this, 0);
 
@@ -185,6 +192,7 @@ void nutshellqt::runModel()
     setCursorLast();
 }
 //---------------------------------------------------------------
+//pause process only for windows systems
 void nutshellqt::suspendModel(bool pause)
 {
     if (calcProcess && calcProcess->state() == QProcess::NotRunning)
@@ -224,13 +232,23 @@ void nutshellqt::killModel()
 {
     if (calcProcess && calcProcess->state() == QProcess::Running)
     {
-        QString output = commandWindow->toPlainText();
-
         calcProcess->kill();
 
         calcProcess->waitForFinished();
 
-        output.append("\nuser interupt...\n");
+        QStringList list = commandWindow->toPlainText().split("\n");
+        xlast = list.count()-1;
+        while (xlast > 0  && (list[xlast] == " " || list[xlast].isEmpty()))
+        {
+            list.removeLast();
+            xlast--;
+        }
+        if (!list[xlast].contains("pcrcalc") && !list[xlast].contains("ERROR"))
+            list[xlast] = "user interupt...\n";
+        else
+            if(!list[xlast].contains("ERROR"))
+            list << "user interupt...\n";
+        QString output = list.join("\n");
         commandWindow->setPlainText(output);
 
         QTextCursor cur = commandWindow->textCursor();
@@ -238,7 +256,7 @@ void nutshellqt::killModel()
         commandWindow->setTextCursor(cur);
 
         setButtons(false, false, true);
-
+        processDone = true;
     }
     else
     {
@@ -252,6 +270,7 @@ void nutshellqt::onScreen(QString buffer)
 {
     QString output, SStep;
     QStringList list, listb;
+    bool done = false;
     //    QList<QByteArray> lines = byteArray.split('\r\n');
     //    foreach (const QByteArray& line, lines) {
     //        if (line.size())
@@ -279,7 +298,6 @@ void nutshellqt::onScreen(QString buffer)
         if(listb[0].contains("version"))
         {
             int last = listb.count() - 1;
-
             list.replace(xlast-3,listb[0]);
             list.replace(xlast-2,listb[last]);
             output=list.join("\n");
@@ -295,11 +313,10 @@ void nutshellqt::onScreen(QString buffer)
         else
         {
             // runstep output
-            for (int j = 0; j < listb.count(); j+=2) //<= each runstep is repeated twice for some reason
+            for (int j = 0; j < listb.count(); j++)//j+=2) //<= each runstep is repeated twice for some reason
                 if (listb[j].contains("Exec"))
                 {
                     //Delay(10);
-
                     calcCursor.setPosition(commandWindow->toPlainText().size(),QTextCursor::KeepAnchor);
                     commandWindow->setTextCursor(calcCursor);
                     //set cursor at the end
@@ -308,31 +325,24 @@ void nutshellqt::onScreen(QString buffer)
                     {
                         SStep = listb[j].remove(0, 19);
                         double timemin = time_ms.elapsed()*(0.001/60);
+                        double timeout = timemin * totalsteps/SStep.toInt();
                         SStep = QString("Executing timestep %1 (runtime: %2 of %3 min)")
-                                .arg(SStep)
-                                .arg(timemin,0,'f',2)
-                                .arg(timemin * totalsteps/SStep.toInt(),0,'f',2);
+                                .arg(SStep).arg(timemin,0,'f',2).arg(timeout,0,'f',2);
+                        done = timemin*1.001 >= timeout;
+                        // qDebug() << timemin*1.000001 << timeout << done;
                         // calculate runtime and show
                     }
 
                     commandWindow->textCursor().removeSelectedText();
                     commandWindow->textCursor().insertText(SStep);
                     // delete run step number text and insert new run number
-
+                    if (done)
+                        commandWindow->appendPlainText("Wrapping up output...");
                     calcCursor.setPosition(cursorPosition);
                     //set cursor back to preferred position
+                    processDone = true;
                 }
         }
-
-    //    if (totalsteps > 0)
-    //    {
-    //        int steps = SStep.toInt();
-    //        double timemin = time_ms.elapsed()*(0.001/60);
-    //        SStep = QString(" Estimated runtime : %1 of %2 minutes").arg(timemin,0,'g',2).arg(timemin * totalsteps/steps,0,'g',2);
-    //        statusLabel.setText(SStep);
-    //        statusLabel.show();
-    //        // calculate runtime and show
-    //    }
 
     QCoreApplication::sendPostedEvents(this, 0);
     // update the plaintextedit with these actions
@@ -347,18 +357,18 @@ void nutshellqt::readFromStderr()
         doRunErrorMessage(buffer);
 
 
-//    QByteArray byteArray = calcProcess->readAllStandardError();
-//    onScreen(byteArray);
-//    QString buffer = QString(byteArray);
-//    if (buffer.contains("ERROR"))
-//        doRunErrorMessage(buffer);
+    //    QByteArray byteArray = calcProcess->readAllStandardError();
+    //    onScreen(byteArray);
+    //    QString buffer = QString(byteArray);
+    //    if (buffer.contains("ERROR"))
+    //        doRunErrorMessage(buffer);
 
-//    QList<QByteArray> lines = byteArray.split('\r\n');
-//    foreach (const QByteArray& line, lines) {
-//        if (line.size())
-//            qDebug() << "PIPE STDERR" << line;
-//    }
-//    qDebug() << calcProcess->readAllStandardError().constData();
+    //    QList<QByteArray> lines = byteArray.split('\r\n');
+    //    foreach (const QByteArray& line, lines) {
+    //        if (line.size())
+    //            qDebug() << "PIPE STDERR" << line;
+    //    }
+    //    qDebug() << calcProcess->readAllStandardError().constData();
     //https://qt.gitorious.org/qtplayground/qtprocessmanager/commit/b3c127ab0d29f9d245a9639c216caedf4a41ca69
 }
 
@@ -406,9 +416,8 @@ void nutshellqt::doRunErrorMessage(QString buffer)
 
 }
 //---------------------------------------------------------------
-void nutshellqt::finishedModel(int c)
+void nutshellqt::finishedModel(int)
 {
-
     if (calcProcess->bytesAvailable() > 0)
     {
         QByteArray buf;
@@ -416,6 +425,23 @@ void nutshellqt::finishedModel(int c)
         buf = calcProcess->readAllStandardError();
         onScreen(QString(buf));
     }
+
+    QStringList list = commandWindow->toPlainText().split("\n");
+    xlast = list.count()-1;
+    while (xlast > 0  && (list[xlast] == " " || list[xlast].isEmpty()))
+    {
+        list.removeLast();
+        xlast--;
+    }
+   // qDebug() << list[xlast];
+    if (!list[xlast].contains("pcrcalc") && !list[xlast].contains("ERROR"))
+        list[xlast] = "Done.";
+    else
+        if(!list[xlast].contains("ERROR"))
+        list << "Done.";
+    QString output = list.join("\n");
+
+    commandWindow->setPlainText(output);
 
     setCursorLast();
 
@@ -437,9 +463,9 @@ void nutshellqt::finishedModel(int c)
     }
 }
 //---------------------------------------------------------------
-void nutshellqt::toggleOldcalc(bool checked)
-{
-    useOldCalc = checked;
-}
+//void nutshellqt::toggleOldcalc(bool checked)
+//{
+//    useOldCalc = checked;
+//}
 //---------------------------------------------------------------
 
