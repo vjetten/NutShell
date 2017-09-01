@@ -10,15 +10,15 @@
 ;--------------------------------
 ;General
 
-   !define VERSION "4.84"
-   !define DATE "[140223]"
+   !define VERSION "4.87a"
+   !define DATE "[150119]"
 
   ;Name and file
-  Name "NutShell  ${VERSION} for PCRaster 4.0.0"
+  Name "NutShell  ${VERSION} for PCRaster 4.0.x"
   OutFile "D:\prgc\PCR\pcraster-nutshell\install\nutshell${VERSION}setup.exe"
   
   ;Default installation folder
-  InstallDir "c:\praster4.0.0\bin"
+  ;InstallDir "c:\pcraster-4.0.2_x86-64\bin\"
   ;$PROGRAMFILES\pcraster\apps
    
   ;Get installation folder from registry if available
@@ -38,14 +38,15 @@
   !define MUI_ICON "nutshell1.ico"
 	!define MUI_WELCOMEFINISHPAGE_BITMAP "nutshell1.bmp"
 	!define MUI_WELCOMEFINISHPAGE_BITMAP_NOSTRETCH
-  !define MUI_WELCOMEPAGE_TEXT "Installation of NutShell version ${VERSION}, compile date ${DATE} for PCRaster. Contains also mapedit version 1.11. \
+  !define MUI_WELCOMEPAGE_TEXT "Installation of NutShell version ${VERSION}, compile date ${DATE} for PCRaster. Contains also mapedit version 1.12. \
   NutShell is a windows shell for the freeware PCRaster environmental modelling language and raster GIS. \
   The PCRaster software can be found here: http://pcraster.geo.uu.nl. \
-  This version is updated for PCRaster 4.0.0"
+  This version is updated for PCRaster 4.0.x"
 
   !insertmacro MUI_PAGE_WELCOME
   !insertmacro MUI_PAGE_LICENSE license.txt
-  !define MUI_DIRECTORYPAGE_TEXT_TOP "Please select the [...]/PCRaster4.0.0/bin folder. NutShell will be copied in a subdirectory nutshell."
+  !define MUI_DIRECTORYPAGE_TEXT_TOP "Please select the ../PCRaster4.0.x/bin/ folder. \
+               NutShell will be copied in a subdirectory ../bin/nutshell. If you change to a new PCRaster version you have to redo this." 
 ;  !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_DIRECTORY
   
@@ -76,8 +77,10 @@ Section "Main files" SecDummy
   SetOutPath "$INSTDIR\nutshell\"
   
   ;ADD YOUR OWN FILES HERE...
-  File D:\prgc\PCR\pcraster-nutshell\release\vc\nutshell.exe
-  File d:\prgc\PCR\pcraster-nutshell\release\vc\*.dll
+ ; File D:\prgc\PCR\pcraster-nutshell\release\vc\nutshell.exe
+ ; File d:\prgc\PCR\pcraster-nutshell\release\vc\*.dll
+  File D:\prgc\PCR\build-nutshellQt-Desktop-Release\release\vc\nutshell.exe
+  File D:\prgc\PCR\build-nutshellQt-Desktop-Release\release\vc\*.dll
   File d:\prgc\PCR\pcraster-nutshell\install\nutshellhelp.pdf
   File d:\prgc\PCR\pcraster-nutshell\install\README.txt
 

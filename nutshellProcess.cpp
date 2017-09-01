@@ -34,8 +34,6 @@ void nutshellqt::setupModel()
     //calcProcess->setTextModeEnabled (true);
     connect(calcProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderr()) );
     connect(calcProcess, SIGNAL(finished(int)),this, SLOT(finishedModel(int)) );
-    //connect(PCRProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderr()) );
-    //connect(PCRProcess, SIGNAL(stateChanged(QProcess::ProcessState)),this, SLOT(doSomething(QProcess::ProcessState)) );
 
     //    useOldCalc = false;
 

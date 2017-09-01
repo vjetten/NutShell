@@ -49,6 +49,8 @@
 #define ACTIONTYPEGSTAT     12
 #define ACTIONTYPEMAPDISPLAY 13
 #define ACTIONTYPEWINDOWSCMD 14
+#define ACTIONTYPEMAP2TIFF 15
+#define ACTIONTYPEMAP2ILWIS 16
 
 #define ETfilePath ET[tabWidget->currentIndex()].filePath
 #define ETfileName ET[tabWidget->currentIndex()].fileName
@@ -371,6 +373,8 @@ public slots:
     void actionmapedit();
     void actioneditor();
     void actionmapDisplay();
+    void actionmapMap2Tiff();
+    void actionmapMap2Ilwis();
 
     void cutFile();
     void copyFile();
@@ -433,6 +437,8 @@ private:
     QAction *mapnewAct;
     QAction *mapeditAct;
     QAction *mapDisplayAct;
+    QAction *map2TiffAct;
+    QAction *map2IlwisAct;
 
     QAction *actionFind;
     QAction *actionReplace;

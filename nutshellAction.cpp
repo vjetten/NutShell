@@ -9,6 +9,8 @@
 
 #include "nutshellqt.h"
 
+
+//---------------------------------------------------------------------------
 // the following functions determine which action to take
 // when a toolbutton is pressed or enter or doubleclick on the fileView is executed
 void nutshellqt::actionaguila2D()
@@ -69,6 +71,16 @@ void nutshellqt::actionmapDisplay()
     PerformAction(ACTIONTYPEMAPDISPLAY);
 }
 //---------------------------------------------------------------------------
+void nutshellqt::actionmapMap2Tiff()
+{
+    PerformAction(ACTIONTYPEMAP2TIFF);
+}
+//---------------------------------------------------------------------------
+void nutshellqt::actionmapMap2Ilwis()
+{
+    PerformAction(ACTIONTYPEMAP2ILWIS);
+}
+//---------------------------------------------------------------------------
 // get actiontype if double click or <enter> keypress in fileView
 int nutshellqt::GetActionType()
 {
@@ -79,7 +91,7 @@ int nutshellqt::GetActionType()
 
     MAP *m = Mopen(SelectedPathName.toAscii(),M_READ);
     //	MAP *m = Mopen(name.toAscii(),M_READ);
-    if (m != NULL || ext.toUpper() == "TIF")
+    if (m != NULL || ext.toUpper() == "TIF" || ext.toUpper() == "MPR")
     {
         at = ACTIONTYPEAGUILA2D; //ACTIONTYPEDISPLAY;
         Mclose(m);
@@ -124,6 +136,9 @@ void nutshellqt::PerformAction(int actiontype)
     QString prog;
     QString cmdl;
     QStringList args;
+    QString nameout;
+    QString namein;
+    QStringList env;
     MAP *m = NULL;
     bool fileIsMap = true;
     bool isAguila = false;
@@ -151,8 +166,9 @@ void nutshellqt::PerformAction(int actiontype)
     else
         Mclose(m);
 
-    isTIFF = QFileInfo(SelectedPathName).suffix().toUpper() == "TIF";
-    // geotiff file only from extension
+    isTIFF = QFileInfo(SelectedPathName).suffix().toUpper() == "TIF" ||
+            QFileInfo(SelectedPathName).suffix().toUpper() == "MPR";
+    // geotiff or ILWIS file only from extension
 
     // check if selection is a pcraster map
     if (!fileIsMap && !isTIFF && (
@@ -161,6 +177,8 @@ void nutshellqt::PerformAction(int actiontype)
                 actiontype == ACTIONTYPEAGUILA2D ||
                 actiontype == ACTIONTYPEDRAPE ||
                 actiontype == ACTIONTYPEMAPEDIT ||
+                actiontype == ACTIONTYPEMAP2TIFF ||
+                actiontype == ACTIONTYPEMAP2ILWIS ||
                 actiontype == ACTIONTYPELEGEND ))
         //|| actiontype == ACTIONTYPEATTRIBUTE))
     {
@@ -314,6 +332,36 @@ void nutshellqt::PerformAction(int actiontype)
         prog = PCRasterAppDirName + "gstat.exe";
         //actiontype = ACTIONTYPENONE;
         break;
+    case ACTIONTYPEMAP2ILWIS:
+        env << QString("PATH=" + GDALDirName);
+        PCRProcess->setEnvironment(env);
+//        nameout = QFileInfo(SelectedPathName).filePath();
+//        nameout = nameout.remove(nameout.lastIndexOf('.'),20) + ".mpr";
+        nameout = QFileInfo(SelectedPathName).baseName() + ".mpr";
+        namein =  QFileInfo(SelectedPathName).baseName() + "." + QFileInfo(SelectedPathName).suffix();
+        args << "-of" << "ILWIS" << namein << nameout;
+        prog = GDALDirName + "gdal/apps/gdal_translate.exe";
+        if (!QFileInfo(prog).exists())
+        {
+            ErrorMsg("Cannot find GDAL tools, have you installed GDAL \nand set file->options?");
+            actiontype = ACTIONTYPENONE;
+        }
+        commandWindow->appendPlainText("gdal_translate "+args.join(" "));
+        break;
+    case ACTIONTYPEMAP2TIFF:
+        env << QString("PATH=" + GDALDirName);
+        PCRProcess->setEnvironment(env);
+        nameout = QFileInfo(SelectedPathName).baseName() + ".tif";
+        namein =  QFileInfo(SelectedPathName).baseName() + "." + QFileInfo(SelectedPathName).suffix();
+        args << "-of" <<"GTiff" << namein << nameout;
+        prog = GDALDirName + "gdal/apps/gdal_translate.exe";
+        if (!QFileInfo(prog).exists())
+        {
+            ErrorMsg("Cannot find GDAL tools, have you installed GDAL \nand set file->options?");
+            actiontype = ACTIONTYPENONE;
+        }
+        commandWindow->appendPlainText("gdal_translate "+args.join(" "));
+        break;
 //    case ACTIONTYPEMAPDISPLAY :
 //        //      args << cmdl;
 //        mapDisplay.mapDisplayNames = SelectedPathName;
@@ -323,7 +371,6 @@ void nutshellqt::PerformAction(int actiontype)
 //        break;
     case ACTIONTYPEWINDOWSCMD:
        // QDesktopServices::openUrl(QUrl("\""+cmdl+"\""));
-       // break;
     default:
         STATUS("Opening file in operating system");
         QDesktopServices::openUrl(QUrl("\""+cmdl+"\""));
@@ -334,12 +381,12 @@ void nutshellqt::PerformAction(int actiontype)
 
     if (actiontype != ACTIONTYPENONE)
     {
-        if (isAguila)//prog.contains("aguila"))
+        if (isAguila)
             PCRProcess->startDetached(prog,args);
         else
         {
             PCRProcess->start(prog,args);
-            PCRProcess->waitForStarted(10000);
+            //PCRProcess->waitForStarted(10000);
         }
         //TODO check if detached only for aguila?
     }

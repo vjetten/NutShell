@@ -49,14 +49,14 @@ void nutshellqt::setupExplorer()
 {
     fns.clear();
     baseFilters.clear();
-    baseFilters << QString("*.mod;*.map;*.csf;*.tbl;*.tss;*.txt;*.dat;*.csv;*.pcr;*.cmd;*.bat;*.tif");
+    baseFilters << QString("*.mod;*.map;*.csf;*.tbl;*.tss;*.txt;*.dat;*.csv;*.pcr;*.cmd;*.bat;*.tif;*.mpr");
     baseFilters << QString("*.map");
     baseFilters << QString("*.tss;*.tbl;*.txt;*.dat;*.csv;*.xls");
     baseFilters << QString("*.mod");
     baseFilters << QString("Map Series");
     baseFilters << QString("*.*");
     baseFilters << QString("*.*");
-    baseFilters << QString("*.tif");
+    baseFilters << QString("*.tif;*.mpr");
     baseFilters << QString("*.*");
     _filternr = 0;
     // predefined filters to show PCRaster relevant files

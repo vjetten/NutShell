@@ -93,5 +93,8 @@
         <file>resources/add_16.png</file>
         <file>resources/filenewscript.png</file>
         <file>resources/showTIFF.png</file>
+        <file>resources/map2ilwis.png</file>
+        <file>resources/map2tiff.png</file>
+        <file>resources/showtif3.png</file>
     </qresource>
 </RCC>

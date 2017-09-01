@@ -31,7 +31,8 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     setupCommandwindow();
 
-    getRegPCRaster();
+    //getRegPCRaster();
+    // Obsolete
 
     currentPath = "C:/";
 
@@ -308,6 +309,11 @@ void nutshellqt::createExplorerActions()
     mapDisplayAct  = new QAction(QIcon(":/resources/aguila2d.png"), "", this);
     connect(mapDisplayAct,      SIGNAL(triggered()), this, SLOT(actionmapDisplay()));
 
+    map2TiffAct  = new QAction(QIcon(":/resources/map2tiff.png"), "Covert Map to GeoTiff", this);
+    connect(map2TiffAct,      SIGNAL(triggered()), this, SLOT(actionmapMap2Tiff()));
+    map2IlwisAct  = new QAction(QIcon(":/resources/map2ilwis.png"), "Covert Map to Ilwis mpr", this);
+    connect(map2IlwisAct,      SIGNAL(triggered()), this, SLOT(actionmapMap2Ilwis()));
+
 }
 //---------------------------------------------------------------
 void nutshellqt::createContextMenuActions()
@@ -382,6 +388,8 @@ void nutshellqt::setupToolBars()
     pcrToolBar->addAction(mapattributeAct );
     pcrToolBar->addAction(mapnewAct       );
     pcrToolBar->addAction(mapeditAct      );
+    pcrToolBar->addAction(map2TiffAct      );
+    pcrToolBar->addAction(map2IlwisAct      );
 
     pcrToolBar->setSizePolicy (QSizePolicy::Expanding,QSizePolicy::Fixed);
 

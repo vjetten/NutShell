@@ -1,15 +1,22 @@
 ==============================================================================================================
-nutshell for PCRaster version 4.83
+nutshell for PCRaster version 4.86
 ==============================================================================================================
-Date: 23 Feb 2014
+Date: 18 Jan 2015
 Author: Victor Jetten
 programmed in Qt (http://qt-project.org) and compiled with MSVC 2010 (freeware)
 Opensource on request and can be compiled in linux (not tried yet!)
 
-Default install location(!):  ../pcraster4.0.0/bin/nutshell
-Do *NOT* install in the pcraster4.0.0/bin directory, nutshell uses different Qt dlls which
+Default install location(!):  ../pcraster4.0.1/bin/nutshell
+Do *NOT* install in the pcraster4.0.1/bin directory, nutshell uses different Qt dlls which
 If you are blocked because of admin rights, NutShell can be installed anywhere else.
 ---------------------------------------------------------------------------------------------------------------
+NOTE: NEW MAPEDIT, fixed crash and enabled editing missing value areas!
+
+Changes 4.85-4.86
+- Added option to show TIF maps
+- Added option to include path to GDAL installation
+- Added option GDAL commands fomr the command window
+
 Changes 4.8-4.84
 - Synced with PCRaster 4.0.0 install, help system etc
 - free splitter window movement

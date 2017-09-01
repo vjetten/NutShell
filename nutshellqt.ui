@@ -637,14 +637,14 @@
               <item>
                <widget class="QToolButton" name="toolButton_showTIF">
                 <property name="toolTip">
-                 <string>Show GeoTIFF</string>
+                 <string>Show GeoTIFF and ILWIS</string>
                 </property>
                 <property name="text">
                  <string>IM</string>
                 </property>
                 <property name="icon">
                  <iconset resource="nutshellqt.qrc">
-                  <normaloff>:/resources/showTIFF.png</normaloff>:/resources/showTIFF.png</iconset>
+                  <normaloff>:/resources/showtif3.png</normaloff>:/resources/showtif3.png</iconset>
                 </property>
                 <property name="checkable">
                  <bool>true</bool>
