@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
-#QTDIR = C:/Qt/5.0.1/5.0.1/msvc2010
+QTDIR = C:\Qt\Qt5.8.0\5.8\msvc2015
 TARGET = nutshell
 TEMPLATE = app
 CONFIG += exceptions
