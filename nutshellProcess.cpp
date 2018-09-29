@@ -42,6 +42,10 @@ void nutshellqt::setupModel()
     connect(toolButton_stoprun, SIGNAL(clicked()), this, SLOT(killModel()));
     connect(toolButton_pauserun, SIGNAL(toggled(bool)), this, SLOT(suspendModel(bool)));
 
+    toolButton_startrun->setIconSize(iSize);
+    toolButton_stoprun->setIconSize(iSize);
+    toolButton_pauserun->setIconSize(iSize);
+
     setButtons(false, false, true);
 
     runPaused = false;

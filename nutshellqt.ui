@@ -836,7 +836,7 @@
             </property>
             <property name="icon">
              <iconset resource="nutshellqt.qrc">
-              <normaloff>:/resources/start1.png</normaloff>:/resources/start1.png</iconset>
+              <normaloff>:/resources/2X/start1.png</normaloff>:/resources/2X/start1.png</iconset>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -856,7 +856,7 @@
             </property>
             <property name="icon">
              <iconset resource="nutshellqt.qrc">
-              <normaloff>:/resources/pause2.png</normaloff>:/resources/pause2.png</iconset>
+              <normaloff>:/resources/2X/pause2.png</normaloff>:/resources/2X/pause2.png</iconset>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -876,7 +876,7 @@
             </property>
             <property name="icon">
              <iconset resource="nutshellqt.qrc">
-              <normaloff>:/resources/stop1.png</normaloff>:/resources/stop1.png</iconset>
+              <normaloff>:/resources/2X/stop1.png</normaloff>:/resources/2X/stop1.png</iconset>
             </property>
             <property name="checkable">
              <bool>true</bool>

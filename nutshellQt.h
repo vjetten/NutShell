@@ -175,6 +175,7 @@ public:
 
     int genfontsize, dpiscale;
     void setfontSize(int fs);
+    QSize iSize;
 
     myTreeView *treeView;
     void setupActions();
