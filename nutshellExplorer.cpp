@@ -31,6 +31,7 @@ void nutshellqt::initExplorer(QString)
     // !!!!
     fileView->setVisible(false);
     fileView->resizeColumnsToContents();
+    fileView->resizeRowsToContents();
     fileView->setVisible(true);
 
     changeFileFilter(_filternr);
@@ -58,10 +59,11 @@ void nutshellqt::setupExplorer()
     dirModel->setNameFilterDisables(false);
     // directory tree view model, show only dirs
 
-    fileModel = new QFileSystemModel(this);
+    fileModel = new FSM(this);//QFileSystemModel(this);
     fileModel->setReadOnly(false);
     fileModel->setFilter( QDir::Files | QDir::NoDotAndDotDot );
     fileModel->setNameFilterDisables(false);
+  //  fileModel->setTextAlignment(Qt::AlignCenter);
     // file list view model, show only files
 
     treeView = new myTreeView();
@@ -88,8 +90,8 @@ void nutshellqt::setupExplorer()
     //fileView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
   //  fileView->horizontalHeader()->setStretchLastSection(true);
     //fileView->horizontalHeader()->setMovable(true);
-//    fileView->resizeRowsToContents();
-//    fileView->resizeColumnsToContents();
+    fileView->resizeRowsToContents();
+    fileView->resizeColumnsToContents();
 
     fileView->setShowGrid(false);
     fileView->setWordWrap(false);
@@ -352,7 +354,11 @@ void nutshellqt::changeFileFilter(int filterNr)
     // set the file model to the filtered output
 
 //    for (int i = 0 ; i < fileView->verticalHeader()->count(); i++)
-//        fileView->setRowHeight(i, genfontsize);
+//        fileView->setRowHeight(i, genfontsize*2);
+    fileView->setVisible(false);
+    fileView->resizeColumnsToContents();
+    fileView->resizeRowsToContents();
+    fileView->setVisible(true);
 }
 //---------------------------------------------------------------
 //! OBSOLETE this function is not used anymore

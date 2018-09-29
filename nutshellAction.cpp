@@ -91,11 +91,11 @@ int nutshellqt::GetActionType()
 
     MAP *m = Mopen(SelectedPathName.toLatin1(),M_READ);
     //	MAP *m = Mopen(name.toLatin1(),M_READ);
-    if (m != NULL || ext.toUpper() == "TIF" || ext.toUpper() == "MPR")
+    if (m != nullptr || ext.toUpper() == "TIF" || ext.toUpper() == "MPR")
     {
         at = ACTIONTYPEAGUILA2D; //ACTIONTYPEDISPLAY;
         Mclose(m);
-        m=NULL;
+        m=nullptr;
     }
     else
         //		if (ext.toUpper() == "TSS")
@@ -139,7 +139,7 @@ void nutshellqt::PerformAction(int actiontype)
     QString nameout;
     QString namein;
     QStringList env;
-    MAP *m = NULL;
+    MAP *m = nullptr;
     bool fileIsMap = true;
     bool isAguila = false;
     bool isTIFF = false;
@@ -161,7 +161,7 @@ void nutshellqt::PerformAction(int actiontype)
     // also makes mapseries if needed
 
     m = Mopen(SelectedPathName.toLatin1().data(),M_READ);
-    if (m == NULL)
+    if (m == nullptr)
         fileIsMap = false;
     else
         Mclose(m);
@@ -286,7 +286,7 @@ void nutshellqt::PerformAction(int actiontype)
         }
         else
             ErrorMsg("Error opening file as PCRaster map.");
-        m = NULL;
+        m = nullptr;
         actiontype = ACTIONTYPENONE;
         break;
     case ACTIONTYPEATTRIBUTENEW :

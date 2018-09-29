@@ -123,7 +123,7 @@ class BlueDelegate : public QStyledItemDelegate
     Q_OBJECT
 
 public:
-    BlueDelegate(QWidget *parent = 0) : QStyledItemDelegate(parent) {}
+    BlueDelegate(QWidget *parent = nullptr) : QStyledItemDelegate(parent) {}
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option,
                const QModelIndex &index) const;
@@ -133,13 +133,31 @@ public:
         ismapseries = iss;
     }
 };
+class FSM : public QFileSystemModel
+{
+    Q_OBJECT
+
+public:
+    FSM(QWidget *parent = nullptr) : QFileSystemModel(parent) {}
+
+    QVariant data(const QModelIndex &index, int role) const
+    {
+      if (role == Qt::TextAlignmentRole && index.column() == 1)
+      {
+        // QFileSystemModel just sets the horizontal alignment which mispositions the text of column 1
+        return QVariant(Qt::AlignRight | Qt::AlignVCenter);
+      }
+      return QFileSystemModel::data(index, role);
+    }
+};
+
 //---------------------------------------------------------------
 class QDropEvent;
 
 class myTreeView : public QTreeView
 {
 public:
-    myTreeView(QTreeView *parent = 0);
+    myTreeView(QTreeView *parent = nullptr);
     QList <filenameseries> fns;
     QString StripForName(QString S);
 
@@ -468,7 +486,8 @@ private:
 
     // explorer variables
     QFileSystemModel *dirModel;
-    QFileSystemModel* fileModel;
+    //QFileSystemModel
+    FSM *fileModel;
     QItemSelectionModel *selectionModel;
     QItemSelectionModel *selectionDirModel;
 
