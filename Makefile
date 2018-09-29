@@ -185,7 +185,6 @@ Makefile: nutshellQt.pro ..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\win32-msvc20
 		..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\win32\qt_config.prf \
 		..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\win32-msvc2010\qmake.conf \
 		..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\spec_post.prf \
-		.qmake.stash \
 		..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\exclusive_builds.prf \
 		..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\default_pre.prf \
 		..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\win32\default_pre.prf \
@@ -323,7 +322,6 @@ Makefile: nutshellQt.pro ..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\win32-msvc20
 ..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\win32\qt_config.prf:
 ..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\win32-msvc2010\qmake.conf:
 ..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\spec_post.prf:
-.qmake.stash:
 ..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\exclusive_builds.prf:
 ..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\default_pre.prf:
 ..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\win32\default_pre.prf:
@@ -359,7 +357,7 @@ clean: release-clean debug-clean  FORCE
 	-$(DEL_FILE) release\vc\nutshell.exp
 distclean: release-distclean debug-distclean  FORCE
 	-$(DEL_FILE) Makefile
-	-$(DEL_FILE) .qmake.stash release\vc\nutshell.lib
+	-$(DEL_FILE) release\vc\nutshell.lib
 
 release-mocclean:
 	@set MAKEFLAGS=$(MAKEFLAGS)

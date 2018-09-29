@@ -15,19 +15,22 @@ void nutshellqt::setPCRasterDirectories()
 {
     if(!PCRasterDirName.isEmpty())
     {
-        PCRasterDirName = QDir(PCRasterDirName).absolutePath()+ "/";
-        PCRasterDocDirName = PCRasterDirName + "doc/pcrman/";
-        PCRasterAppDirName = PCRasterDirName + "apps" + "/";
+        if (!PCRasterDirName.endsWith("\\") && !PCRasterDirName.endsWith("/"))
+            PCRasterDirName = PCRasterDirName + "/";// QDir::separator();
+  //      PCRasterDirName = QDir(PCRasterDirName).absolutePath()+ "/";
+//        PCRasterDocDirName = PCRasterDirName + "doc/pcrman/";
+//        PCRasterAppDirName = PCRasterDirName + "apps" + "/";
 
         // assume verssion 4.0.0
-        if (!QFileInfo(PCRasterDocDirName+"index.html").exists())
-        {
+   //     if (!QFileInfo(PCRasterDocDirName+"index.html").exists())
+   //     {
             PCRasterDocDirName = PCRasterDirName + "doc/manual/";
             PCRasterAppDirName = PCRasterDirName + "bin" + "/";
-        }
+   //     }
         AguilaDirName = PCRasterAppDirName;
-        MapeditDirName = PCRasterAppDirName + "nutshell/";
+        MapeditDirName = QCoreApplication::applicationDirPath();//PCRasterAppDirName + "nutshell/";
     }
+    /*
     else
     {
         //check if the install has pcrcalc in the dir ../bin
@@ -45,6 +48,7 @@ void nutshellqt::setPCRasterDirectories()
         }
      //   qDebug() << PCRasterDirName << PCRasterAppDirName << PCRasterDocDirName << MapeditDirName;
     }
+    */
 }
 //---------------------------------------------------------------
 void nutshellqt::setNutshellIni()
@@ -53,10 +57,10 @@ void nutshellqt::setNutshellIni()
     settings.clear();
     //   settings.setValue("workDirectory", currentPath);
     settings.setValue("PCRasterDirectory", PCRasterDirName);
-    settings.setValue("pcrcalcDirectory", PCRasterAppDirName);
-    settings.setValue("aguilaDirectory", AguilaDirName);
-    settings.setValue("mapeditDirectory", MapeditDirName);
-    settings.setValue("docDirectory", PCRasterDocDirName);
+  //  settings.setValue("pcrcalcDirectory", PCRasterAppDirName);
+   // settings.setValue("aguilaDirectory", AguilaDirName);
+   // settings.setValue("mapeditDirectory", MapeditDirName);
+  //  settings.setValue("docDirectory", PCRasterDocDirName);
     settings.setValue("GDALDirectory", GDALDirName);
 
     //settings.setValue(QString("workdir/current"),comboBox_workdir->currentIndex());
@@ -104,39 +108,28 @@ void nutshellqt::getNutshellIni()
     QSettings settings(qApp->applicationDirPath()+"/NutShell.ini",QSettings::IniFormat);
     //   currentPath = settings.value("workDirectory").toString();
 
-    QChar cs = QDir::separator();
     QString str = settings.value("PCRasterDirectory").toString();
     if (!str.isEmpty())
-        PCRasterDirName = (str.endsWith(QDir::separator())?str:str + QDir::separator());
-    str = settings.value("pcrcalcDirectory").toString();   
-    if (!str.isEmpty())
-        PCRasterAppDirName = (str.endsWith(QDir::separator())?str:str + QDir::separator());
-    str = settings.value("aguilaDirectory").toString();
-    if (!str.isEmpty())
-        AguilaDirName = (str.endsWith(QDir::separator())?str:str + QDir::separator());
-    str = settings.value("mapeditDirectory").toString();
-    if (!str.isEmpty())
-        MapeditDirName = (str.endsWith(QDir::separator())?str:str + QDir::separator());
-    str = settings.value("docDirectory").toString();
-    if (!str.isEmpty())
-        PCRasterDocDirName = (str.endsWith(QDir::separator())?str:str + QDir::separator());
+        if (!str.endsWith("\\") && !str.endsWith("/"))
+            str = str + "/";
+    PCRasterDirName = str;
     str = settings.value("GDALDirectory").toString();
     if (!str.isEmpty())
-        GDALDirName = (str.endsWith(QDir::separator())?str:str + QDir::separator());
+        if (!str.endsWith("\\") && !str.endsWith("/"))
+            str = str + "/";
+    GDALDirName = str;
 
-    if (!PCRasterAppDirName.isEmpty() && !QFileInfo(PCRasterAppDirName + "/pcrcalc.exe").exists())
+    if (!PCRasterDirName.isEmpty() && !QFileInfo(PCRasterDirName + "bin/pcrcalc.exe").exists())
     {
         PCRasterDirName = "";
         PCRasterAppDirName = "";
         AguilaDirName = "";
         MapeditDirName = "";
         PCRasterDocDirName = "";
-
     }
 
-    if (!GDALDirName.isEmpty() && !QFileInfo(GDALDirName + "gdal/apps/gdal_translate.exe").exists())
+    if (!GDALDirName.isEmpty() && !QFileInfo(GDALDirName + "bin/gdal/apps/gdal_translate.exe").exists())
         GDALDirName = "";
-
 
     settings.beginGroup("workdir");
     QStringList keys = settings.childKeys();
