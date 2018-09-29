@@ -88,8 +88,8 @@ void nutshellqt::setupExplorer()
     //fileView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
   //  fileView->horizontalHeader()->setStretchLastSection(true);
     //fileView->horizontalHeader()->setMovable(true);
-    fileView->resizeRowsToContents();
-    fileView->resizeColumnsToContents();
+//    fileView->resizeRowsToContents();
+//    fileView->resizeColumnsToContents();
 
     fileView->setShowGrid(false);
     fileView->setWordWrap(false);
@@ -351,8 +351,8 @@ void nutshellqt::changeFileFilter(int filterNr)
     fileModel->setNameFilters(currentFilter);
     // set the file model to the filtered output
 
-    for (int i = 0 ; i < fileView->verticalHeader()->count(); i++)
-        fileView->setRowHeight(i, genfontsize*3);
+//    for (int i = 0 ; i < fileView->verticalHeader()->count(); i++)
+//        fileView->setRowHeight(i, genfontsize);
 }
 //---------------------------------------------------------------
 //! OBSOLETE this function is not used anymore
