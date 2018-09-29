@@ -93,7 +93,7 @@ void nutshellqt::parseCommand()
     prog = PCRasterAppDirName + args[0] +".exe";
 
     if (args[0].contains("gdal", Qt::CaseInsensitive))
-        prog = GDALDirName + "gdal/apps/" + args[0] +".exe";
+        prog = GDALDirName + "bin/gdal/apps/" + args[0] +".exe";
 
     if ((args[0].toUpper() == "PCRCALC")// || args[0].toUpper() == "OLDCALC")
             && (args1 && args[1].indexOf("-f",Qt::CaseInsensitive) == 0))
@@ -113,7 +113,7 @@ void nutshellqt::parseCommand()
             {
                 args.removeAt(0);
                 QStringList env;
-                env << QString("PATH=" + GDALDirName);
+                env << QString("PATH=" + GDALDirName + "bin/");
                 PCRProcess->setEnvironment(env);
                 PCRProcess->start(prog, args);
             }

@@ -496,7 +496,8 @@ void nutshellqt::getDirectories()
 {
     QStringList tempdirs;
     tempdirs.clear();
-    tempdirs << PCRasterAppDirName << AguilaDirName << MapeditDirName << GDALDirName;
+  //  tempdirs << PCRasterAppDirName << AguilaDirName << MapeditDirName << GDALDirName;
+    tempdirs << PCRasterDirName  << GDALDirName;
 
     nutOptions.setupOptions(tempdirs);
     nutOptions.setModal(true);
@@ -504,17 +505,20 @@ void nutshellqt::getDirectories()
     {
         tempdirs = nutOptions.getOptions();
 
-        PCRasterAppDirName = tempdirs[0];
-        AguilaDirName = tempdirs[1];
-        MapeditDirName = tempdirs[2];
-        GDALDirName = tempdirs[3];
-
-        PCRasterDirName = PCRasterAppDirName + "../";
-        PCRasterDirName = QDir(PCRasterDirName).absolutePath() + "/";
-
-        PCRasterDocDirName = PCRasterDirName + "doc/pcrman/";
-        if (!QFileInfo(PCRasterDocDirName+"index.html").exists())
-            PCRasterDocDirName = PCRasterDirName + "doc/manual/";
+        PCRasterDirName = tempdirs[0];
+        if (!PCRasterDirName.endsWith("\\") && !PCRasterDirName.endsWith("/"))
+            PCRasterDirName = PCRasterDirName + "/";
+        //MapeditDirName = tempdirs[2];
+        GDALDirName = tempdirs[1];
+        if (!GDALDirName.endsWith("\\") && !GDALDirName.endsWith("/"))
+            GDALDirName = GDALDirName + "/";
+        PCRasterAppDirName = PCRasterDirName + "bin/";
+       // PCRasterDirName = QDir(PCRasterDirName).absolutePath() + "/";
+        AguilaDirName = PCRasterAppDirName;
+       // PCRasterDocDirName = PCRasterDirName + "doc/pcrman/";
+       // if (!QFileInfo(PCRasterDocDirName+"index.html").exists())
+       //     PCRasterDocDirName = PCRasterDirName + "doc/manual/";
+qDebug() << tempdirs << PCRasterDirName << PCRasterAppDirName << GDALDirName;
     }
 }
 //---------------------------------------------------------------
