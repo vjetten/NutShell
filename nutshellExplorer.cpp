@@ -19,44 +19,45 @@
 
 //---------------------------------------------------------------
 /// SLOT triggered when the tableview is populated: resize the columns but keep user control of column width
-void nutshellqt::initExplorer(QString path)
+void nutshellqt::initExplorer(QString)
 {
     // cannot be done earlier because treeview is not populated yet
     treeView->hideColumn(1);
     treeView->hideColumn(2);
 
-    treeView->header()->setResizeMode(0, QHeaderView::ResizeToContents);
+    //treeView->header()->setResizeMode(0, QHeaderView::ResizeToContents);
     int w = treeView->columnWidth(0);
-    treeView->header()->setResizeMode(0, QHeaderView::Interactive);
+    //treeView->header()->setResizeMode(0, QHeaderView::Interactive);
     treeView->setColumnWidth (0, w);
 
-    fileView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-    fileView->horizontalHeader()->setResizeMode(0, QHeaderView::ResizeToContents);
+    //fileView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+   // fileView->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     int w0 = fileView->columnWidth(0);
     int w1 = fileView->columnWidth(1);
     int w2 = fileView->columnWidth(2);
     int w3 = fileView->columnWidth(3);
 
-    fileView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
-    fileView->setColumnWidth (0, w0);
+//    //fileView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+    fileView->setColumnWidth (0, w0*2);
     fileView->setColumnWidth (1, w1);
-    fileView->setColumnWidth (2, w2);
-    fileView->setColumnWidth (3, w3);
+    fileView->setColumnWidth (2, w2*2);
+    fileView->setColumnWidth (3, w3*2);
 
+    changeFileFilter(_filternr);
 }
 //---------------------------------------------------------------
 void nutshellqt::setupExplorer()
 {
     fns.clear();
     baseFilters.clear();
-    baseFilters << QString("*.mod;*.map;*.csf;*.tbl;*.tss;*.txt;*.dat;*.csv;*.pcr;*.cmd;*.bat;*.tif;*.mpr");
+    baseFilters << QString("*.mod;*.map;*.csf;*.tbl;*.tss;*.txt;*.dat;*.csv;*.pcr;*.cmd;*.bat;*.tif");
     baseFilters << QString("*.map");
     baseFilters << QString("*.tss;*.tbl;*.txt;*.dat;*.csv;*.xls");
     baseFilters << QString("*.mod");
     baseFilters << QString("Map Series");
     baseFilters << QString("*.*");
     baseFilters << QString("*.*");
-    baseFilters << QString("*.tif;*.mpr");
+    baseFilters << QString("*.tif");
     baseFilters << QString("*.*");
     _filternr = 0;
     // predefined filters to show PCRaster relevant files
@@ -94,21 +95,20 @@ void nutshellqt::setupExplorer()
 
     fileView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     fileView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    fileView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
-    fileView->horizontalHeader()->setStretchLastSection(true);
-    fileView->horizontalHeader()->setMovable(true);
+    //fileView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  //  fileView->horizontalHeader()->setStretchLastSection(true);
+    //fileView->horizontalHeader()->setMovable(true);
+    fileView->resizeRowsToContents();
+    fileView->resizeColumnsToContents();
 
-    fileView->verticalHeader()->hide();
     fileView->setShowGrid(false);
     fileView->setWordWrap(false);
     fileView->sortByColumn(0, Qt::AscendingOrder);
     fileView->setSortingEnabled(true);
-    fileView->verticalHeader()->setDefaultSectionSize(22);
     fileView->setDragEnabled(true);
     fileView->setAcceptDrops(true);
     fileView->setDropIndicatorShown(true);
     fileView->setIconSize(QSize(0,0));
-
     fileView->setModel(fileModel);
 
     BDgate = new BlueDelegate();
@@ -170,6 +170,8 @@ void nutshellqt::setupExplorer()
     ismapseries = true;
     history.clear();
     future.clear();
+
+    expFont = 32;
 }
 //---------------------------------------------------------------
 void nutshellqt::contextualMenu(const QPoint& point)
@@ -359,6 +361,8 @@ void nutshellqt::changeFileFilter(int filterNr)
     fileModel->setNameFilters(currentFilter);
     // set the file model to the filtered output
 
+    for (int i = 0 ; i < fileView->verticalHeader()->count(); i++)
+        fileView->setRowHeight(i, genfontsize*3);
 }
 //---------------------------------------------------------------
 //! OBSOLETE this function is not used anymore

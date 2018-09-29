@@ -2,6 +2,7 @@
 #define NUTSHELLEDITOR_H
 
 #include <QtGui>
+#include <QtWidgets>
 
 QT_BEGIN_NAMESPACE
 class QPaintEvent;

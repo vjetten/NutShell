@@ -69,7 +69,8 @@ void nutshellLegend::makelegend(QString name)
 
    QApplication::setOverrideCursor(Qt::WaitCursor);
 
-   MAP *legendmap = Mopen(name.toAscii().data(),M_READ);
+   MAP *legendmap = Mopen(name.toLatin1()
+.data(),M_READ);
 
    if (legendmap == NULL)
    {
@@ -175,7 +176,8 @@ void nutshellLegend::Accept()
    memset(theLegend, 0, sizeof(CSF_LEGEND)*sizel);
 
    //copy the header to theLegend
-   strncpy(theLegend[0].descr,legendTitle->text().toAscii(),63);
+   strncpy(theLegend[0].descr,legendTitle->text().toLatin1()
+,63);
    theLegend[0].nr = 0;
 
    //copy the entries to theLegend
@@ -183,14 +185,16 @@ void nutshellLegend::Accept()
    {
       QModelIndex index = legendmodel->index(i, 1, QModelIndex());
       QString text = legendmodel->data(index, Qt::DisplayRole).toString();
-      strncpy(theLegend[i+1].descr, text.toAscii(),63);
+      strncpy(theLegend[i+1].descr, text.toLatin1()
+,63);
 
       index = legendmodel->index(i, 0, QModelIndex());
       theLegend[i+1].nr = legendmodel->data(index, Qt::DisplayRole).toInt();
    }
 
    // put theLegend in the map
-   in = Mopen(filename.toAscii().data(),M_READ_WRITE);
+   in = Mopen(filename.toLatin1()
+.data(),M_READ_WRITE);
    if (in == NULL)
    {
       ErrorMsg("Cannot write legend to map");

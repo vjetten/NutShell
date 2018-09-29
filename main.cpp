@@ -4,8 +4,9 @@
  * Author: VJ 140222
  */
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include "nutshellqt.h"
+//#include <QtGui/QApplication>
 //qlineargradient(x1:0, y1:0, x2:1, y2:1,stop:0 #eee, stop:1 #ccc);
 int main(int argc, char *argv[])
 {
@@ -21,7 +22,7 @@ int main(int argc, char *argv[])
 //    margin-bottom: 1px;\
 //    border-radius: 2px;}");
 
-    w.setWindowTitle("NutShell (version 4.87a [19 Jan 2015])");
+    w.setWindowTitle("NutShell (version 5.0 [17 Apr 2018])");
     w.showMaximized();
     w.show();
     //a.setStyle("Cleanlooks");

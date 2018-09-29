@@ -64,6 +64,37 @@ nutshellqt::nutshellqt(QWidget *parent) :
     changeName = false;
 
     fileView->horizontalHeader()->moveSection(3, 2);
+
+
+    QRect rect = qApp->desktop()->screenGeometry();
+    int _H = rect.height();
+    QFont font = qApp->font();
+    genfontsize=font.pointSize();
+    dpiscale = 1;
+
+    // do a bit of size teaking for large displays becvause QT 5.5.0 does not have that yet
+    toolBar->setIconSize(QSize(16, 16));
+    QSize iSize = QSize(16,16);
+// the "20" margin is because not all mon itors are exactly the pixel size, e.g. 1210
+    int mar = 0;
+    if (_H > 800) {
+        toolBar->setIconSize(QSize(32, 32));
+        genfontsize = 12;
+    }
+    if (_H > 1080+mar) {
+        genfontsize = 14;
+        this->setStyleSheet(QString("QToolButton * {icon-size: 32px 32px}"));
+        iSize = QSize(24,24);
+    }
+    if (_H > 1200+mar) {
+        dpiscale = 2;
+        genfontsize = 12;
+        toolBar->setIconSize(QSize(48, 48));
+        this->setStyleSheet(QString("QToolButton * {icon-size: 48px 48px}"));
+        iSize = QSize(32,32);
+    }
+
+    setfontSize(genfontsize);
 }
 //---------------------------------------------------------------
 nutshellqt::~nutshellqt()
@@ -376,7 +407,7 @@ void nutshellqt::setupToolBars()
 
     pcrToolBar = new QToolBar();
     horizontalLayoutPCRbuttons->insertWidget(0, pcrToolBar);
-    pcrToolBar->setIconSize(QSize(16,16));
+    pcrToolBar->setIconSize(QSize(32,32));
     pcrToolBar->addAction(aguilaplusAct   );
     //pcrToolBar->addWidget(fileMaskBox);
     pcrToolBar->addAction(aguila2DAct     );
@@ -485,5 +516,20 @@ void nutshellqt::getDirectories()
         if (!QFileInfo(PCRasterDocDirName+"index.html").exists())
             PCRasterDocDirName = PCRasterDirName + "doc/manual/";
     }
+}
+//---------------------------------------------------------------
+void nutshellqt::setfontSize(int fs)
+{
+    qDebug() << "fs" << fs << dpiscale;
+    QFont font = qApp->font();
+    font.setPixelSize(fs*dpiscale);
+    qApp->setFont(font);
+
+    qApp->setStyleSheet(QString("QComboBox {font: %1px; padding: 1px 0px 1px 3px;}").arg(fs*dpiscale));
+  //  qApp->setStyleSheet(QString("QToolButton {iconSize: %1px %1px; }").arg(fs*dpiscale));
+
+    qApp->setStyleSheet(QString("QCheckBox::indicator {width: %1px; height: %1px;}\
+                                QRadioButton::indicator {width: %1px; height: %1px;}").arg(fs*dpiscale));
+
 }
 //---------------------------------------------------------------

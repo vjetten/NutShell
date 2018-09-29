@@ -4,8 +4,10 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
-QTDIR = C:\Qt\Qt5.8.0\5.8\msvc2015
+QT       += core gui widgets
+#QTDIR = C:\Qt\Qt5.8.0\5.8\msvc2015
+QTDIR =C:\\Qt\\Qt5.5.1vs\\5.5\\msvc2010
+#QTDIR = C:/Qt/4.8.6/bin
 TARGET = nutshell
 TEMPLATE = app
 CONFIG += exceptions
@@ -83,6 +85,6 @@ CONFIG(debug, debug|release) {
 }
 RESOURCES += nutshellqt.qrc
 RC_FILE = nutshellqt.rc
-CONFIG += precompile_header
-PRECOMPILED_HEADER = stable.h
+# CONFIG += precompile_header
+# PRECOMPILED_HEADER = stable.h
 

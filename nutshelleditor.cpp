@@ -283,11 +283,11 @@ void nutshellqt::fontSelect()
 {
     if (!ETExists)
         return;
-
+    bool ok;
     if (commandWindow->hasFocus())
-        commandWindow->setFont(QFontDialog::getFont(0, commandWindow->font()));
+        commandWindow->setFont(QFontDialog::getFont(&ok, commandWindow->font()));
     else
-        ETEditor->setFont(QFontDialog::getFont(0, ETEditor->font()));
+        ETEditor->setFont(QFontDialog::getFont(&ok, ETEditor->font()));
 }
 //---------------------------------------------------------------
 void nutshellqt::fontDecrease()

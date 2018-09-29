@@ -25,7 +25,7 @@ QString myTreeView::StripForName(QString S)
    Ss = QFileInfo(S).baseName();
 
    int i = Ss.length()-1;
-   while (i > 0 && int(Ss.toAscii()[i]) >= 48 && int(Ss.toAscii()[i]) <= 57)
+   while (i > 0 && int(Ss.toLatin1()[i]) >= 48 && int(Ss.toLatin1()[i]) <= 57)
       i--;
    Ss = Ss.remove(i+1, 256);
 

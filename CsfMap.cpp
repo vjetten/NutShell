@@ -57,7 +57,9 @@ void cTMap::KillMap()
 //---------------------------------------------------------------------------
 void cTMap::GetMapHeader(QString Name)
 {
-   MAP *m = Mopen(Name.toAscii().constData(), M_READ);
+   MAP *m = Mopen(Name.toLatin1(), M_READ);
+//   originalPixmap.save(fileName, format.toLatin1());
+
    if (m == NULL)
       Error(QString("Map %1 cannot be opened.").arg(Name));
 //   {
@@ -118,7 +120,8 @@ bool cTMap::LoadFromFile()
 
    MapName = PathName;
 
-   m = Mopen(MapName.toAscii().constData(), M_READ);
+   m = Mopen(MapName.toLatin1()
+.constData(), M_READ);
 
    if (!m)
       return(false);
@@ -214,7 +217,8 @@ void cTMap::WriteMap(QString Name)
    // make an array for output
 
    MH.cellRepr = CR_REAL4;
-   out = Rcreate(Name.toAscii().constData(),nrRows, nrCols, (CSF_CR)MH.cellRepr, VS_SCALAR,
+   out = Rcreate(Name.toLatin1()
+.constData(),nrRows, nrCols, (CSF_CR)MH.cellRepr, VS_SCALAR,
                  (CSF_PT)projection, MH.xUL, MH.yUL, MH.angle, MH.cellSizeX);
    RuseAs(out, CR_REAL4);
 

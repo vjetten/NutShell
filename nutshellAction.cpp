@@ -89,8 +89,8 @@ int nutshellqt::GetActionType()
     QString ext = QFileInfo(SelectedPathName).suffix();
     //	QString ext = QFileInfo(name).suffix();
 
-    MAP *m = Mopen(SelectedPathName.toAscii(),M_READ);
-    //	MAP *m = Mopen(name.toAscii(),M_READ);
+    MAP *m = Mopen(SelectedPathName.toLatin1(),M_READ);
+    //	MAP *m = Mopen(name.toLatin1(),M_READ);
     if (m != NULL || ext.toUpper() == "TIF" || ext.toUpper() == "MPR")
     {
         at = ACTIONTYPEAGUILA2D; //ACTIONTYPEDISPLAY;
@@ -160,7 +160,7 @@ void nutshellqt::PerformAction(int actiontype)
         cmdl = getFileListString();
     // also makes mapseries if needed
 
-    m = Mopen(SelectedPathName.toAscii().data(),M_READ);
+    m = Mopen(SelectedPathName.toLatin1().data(),M_READ);
     if (m == NULL)
         fileIsMap = false;
     else
@@ -271,7 +271,7 @@ void nutshellqt::PerformAction(int actiontype)
     case ACTIONTYPELEGEND:
         if (fileIsMap)
         {
-            m = Mopen(SelectedPathName.toAscii().data(),M_READ);
+            m = Mopen(SelectedPathName.toLatin1().data(),M_READ);
             if (RgetValueScale(m) == VS_NOMINAL ||
                     RgetValueScale(m) == VS_ORDINAL ||
                     RgetValueScale(m) == VS_BOOLEAN)
@@ -334,6 +334,7 @@ void nutshellqt::PerformAction(int actiontype)
         break;
     case ACTIONTYPEMAP2ILWIS:
         env << QString("PATH=" + GDALDirName);
+        env << QString("set GDAL_DATA=") + GDALDirName + QString("/gdal-data");
         PCRProcess->setEnvironment(env);
 //        nameout = QFileInfo(SelectedPathName).filePath();
 //        nameout = nameout.remove(nameout.lastIndexOf('.'),20) + ".mpr";
@@ -350,6 +351,7 @@ void nutshellqt::PerformAction(int actiontype)
         break;
     case ACTIONTYPEMAP2TIFF:
         env << QString("PATH=" + GDALDirName);
+        env << QString("set GDAL_DATA=") + GDALDirName + QString("/gdal-data");
         PCRProcess->setEnvironment(env);
         nameout = QFileInfo(SelectedPathName).baseName() + ".tif";
         namein =  QFileInfo(SelectedPathName).baseName() + "." + QFileInfo(SelectedPathName).suffix();

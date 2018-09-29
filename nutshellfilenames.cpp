@@ -25,7 +25,9 @@ QString nutshellqt::StripForName(QString S)
     QString Ss;
     Ss = QFileInfo(S).baseName();
     int i = Ss.length()-1;
-    while (i > 0 && int(Ss.toAscii()[i]) >= 48 && int(Ss.toAscii()[i]) <= 57)
+    while (i > 0 && int(Ss.toLatin1()
+[i]) >= 48 && int(Ss.toLatin1()
+[i]) <= 57)
         i--;
     Ss = Ss.remove(i+1, 256);
 
@@ -40,12 +42,15 @@ QString nutshellqt::StripForNumber(QString S)
     Ss = QFileInfo(S).baseName() + QFileInfo(S).suffix();
 
     int i = Ss.length()-1;
-    while (i > 0 && int(Ss.toAscii()[i])>=48 && int(Ss.toAscii()[i])<=57)
+    while (i > 0 && int(Ss.toLatin1()
+[i])>=48 && int(Ss.toLatin1()
+[i])<=57)
         i--;
     Ss = Ss.remove(0, i+1);
 
     //strip all zero's before the value
-    while(int(Ss.toAscii()[0])==48)
+    while(int(Ss.toLatin1()
+[0])==48)
         Ss.remove(0,1);
 
     return(Ss);

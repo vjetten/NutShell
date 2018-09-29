@@ -7,6 +7,7 @@
 #define FINDREPLACEFORM_H
 
 #include <QtGui>
+#include <QtWidgets>
 #include "ui_findreplaceform.h"
 
 class FindReplaceForm : public QDialog,private Ui::FindReplaceForm

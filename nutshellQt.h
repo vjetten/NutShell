@@ -4,6 +4,7 @@
 //---------------------------------------------------------------
 
 #include <QtGui>
+#include <QtWidgets>
 //#include <QStyledItemDelegate>
 
 #include "csf.h"
@@ -151,8 +152,11 @@ class nutshellqt : public QMainWindow, private Ui::nutshellqt
     Q_OBJECT
 
 public:
-    nutshellqt(QWidget *parent = 0);
+    nutshellqt(QWidget *parent = nullptr);
     ~nutshellqt();
+
+    int genfontsize, dpiscale;
+    void setfontSize(int fs);
 
     myTreeView *treeView;
     void setupActions();
@@ -220,7 +224,7 @@ public:
     void runModelCommandwindow(QString prog, QStringList args);
     bool runPaused;
     void setButtons(bool one, bool two, bool three);
-
+    int expFont;
     //======================
     //Vars for editor
     //======================
@@ -275,7 +279,7 @@ protected:
 public slots:
     //void doSomething(QProcess::ProcessState hoi);
 
-    void initExplorer(QString path);
+    void initExplorer(QString);
     //=========================
     //slots to run model script
     //=========================
