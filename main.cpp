@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 //    margin-bottom: 1px;\
 //    border-radius: 2px;}");
 
-    w.setWindowTitle("NutShell (version 5.0 [17 Apr 2018])");
+    w.setWindowTitle("NutShell (version 5.1 [29 Sep 2018])");
     w.showMaximized();
     w.show();
     //a.setStyle("Cleanlooks");

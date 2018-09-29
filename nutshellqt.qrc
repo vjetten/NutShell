@@ -97,19 +97,6 @@
         <file>resources/map2tiff.png</file>
         <file>resources/showtif3.png</file>
         <file>resources/2X/aguila2d.png</file>
-        <file>debug/moc/moc_findreplaceform.cpp</file>
-        <file>debug/moc/moc_nutshelleditor.cpp</file>
-        <file>debug/moc/moc_nutshellhighlighter.cpp</file>
-        <file>debug/moc/moc_nutshelllegend.cpp</file>
-        <file>debug/moc/moc_nutshellmapattribute.cpp</file>
-        <file>debug/moc/moc_nutshelloptions.cpp</file>
-        <file>debug/moc/moc_nutshellqt.cpp</file>
-        <file>debug/rcc/qrc_nutshellqt.cpp</file>
-        <file>debug/ui/ui_findreplaceform.h</file>
-        <file>debug/ui/ui_nutshelllegend.h</file>
-        <file>debug/ui/ui_nutshellmapattribute.h</file>
-        <file>debug/ui/ui_nutshelloptions.h</file>
-        <file>debug/ui/ui_nutshellqt.h</file>
         <file>resources/2X/add_16.png</file>
         <file>resources/2X/add_24.png</file>
         <file>resources/2X/aguila.png</file>
@@ -231,40 +218,5 @@
         <file>resources/2X/timeplot.png</file>
         <file>resources/2X/up.png</file>
         <file>resources/2X/workdir.png</file>
-        <file>csf.h</file>
-        <file>csfattr.h</file>
-        <file>csfimpl.h</file>
-        <file>CsfMap.cpp</file>
-        <file>CsfMap.h</file>
-        <file>csftypes.h</file>
-        <file>findreplaceform.cpp</file>
-        <file>findreplaceform.h</file>
-        <file>main.cpp</file>
-        <file>nutshellAction.cpp</file>
-        <file>nutshellCommandwindow.cpp</file>
-        <file>nutshelldragdrop.cpp</file>
-        <file>nutshelldragdrop.h</file>
-        <file>nutshelleditor.cpp</file>
-        <file>nutshelleditor.h</file>
-        <file>nutshellevent.cpp</file>
-        <file>nutshellExplorer.cpp</file>
-        <file>nutshellfilenames.cpp</file>
-        <file>nutshellhelp.cpp</file>
-        <file>nutshellhelp.h</file>
-        <file>nutshellhighlighter.h</file>
-        <file>nutshellhighligter.cpp</file>
-        <file>nutshellIni.cpp</file>
-        <file>nutshelllegend.cpp</file>
-        <file>nutshelllegend.h</file>
-        <file>nutshelllinenumber.cpp</file>
-        <file>nutshellmapattribute.cpp</file>
-        <file>nutshellmapattribute.h</file>
-        <file>nutshelloptions.cpp</file>
-        <file>nutshelloptions.h</file>
-        <file>nutshellProcess.cpp</file>
-        <file>nutshellqt.cpp</file>
-        <file>nutshellqt.h</file>
-        <file>nutshelltreeview.cpp</file>
-        <file>stable.h</file>
     </qresource>
 </RCC>
