@@ -83,7 +83,7 @@ CONFIG(debug, debug|release) {
   UI_DIR= release/ui
   RCC_DIR= release/rcc
 }
-RESOURCES += nutshellqt.qrc
+RESOURCES +=  nutshellqt.qrc
 RC_FILE = nutshellqt.rc
 # CONFIG += precompile_header
 # PRECOMPILED_HEADER = stable.h

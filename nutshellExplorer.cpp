@@ -24,24 +24,14 @@ void nutshellqt::initExplorer(QString)
     // cannot be done earlier because treeview is not populated yet
     treeView->hideColumn(1);
     treeView->hideColumn(2);
+    treeView->setVisible(false);
+    treeView->resizeColumnToContents(0);
+    treeView->setVisible(true);
 
-    //treeView->header()->setResizeMode(0, QHeaderView::ResizeToContents);
-    int w = treeView->columnWidth(0);
-    //treeView->header()->setResizeMode(0, QHeaderView::Interactive);
-    treeView->setColumnWidth (0, w);
-
-    //fileView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-   // fileView->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-    int w0 = fileView->columnWidth(0);
-    int w1 = fileView->columnWidth(1);
-    int w2 = fileView->columnWidth(2);
-    int w3 = fileView->columnWidth(3);
-
-//    //fileView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
-    fileView->setColumnWidth (0, w0*2);
-    fileView->setColumnWidth (1, w1);
-    fileView->setColumnWidth (2, w2*2);
-    fileView->setColumnWidth (3, w3*2);
+    // !!!!
+    fileView->setVisible(false);
+    fileView->resizeColumnsToContents();
+    fileView->setVisible(true);
 
     changeFileFilter(_filternr);
 }

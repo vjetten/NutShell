@@ -333,6 +333,7 @@ void nutshellqt::PerformAction(int actiontype)
         //actiontype = ACTIONTYPENONE;
         break;
     case ACTIONTYPEMAP2ILWIS:
+        qDebug() << GDALDirName;
         env << QString("PATH=" + GDALDirName);
         env << QString("set GDAL_DATA=") + GDALDirName + QString("/gdal-data");
         PCRProcess->setEnvironment(env);

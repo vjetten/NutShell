@@ -93,7 +93,7 @@ nutshellqt::nutshellqt(QWidget *parent) :
         this->setStyleSheet(QString("QToolButton * {icon-size: 48px 48px}"));
         iSize = QSize(32,32);
     }
-
+toolBar->setIconSize(iSize);
     setfontSize(genfontsize);
 }
 //---------------------------------------------------------------
@@ -342,8 +342,9 @@ void nutshellqt::createExplorerActions()
 
     map2TiffAct  = new QAction(QIcon(":/resources/map2tiff.png"), "Covert Map to GeoTiff", this);
     connect(map2TiffAct,      SIGNAL(triggered()), this, SLOT(actionmapMap2Tiff()));
-    map2IlwisAct  = new QAction(QIcon(":/resources/map2ilwis.png"), "Covert Map to Ilwis mpr", this);
-    connect(map2IlwisAct,      SIGNAL(triggered()), this, SLOT(actionmapMap2Ilwis()));
+
+//    map2IlwisAct  = new QAction(QIcon(":/resources/map2ilwis.png"), "Covert Map to Ilwis mpr", this);
+//    connect(map2IlwisAct,      SIGNAL(triggered()), this, SLOT(actionmapMap2Ilwis()));
 
 }
 //---------------------------------------------------------------
