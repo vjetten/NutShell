@@ -93,7 +93,7 @@ nutshellqt::nutshellqt(QWidget *parent) :
         this->setStyleSheet(QString("QToolButton * {icon-size: 48px 48px}"));
         iSize = QSize(32,32);
     }
-toolBar->setIconSize(iSize);
+
     setfontSize(genfontsize);
 }
 //---------------------------------------------------------------
