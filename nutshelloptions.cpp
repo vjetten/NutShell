@@ -6,7 +6,8 @@ nutshellOptions::nutshellOptions(QWidget *parent) :
 		QDialog(parent)
 {
 	setupUi(this);
-
+    this->setWindowTitle("Directories for the GIS software");
+   this->setWindowFlags(Qt::WindowSystemMenuHint | Qt::WindowTitleHint);
 	connect(toolButton_1, SIGNAL(clicked()), this, SLOT(findPcrcalcDir()));
 //	connect(toolButton_2, SIGNAL(clicked()), this, SLOT(findAguilaDir()));
 //	connect(toolButton_3, SIGNAL(clicked()), this, SLOT(findMapeditDir()));

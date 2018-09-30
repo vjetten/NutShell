@@ -81,6 +81,27 @@ void nutshellqt::actionmapMap2Ilwis()
     PerformAction(ACTIONTYPEMAP2ILWIS);
 }
 //---------------------------------------------------------------------------
+void nutshellqt::createBatch(QString sss)
+{
+    QFile efout(MapeditDirName+"_nutshell_batchjob.cmd");
+ //   qDebug() << MapeditDirName+"_nutshell_doit.cmd";
+    efout.open(QIODevice::WriteOnly | QIODevice::Text);
+    QTextStream eout(&efout);
+    eout << "CD "+currentPath +"\n";
+    eout << QString("PATH=") + GDALDirName+QString("bin/gdal/apps;")+ PCRasterAppDirName + "\n";
+    eout << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data\n");
+    eout << "call \"" + sss + "\"";
+//    eout << "pause";
+    efout.flush();
+    efout.close();
+}
+//---------------------------------------------------------------------------
+void nutshellqt::deleteBatch()
+{
+    QFile efout(MapeditDirName+"_nutshell_batchjob.cmd");
+    efout.remove();
+}
+//---------------------------------------------------------------------------
 // get actiontype if double click or <enter> keypress in fileView
 int nutshellqt::GetActionType()
 {
@@ -145,7 +166,6 @@ void nutshellqt::PerformAction(int actiontype)
     bool isTIFF = false;
 
     changeFileFilter(_filternr);
-
     args.clear();
     if(!selectionModel->currentIndex().isValid() && actiontype != ACTIONTYPEATTRIBUTENEW)
     {
@@ -166,8 +186,8 @@ void nutshellqt::PerformAction(int actiontype)
     else
         Mclose(m);
 
-    isTIFF = QFileInfo(SelectedPathName).suffix().toUpper() == "TIF" ||
-            QFileInfo(SelectedPathName).suffix().toUpper() == "MPR";
+    isTIFF = QFileInfo(SelectedPathName).suffix().toUpper() == "TIF";// ||
+      //      QFileInfo(SelectedPathName).suffix().toUpper() == "MPR";
     // geotiff or ILWIS file only from extension
 
     // check if selection is a pcraster map
@@ -178,22 +198,14 @@ void nutshellqt::PerformAction(int actiontype)
                 actiontype == ACTIONTYPEDRAPE ||
                 actiontype == ACTIONTYPEMAPEDIT ||
                 actiontype == ACTIONTYPEMAP2TIFF ||
-                actiontype == ACTIONTYPEMAP2ILWIS ||
+              //  actiontype == ACTIONTYPEMAP2ILWIS ||
                 actiontype == ACTIONTYPELEGEND ))
         //|| actiontype == ACTIONTYPEATTRIBUTE))
     {
         ErrorMsg(QString("%1 is not a PCRaster map.").arg(SelectedPathName));
         actiontype = ACTIONTYPENONE;
     }
-    /*
- if (actiontype == ACTIONTYPEDISPLAY)
- {
-      //NO LONGER USED, THIS IS NEVER SELECTED
-  args << cmdl.split(" ");
-  prog = PCRasterAppDirName + "display.exe";
- }
- else
-    */
+
     if (fileIsMap)
     {
         QString mapatts;
@@ -315,12 +327,6 @@ void nutshellqt::PerformAction(int actiontype)
                 mapattribute.show();
                 mapattribute.raise();
             }
-
-            //         QString mapatts;
-            //         mapatts = mapattribute.getMapAttributes(SelectedPathName);
-            //         statusLabel.setText("<b>Map Attributes</b> - " + mapatts);
-            //         statusBar()->addWidget(&statusLabel);
-            //         statusLabel.show();
         }
         else
             statusBar()->removeWidget(&statusLabel);
@@ -373,13 +379,22 @@ void nutshellqt::PerformAction(int actiontype)
 //        mapDisplay.ShowMap();
 //        break;
     case ACTIONTYPEWINDOWSCMD:
-       // QDesktopServices::openUrl(QUrl("\""+cmdl+"\""));
-    default:
-        STATUS("Opening file in operating system");
-        QDesktopServices::openUrl(QUrl("\""+cmdl+"\""));
-        // open process in its standard OS application
+//      //  QDesktopServices::openUrl(QUrl("file:///" + cmdl));
+        if (cmdl.contains("_nutshell_batchjob"))
+            break;
+
+        deleteBatch();
+        createBatch(cmdl);
+        prog = "cmd.exe";
+        args << QString("/C _nutshell_batchjob");
+        CMDProcess->startDetached(prog,args);
         actiontype = ACTIONTYPENONE;
         break;
+    default:
+        STATUS("Opening file in operating system");
+        QDesktopServices::openUrl(QUrl("file:///" + cmdl));
+        //open process in its standard OS application
+        actiontype = ACTIONTYPENONE;
     }
 
     if (actiontype != ACTIONTYPENONE)
@@ -389,7 +404,7 @@ void nutshellqt::PerformAction(int actiontype)
         else
         {
             PCRProcess->start(prog,args);
-            //PCRProcess->waitForStarted(10000);
+          //PCRProcess->waitForStarted(10000);
         }
         //TODO check if detached only for aguila?
     }

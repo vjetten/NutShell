@@ -20,6 +20,8 @@ void nutshellqt::setupCommandwindow()
     connect(PCRProcess, SIGNAL(error(QProcess::ProcessError)),this, SLOT(errorCommand()) );
     // process called by command window, typing pcrcalc, or aguila or any other pcr prog
 
+    CMDProcess = new QProcess(this);
+
     commandWindow = new nutshelleditor(this, 1);
     commandWindow->document()->setDocumentMargin(2);
     commandWindow->setFrameShape(QFrame::StyledPanel);

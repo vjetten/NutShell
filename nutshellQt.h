@@ -133,6 +133,7 @@ public:
         ismapseries = iss;
     }
 };
+//---------------------------------------------------------------
 class FSM : public QFileSystemModel
 {
     Q_OBJECT
@@ -150,7 +151,18 @@ public:
       return QFileSystemModel::data(index, role);
     }
 };
-
+//---------------------------------------------------------------
+class QDetachableProcess : public QProcess
+{
+        Q_OBJECT
+public:
+    QDetachableProcess(QObject *parent = nullptr) : QProcess(parent){}
+    void detach()
+    {
+        this->waitForStarted();
+        setProcessState(QProcess::NotRunning);
+    }
+};
 //---------------------------------------------------------------
 class QDropEvent;
 
@@ -196,6 +208,9 @@ public:
     void getNutshellIni();
     void getRegPCRaster();
     void setPCRasterDirectories();
+
+    void createBatch(QString sss);
+    void deleteBatch();
 
     QList<editortabs> ET;
 
@@ -499,7 +514,7 @@ private:
     QProcess *PCRProcess;
     bool processError;
     QProcess *calcProcess;
-
+    QProcess *CMDProcess;
 };
 
 #endif // NUTSHELLQT_H

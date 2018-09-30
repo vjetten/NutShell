@@ -28,7 +28,7 @@ void nutshellqt::setPCRasterDirectories()
             PCRasterAppDirName = PCRasterDirName + "bin" + "/";
    //     }
         AguilaDirName = PCRasterAppDirName;
-        MapeditDirName = QCoreApplication::applicationDirPath();//PCRasterAppDirName + "nutshell/";
+        MapeditDirName = QCoreApplication::applicationDirPath() + "/";//PCRasterAppDirName + "nutshell/";
     }
     /*
     else

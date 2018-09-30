@@ -101,6 +101,10 @@ nutshellqt::~nutshellqt()
     if (calcProcess && calcProcess->state() == QProcess::Running) {
         calcProcess->kill();
     }
+    if (CMDProcess && CMDProcess->state() == QProcess::Running) {
+        CMDProcess->kill();
+    }
+    deleteBatch();
     setNutshellIni();
 }
 //---------------------------------------------------------------

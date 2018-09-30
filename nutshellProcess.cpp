@@ -58,15 +58,6 @@ void nutshellqt::runModelCommandwindow(QString prog, QStringList args)
     ETEditor->clearerror();
     statusBar()->clearMessage();
 
-    QString ext = QFileInfo(prog).suffix();
-    if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
-    {
-        STATUS("Opening file in operating system");
-        QDesktopServices::openUrl(QUrl("\""+prog+"\""));
-        return;
-    }
-    // run a batch file by passing it on to the system
-
     if (!QFileInfo(prog).exists())
     {
         ErrorMsg("pcrcalc not found. Specify directory in File->Options.");
@@ -108,8 +99,12 @@ void nutshellqt::runModel()
     QString ext = QFileInfo(ETfilePath).suffix();
     if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
     {
-        STATUS("Opening file in operating system");
-        QDesktopServices::openUrl(QUrl("\""+ETfilePath+"\""));
+        deleteBatch();
+        createBatch(ETfilePath);
+        QStringList args;
+        args << QString("/C _nutshell_batchjob");
+        CMDProcess->startDetached("cmd.exe",args);
+        setButtons(false, false, true);
         return;
     }
     // run a batch file by passing it on to the system
