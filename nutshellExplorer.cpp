@@ -328,12 +328,16 @@ void nutshellqt::changeFileFilter(int filterNr)
     if (filterNr == freport)
         currentFilter << getReportFilter();
     //currentFilter is set here to script reported output
-    else
-        if (filterNr == fdelreport)
+//    else
+//        if (filterNr == fdelreport)
+//            deleteScriptReport();
+    else {
+        if (filterNr == fdelreport) {
             deleteScriptReport();
-    else
-    {
-
+            filterNr = 0;
+            _filternr = 0;
+            toolButton_showPCR->setChecked(true);
+        }
         currentFilter << baseFilters[filterNr].split(";");
         // get the right base filter from the hardcoded list
         if (ismapseries)
@@ -353,8 +357,6 @@ void nutshellqt::changeFileFilter(int filterNr)
     fileModel->setNameFilters(currentFilter);
     // set the file model to the filtered output
 
-//    for (int i = 0 ; i < fileView->verticalHeader()->count(); i++)
-//        fileView->setRowHeight(i, genfontsize*2);
     fileView->setVisible(false);
     fileView->resizeColumnsToContents();
     fileView->resizeRowsToContents();
@@ -493,7 +495,8 @@ void nutshellqt::deleteScriptReport()
     statusBar()->removeWidget(&statusBarProgress);
     statusBar()->removeWidget(&statusLabel);
     toolButton_deletereport->setChecked(false);
-    changeFileFilter(_filternr);
+
+ //   changeFileFilter(0);//_filternr);
     // update explorer
 }
 //---------------------------------------------------------------

@@ -281,7 +281,7 @@ void nutshellqt::onScreen(QString buffer)
     list = output.split("\n");
     xlast = list.count();
     // get the lines in the commandWindow
-
+qDebug() << list;
     // first output at start run
     if (buffer.contains("ERROR") )
     {
