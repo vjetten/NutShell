@@ -31,7 +31,8 @@
 
 #define SelectedPathName fileModel->fileInfo(selectionModel->currentIndex()).absoluteFilePath()
 #define SelectedSuffix   fileModel->fileInfo(selectionModel->currentIndex()).suffix()
-#define SelectedFileName fileModel->fileName(selectionModel->currentIndex())
+//#define SelectedFileName fileModel->fileName(selectionModel->currentIndex())
+#define SelectedFileName fileModel->fileInfo(selectionModel->currentIndex()).fileName()
 //#define SelectPatnNameIndexes(j) fileModel->fileInfo(indexes.at(j)).absoluteFilePath()
 
 #define ACTIONTYPEUNDEFINED -1
@@ -502,7 +503,7 @@ private:
 
     // explorer variables
     QFileSystemModel *dirModel;
-    //QFileSystemModel
+//    QFileSystemModel *fileModel;
     FSM *fileModel;
     QItemSelectionModel *selectionModel;
     QItemSelectionModel *selectionDirModel;

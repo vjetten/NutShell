@@ -59,7 +59,7 @@ void nutshellqt::setupExplorer()
     dirModel->setNameFilterDisables(false);
     // directory tree view model, show only dirs
 
-    fileModel = new FSM(this);//QFileSystemModel(this);
+    fileModel = new FSM(this);//QFileSystemModel(this); //
     fileModel->setReadOnly(false);
     fileModel->setFilter( QDir::Files | QDir::NoDotAndDotDot );
     fileModel->setNameFilterDisables(false);
@@ -74,8 +74,8 @@ void nutshellqt::setupExplorer()
     treeView->setIndentation(10);
     treeView->setHeaderHidden(false);
     treeView->setSortingEnabled(true);
- //   treeView->sortByColumn(0, Qt::AscendingOrder);
- //   treeView->sortByColumn(1, Qt::AscendingOrder);
+    //   treeView->sortByColumn(0, Qt::AscendingOrder);
+    //   treeView->sortByColumn(1, Qt::AscendingOrder);
     //   treeView->setDragEnabled(true);
     treeView->setAcceptDrops(true);
     treeView->setDropIndicatorShown(true);
@@ -88,7 +88,7 @@ void nutshellqt::setupExplorer()
     fileView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     fileView->setSelectionBehavior(QAbstractItemView::SelectRows);
     //fileView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
-  //  fileView->horizontalHeader()->setStretchLastSection(true);
+    fileView->horizontalHeader()->setStretchLastSection(true);
     //fileView->horizontalHeader()->setMovable(true);
     fileView->resizeRowsToContents();
     fileView->resizeColumnsToContents();
@@ -109,6 +109,7 @@ void nutshellqt::setupExplorer()
     // delegate paints filenames for mapseries blue
 
     selectionModel = new QItemSelectionModel(fileModel);
+
     fileView->setSelectionModel(selectionModel);
     selectionDirModel = new QItemSelectionModel(dirModel);
     treeView->setSelectionModel(selectionDirModel);
@@ -328,9 +329,9 @@ void nutshellqt::changeFileFilter(int filterNr)
     if (filterNr == freport)
         currentFilter << getReportFilter();
     //currentFilter is set here to script reported output
-//    else
-//        if (filterNr == fdelreport)
-//            deleteScriptReport();
+    //    else
+    //        if (filterNr == fdelreport)
+    //            deleteScriptReport();
     else {
         if (filterNr == fdelreport) {
             deleteScriptReport();
@@ -357,10 +358,10 @@ void nutshellqt::changeFileFilter(int filterNr)
     fileModel->setNameFilters(currentFilter);
     // set the file model to the filtered output
 
-    fileView->setVisible(false);
+  //  fileView->setVisible(false);
     fileView->resizeColumnsToContents();
     fileView->resizeRowsToContents();
-    fileView->setVisible(true);
+  //  fileView->setVisible(true);
 }
 //---------------------------------------------------------------
 //! OBSOLETE this function is not used anymore
@@ -496,7 +497,7 @@ void nutshellqt::deleteScriptReport()
     statusBar()->removeWidget(&statusLabel);
     toolButton_deletereport->setChecked(false);
 
- //   changeFileFilter(0);//_filternr);
+    //   changeFileFilter(0);//_filternr);
     // update explorer
 }
 //---------------------------------------------------------------
@@ -753,7 +754,7 @@ void nutshellqt::goForward()
 void nutshellqt::removeWorkdirectory()
 {
     comboBox_workdir->removeItem(comboBox_workdir->currentIndex());
- //   initExplorer();
+    //   initExplorer();
 }
 //---------------------------------------------------------------
 void nutshellqt::setWorkdirectory()
@@ -783,9 +784,9 @@ void nutshellqt::setWorkdirectoryNr(int index)
     currentPath = comboBox_workdir->currentText();
     // set current working path
 
-//    QString root = QDir(currentPath).rootPath();
-//    setRootIndex(dirModel->index(root));
-//    treeView->sortByColumn(0, Qt::AscendingOrder);
+    //    QString root = QDir(currentPath).rootPath();
+    //    setRootIndex(dirModel->index(root));
+    //    treeView->sortByColumn(0, Qt::AscendingOrder);
 
     setRootIndex(dirModel->index(currentPath));
     // set the explorer to this path

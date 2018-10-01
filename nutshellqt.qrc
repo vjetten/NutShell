@@ -171,5 +171,7 @@
         <file>resources/2X/stop1.png</file>
         <file>resources/2X/syntax.png</file>
         <file>resources/2X/timeplot.png</file>
+        <file>resources/2X/tifconvert.png</file>
+        <file>resources/tifconvert.png</file>
     </qresource>
 </RCC>

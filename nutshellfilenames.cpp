@@ -27,8 +27,8 @@ QString nutshellqt::StripForName(QString S)
     Ss = QFileInfo(S).baseName();
     int i = Ss.length()-1;
     while (i > 0 && int(Ss.toLatin1()
-[i]) >= 48 && int(Ss.toLatin1()
-[i]) <= 57)
+                        [i]) >= 48 && int(Ss.toLatin1()
+                                          [i]) <= 57)
         i--;
     Ss = Ss.remove(i+1, 256);
 
@@ -43,15 +43,12 @@ QString nutshellqt::StripForNumber(QString S)
     Ss = QFileInfo(S).baseName() + QFileInfo(S).suffix();
 
     int i = Ss.length()-1;
-    while (i > 0 && int(Ss.toLatin1()
-[i])>=48 && int(Ss.toLatin1()
-[i])<=57)
+    while (i > 0 && int(Ss.toLatin1()[i])>=48 && int(Ss.toLatin1()[i])<=57)
         i--;
     Ss = Ss.remove(0, i+1);
 
     //strip all zero's before the value
-    while(int(Ss.toLatin1()
-[0])==48)
+    while(int(Ss.toLatin1()[0])==48)
         Ss.remove(0,1);
 
     return(Ss);
@@ -192,7 +189,7 @@ QString nutshellqt::getFileListString()
             }
             else  // it is a regular file
                 temp = fileModel->fileInfo(index).absoluteFilePath(); //fileName(); //
-
+            //qDebug() << index << temp;
             if (Sfilelist.isEmpty())
                 Sfilelist = temp;
             // first selected name
@@ -204,6 +201,7 @@ QString nutshellqt::getFileListString()
             // this is to circumvent spaces in pathnames
         }
     }
+    //qDebug() << Sfilelist;
     return(Sfilelist);
 }
 //---------------------------------------------------------------------------
@@ -362,8 +360,8 @@ bool nutshellqt::getScriptReport(bool addBinding)
                 reportNames << reportRec;
             }
         }
-//        if (reportNames.count() == 0)
-//            return(false);
+        //        if (reportNames.count() == 0)
+        //            return(false);
         // add the variables in the binding that are not reported but
         // may have a file, these are prob. mostly input file
 
@@ -397,8 +395,8 @@ bool nutshellqt::getScriptReport(bool addBinding)
         for (int i = 0; i < reportNames.count(); i++)
             reportNames[i].isSeries = !reportNames[i].fileName.contains(".");
 
-//        for (int i = 0; i < reportNames.count(); i++)
-//            qDebug() << "rn" << reportNames[i].fileName << reportNames[i].reportName << reportNames[i].isSeries << reportNames[i].isBinding;
+        //        for (int i = 0; i < reportNames.count(); i++)
+        //            qDebug() << "rn" << reportNames[i].fileName << reportNames[i].reportName << reportNames[i].isSeries << reportNames[i].isBinding;
     }
     return (reportNames.count() > 0);
 }
