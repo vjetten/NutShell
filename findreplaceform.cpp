@@ -16,8 +16,10 @@ FindReplaceForm::FindReplaceForm(QWidget *parent) :
     //VJ find and replace are comboboxes
     textToFind->setInsertPolicy (QComboBox::InsertAtTop);
     textToFind->setMaxCount(40);
+    textToFind->setDuplicatesEnabled(false);
     textToReplace->setInsertPolicy (QComboBox::InsertAtTop);
     textToReplace->setMaxCount(40);
+    textToReplace->setDuplicatesEnabled(false);
     connect(textToFind, SIGNAL(editTextChanged(QString)), this, SLOT(textToFindChanged()));
     connect(textToFind, SIGNAL(editTextChanged(QString)), this, SLOT(validateRegExp(QString)));
 
@@ -124,12 +126,12 @@ void FindReplaceForm::insertFind()
 {
     bool fnd = false;
     int j = 0;
-    //    if (!textEdit->textCursor().hasSelection())
-    //        textEdit->textCursor().select(QTextCursor::WordUnderCursor);
 
     if (!textEdit->textCursor().hasSelection())
     {
-
+        if (!textToFind->currentText().isEmpty())
+            j=-1;
+            // textToFind->insertItem(0,"");
         textToFind->setCurrentIndex(j);
         return;
     }
@@ -148,7 +150,6 @@ void FindReplaceForm::insertFind()
         textToFind->insertItem(0, textEdit->textCursor().selectedText());
         j = 0;
     }
-
     textToFind->setCurrentIndex(j);
     // go look for the next occurence, change index triggers search
 }

@@ -3,6 +3,7 @@
  * These functions make valid strings for Aguila of file selections
  * and make a display filter for fileView
  * also functions to get the reported output of a script
+ * Author: VJ 140222,181001
  */
 
 

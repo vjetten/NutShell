@@ -209,7 +209,7 @@ public:
     void getRegPCRaster();
     void setPCRasterDirectories();
 
-    void createBatch(QString sss);
+    void createBatch(QString sss, QString args);
     void deleteBatch();
 
     QList<editortabs> ET;

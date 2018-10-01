@@ -100,8 +100,11 @@ void nutshellqt::runModel()
     if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
     {
         deleteBatch();
-        createBatch(ETfilePath);
-        QStringList args;
+        QString name =  ETfilePath;
+        QString ar = "";
+        if (toolButton_argSubs->isChecked())
+            ar = lineEdit_argsubst->text();
+        createBatch(ETfilePath, ar);
         args << QString("/C _nutshell_batchjob");
         CMDProcess->startDetached("cmd.exe",args);
         setButtons(false, false, true);

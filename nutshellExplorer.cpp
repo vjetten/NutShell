@@ -3,7 +3,7 @@
 
  * adapted from the extended explorer example in Qt wiki:
  * http://www.qtcentre.org/wiki/index.php?title=Extended_Dir_View_example
- * Author: VJ 140222
+ * Author: VJ 140222,181001
  */
 
 

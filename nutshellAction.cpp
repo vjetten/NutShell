@@ -3,7 +3,7 @@
 
  * perform an action on the explorer selection (aguia2D, aguila 3D etc)
  * valid strings are made in nutshellfilenames.cpp
- * Author: VJ 140222
+ * Author: VJ 140222,181001
  */
 
 
@@ -81,7 +81,7 @@ void nutshellqt::actionmapMap2Ilwis()
     PerformAction(ACTIONTYPEMAP2ILWIS);
 }
 //---------------------------------------------------------------------------
-void nutshellqt::createBatch(QString sss)
+void nutshellqt::createBatch(QString sss, QString args)
 {
     QFile efout(MapeditDirName+"_nutshell_batchjob.cmd");
  //   qDebug() << MapeditDirName+"_nutshell_doit.cmd";
@@ -90,8 +90,10 @@ void nutshellqt::createBatch(QString sss)
     eout << "CD "+currentPath +"\n";
     eout << QString("PATH=") + GDALDirName+QString("bin/gdal/apps;")+ PCRasterAppDirName + "\n";
     eout << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data\n");
-    eout << "call \"" + sss + "\"";
-//    eout << "pause";
+    eout << "call \"" + sss + "\" " + args;
+
+   // eout << "\npause";
+
     efout.flush();
     efout.close();
 }
@@ -99,7 +101,7 @@ void nutshellqt::createBatch(QString sss)
 void nutshellqt::deleteBatch()
 {
     QFile efout(MapeditDirName+"_nutshell_batchjob.cmd");
-    efout.remove();
+ //   efout.remove();
 }
 //---------------------------------------------------------------------------
 // get actiontype if double click or <enter> keypress in fileView
@@ -340,15 +342,15 @@ void nutshellqt::PerformAction(int actiontype)
         break;
     case ACTIONTYPEMAP2ILWIS:
         qDebug() << GDALDirName;
-        env << QString("PATH=" + GDALDirName);
-        env << QString("set GDAL_DATA=") + GDALDirName + QString("/gdal-data");
+        env << QString("PATH=" + GDALDirName +"bin/gdal/apps;");
+        env << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data");
         PCRProcess->setEnvironment(env);
 //        nameout = QFileInfo(SelectedPathName).filePath();
 //        nameout = nameout.remove(nameout.lastIndexOf('.'),20) + ".mpr";
         nameout = QFileInfo(SelectedPathName).baseName() + ".mpr";
         namein =  QFileInfo(SelectedPathName).baseName() + "." + QFileInfo(SelectedPathName).suffix();
         args << "-of" << "ILWIS" << namein << nameout;
-        prog = GDALDirName + "gdal/apps/gdal_translate.exe";
+        prog = GDALDirName + "bin/gdal/apps/gdal_translate.exe";
         if (!QFileInfo(prog).exists())
         {
             ErrorMsg("Cannot find GDAL tools, have you installed GDAL \nand set file->options?");
@@ -357,13 +359,13 @@ void nutshellqt::PerformAction(int actiontype)
         commandWindow->appendPlainText("gdal_translate "+args.join(" "));
         break;
     case ACTIONTYPEMAP2TIFF:
-        env << QString("PATH=" + GDALDirName);
-        env << QString("set GDAL_DATA=") + GDALDirName + QString("/gdal-data");
+        env << QString("PATH=" + GDALDirName + "bin");
+        env << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data");
         PCRProcess->setEnvironment(env);
         nameout = QFileInfo(SelectedPathName).baseName() + ".tif";
         namein =  QFileInfo(SelectedPathName).baseName() + "." + QFileInfo(SelectedPathName).suffix();
-        args << "-of" <<"GTiff" << namein << nameout;
-        prog = GDALDirName + "gdal/apps/gdal_translate.exe";
+        args <</* "-of" <<"GTiff" <<*/ namein << nameout;
+        prog = GDALDirName + "bin/gdal/apps/gdal_translate.exe";
         if (!QFileInfo(prog).exists())
         {
             ErrorMsg("Cannot find GDAL tools, have you installed GDAL \nand set file->options?");
@@ -384,7 +386,7 @@ void nutshellqt::PerformAction(int actiontype)
             break;
 
         deleteBatch();
-        createBatch(cmdl);
+        createBatch(cmdl,"");
         prog = "cmd.exe";
         args << QString("/C _nutshell_batchjob");
         CMDProcess->startDetached(prog,args);

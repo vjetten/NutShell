@@ -2,7 +2,7 @@
  * NutshellCommandwindow
 
  * functions to deal with commands given in commandwindow and cmd list
- * Author: VJ 140222
+ * Author: VJ 140222,181001
  */
 
 
@@ -74,7 +74,6 @@ void nutshellqt::parseCommand()
     QStringList args;
     QString prog;
 
-
     lines = all.split("\n");
     args = lines[lines.count()-1].split(" ");
     bool args1 = args.count() > 1;
@@ -97,7 +96,7 @@ void nutshellqt::parseCommand()
     if (args[0].contains("gdal", Qt::CaseInsensitive))
         prog = GDALDirName + "bin/gdal/apps/" + args[0] +".exe";
 
-    if ((args[0].toUpper() == "PCRCALC")// || args[0].toUpper() == "OLDCALC")
+    if ((args[0].toUpper() == "PCRCALC")
             && (args1 && args[1].indexOf("-f",Qt::CaseInsensitive) == 0))
     {
         args.removeAt(0);
@@ -115,18 +114,12 @@ void nutshellqt::parseCommand()
             {
                 args.removeAt(0);
                 QStringList env;
-                env << QString("PATH=" + GDALDirName + "bin/");
+                env << QString("PATH=" + GDALDirName + "bin");
+                env << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data");
                 PCRProcess->setEnvironment(env);
                 PCRProcess->start(prog, args);
             }
             else
-                //            if (args[0].toUpper() == "RESAMPLE" && args.count() > 1)
-                //            {
-                //                args.removeAt(0);
-                //                PCRProcess->startDetached(prog, args);
-                //                commandWindow->appendPlainText("");
-                //            }
-                //            else
             {
                 args.removeAt(0);
                 PCRProcess->start(prog, args);
@@ -134,6 +127,7 @@ void nutshellqt::parseCommand()
 
                 PCRProcess->waitForFinished(-1);
             }
+
     setCursorLast();
     //  if (!processError)
     comboBox_cmdlist->insertItem(0, lines[lines.count()-1]);

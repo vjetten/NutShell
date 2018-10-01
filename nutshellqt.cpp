@@ -117,8 +117,10 @@ void nutshellqt::setupActions()
     createContextMenuActions();
     // not needed
 
-    nextDirAct = new QAction(QIcon(":/resources/2X/forward.png"),QString("Next Directory"), this);
-    prevDirAct = new QAction(QIcon(":/resources/2X/back.png"),QString("Prev Directory"), this);
+//    nextDirAct = new QAction(QIcon(":/resources/2X/forward.png"),QString("Next Directory"), this);
+//    prevDirAct = new QAction(QIcon(":/resources/2X/back.png"),QString("Prev Directory"), this);
+ //   nextDirAct = new QAction(QString("Next Directory"), this);
+//    prevDirAct = new QAction(QString("Prev Directory"), this);
 
 }
 //---------------------------------------------------------------
@@ -239,7 +241,8 @@ void nutshellqt::createEditorActions()
 
     wheelAct = new QAction(this);
 
-    deleteLineAct = new QAction(QIcon(":/resources/2X/table_delete_row.png"), "&Delete Line", this);
+//    deleteLineAct = new QAction(QIcon(":/resources/2X/table_delete_row.png"), "&Delete Line", this);
+    deleteLineAct = new QAction("&Delete Line", this);
     deleteLineAct->setShortcut(Qt::CTRL+Qt::Key_D);
     connect(deleteLineAct, SIGNAL(triggered()), this, SLOT(deleteLine()));
 

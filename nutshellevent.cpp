@@ -2,14 +2,11 @@
  * NutShellEvent,
 
  * separate file with event catching at application level
- * Author: VJ 140222
+ * Author: VJ 140222,181001
  */
 
 
 #include "nutshellqt.h"
-
-
-
 
 //---------------------------------------------------------------
 /*!
@@ -21,19 +18,6 @@
  */
 bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
 {
-//    if (event->type() == QEvent::KeyPress)
-//    {
-
-//        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-//        if (keyEvent->key() == Qt::Key_F5)
-//        {
-//            changeFileFilter(_filternr);
-//            QCoreApplication::sendPostedEvents(this, 0);
-//            setRootIndex(dirModel->index(currentPath));
-//            return true;
-//        }
-//    }
-
     if (obj == treeView)
     {
         if (event->type() == QEvent::KeyPress)
