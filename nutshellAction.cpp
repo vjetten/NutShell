@@ -9,7 +9,13 @@
 
 #include "nutshellqt.h"
 
-
+QStringList nutshellqt::setEnvironment()
+{
+    QStringList env;
+    env << QString("PATH=") + GDALDirName+QString("bin;")+ GDALDirName+QString("bin/gdal/apps;")+ PCRasterAppDirName + "\n";
+    env << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data\n");
+    return env;
+}
 //---------------------------------------------------------------------------
 // the following functions determine which action to take
 // when a toolbutton is pressed or enter or doubleclick on the fileView is executed
@@ -88,11 +94,11 @@ void nutshellqt::createBatch(QString sss, QString args)
     efout.open(QIODevice::WriteOnly | QIODevice::Text);
     QTextStream eout(&efout);
     eout << "CD "+currentPath +"\n";
-    eout << QString("PATH=") + GDALDirName+QString("bin/gdal/apps;")+ PCRasterAppDirName + "\n";
+    eout << QString("PATH=") + GDALDirName+QString("bin;")+ GDALDirName+QString("bin/gdal/apps;")+ PCRasterAppDirName + "\n";
     eout << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data\n");
     eout << "call \"" + sss + "\" " + args;
 
-   // eout << "\npause";
+ //   eout << "\npause";
 
     efout.flush();
     efout.close();
@@ -326,8 +332,9 @@ void nutshellqt::PerformAction(int actiontype)
         break;
     case ACTIONTYPEATTRIBUTE :
         if (isTIFF) {
-            env << QString("PATH=" + GDALDirName + "bin");
-            env << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data");
+//            env << QString("PATH=" + GDALDirName + "bin");
+//            env << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data");
+            env << setEnvironment();
             PCRProcess->setEnvironment(env);
 
             args << SelectedPathName;
@@ -351,8 +358,9 @@ void nutshellqt::PerformAction(int actiontype)
         //actiontype = ACTIONTYPENONE;
         break;
     case ACTIONTYPEMAP2ILWIS:
-        env << QString("PATH=" + GDALDirName +"bin/gdal/apps;");
-        env << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data");
+     //   env << QString("PATH=" + GDALDirName +"bin/gdal/apps;");
+     //   env << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data");
+        env << setEnvironment();
         PCRProcess->setEnvironment(env);
 //        nameout = QFileInfo(SelectedPathName).filePath();
 //        nameout = nameout.remove(nameout.lastIndexOf('.'),20) + ".mpr";
@@ -368,8 +376,9 @@ void nutshellqt::PerformAction(int actiontype)
         commandWindow->appendPlainText("gdal_translate "+args.join(" "));
         break;
     case ACTIONTYPEMAP2TIFF:
-        env << QString("PATH=" + GDALDirName + "bin");
-        env << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data");
+//        env << QString("PATH=" + GDALDirName + "bin");
+//        env << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data");
+        env << setEnvironment();
         PCRProcess->setEnvironment(env);
 //        if (isTIFF)
 //           nameout = QFileInfo(SelectedPathName).baseName() + ".map";
@@ -403,7 +412,7 @@ void nutshellqt::PerformAction(int actiontype)
         deleteBatch();
         createBatch(cmdl,"");
         prog = "cmd.exe";
-        args << QString("/C _nutshell_batchjob");
+        args << QString("/C " + MapeditDirName + "_nutshell_batchjob");
         CMDProcess->startDetached(prog,args);
         actiontype = ACTIONTYPENONE;
         break;

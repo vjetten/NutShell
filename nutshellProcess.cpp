@@ -105,7 +105,7 @@ void nutshellqt::runModel()
         if (toolButton_argSubs->isChecked())
             ar = lineEdit_argsubst->text();
         createBatch(ETfilePath, ar);
-        args << QString("/C _nutshell_batchjob");
+        args << QString("/C " + MapeditDirName + "_nutshell_batchjob");
         CMDProcess->startDetached("cmd.exe",args);
         setButtons(false, false, true);
         return;

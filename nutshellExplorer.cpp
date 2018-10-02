@@ -141,6 +141,23 @@ void nutshellqt::setupExplorer()
     connect(toolButton_showOutput, SIGNAL(clicked()), this, SLOT(showReport()));
     connect(toolButton_deletereport, SIGNAL(clicked()), this, SLOT(showDelReport())); //deleteScriptReport()));
 
+
+    expToolBar = new QToolBar();
+    expToolBar->setOrientation(Qt::Vertical);
+        expToolBar->setIconSize(iSize);
+    verticalLayout->insertWidget(0, expToolBar);
+    expToolBar->addWidget(toolButton_showPCR);
+    expToolBar->addWidget(toolButton_showMaps);
+    expToolBar->addWidget(toolButton_showPlot);
+    expToolBar->addWidget(toolButton_showScript);
+    expToolBar->addWidget(toolButton_showSeries);
+    expToolBar->addWidget(toolButton_showOutput);
+    expToolBar->addWidget(toolButton_deletereport);
+    expToolBar->addWidget(toolButton_showTIF);
+    expToolBar->addWidget(toolButton_showAll);
+
+
+
     statusBarProgress.setMaximum(100);
     statusBarProgress.setValue(0);
     statusBarProgress.setMinimumHeight(16);
@@ -167,7 +184,7 @@ void nutshellqt::setupExplorer()
     expFont = 32;
 }
 //---------------------------------------------------------------
-void nutshellqt::contextualMenu(const QPoint& point)
+void nutshellqt::contextualMenu(const QPoint  &point)
 {
     QMenu *menu = new QMenu;
     menu->addAction(newDirAct);

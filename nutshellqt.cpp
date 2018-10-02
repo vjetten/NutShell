@@ -23,15 +23,15 @@ nutshellqt::nutshellqt(QWidget *parent) :
     // do a bit of size teaking for large displays becvause QT 5.5.0 does not have that yet
     iSize = QSize(16,16);
 // the "20" margin is because not all mon itors are exactly the pixel size, e.g. 1210
-    int mar = 0;
     if (_H > 800) {
         genfontsize = 12;
+        QSize(24,24);
     }
-    if (_H > 1080+mar) {
+    if (_H > 1080-5) {
         genfontsize = 14;
         iSize = QSize(32,32);
     }
-    if (_H > 1200+mar) {
+    if (_H > 1200) {
         dpiscale = 2;
         genfontsize = 12;
         iSize = QSize(48,48);
@@ -433,6 +433,8 @@ void nutshellqt::setupToolBars()
     //        dirToolBar->setIconSize(QSize(16,16));
     //        dirToolBar->addAction(prevDirAct   );
     //        dirToolBar->addAction(nextDirAct     );
+
+
 }
 //---------------------------------------------------------------
 void nutshellqt::setupMenu( )

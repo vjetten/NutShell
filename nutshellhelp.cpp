@@ -12,10 +12,12 @@
 void nutshellqt::showNutshellHelp()
 {
     QDialog *box = new QDialog();
+    box->setWindowTitle("Overview of functions in NutShell");
+  // box->setWindowFlags(Qt::Window|Qt::WindowTitleHint);
 
     QLabel *label = new QLabel();
     label->setPixmap(QPixmap(":/resources/nutshellhelp.png"));
-
+    label->setScaledContents(true);
     QHBoxLayout *horizontalLayout = new QHBoxLayout(box);
     horizontalLayout->addWidget(label);
 

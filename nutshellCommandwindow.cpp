@@ -114,8 +114,9 @@ void nutshellqt::parseCommand()
             {
                 args.removeAt(0);
                 QStringList env;
-                env << QString("PATH=" + GDALDirName + "bin");
-                env << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data");
+              //  env << QString("PATH=" + GDALDirName + "bin");
+              //  env << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data");
+                env << setEnvironment();
                 PCRProcess->setEnvironment(env);
                 PCRProcess->start(prog, args);
             }

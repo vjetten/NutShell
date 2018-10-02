@@ -212,6 +212,7 @@ public:
 
     void createBatch(QString sss, QString args);
     void deleteBatch();
+    QStringList setEnvironment();
 
     QList<editortabs> ET;
 
@@ -225,6 +226,7 @@ public:
     QToolBar *pcrToolBar;
     //void contextMenuEvent(QContextMenuEvent *event);
     QToolBar *dirToolBar;
+    QToolBar *expToolBar;
 
     QString AguilaDirName;
     QString PCRasterDirName;
