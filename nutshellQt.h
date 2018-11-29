@@ -186,8 +186,9 @@ public:
     nutshellqt(QWidget *parent = nullptr);
     ~nutshellqt();
 
-    int genfontsize, dpiscale;
-    void setfontSize(int fs);
+    int genfontsize;
+    double dpiscale;
+    void setfontSize();
     QSize iSize;
 
     myTreeView *treeView;
@@ -209,6 +210,7 @@ public:
     void getNutshellIni();
     void getRegPCRaster();
     void setPCRasterDirectories();
+    void findDPIscale();
 
     void createBatch(QString sss, QString args);
     void deleteBatch();
@@ -311,7 +313,8 @@ public:
     bool changeName;
 
 protected:
-    bool eventFilter(QObject *obj, QEvent *event);
+    bool eventFilter(QObject *obj, QEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
 
 public slots:
     //void doSomething(QProcess::ProcessState hoi);

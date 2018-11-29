@@ -347,8 +347,10 @@ void nutshellqt::PerformAction(int actiontype)
                 mapattribute.raise();
                 actiontype = ACTIONTYPENONE;
             }
-        } else
+        } else {
             statusBar()->removeWidget(&statusLabel);
+             ErrorMsg("File is not recognised as PCRaster or GeoTIFF map.p");
+        }
 
 
         break;

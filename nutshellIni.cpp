@@ -62,6 +62,7 @@ void nutshellqt::setNutshellIni()
    // settings.setValue("mapeditDirectory", MapeditDirName);
   //  settings.setValue("docDirectory", PCRasterDocDirName);
     settings.setValue("GDALDirectory", GDALDirName);
+    settings.setValue("DPI",dpiscale);
 
     //settings.setValue(QString("workdir/current"),comboBox_workdir->currentIndex());
     for (int i = 0; i < comboBox_workdir->count(); i++)
@@ -119,6 +120,8 @@ void nutshellqt::getNutshellIni()
             str = str + "/";
     GDALDirName = str;
 
+    dpiscale = settings.value("DPI").toDouble();
+qDebug() << dpiscale;
     if (!PCRasterDirName.isEmpty() && !QFileInfo(PCRasterDirName + "bin/pcrcalc.exe").exists())
     {
         PCRasterDirName = "";

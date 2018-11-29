@@ -15,7 +15,7 @@ public:
 	 QString setExistingDirectory(QString title, QString bd);
 	 QStringList baseDirs;
 	 QStringList getOptions();
-	 void setupOptions(QStringList SL);
+     void setupOptions(QStringList SL, double dpi);
 
 public slots:
 	 void findPcrcalcDir();

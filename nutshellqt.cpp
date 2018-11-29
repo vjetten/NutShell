@@ -14,28 +14,7 @@ nutshellqt::nutshellqt(QWidget *parent) :
 {
     setupUi(this);
 
-    QRect rect = qApp->desktop()->screenGeometry();
-    int _H = rect.height();
-    QFont font = qApp->font();
-    genfontsize=font.pointSize();
-    dpiscale = 1;
-
-    // do a bit of size teaking for large displays becvause QT 5.5.0 does not have that yet
-    iSize = QSize(16,16);
-// the "20" margin is because not all mon itors are exactly the pixel size, e.g. 1210
-    if (_H > 800) {
-        genfontsize = 12;
-        QSize(24,24);
-    }
-    if (_H > 1080-5) {
-        genfontsize = 14;
-        iSize = QSize(32,32);
-    }
-    if (_H > 1200) {
-        dpiscale = 2;
-        genfontsize = 12;
-        iSize = QSize(48,48);
-    }
+    findDPIscale();
 
     setupActions();
 
@@ -86,11 +65,11 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     changeName = false;
 
-    fileView->horizontalHeader()->moveSection(3, 2);
+  //  fileView->horizontalHeader()->moveSection(3, 2);
 
 
     toolBar->setIconSize(iSize);
-    setfontSize(genfontsize);
+    setfontSize();
 }
 //---------------------------------------------------------------
 nutshellqt::~nutshellqt()
@@ -505,7 +484,7 @@ void nutshellqt::getDirectories()
 
     tempdirs << PCRasterDirName  << GDALDirName;
 
-    nutOptions.setupOptions(tempdirs);
+    nutOptions.setupOptions(tempdirs, dpiscale);
     nutOptions.setModal(true);
     if (nutOptions.exec())
     {
@@ -519,27 +498,67 @@ void nutshellqt::getDirectories()
         if (!GDALDirName.endsWith("\\") && !GDALDirName.endsWith("/"))
             GDALDirName = GDALDirName + "/";
         PCRasterAppDirName = PCRasterDirName + "bin/";
-
         AguilaDirName = PCRasterAppDirName;
-       // PCRasterDocDirName = PCRasterDirName + "doc/pcrman/";
-       // if (!QFileInfo(PCRasterDocDirName+"index.html").exists())
-       //     PCRasterDocDirName = PCRasterDirName + "doc/manual/";
-qDebug() << tempdirs << PCRasterDirName << PCRasterAppDirName << GDALDirName;
+        dpiscale = tempdirs[2].toDouble();
+        setfontSize();
+
+qDebug() << tempdirs << PCRasterDirName << PCRasterAppDirName << GDALDirName << dpiscale;
     }
 }
 //---------------------------------------------------------------
-void nutshellqt::setfontSize(int fs)
+void nutshellqt::setfontSize()
 {
-    qDebug() << "fs" << fs << dpiscale;
+    qDebug() << "fs" << genfontsize << dpiscale;
+    int fs = genfontsize;
     QFont font = qApp->font();
-    font.setPixelSize(fs*dpiscale);
+    font.setPixelSize((int)fs*dpiscale);
     qApp->setFont(font);
-
     qApp->setStyleSheet(QString("QComboBox {font: %1px; padding: 1px 0px 1px 3px;}").arg(fs*dpiscale));
-  //  qApp->setStyleSheet(QString("QToolButton {iconSize: %1px %1px; }").arg(fs*dpiscale));
+    qApp->setStyleSheet(QString("QLineEdit {font: %1px;}").arg(fs*dpiscale));
+    qApp->setStyleSheet(QString("QLabel {font: %1px;}").arg(fs*dpiscale));
+    qApp->setStyleSheet(QString("QToolButton {font: %1px;}").arg(fs*dpiscale));
+    treeView->setStyleSheet(QString("font: %1px").arg(fs*dpiscale));
+    fileView->setStyleSheet(QString("font: %1px").arg(fs*dpiscale));
+    fileMenu->setStyleSheet(QString("font: %1px").arg(fs*dpiscale));
+    runMenu->setStyleSheet(QString("font: %1px").arg(fs*dpiscale));
+    editMenu->setStyleSheet(QString("font: %1px").arg(fs*dpiscale));
+    helpMenu->setStyleSheet(QString("font: %1px").arg(fs*dpiscale));
+    findMenu->setStyleSheet(QString("font: %1px").arg(fs*dpiscale));
+    formatMenu->setStyleSheet(QString("font: %1px").arg(fs*dpiscale));
+    menuBar()->setStyleSheet(QString("font: %1px").arg(fs*dpiscale));
 
     qApp->setStyleSheet(QString("QCheckBox::indicator {width: %1px; height: %1px;}\
                                 QRadioButton::indicator {width: %1px; height: %1px;}").arg(fs*dpiscale));
 
 }
 //---------------------------------------------------------------
+void nutshellqt::findDPIscale()
+{
+    QRect rect = qApp->desktop()->screenGeometry();
+    int _H = rect.height();
+    QFont font = qApp->font();
+    genfontsize=font.pointSize();
+    dpiscale = 1.0;
+
+    // do a bit of size teaking for large displays becvause QT 5.5.0 does not have that yet
+    iSize = QSize(16,16);
+    // the "20" margin is because not all mon itors are exactly the pixel size, e.g. 1210
+    if (_H > 800) {
+        genfontsize = 12;
+        QSize(24,24);
+    }
+    if (_H > 1080-5) {
+        genfontsize = 14;
+        iSize = QSize(24,24);
+    }
+    //    if (_H > 1200) {
+    //        dpiscale = 2;
+    //        genfontsize = 12;
+    //        iSize = QSize(32,32);
+    //    }
+    if (_H > 1440) {
+        dpiscale = 2.0;
+        genfontsize = 12;
+        iSize = QSize(48,48);
+    }
+}

@@ -29,8 +29,9 @@ void nutshellqt::setupCommandwindow()
 
     verticalLayoutCmdlist->insertWidget(0, commandWindow);
     commandWindow->installEventFilter(this);
-    commandWindow->document()->setDefaultFont(QFont("Consolas", 10));
-    //commandWindow->document()->setDefaultFont(QFont("Courier New", 10));
+  //  commandWindow->document()->setDefaultFont(QFont("Consolas", 10));
+    commandWindow->setFont(QFont("Consolas", 10));
+  //  commandWindow->document()->setDefaultFont(QFont("Courier New", 10));
     // declare and set the commandWindow
 
     connect(toolButton_clearcmd, SIGNAL(clicked()), this, SLOT(clearCommandWindow()));
@@ -114,9 +115,10 @@ void nutshellqt::parseCommand()
             {
                 args.removeAt(0);
                 QStringList env;
-              //  env << QString("PATH=" + GDALDirName + "bin");
-              //  env << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data");
-                env << setEnvironment();
+                env << QString("PATH=" + GDALDirName + "bin;"+ GDALDirName + "bin/gdal-data");
+                env << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data");
+               // env << setEnvironment();
+                qDebug() << env;
                 PCRProcess->setEnvironment(env);
                 PCRProcess->start(prog, args);
             }

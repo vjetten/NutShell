@@ -284,13 +284,17 @@ void nutshellqt::onScreen(QString buffer)
     list = output.split("\n");
     xlast = list.count();
     // get the lines in the commandWindow
-qDebug() << list;
+//qDebug() << list;
     // first output at start run
-    if (buffer.contains("ERROR") )
-    {
-        list.replace(xlast-3,listb[0]);  // pcrcalc version
-        list.replace(xlast-2,listb[1]);  // error message
-        output=list.join("\n");
+    if (buffer.contains("ERROR") ) {
+        if (output.isEmpty()) {
+            qDebug() << "hier";
+        } else {
+                        qDebug() << xlast;
+            list.replace(xlast-3,listb[0]);  // pcrcalc version
+            list.replace(xlast-2,listb[1]);  // error message
+            output=list.join("\n");
+        }
         commandWindow->setPlainText(output);
         // join new lines and replace the commandWindow
     }

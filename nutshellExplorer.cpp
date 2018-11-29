@@ -29,10 +29,10 @@ void nutshellqt::initExplorer(QString)
     treeView->setVisible(true);
 
     // !!!!
-    fileView->setVisible(false);
-    fileView->resizeColumnsToContents();
-    fileView->resizeRowsToContents();
-    fileView->setVisible(true);
+//    fileView->setVisible(false);
+//    fileView->resizeColumnsToContents();
+//    fileView->resizeRowsToContents();
+//    fileView->setVisible(true);
 
     changeFileFilter(_filternr);
 }
@@ -90,8 +90,11 @@ void nutshellqt::setupExplorer()
     //fileView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
     fileView->horizontalHeader()->setStretchLastSection(true);
     //fileView->horizontalHeader()->setMovable(true);
-    fileView->resizeRowsToContents();
-    fileView->resizeColumnsToContents();
+  //  fileView->resizeRowsToContents();
+//    fileView->resizeColumnsToContents();
+
+    fileView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    fileView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     fileView->setShowGrid(false);
     fileView->setWordWrap(false);
@@ -376,8 +379,8 @@ void nutshellqt::changeFileFilter(int filterNr)
     // set the file model to the filtered output
 
   //  fileView->setVisible(false);
-    fileView->resizeColumnsToContents();
-    fileView->resizeRowsToContents();
+  //  fileView->resizeColumnsToContents();
+  //  fileView->resizeRowsToContents();
   //  fileView->setVisible(true);
 }
 //---------------------------------------------------------------

@@ -22,13 +22,14 @@ nutshellOptions::~nutshellOptions()
 {
 }
 //---------------------------------------------------------------------------
-void nutshellOptions::setupOptions(QStringList SL)
+void nutshellOptions::setupOptions(QStringList SL, double dpi)
 {
 	baseDirs = SL;
 	lineEdit_pcrcalcDir->setText(SL[0]);
 //	lineEdit_aguilaDir->setText(SL[1]);
 //	lineEdit_mapeditDir->setText(SL[2]);
     lineEdit_GDALDir->setText(SL[1]);
+    dpiScale->setValue(dpi);
 }
 //---------------------------------------------------------------------------
 QStringList nutshellOptions::getOptions()
@@ -37,8 +38,9 @@ QStringList nutshellOptions::getOptions()
 	baseDirs << lineEdit_pcrcalcDir->text()
   //          << lineEdit_aguilaDir->text()
           //  << lineEdit_mapeditDir->text()
-            << lineEdit_GDALDir->text();
-	return baseDirs;
+            << lineEdit_GDALDir->text()
+            << dpiScale->text();
+    return baseDirs;
 }
 //---------------------------------------------------------------------------
 void nutshellOptions::findPcrcalcDir()

@@ -278,17 +278,18 @@ void nutshellqt::findPrevfind()
 //---------------------------------------------------------------
 void nutshellqt::fontSelect()
 {
-    if (!ETExists)
-        return;
     bool ok;
     if (commandWindow->hasFocus())
         commandWindow->setFont(QFontDialog::getFont(&ok, commandWindow->font()));
     else
+        if (ETExists)
         ETEditor->setFont(QFontDialog::getFont(&ok, ETEditor->font()));
 }
 //---------------------------------------------------------------
 void nutshellqt::fontDecrease()
 {
+//    dpiscale *= 0.9;
+//    setfontSize(genfontsize);
     if (commandWindow->hasFocus())
     {
         QFont f = commandWindow->font();
@@ -312,6 +313,8 @@ void nutshellqt::fontDecrease()
 //---------------------------------------------------------------
 void nutshellqt::fontIncrease()
 {
+//    dpiscale *= 1.1;
+//    setfontSize(genfontsize);
     if (commandWindow->hasFocus())
     {
         QFont f = commandWindow->font();

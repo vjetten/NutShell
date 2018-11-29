@@ -1,15 +1,20 @@
 ==============================================================================================================
-nutshell for PCRaster version 5.1
+nutshell for PCRaster version 5.4
 ==============================================================================================================
-Date: 1 Oct 2018
+Date: 24 Oct 2018
 Author: Victor Jetten
 uses pcraster 4.2.0 (pcraster.geo.uu.nl)
-uses GDAL (gdal.org)
+can use GDAL (gdal.org)
 ---------------------------------------------------------------------------------------------------------------
 
 NOTE this version uses QT5 dlls, delete the previous version and dlls.
-Changes 5.11
+NOTE DO *NOT* copy the contents of this zip file in the pcraster/bin directory. PCRaster uses different versions of the Qt dll files.
+
+Changes 5.1-5.4
+= font control for high res screens
+- fixed minor interface bugs
 - fixed bug in executing CMD file 
+- added platforms in install zip file
 
 Changes 4.86-5.1
 - added surpport for GDAL operations
