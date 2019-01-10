@@ -283,13 +283,14 @@ void nutshellqt::PerformAction(int actiontype)
         }
         break;
     case ACTIONTYPEMAPEDIT :
-        args << cmdl;
         if (!fileIsMap) {
             ErrorMsg(QString("%1 is not a PCRaster map and cannot be loaded in MapEdit.").arg(SelectedFileName));
             actiontype = ACTIONTYPENONE;
             break;
         }
-        prog = MapeditDirName + "mapedit.exe";
+        mapedit.loadmap(SelectedPathName);
+        mapedit.show();
+        //prog = MapeditDirName + "mapedit.exe";
         break;
     case ACTIONTYPELEGEND:
         if (fileIsMap)

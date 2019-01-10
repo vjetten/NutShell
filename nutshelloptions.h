@@ -2,14 +2,14 @@
 #define NUTSHELLOPTIONS_H
 
 #include <QDialog>
-#include "ui_nutshellOptions.h"
+#include "ui_nutshelloptions.h"
 
 class nutshellOptions : public QDialog, private Ui::nutshellOptions
 {
     Q_OBJECT
 
 public:
-    explicit nutshellOptions(QWidget *parent = 0);
+    explicit nutshellOptions(QWidget *parent = nullptr);
     ~nutshellOptions();
 
 	 QString setExistingDirectory(QString title, QString bd);

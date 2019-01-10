@@ -121,7 +121,7 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
 //---------------------------------------------------------------
 void nutshellqt::resizeEvent(QResizeEvent *event)
 {
-    qDebug() << "hoi";
-    findDPIscale();
+    //qDebug() << "resizeEvent()";
+    //findDPIscale(true);
     return QMainWindow::resizeEvent(event);
 }

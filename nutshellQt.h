@@ -16,6 +16,7 @@
 #include "findreplaceform.h"
 #include "nutshellhelp.h"
 #include "nutshelloptions.h"
+#include "nutshellmapedit.h"
 
 //---------------------------------------------------------------
 
@@ -187,7 +188,7 @@ public:
     ~nutshellqt();
 
     int genfontsize;
-    double dpiscale;
+    double dpiscale, opDPIscale;
     void setfontSize();
     QSize iSize;
 
@@ -210,10 +211,13 @@ public:
     void getNutshellIni();
     void getRegPCRaster();
     void setPCRasterDirectories();
-    void findDPIscale();
 
     void createBatch(QString sss, QString args);
     void deleteBatch();
+
+    void findDPIscale(bool check);
+
+
     QStringList setEnvironment();
 
     QList<editortabs> ET;
@@ -250,6 +254,11 @@ public:
 
     QTextCursor calcCursor;
     int cursorPosition;
+    //========================
+    //map edit
+    //========================
+
+    nutshellmapedit mapedit;
 
     //========================
     //Vars for pcrcalc process
@@ -330,6 +339,9 @@ public slots:
     //void toggleOldcalc(bool checked);
     void readFromStderr();
 
+    void checkDPIscale();
+
+
     //=======================
     //slots for commandWindow
     //=======================
@@ -375,6 +387,10 @@ public slots:
     void clearNutshellIni();
     // void findScriptReport();
     void deleteLine();
+
+//    void makeNewMapedit();
+//    double fillDrawMapData(cTMap *_M, QwtMatrixRasterData *_RD);
+//    void showMap();
 
     //====================
     //slots for explorer

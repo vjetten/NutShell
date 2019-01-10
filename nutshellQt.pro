@@ -11,7 +11,9 @@ QTDIR =C:\\Qt\\Qt5.5.1vs\\5.5\\msvc2010
 TARGET = nutshell
 TEMPLATE = app
 CONFIG += exceptions
+#QMAKE_CXXFLAGS += -Wall
 #CONFIG += static
+CONFIG += warn_off
 SOURCES += main.cpp\
         nutshellqt.cpp \
         nutshellExplorer.cpp \
@@ -30,7 +32,8 @@ SOURCES += main.cpp\
     nutshellevent.cpp \
     nutshelltreeview.cpp \
     nutshellIni.cpp \
-    nutshellCommandwindow.cpp
+    nutshellCommandwindow.cpp \
+    nutshellmapedit.cpp
 HEADERS  += nutshellqt.h \
     csfattr.h \
     csfimpl.h \
@@ -44,12 +47,15 @@ HEADERS  += nutshellqt.h \
     nutshellhelp.h \
     nutshelloptions.h \
     findreplaceform.h \
-    CsfMap.h
+    CsfMap.h \
+    nutshellmapedit.h
 FORMS    += nutshellqt.ui \
     nutshelllegend.ui \
     nutshellmapattribute.ui \
     nutshelloptions.ui \
-    findreplaceform.ui
+    findreplaceform.ui \
+    mapedit.ui \
+    nutshellmapedit.ui
 INCLUDEPATH+=$${QTDIR}/lib
 CONFIG(debug, debug|release) {
   # debug build

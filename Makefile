@@ -191,10 +191,10 @@ Makefile: nutshellQt.pro ..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\win32-msvc20
 		..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\resolve_config.prf \
 		..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\exclusive_builds_post.prf \
 		..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\default_post.prf \
+		..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\warn_off.prf \
 		..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\exceptions.prf \
 		..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\win32\rtti.prf \
 		..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\precompile_header.prf \
-		..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\warn_on.prf \
 		..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\qt.prf \
 		..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\resources.prf \
 		..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\moc.prf \
@@ -328,10 +328,10 @@ Makefile: nutshellQt.pro ..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\win32-msvc20
 ..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\resolve_config.prf:
 ..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\exclusive_builds_post.prf:
 ..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\default_post.prf:
+..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\warn_off.prf:
 ..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\exceptions.prf:
 ..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\win32\rtti.prf:
 ..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\precompile_header.prf:
-..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\warn_on.prf:
 ..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\qt.prf:
 ..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\resources.prf:
 ..\..\..\Qt\Qt5.5.1vs\5.5\msvc2010\mkspecs\features\moc.prf:

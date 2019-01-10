@@ -43,14 +43,6 @@ void nutshellqt::makeNewFile(bool script)
 
     myeditor->setWordWrapMode(QTextOption::NoWrap);
 
-// not necessary, exists by default
-//    connect(pasteAct, SIGNAL(triggered()), myeditor, SLOT(paste()));
-//    connect(copyAct, SIGNAL(triggered()), myeditor, SLOT(copy()));
-//    connect(cutAct, SIGNAL(triggered()), myeditor, SLOT(cut()));
-//    connect(undoAct, SIGNAL(triggered()), myeditor, SLOT(undo()));
-//    connect(redoAct, SIGNAL(triggered()), myeditor, SLOT(redo()));
-//    connect(redoAct, SIGNAL(triggered()), myeditor, SLOT(redo()));
-
     tabLayout->setMargin(2);
     tabLayout->addWidget(myeditor);
 

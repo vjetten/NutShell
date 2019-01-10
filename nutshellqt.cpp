@@ -14,7 +14,7 @@ nutshellqt::nutshellqt(QWidget *parent) :
 {
     setupUi(this);
 
-    findDPIscale();
+  //  findDPIscale();
 
     setupActions();
 
@@ -67,9 +67,7 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
   //  fileView->horizontalHeader()->moveSection(3, 2);
 
-
-    toolBar->setIconSize(iSize);
-    setfontSize();
+    findDPIscale(true);
 }
 //---------------------------------------------------------------
 nutshellqt::~nutshellqt()
@@ -132,6 +130,8 @@ void nutshellqt::createModelActions()
 //---------------------------------------------------------------
 void nutshellqt::createMainActions()
 {
+    connect(window()->windowHandle(), SIGNAL(screenChanged(QScreen*)), this, SLOT(checkDPIscale()));
+
     // main actions
     connect(toolButton_workdir, SIGNAL(clicked()), this, SLOT(setWorkdirectory()));
     connect(toolButton_delWorkdir, SIGNAL(clicked()), this, SLOT(removeWorkdirectory()));
@@ -499,10 +499,9 @@ void nutshellqt::getDirectories()
             GDALDirName = GDALDirName + "/";
         PCRasterAppDirName = PCRasterDirName + "bin/";
         AguilaDirName = PCRasterAppDirName;
-        dpiscale = tempdirs[2].toDouble();
-        setfontSize();
+        opDPIscale = tempdirs[2].toDouble();
 
-qDebug() << tempdirs << PCRasterDirName << PCRasterAppDirName << GDALDirName << dpiscale;
+        findDPIscale(false);
     }
 }
 //---------------------------------------------------------------
@@ -510,35 +509,42 @@ void nutshellqt::setfontSize()
 {
     qDebug() << "fs" << genfontsize << dpiscale;
     int fs = genfontsize;
+
+    int fsdpi = int(fs*dpiscale);
     QFont font = qApp->font();
-    font.setPixelSize((int)fs*dpiscale);
+    font.setPixelSize((int)(fs*dpiscale));
     qApp->setFont(font);
-    qApp->setStyleSheet(QString("QComboBox {font: %1px; padding: 1px 0px 1px 3px;}").arg(fs*dpiscale));
-    qApp->setStyleSheet(QString("QLineEdit {font: %1px;}").arg(fs*dpiscale));
-    qApp->setStyleSheet(QString("QLabel {font: %1px;}").arg(fs*dpiscale));
-    qApp->setStyleSheet(QString("QToolButton {font: %1px;}").arg(fs*dpiscale));
-    treeView->setStyleSheet(QString("font: %1px").arg(fs*dpiscale));
-    fileView->setStyleSheet(QString("font: %1px").arg(fs*dpiscale));
-    fileMenu->setStyleSheet(QString("font: %1px").arg(fs*dpiscale));
-    runMenu->setStyleSheet(QString("font: %1px").arg(fs*dpiscale));
-    editMenu->setStyleSheet(QString("font: %1px").arg(fs*dpiscale));
-    helpMenu->setStyleSheet(QString("font: %1px").arg(fs*dpiscale));
-    findMenu->setStyleSheet(QString("font: %1px").arg(fs*dpiscale));
-    formatMenu->setStyleSheet(QString("font: %1px").arg(fs*dpiscale));
-    menuBar()->setStyleSheet(QString("font: %1px").arg(fs*dpiscale));
+    qApp->setStyleSheet(QString("QComboBox {font: %1px; padding: 1px 0px 1px 3px;}").arg(fsdpi));
+    qApp->setStyleSheet(QString("QLineEdit {font: %1px;}").arg(fsdpi));
+    qApp->setStyleSheet(QString("QLabel {font: %1px;}").arg(fsdpi));
+    qApp->setStyleSheet(QString("QToolButton {font: %1px;}").arg(fsdpi));
+    treeView->setStyleSheet(QString("font: %1px").arg(fsdpi));
+    fileView->setStyleSheet(QString("font: %1px").arg(fsdpi));
+    fileMenu->setStyleSheet(QString("font: %1px").arg(fsdpi));
+    runMenu->setStyleSheet(QString("font: %1px").arg(fsdpi));
+    editMenu->setStyleSheet(QString("font: %1px").arg(fsdpi));
+    helpMenu->setStyleSheet(QString("font: %1px").arg(fsdpi));
+    findMenu->setStyleSheet(QString("font: %1px").arg(fsdpi));
+    formatMenu->setStyleSheet(QString("font: %1px").arg(fsdpi));
+    menuBar()->setStyleSheet(QString("font: %1px").arg(fsdpi));
 
     qApp->setStyleSheet(QString("QCheckBox::indicator {width: %1px; height: %1px;}\
-                                QRadioButton::indicator {width: %1px; height: %1px;}").arg(fs*dpiscale));
+                                QRadioButton::indicator {width: %1px; height: %1px;}").arg(fsdpi));
 
 }
 //---------------------------------------------------------------
-void nutshellqt::findDPIscale()
+void nutshellqt::checkDPIscale()
+{
+    qDebug() << "hoi";
+    findDPIscale(true);
+}
+
+void nutshellqt::findDPIscale(bool check)
 {
     QRect rect = qApp->desktop()->screenGeometry();
     int _H = rect.height();
     QFont font = qApp->font();
     genfontsize=font.pointSize();
-    dpiscale = 1.0;
 
     // do a bit of size teaking for large displays becvause QT 5.5.0 does not have that yet
     iSize = QSize(16,16);
@@ -551,14 +557,22 @@ void nutshellqt::findDPIscale()
         genfontsize = 14;
         iSize = QSize(24,24);
     }
-    //    if (_H > 1200) {
-    //        dpiscale = 2;
-    //        genfontsize = 12;
-    //        iSize = QSize(32,32);
-    //    }
+    if (_H > 1200-5) {
+        dpiscale = 1.2;
+        genfontsize = 14;
+    }
     if (_H > 1440) {
         dpiscale = 2.0;
         genfontsize = 12;
         iSize = QSize(48,48);
     }
+
+    if (!check)
+        dpiscale = opDPIscale;
+
+    toolBar->setIconSize(iSize);
+    setfontSize();
+
+
+    qDebug() << "dpi" << _H << dpiscale;
 }

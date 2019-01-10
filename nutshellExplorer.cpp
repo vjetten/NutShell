@@ -94,7 +94,7 @@ void nutshellqt::setupExplorer()
 //    fileView->resizeColumnsToContents();
 
     fileView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    fileView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    fileView->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
 
     fileView->setShowGrid(false);
     fileView->setWordWrap(false);
