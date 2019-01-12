@@ -33,6 +33,7 @@ void nutshellqt::setupModel()
     // pcrcalc outputs on the error channel
     //calcProcess->setTextModeEnabled (true);
     connect(calcProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderr()) );
+  //  connect(calcProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(readFromStdOutput()) );
     connect(calcProcess, SIGNAL(finished(int)),this, SLOT(finishedModel(int)) );
 
     //    useOldCalc = false;
@@ -158,8 +159,8 @@ void nutshellqt::runModel()
     statusBar()->addWidget(&statusLabel);
     setCursorLast();
 
-    args << QString("-f") <<  ETfilePath;
-    argsscreen << QString("-f") <<  ETfileName;
+    args << QString("-1") << QString("-f") <<  ETfilePath;
+    argsscreen << QString("-1 -f") <<  ETfileName;
     if (toolButton_argSubs->isChecked())
     {
         QStringList subs;
@@ -287,15 +288,14 @@ void nutshellqt::onScreen(QString buffer)
 //qDebug() << list;
     // first output at start run
     if (buffer.contains("ERROR") ) {
- /*       if (output.isEmpty()) {
+        if (output.isEmpty()) {
             qDebug() << "hier";
         } else {
-                        qDebug() << xlast;
-                        */
+            qDebug() << xlast;
             list.replace(xlast-3,listb[0]);  // pcrcalc version
             list.replace(xlast-2,listb[1]);  // error message
             output=list.join("\n");
-       // }
+        }
         commandWindow->setPlainText(output);
         // join new lines and replace the commandWindow
     }
@@ -356,6 +356,57 @@ void nutshellqt::onScreen(QString buffer)
 void nutshellqt::readFromStderr()
 {
     QString buffer = QString(calcProcess->readAllStandardError());
+
+    if (!buffer.contains('\r')) {
+        bufprev = bufprev + buffer;
+        return;
+    }
+    else {
+        bufprev = bufprev + buffer;
+        buffer = bufprev;
+        bufprev = "";
+    }
+
+// pcraster 4.2.0 with pcrcalc 2018 has different output: first the first chr then the rest?!
+
+    qDebug() << buffer << bufprev;
+    onScreen(buffer);
+
+    if (buffer.contains("ERROR"))
+        doRunErrorMessage(buffer);
+
+
+    //    QByteArray byteArray = calcProcess->readAllStandardError();
+    //    onScreen(byteArray);
+    //    QString buffer = QString(byteArray);
+    //    if (buffer.contains("ERROR"))
+    //        doRunErrorMessage(buffer);
+
+    //    QList<QByteArray> lines = byteArray.split('\r\n');
+    //    foreach (const QByteArray& line, lines) {
+    //        if (line.size())
+    //            qDebug() << "PIPE STDERR" << line;
+    //    }
+    //    qDebug() << calcProcess->readAllStandardError().constData();
+    //https://qt.gitorious.org/qtplayground/qtprocessmanager/commit/b3c127ab0d29f9d245a9639c216caedf4a41ca69
+}//---------------------------------------------------------------
+void nutshellqt::readFromStderrPCR()
+{
+    QString buffer = QString(PCRProcess->readAllStandardError());
+
+    if (!buffer.contains('\r')) {
+        bufprev = bufprev + buffer;
+        return;
+    }
+    else {
+        bufprev = bufprev + buffer;
+        buffer = bufprev;
+        bufprev = "";
+    }
+
+// pcraster 4.2.0 with pcrcalc 2018 has different output: first the first chr then the rest?!
+
+    qDebug() << buffer << bufprev;
     onScreen(buffer);
 
     if (buffer.contains("ERROR"))
@@ -428,6 +479,7 @@ void nutshellqt::finishedModel(int)
         QByteArray buf;
         buf.clear();
         buf = calcProcess->readAllStandardError();
+        qDebug() << "buf" << buf;
         onScreen(QString(buf));
     }
 

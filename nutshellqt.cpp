@@ -130,7 +130,7 @@ void nutshellqt::createModelActions()
 //---------------------------------------------------------------
 void nutshellqt::createMainActions()
 {
-    connect(window()->windowHandle(), SIGNAL(screenChanged(QScreen*)), this, SLOT(checkDPIscale()));
+  //  connect(window()->windowHandle(), SIGNAL(screenChanged(QScreen*)), this, SLOT(checkDPIscale()));
 
     // main actions
     connect(toolButton_workdir, SIGNAL(clicked()), this, SLOT(setWorkdirectory()));

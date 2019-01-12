@@ -249,7 +249,7 @@
               <string>...</string>
              </property>
              <property name="icon">
-              <iconset>
+              <iconset resource="nutshellqt.qrc">
                <normaloff>:/resources/2X/dir_del.png</normaloff>:/resources/2X/dir_del.png</iconset>
              </property>
              <property name="autoRaise">

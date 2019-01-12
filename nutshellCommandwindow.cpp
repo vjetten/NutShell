@@ -16,7 +16,7 @@ void nutshellqt::setupCommandwindow()
     processError = false;
     PCRProcess->setProcessChannelMode(QProcess::MergedChannels);
     connect(PCRProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(outputCommand()) );
-    connect(PCRProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderr()) );
+    connect(PCRProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderrPCR()) );
     connect(PCRProcess, SIGNAL(error(QProcess::ProcessError)),this, SLOT(errorCommand()) );
     // process called by command window, typing pcrcalc, or aguila or any other pcr prog
 
@@ -162,11 +162,20 @@ void nutshellqt::errorCommand()
 //---------------------------------------------------------------
 void nutshellqt::outputCommand()
 {
-    QByteArray ba = PCRProcess->readAllStandardOutput();
-    //	commandWindow->cursor = 1;
-    commandWindow->appendPlainText(ba);
+    QString buffer = QString(PCRProcess->readAllStandardOutput());
+
+    if (!buffer.contains('\r')) {
+        bufprev = bufprev + buffer;
+        return;
+    }
+    else {
+        bufprev = bufprev + buffer;
+        buffer = bufprev;
+        bufprev = "";
+    }
+
+    commandWindow->appendPlainText(buffer);
     QCoreApplication::sendPostedEvents(this, 0);
-    //	commandWindow->cursor = 1;
 }
 
 //---------------------------------------------------------------

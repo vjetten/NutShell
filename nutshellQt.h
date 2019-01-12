@@ -273,6 +273,7 @@ public:
     bool runPaused;
     void setButtons(bool one, bool two, bool three);
     int expFont;
+    QString bufprev;
     //======================
     //Vars for editor
     //======================
@@ -338,7 +339,7 @@ public slots:
     void finishedModel(int);
     //void toggleOldcalc(bool checked);
     void readFromStderr();
-
+    void readFromStderrPCR();
     void checkDPIscale();
 
 

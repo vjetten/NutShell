@@ -31,7 +31,6 @@ SOURCES += main.cpp\
     CsfMap.cpp \
     nutshellevent.cpp \
     nutshelltreeview.cpp \
-    nutshellIni.cpp \
     nutshellCommandwindow.cpp \
     nutshellmapedit.cpp
 HEADERS  += nutshellqt.h \
