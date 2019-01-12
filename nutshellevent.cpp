@@ -54,7 +54,7 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
             {
                 changeFileFilter(_filternr);
                 QCoreApplication::sendPostedEvents(this, 0);
-              //  setRootIndex(dirModel->index(currentPath)); why???
+
                 return true;
             }
             if (keyEvent->key() == Qt::Key_F2)

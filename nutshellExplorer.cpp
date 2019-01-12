@@ -378,10 +378,15 @@ void nutshellqt::changeFileFilter(int filterNr)
     fileModel->setNameFilters(currentFilter);
     // set the file model to the filtered output
 
-  //  fileView->setVisible(false);
-  //  fileView->resizeColumnsToContents();
-  //  fileView->resizeRowsToContents();
-  //  fileView->setVisible(true);
+//    fileView->setVisible(false);
+//    fileView->resizeColumnsToContents();
+//    fileView->resizeRowsToContents();
+//    fileView->setVisible(true);
+
+    fileView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    fileView->resizeColumnsToContents();
+    QCoreApplication::sendPostedEvents(this, 0);
+    fileView->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
 }
 //---------------------------------------------------------------
 //! OBSOLETE this function is not used anymore
