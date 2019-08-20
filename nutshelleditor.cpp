@@ -99,7 +99,7 @@ void nutshellqt::openFile()
     QFileDialog dialog(this);
     dialog.setViewMode(QFileDialog::Detail);
     QString fileName = dialog.getOpenFileName(this,
-                                              "Open model/script", currentPath, "*.mod *.txt;;*.*");
+                                              "Open model/script", currentPath, "*.mod *.txt *.cmd *.bat;;*.*");
     if (!fileName.isEmpty())
         AddModel(fileName, 1);
 }

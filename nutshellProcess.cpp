@@ -159,7 +159,8 @@ void nutshellqt::runModel()
     statusBar()->addWidget(&statusLabel);
     setCursorLast();
 
-    args << QString("-1") << QString("-f") <<  ETfilePath;
+    args << QString("-1");
+    args  << QString("-f") <<  ETfilePath;
     argsscreen << QString("-1 -f") <<  ETfileName;
     if (toolButton_argSubs->isChecked())
     {
@@ -406,7 +407,7 @@ void nutshellqt::readFromStderrPCR()
 
 // pcraster 4.2.0 with pcrcalc 2018 has different output: first the first chr then the rest?!
 
-    qDebug() << buffer << bufprev;
+    //qDebug() << buffer << bufprev;
     onScreen(buffer);
 
     if (buffer.contains("ERROR"))

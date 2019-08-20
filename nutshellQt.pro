@@ -6,8 +6,8 @@
 
 QT       += core gui widgets
 #QTDIR = C:\Qt\Qt5.8.0\5.8\msvc2015
-QTDIR =C:\\Qt\\Qt5.5.1vs\\5.5\\msvc2010
-#QTDIR = C:/Qt/4.8.6/bin
+#QTDIR =C:\Qt\Q513\5.13.0\mingw73_64
+QTDIR = C:\Qt\Q513\5.13.0\msvc2015_64
 TARGET = nutshell
 TEMPLATE = app
 CONFIG += exceptions
@@ -15,6 +15,7 @@ CONFIG += exceptions
 #CONFIG += static
 CONFIG += warn_off
 SOURCES += main.cpp\
+    nutshellIni.cpp \
         nutshellqt.cpp \
         nutshellExplorer.cpp \
     nutshellAction.cpp \
@@ -58,13 +59,13 @@ FORMS    += nutshellqt.ui \
 INCLUDEPATH+=$${QTDIR}/lib
 CONFIG(debug, debug|release) {
   # debug build
-  win32:win32-msvc2010{
+  win32:win32-msvc2015{
    # compile release with MSVC 2010
     DEFINES += _CRT_SECURE_NO_WARNINGS
-    LIBS += -L"debug/vc/static" -lcsfvcd
+    LIBS += -L"debug/vc" -llibcsfd
     DESTDIR = debug/vc
   } else {
-    LIBS += -L"debug/vc/static" -llibcsfd
+    LIBS += -L"debug" -llibcsfd
     DESTDIR = debug
   }
   MOC_DIR = debug/moc
@@ -73,14 +74,14 @@ CONFIG(debug, debug|release) {
   RCC_DIR= debug/rcc
 } else {
   # release build
-  win32:win32-msvc2010{
+  win32:win32-msvc2015{
                  # compile release with MSVC 2010
     DEFINES += _CRT_SECURE_NO_WARNINGS
-    LIBS += -L"release/vc" -L"release/vc/static" -lcsfvc
+    LIBS += -L"release/vc" -L"release/vc" -llibcsf
     DESTDIR = release/vc
   } else {
                  # compile with mingw
-    LIBS += -L"release/csf" -llibcsf
+    LIBS += -L"release" -llibcsf
 
   }
   MOC_DIR = release/moc

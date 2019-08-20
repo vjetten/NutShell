@@ -321,15 +321,18 @@ public:
     bool isExtentionInt(QString name);
     void scriptFold(int section);
     bool changeName;
+    bool crtlpressed;
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
+    void wheelEvent(QObject *obj, QWheelEvent *event);
 
 public slots:
     //void doSomething(QProcess::ProcessState hoi);
 
     void initExplorer(QString);
+    void initExplorer2(QString);
     //=========================
     //slots to run model script
     //=========================
@@ -538,6 +541,8 @@ private:
     bool processError;
     QProcess *calcProcess;
     QProcess *CMDProcess;
+
+
 };
 
 #endif // NUTSHELLQT_H

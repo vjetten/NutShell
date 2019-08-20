@@ -114,12 +114,12 @@ void nutshellqt::parseCommand()
             if (args[0].contains("gdal", Qt::CaseInsensitive))
             {
                 args.removeAt(0);
-                QStringList env;
-                env << QString("PATH=" + GDALDirName + "bin;"+ GDALDirName + "bin/gdal-data");
-                env << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data");
-               // env << setEnvironment();
-                qDebug() << env;
-                PCRProcess->setEnvironment(env);
+                QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+                QString str = GDALDirName+QString("bin;")+ GDALDirName+QString("bin/gdal/apps;")+ PCRasterAppDirName;
+                env.insert("PATH",str);
+                str = GDALDirName + QString("bin/gdal-data");
+                env.insert("GDAL_DATA",str);
+                PCRProcess->setProcessEnvironment(env);
                 PCRProcess->start(prog, args);
             }
             else

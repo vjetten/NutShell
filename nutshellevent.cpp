@@ -53,6 +53,16 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
             if (keyEvent->key() == Qt::Key_F5)
             {
                 changeFileFilter(_filternr);
+
+                treeView->setVisible(false);
+                treeView->resizeColumnToContents(0);
+                treeView->setVisible(true);
+
+               // !!!!
+                fileView->setVisible(false);
+                fileView->resizeColumnsToContents();
+                fileView->resizeRowsToContents();
+                fileView->setVisible(true);
                 QCoreApplication::sendPostedEvents(this, 0);
 
                 return true;
@@ -66,9 +76,25 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
     }
     if (obj == commandWindow)
     {
+        if (event->type() == QEvent::Wheel && crtlpressed)
+        {
+            QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
+
+            QPoint numPixels = wheelEvent->angleDelta()/120;
+            int y = numPixels.y();
+            //qDebug() << "wheel" << y;
+            crtlpressed = false;
+        }
+
         if (event->type() == QEvent::KeyPress)
         {
             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+
+
+            if (keyEvent->key() == Qt::Key_Control) {
+           //     qDebug() << "hoi";
+                crtlpressed = true;
+            }
 
             if (calcProcess && calcProcess->state() == QProcess::Running)
                 return true;
@@ -124,4 +150,10 @@ void nutshellqt::resizeEvent(QResizeEvent *event)
     //qDebug() << "resizeEvent()";
     //findDPIscale(true);
     return QMainWindow::resizeEvent(event);
+}
+
+
+void nutshellqt::wheelEvent(QObject *obj, QWheelEvent *event)
+{
+
 }

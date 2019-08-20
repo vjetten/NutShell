@@ -12,8 +12,8 @@
 QStringList nutshellqt::setEnvironment()
 {
     QStringList env;
-    env << QString("PATH=") + GDALDirName+QString("bin;")+ GDALDirName+QString("bin/gdal/apps;")+ PCRasterAppDirName + "\n";
-    env << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data\n");
+    env << QString("PATH=") + GDALDirName+QString("bin;")+ GDALDirName+QString("bin/gdal/apps;")+ PCRasterAppDirName;
+    env << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data");
     return env;
 }
 //---------------------------------------------------------------------------
@@ -165,7 +165,6 @@ void nutshellqt::PerformAction(int actiontype)
     QStringList args;
     QString nameout;
     QString namein;
-    QStringList env;
     MAP *m = nullptr;
     bool fileIsMap = true;
     bool isAguila = false;
@@ -220,6 +219,13 @@ void nutshellqt::PerformAction(int actiontype)
         statusBar()->addWidget(&statusLabel);
         statusLabel.show();
     }
+
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    QString str = GDALDirName+QString("bin;")+ GDALDirName+QString("bin/gdal/apps;")+ PCRasterAppDirName;
+    env.insert("PATH",str);
+    str = GDALDirName + QString("bin/gdal-data");
+    env.insert("GDAL_DATA",str);
+    PCRProcess->setProcessEnvironment(env);
 
     switch (actiontype)
     {
@@ -288,9 +294,10 @@ void nutshellqt::PerformAction(int actiontype)
             actiontype = ACTIONTYPENONE;
             break;
         }
-        mapedit.loadmap(SelectedPathName);
-        mapedit.show();
-        //prog = MapeditDirName + "mapedit.exe";
+//        mapedit.loadmap(SelectedPathName);
+//        mapedit.show();
+        args << cmdl;
+        prog = MapeditDirName + "mapedit.exe";
         break;
     case ACTIONTYPELEGEND:
         if (fileIsMap)
@@ -333,11 +340,6 @@ void nutshellqt::PerformAction(int actiontype)
         break;
     case ACTIONTYPEATTRIBUTE :
         if (isTIFF) {
-//            env << QString("PATH=" + GDALDirName + "bin");
-//            env << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data");
-            env << setEnvironment();
-            PCRProcess->setEnvironment(env);
-
             args << SelectedPathName;
             prog = GDALDirName + "bin/gdal/apps/gdalinfo.exe";
             qDebug() << prog << args;
@@ -352,8 +354,6 @@ void nutshellqt::PerformAction(int actiontype)
             statusBar()->removeWidget(&statusLabel);
              ErrorMsg("File is not recognised as PCRaster or GeoTIFF map.p");
         }
-
-
         break;
     case ACTIONTYPEGSTAT :
         args << cmdl;
@@ -361,12 +361,6 @@ void nutshellqt::PerformAction(int actiontype)
         //actiontype = ACTIONTYPENONE;
         break;
     case ACTIONTYPEMAP2ILWIS:
-     //   env << QString("PATH=" + GDALDirName +"bin/gdal/apps;");
-     //   env << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data");
-        env << setEnvironment();
-        PCRProcess->setEnvironment(env);
-//        nameout = QFileInfo(SelectedPathName).filePath();
-//        nameout = nameout.remove(nameout.lastIndexOf('.'),20) + ".mpr";
         nameout = QFileInfo(SelectedPathName).baseName() + ".mpr";
         namein =  QFileInfo(SelectedPathName).baseName() + "." + SelectedSuffix;//QFileInfo(SelectedPathName).suffix();
         args << "-of" << "ILWIS" << namein << nameout;
@@ -379,19 +373,9 @@ void nutshellqt::PerformAction(int actiontype)
         commandWindow->appendPlainText("gdal_translate "+args.join(" "));
         break;
     case ACTIONTYPEMAP2TIFF:
-//        env << QString("PATH=" + GDALDirName + "bin");
-//        env << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data");
-        env << setEnvironment();
-        PCRProcess->setEnvironment(env);
-//        if (isTIFF)
-//           nameout = QFileInfo(SelectedPathName).baseName() + ".map";
-//        else
-           nameout = QFileInfo(SelectedPathName).baseName() + ".tif";
+        nameout = QFileInfo(SelectedPathName).baseName() + ".tif";
         namein =  QFileInfo(SelectedPathName).baseName() + "." + SelectedSuffix;//QFileInfo(SelectedPathName).suffix();
-//        if (isTIFF)
-//            args << "-of" << "pcraster" << namein << nameout;
-//        else
-            args << namein << nameout;
+        args << namein << nameout;
         prog = GDALDirName + "bin/gdal/apps/gdal_translate.exe";
         if (!QFileInfo(prog).exists())
         {

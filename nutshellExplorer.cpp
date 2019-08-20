@@ -19,8 +19,9 @@
 
 //---------------------------------------------------------------
 /// SLOT triggered when the tableview is populated: resize the columns but keep user control of column width
-void nutshellqt::initExplorer(QString)
+void nutshellqt::initExplorer2(QString)
 {
+ //   qDebug() << "initexplorer";
     // cannot be done earlier because treeview is not populated yet
     treeView->hideColumn(1);
     treeView->hideColumn(2);
@@ -29,10 +30,29 @@ void nutshellqt::initExplorer(QString)
     treeView->setVisible(true);
 
     // !!!!
-//    fileView->setVisible(false);
-//    fileView->resizeColumnsToContents();
-//    fileView->resizeRowsToContents();
-//    fileView->setVisible(true);
+//        fileView->setVisible(false);
+//        fileView->resizeColumnsToContents();
+//        fileView->resizeRowsToContents();
+//        fileView->setVisible(true);
+
+    changeFileFilter(_filternr);
+}
+
+void nutshellqt::initExplorer(QString)
+{
+ //   qDebug() << "initexplorer";
+    // cannot be done earlier because treeview is not populated yet
+    treeView->hideColumn(1);
+    treeView->hideColumn(2);
+    treeView->setVisible(false);
+    treeView->resizeColumnToContents(0);
+    treeView->setVisible(true);
+
+    // !!!!
+//        fileView->setVisible(false);
+//        fileView->resizeColumnsToContents();
+//        fileView->resizeRowsToContents();
+//        fileView->setVisible(true);
 
     changeFileFilter(_filternr);
 }
@@ -44,7 +64,7 @@ void nutshellqt::setupExplorer()
     baseFilters << QString("*.mod;*.map;*.csf;*.tbl;*.tss;*.txt;*.dat;*.csv;*.pcr;*.cmd;*.bat;*.tif");
     baseFilters << QString("*.map");
     baseFilters << QString("*.tss;*.tbl;*.txt;*.dat;*.csv;*.xls");
-    baseFilters << QString("*.mod");
+    baseFilters << QString("*.mod;*.cmd;*.bat");
     baseFilters << QString("Map Series");
     baseFilters << QString("*.*");
     baseFilters << QString("*.*");
@@ -84,17 +104,20 @@ void nutshellqt::setupExplorer()
 
     treeView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(treeView,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(contextualMenu(const QPoint &)));
+//    treeView->setVisible(false);
+//    treeView->resizeColumnToContents(0);
+//    treeView->setVisible(true);
+      treeView->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
 
     fileView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     fileView->setSelectionBehavior(QAbstractItemView::SelectRows);
     //fileView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
     fileView->horizontalHeader()->setStretchLastSection(true);
-    //fileView->horizontalHeader()->setMovable(true);
-  //  fileView->resizeRowsToContents();
-//    fileView->resizeColumnsToContents();
-
+    QCoreApplication::sendPostedEvents(this, 0);
     fileView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     fileView->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+
+
 
     fileView->setShowGrid(false);
     fileView->setWordWrap(false);
@@ -118,6 +141,7 @@ void nutshellqt::setupExplorer()
     treeView->setSelectionModel(selectionDirModel);
 
     connect(fileModel, SIGNAL(directoryLoaded(QString)),this, SLOT(initExplorer(QString)));
+    connect(fileModel, SIGNAL(rootPathChanged(QString)),this, SLOT(initExplorer2(QString)));
     // link finished updating tableview to resizing columns
 
     treeView->setEditTriggers(QAbstractItemView::NoEditTriggers | QAbstractItemView::EditKeyPressed);
@@ -234,6 +258,8 @@ void nutshellqt::setRootIndex(const QModelIndex& index)
 
     toolButton_dirprev->setEnabled(!history.isEmpty());
     toolButton_dirnext->setEnabled(!future.isEmpty());
+
+    QCoreApplication::sendPostedEvents(this, 0);
 }
 //---------------------------------------------------------------
 // the following show actions trigger fileFilterChange(QString S)
@@ -378,15 +404,18 @@ void nutshellqt::changeFileFilter(int filterNr)
     fileModel->setNameFilters(currentFilter);
     // set the file model to the filtered output
 
-//    fileView->setVisible(false);
-//    fileView->resizeColumnsToContents();
-//    fileView->resizeRowsToContents();
-//    fileView->setVisible(true);
+//   fileView->setVisible(false);
+   // fileView->resizeColumnsToContents();
+   // fileView->resizeRowsToContents();
+//  //  fileView->setVisible(true);
 
-    fileView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    fileView->resizeColumnsToContents();
-    QCoreApplication::sendPostedEvents(this, 0);
-    fileView->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+//    fileView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+//    fileView->resizeColumnsToContents();
+//    QCoreApplication::sendPostedEvents(this, 0);
+
+//    fileView->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+
+
 }
 //---------------------------------------------------------------
 //! OBSOLETE this function is not used anymore

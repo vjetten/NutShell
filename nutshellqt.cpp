@@ -68,6 +68,7 @@ nutshellqt::nutshellqt(QWidget *parent) :
   //  fileView->horizontalHeader()->moveSection(3, 2);
 
     findDPIscale(true);
+
 }
 //---------------------------------------------------------------
 nutshellqt::~nutshellqt()
@@ -535,7 +536,7 @@ void nutshellqt::setfontSize()
 //---------------------------------------------------------------
 void nutshellqt::checkDPIscale()
 {
-    qDebug() << "hoi";
+  //  qDebug() << "hoi";
     findDPIscale(true);
 }
 
@@ -574,5 +575,5 @@ void nutshellqt::findDPIscale(bool check)
     setfontSize();
 
 
-    qDebug() << "dpi" << _H << dpiscale;
+    //qDebug() << "dpi" << _H << dpiscale;
 }
