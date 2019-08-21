@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     w.setWindowTitle("NutShell (version 5.6 [20 Aug 2019])");
     w.showMaximized();
     w.show();
-    //a.setStyle("Cleanlooks");
+   // a.setStyle("Cleanlooks");
 
     return a.exec();
 }
