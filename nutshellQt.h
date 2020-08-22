@@ -8,6 +8,7 @@
 //#include <QStyledItemDelegate>
 
 #include "csf.h"
+//#include "CsfMap.h"
 #include "ui_nutshellqt.h"
 #include "nutshelllegend.h"
 #include "nutshellmapattribute.h"
@@ -240,6 +241,7 @@ public:
     QString PCRasterDocDirName;
     QString MapeditDirName;
     QString GDALDirName;
+    QString CondaDirName;
 
 
 

@@ -7,13 +7,13 @@ nutshellOptions::nutshellOptions(QWidget *parent) :
 {
 	setupUi(this);
     this->setWindowTitle("Directories for the GIS software");
-   this->setWindowFlags(Qt::WindowSystemMenuHint | Qt::WindowTitleHint);
+    this->setWindowFlags(Qt::WindowSystemMenuHint | Qt::WindowTitleHint);
+
 	connect(toolButton_1, SIGNAL(clicked()), this, SLOT(findPcrcalcDir()));
-//	connect(toolButton_2, SIGNAL(clicked()), this, SLOT(findAguilaDir()));
+    connect(toolButton_2, SIGNAL(clicked()), this, SLOT(findCondaDir()));
 //	connect(toolButton_3, SIGNAL(clicked()), this, SLOT(findMapeditDir()));
     connect(toolButton_4, SIGNAL(clicked()), this, SLOT(findGDALDir()));
-    //	connect(pushButton_ok, SIGNAL(clicked()), this, SLOT(closew()));
-	//	connect(pushButton_cancel, SIGNAL(clicked()), this, SLOT(close()));
+
 
 	baseDirs.clear();
 }
@@ -29,6 +29,7 @@ void nutshellOptions::setupOptions(QStringList SL, double dpi)
 //	lineEdit_aguilaDir->setText(SL[1]);
 //	lineEdit_mapeditDir->setText(SL[2]);
     lineEdit_GDALDir->setText(SL[1]);
+    lineEdit_CondaDir->setText(SL[2]);
     dpiScale->setValue(dpi);
 }
 //---------------------------------------------------------------------------
@@ -39,8 +40,39 @@ QStringList nutshellOptions::getOptions()
   //          << lineEdit_aguilaDir->text()
           //  << lineEdit_mapeditDir->text()
             << lineEdit_GDALDir->text()
+            << lineEdit_CondaDir->text()
             << dpiScale->text();
     return baseDirs;
+}
+//---------------------------------------------------------------------------
+void nutshellOptions::findCondaDir()
+{
+    QString dir;
+    QString olddir = lineEdit_CondaDir->text();
+
+    dir = setExistingDirectory("(min)Conda main dir",baseDirs[0]);
+
+    if (!dir.endsWith("\\") && !dir.endsWith("/"))
+        dir = dir + "/";
+
+    if (QFileInfo(dir+"_conda.exe").exists())
+    {
+        QString pcrdir = QString(dir+"envs/pcraster37/Library/bin/");
+        qDebug() << pcrdir;
+        lineEdit_pcrcalcDir->setText(pcrdir);
+        QString gdaldir = pcrdir;
+        lineEdit_GDALDir->setText(gdaldir);
+      //  baseDirs.clear();
+        baseDirs[0] = pcrdir;
+        baseDirs[1] = gdaldir;
+        lineEdit_CondaDir->setText(dir);
+    }
+    else
+    {
+        lineEdit_CondaDir->setText(olddir);
+        ErrorMsg("_conda.exe not found.");
+    }
+    qDebug() << dir;
 }
 //---------------------------------------------------------------------------
 void nutshellOptions::findPcrcalcDir()
@@ -51,19 +83,11 @@ void nutshellOptions::findPcrcalcDir()
     dir = setExistingDirectory("pcrcalc main dir",baseDirs[0]);
 
     if (!dir.endsWith("\\") && !dir.endsWith("/"))
-        dir = dir + "/";// QDir::separator();
+        dir = dir + "/";
     if (QFileInfo(dir+"bin/pcrcalc.exe").exists())
     {
-//        if (!dir.endsWith(QDir::separator()))
-//            dir = dir + QDir::separator();
 		lineEdit_pcrcalcDir->setText(dir);
         baseDirs[0] = dir;
-
-//        if (QFileInfo(dir+"aguila.exe").exists())
-//        {
-//            lineEdit_aguilaDir->setText(dir);
-//            baseDirs[1] = dir;
-//        }
     }
 	else
 	{
@@ -125,11 +149,13 @@ void nutshellOptions::findGDALDir()
     dir = setExistingDirectory("GDAL main dir",baseDirs[1]);
     if (!dir.endsWith("\\") && !dir.endsWith("/"))
         dir = dir + "/";
+
     if (QFileInfo(dir+"bin/gdal/apps/gdal_translate.exe").exists())
     {
         lineEdit_GDALDir->setText(dir);
     }
     else
+      if (QFileInfo(dir+"bin/gdal_translate.exe").exists())
     {
         lineEdit_GDALDir->setText(olddir);
         ErrorMsg("GDAL executables not found.");

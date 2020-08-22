@@ -8,6 +8,7 @@ QT       += core gui widgets
 #QTDIR = C:\Qt\Qt5.8.0\5.8\msvc2015
 #QTDIR =C:\Qt\Q513\5.13.0\mingw73_64
 #QTDIR = C:\Qt\Q513\5.13.0\msvc2015_64
+QWTDIR = C:/Qt/qwt-6.1.4
 TARGET = nutshell
 TEMPLATE = app
 CONFIG += exceptions
@@ -61,25 +62,27 @@ CONFIG(debug, debug|release) {
   win32:win32-msvc2015{
    # compile release with MSVC 2010
     DEFINES += _CRT_SECURE_NO_WARNINGS
-    LIBS += -L"debug/vc" -llibcsfd
-    DESTDIR = debug/vc
+    LIBS += -L"debug" -lcsfvcd
+    DESTDIR = debug
   } else {
-    LIBS += -L"debug" -llibcsfd
+    LIBS += -L"debug" -lcsfd
     DESTDIR = debug
   }
   MOC_DIR = debug/moc
   OBJECTS_DIR= debug/objs
   UI_DIR= debug/ui
   RCC_DIR= debug/rcc
+  DESTDIR = debug
 } else {
   # release build
   win32:win32-msvc2015{
                  # compile release with MSVC 2010
     DEFINES += _CRT_SECURE_NO_WARNINGS
-    LIBS +=  -L"release" -lcsfVC
+    LIBS +=  -L"release" -lcsf
   } else {
  # compile with mingw
-  LIBS += -L"release" -llibcsf
+  LIBS += -L"release" -lcsf
+#-llibcsf
   }
   MOC_DIR = release/moc
   OBJECTS_DIR= release/objs
@@ -87,8 +90,11 @@ CONFIG(debug, debug|release) {
   RCC_DIR= release/rcc
   DESTDIR = release
 }
+#INCLUDEPATH += "C:\Qt\qwt-6.1.4\src" # $${QWTDIR}/src
+#INCLUDEPATH += $${QWTDIR}/include
+#LIBS += $${QWTDIR}/lib
 RESOURCES +=  nutshellqt.qrc
 RC_FILE = nutshellqt.rc
- #CONFIG += precompile_header
-# PRECOMPILED_HEADER = stable.h
+ CONFIG += precompile_header
+ PRECOMPILED_HEADER = stable.h
 

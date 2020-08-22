@@ -16,17 +16,11 @@ void nutshellqt::setPCRasterDirectories()
     if(!PCRasterDirName.isEmpty())
     {
         if (!PCRasterDirName.endsWith("\\") && !PCRasterDirName.endsWith("/"))
-            PCRasterDirName = PCRasterDirName + "/";// QDir::separator();
-  //      PCRasterDirName = QDir(PCRasterDirName).absolutePath()+ "/";
-//        PCRasterDocDirName = PCRasterDirName + "doc/pcrman/";
-//        PCRasterAppDirName = PCRasterDirName + "apps" + "/";
+            PCRasterDirName = PCRasterDirName + "/";
 
-        // assume verssion 4.0.0
-   //     if (!QFileInfo(PCRasterDocDirName+"index.html").exists())
-   //     {
-            PCRasterDocDirName = PCRasterDirName + "doc/manual/";
-            PCRasterAppDirName = PCRasterDirName + "bin" + "/";
-   //     }
+        PCRasterDocDirName = PCRasterDirName + "doc/manual/";
+        PCRasterAppDirName = PCRasterDirName;// + "bin" + "/";
+
         AguilaDirName = PCRasterAppDirName;
         MapeditDirName = QCoreApplication::applicationDirPath() + "/";//PCRasterAppDirName + "nutshell/";
     }
@@ -57,11 +51,8 @@ void nutshellqt::setNutshellIni()
     settings.clear();
     //   settings.setValue("workDirectory", currentPath);
     settings.setValue("PCRasterDirectory", PCRasterDirName);
-  //  settings.setValue("pcrcalcDirectory", PCRasterAppDirName);
-   // settings.setValue("aguilaDirectory", AguilaDirName);
-   // settings.setValue("mapeditDirectory", MapeditDirName);
-  //  settings.setValue("docDirectory", PCRasterDocDirName);
     settings.setValue("GDALDirectory", GDALDirName);
+    settings.setValue("CondaDirectory", CondaDirName);
     settings.setValue("DPI",dpiscale);
 
     //settings.setValue(QString("workdir/current"),comboBox_workdir->currentIndex());
@@ -119,20 +110,30 @@ void nutshellqt::getNutshellIni()
         if (!str.endsWith("\\") && !str.endsWith("/"))
             str = str + "/";
     GDALDirName = str;
+    str = settings.value("CondaDirectory").toString();
+    if (!str.isEmpty())
+        if (!str.endsWith("\\") && !str.endsWith("/"))
+            str = str + "/";
+    CondaDirName = str;
 
     dpiscale = settings.value("DPI").toDouble();
-qDebug() << dpiscale;
-    if (!PCRasterDirName.isEmpty() && !QFileInfo(PCRasterDirName + "bin/pcrcalc.exe").exists())
-    {
-        PCRasterDirName = "";
-        PCRasterAppDirName = "";
-        AguilaDirName = "";
-        MapeditDirName = "";
-        PCRasterDocDirName = "";
+
+    if (!CondaDirName.isEmpty()) {
+        PCRasterDirName = QString(CondaDirName+"envs/pcraster37/Library/bin/");
+        GDALDirName = PCRasterDirName;
     }
 
-    if (!GDALDirName.isEmpty() && !QFileInfo(GDALDirName + "bin/gdal/apps/gdal_translate.exe").exists())
-        GDALDirName = "";
+//    if (!PCRasterDirName.isEmpty() && !QFileInfo(PCRasterDirName + "pcrcalc.exe").exists())
+//    {
+//        PCRasterDirName = "";
+//        PCRasterAppDirName = "";
+//        AguilaDirName = "";
+//        MapeditDirName = "";
+//        PCRasterDocDirName = "";
+//    }
+
+//    if (!GDALDirName.isEmpty() && !QFileInfo(GDALDirName + "bin/gdal/apps/gdal_translate.exe").exists())
+//        GDALDirName = "";
 
     settings.beginGroup("workdir");
     QStringList keys = settings.childKeys();

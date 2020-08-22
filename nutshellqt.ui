@@ -748,11 +748,11 @@
               <attribute name="horizontalHeaderCascadingSectionResizes">
                <bool>false</bool>
               </attribute>
-              <attribute name="horizontalHeaderDefaultSectionSize">
-               <number>128</number>
-              </attribute>
               <attribute name="horizontalHeaderMinimumSectionSize">
                <number>16</number>
+              </attribute>
+              <attribute name="horizontalHeaderDefaultSectionSize">
+               <number>128</number>
               </attribute>
               <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
                <bool>true</bool>

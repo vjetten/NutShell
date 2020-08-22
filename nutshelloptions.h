@@ -18,6 +18,7 @@ public:
      void setupOptions(QStringList SL, double dpi);
 
 public slots:
+     void findCondaDir();
 	 void findPcrcalcDir();
 	 void findAguilaDir();
 	 void findMapeditDir();

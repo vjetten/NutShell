@@ -16,6 +16,7 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
   //  findDPIscale();
 
+
     setupActions();
 
     setupToolBars();
@@ -68,7 +69,7 @@ nutshellqt::nutshellqt(QWidget *parent) :
   //  fileView->horizontalHeader()->moveSection(3, 2);
 
     findDPIscale(true);
-
+//dpiscale = 1.0;
 }
 //---------------------------------------------------------------
 nutshellqt::~nutshellqt()
@@ -131,7 +132,11 @@ void nutshellqt::createModelActions()
 //---------------------------------------------------------------
 void nutshellqt::createMainActions()
 {
-  //  connect(window()->windowHandle(), SIGNAL(screenChanged(QScreen*)), this, SLOT(checkDPIscale()));
+ //   connect(QGuiApplication::focusWindow()->windowHandle(), SIGNAL(screenChanged(QScreen*)), this, SLOT(checkDPIscale()));
+     //   connect(parent()->window()->windowHandle(), SIGNAL(screenChanged(QScreen*)), this, SLOT(checkDPIscale()));
+
+    //connect(this->window()->windowHandle(), SIGNAL(screenChanged(QScreen*)), this, SLOT(checkDPIscale()) );
+    connect(QApplication::desktop(), SIGNAL(geometryChanged(int)), this, SLOT(checkDPIscale()));
 
     // main actions
     connect(toolButton_workdir, SIGNAL(clicked()), this, SLOT(setWorkdirectory()));
@@ -483,8 +488,8 @@ void nutshellqt::getDirectories()
     QStringList tempdirs;
     tempdirs.clear();
 
-    tempdirs << PCRasterDirName  << GDALDirName;
-
+    tempdirs << PCRasterDirName  << GDALDirName << CondaDirName;
+qDebug() << tempdirs;
     nutOptions.setupOptions(tempdirs, dpiscale);
     nutOptions.setModal(true);
     if (nutOptions.exec())
@@ -498,9 +503,11 @@ void nutshellqt::getDirectories()
         GDALDirName = tempdirs[1];
         if (!GDALDirName.endsWith("\\") && !GDALDirName.endsWith("/"))
             GDALDirName = GDALDirName + "/";
-        PCRasterAppDirName = PCRasterDirName + "bin/";
+        PCRasterAppDirName = PCRasterDirName;// + "bin/";
         AguilaDirName = PCRasterAppDirName;
-        opDPIscale = tempdirs[2].toDouble();
+
+        CondaDirName = tempdirs[2];
+        opDPIscale = tempdirs[3].toDouble();
 
         findDPIscale(false);
     }
@@ -536,14 +543,19 @@ void nutshellqt::setfontSize()
 //---------------------------------------------------------------
 void nutshellqt::checkDPIscale()
 {
-  //  qDebug() << "hoi";
+    qDebug() << "hoi";
     findDPIscale(true);
 }
 
 void nutshellqt::findDPIscale(bool check)
 {
-    QRect rect = qApp->desktop()->screenGeometry();
+    return;
+    //QRect rect = qApp->screens();
+    QRect rect = QGuiApplication::primaryScreen()->availableGeometry();
+            //->screenGeometry();
     int _H = rect.height();
+
+    qDebug() << _H;
     QFont font = qApp->font();
     genfontsize=font.pointSize();
 

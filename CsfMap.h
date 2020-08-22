@@ -31,9 +31,8 @@
 #define CsfMapH
 
 #include "csf.h"
-#include <QtGui>
-//#define max(a, b)  (((a) > (b)) ? (a) : (b))
-//#define min(a, b)  (((a) < (b)) ? (a) : (b))
+#include <QString>
+#include <QFileInfo>
 
 #define Error(s) QString(s)
 
@@ -55,6 +54,7 @@ public:
     QString PathName;
     int nrRows, nrCols;
     bool Created;
+    double CellSize;
     
     void KillMap();
     void GetMapHeader(QString Name);

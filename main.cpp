@@ -5,17 +5,19 @@
  */
 
 #include <QApplication>
-#include "nutshellqt.h"
+#include "nutshellQt.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     nutshellqt w;
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-    w.setWindowTitle("NutShell (version 5.6 [20 Aug 2019])");
+
+    w.setWindowTitle("NutShell (version 5.8 [22 Aug 2020])");
     w.showMaximized();
     w.show();
-   // a.setStyle("Cleanlooks");
+    a.setStyle("Fusion");
 
     return a.exec();
 }
