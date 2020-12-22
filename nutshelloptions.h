@@ -15,9 +15,10 @@ public:
 	 QString setExistingDirectory(QString title, QString bd);
 	 QStringList baseDirs;
 	 QStringList getOptions();
-     void setupOptions(QStringList SL, double dpi);
-
+     void setupOptions(QStringList SL, double dpi, bool CI);
+     bool CondaInstall;
 public slots:
+     void on_checkBoxInstallation_stateChanged(int state);
      void findCondaDir();
 	 void findPcrcalcDir();
 	 void findAguilaDir();

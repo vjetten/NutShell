@@ -338,6 +338,23 @@
                </property>
               </widget>
              </item>
+             <item>
+              <widget class="QToolButton" name="toolButton_savecmd">
+               <property name="toolTip">
+                <string>Save the commands on disk</string>
+               </property>
+               <property name="text">
+                <string>...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="nutshellqt.qrc">
+                 <normaloff>:/resources/2X/filesave.png</normaloff>:/resources/2X/filesave.png</iconset>
+               </property>
+               <property name="autoRaise">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
           </layout>

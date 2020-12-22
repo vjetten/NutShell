@@ -16,7 +16,6 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
   //  findDPIscale();
 
-
     setupActions();
 
     setupToolBars();
@@ -34,18 +33,34 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     setupCommandwindow();
 
-    //getRegPCRaster();
-    // Obsolete
-
     currentPath = "C:/";
 
     getNutshellIni();
+   // qDebug() << "set dirs" << PCRasterAppDirName << CondaInstall << CondaDirName;
+  //  setPCRasterDirectories();
+
+    if (CondaInstall) {
+        CondaDirName = "";
+        QString name = qgetenv("USER");
+        if (name.isEmpty())
+            name = qgetenv("USERNAME");
+        name = QString("c:/Users/" +name + "/.conda/environments.txt");
+        QFile inputFile(name);
+        if (inputFile.open(QIODevice::ReadOnly))  {
+           QTextStream in(&inputFile);
+           while (!in.atEnd()) {
+           QString line = in.readLine();
+           if (line.contains("pcraster"))
+               CondaDirName = line.replace("\\","/");
+           }
+           inputFile.close();
+        }
+        if (CondaDirName != "")
+            CondaDirName = CondaDirName + "/Library/bin/";
+    }
 
     setPCRasterDirectories();
-
-    // present but not used
-    //toolButton_oldcalc->setVisible(false);
-
+//qDebug() << "set dirs" << PCRasterAppDirName << CondaInstall << CondaDirName;
     // OBSOLETE
     //   toolButton_deletemapseries->setVisible(false);
     //       toolButton_dirRemove->setVisible(false);
@@ -66,10 +81,8 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     changeName = false;
 
-  //  fileView->horizontalHeader()->moveSection(3, 2);
-
     findDPIscale(true);
-//dpiscale = 1.0;
+
 }
 //---------------------------------------------------------------
 nutshellqt::~nutshellqt()
@@ -136,7 +149,7 @@ void nutshellqt::createMainActions()
      //   connect(parent()->window()->windowHandle(), SIGNAL(screenChanged(QScreen*)), this, SLOT(checkDPIscale()));
 
     //connect(this->window()->windowHandle(), SIGNAL(screenChanged(QScreen*)), this, SLOT(checkDPIscale()) );
-    connect(QApplication::desktop(), SIGNAL(geometryChanged(int)), this, SLOT(checkDPIscale()));
+ //   connect(QApplication::desktop(), SIGNAL(geometryChanged(int)), this, SLOT(checkDPIscale()));
 
     // main actions
     connect(toolButton_workdir, SIGNAL(clicked()), this, SLOT(setWorkdirectory()));
@@ -204,25 +217,25 @@ void nutshellqt::createEditorActions()
 {
     // text edit options
     // text actions are defined here but connected with slot in myeditor construction
-    cutAct = new QAction(QIcon(":/resources/2X/Cut.png"), tr("Cu&t text"), this);
-    cutAct->setShortcuts(QKeySequence::Cut);
-    cutAct->setStatusTip(tr("Cut selection"));
+//    cutAct = new QAction(QIcon(":/resources/2X/Cut.png"), tr("Cu&t text"), this);
+//    cutAct->setShortcuts(QKeySequence::Cut);
+//    cutAct->setStatusTip(tr("Cut selection"));
 
-    copyAct = new QAction(QIcon(":/resources/2X/editCopy.png"), tr("&Copy text"), this);
-    copyAct->setShortcuts(QKeySequence::Copy);
-    copyAct->setStatusTip(tr("Copy selection"));
+//    copyAct = new QAction(QIcon(":/resources/2X/editCopy.png"), tr("&Copy text"), this);
+//    copyAct->setShortcuts(QKeySequence::Copy);
+//    copyAct->setStatusTip(tr("Copy selection"));
 
-    pasteAct = new QAction(QIcon(":/resources/2X/editPaste.png"), tr("&Paste text"), this);
-    pasteAct->setShortcuts(QKeySequence::Paste);
-    pasteAct->setStatusTip(tr("Paste selection"));
+//    pasteAct = new QAction(QIcon(":/resources/2X/editPaste.png"), tr("&Paste text"), this);
+//    pasteAct->setShortcuts(QKeySequence::Paste);
+//    pasteAct->setStatusTip(tr("Paste selection"));
 
-    undoAct = new QAction(QIcon(":/resources/2X/editUndo.png"), tr("&Undo edit"), this);
-    undoAct->setShortcuts(QKeySequence::Undo);
-    undoAct->setStatusTip(tr("Undo"));
+//    undoAct = new QAction(QIcon(":/resources/2X/editUndo.png"), tr("&Undo edit"), this);
+//    undoAct->setShortcuts(QKeySequence::Undo);
+//    undoAct->setStatusTip(tr("Undo"));
 
-    redoAct = new QAction(QIcon(":/resources/2X/editRedo.png"), tr("&Redo edit"), this);
-    redoAct->setShortcuts(QKeySequence::Redo);
-    redoAct->setStatusTip(tr("Redo"));
+//    redoAct = new QAction(QIcon(":/resources/2X/editRedo.png"), tr("&Redo edit"), this);
+//    redoAct->setShortcuts(QKeySequence::Redo);
+//    redoAct->setStatusTip(tr("Redo"));
 
     wheelAct = new QAction(this);
 
@@ -360,12 +373,12 @@ void nutshellqt::setupToolBars()
     toolBar->addAction(savefileAct);
     toolBar->addAction(saveasfileAct);
     //toolBar->addAction(closefileAct);
-    toolBar->addSeparator ();
-    toolBar->addAction(cutAct);
-    toolBar->addAction(copyAct);
-    toolBar->addAction(pasteAct);
-    toolBar->addAction(undoAct);
-    toolBar->addAction(redoAct);
+//    toolBar->addSeparator ();
+//    toolBar->addAction(cutAct);
+//    toolBar->addAction(copyAct);
+//    toolBar->addAction(pasteAct);
+//    toolBar->addAction(undoAct);
+//    toolBar->addAction(redoAct);
     toolBar->addSeparator ();
     toolBar->addAction(actionFind);
     toolBar->addAction(actionReplace);
@@ -445,15 +458,15 @@ void nutshellqt::setupMenu( )
  //   runMenu->addAction(oldmodelAct);
 
     editMenu = menuBar()->addMenu(tr("&Edit"));
-    editMenu->addAction(undoAct);
-    editMenu->addAction(redoAct);
-    editMenu->addSeparator();
-    editMenu->addAction(cutAct);
-    editMenu->addAction(copyAct);
-    editMenu->addAction(pasteAct);
-    editMenu->addAction(wheelAct);
+//    editMenu->addAction(undoAct);
+//    editMenu->addAction(redoAct);
+//    editMenu->addSeparator();
+//    editMenu->addAction(cutAct);
+//    editMenu->addAction(copyAct);
+//    editMenu->addAction(pasteAct);
+//    editMenu->addAction(wheelAct);
 
-    editMenu->addSeparator ();
+//    editMenu->addSeparator ();
 
     findMenu = menuBar()->addMenu(tr("&Find"));
     findMenu->addAction(actionFind);
@@ -489,25 +502,41 @@ void nutshellqt::getDirectories()
     tempdirs.clear();
 
     tempdirs << PCRasterDirName  << GDALDirName << CondaDirName;
-qDebug() << tempdirs;
-    nutOptions.setupOptions(tempdirs, dpiscale);
+//qDebug() << "into options" << tempdirs << CondaInstall;
+    nutOptions.setupOptions(tempdirs, dpiscale, CondaInstall);
     nutOptions.setModal(true);
     if (nutOptions.exec())
     {
         tempdirs = nutOptions.getOptions();
 
-        PCRasterDirName = tempdirs[0];
-        if (!PCRasterDirName.endsWith("\\") && !PCRasterDirName.endsWith("/"))
-            PCRasterDirName = PCRasterDirName + "/";
+        CondaInstall = tempdirs[4] == "0" ? false : true;
 
-        GDALDirName = tempdirs[1];
-        if (!GDALDirName.endsWith("\\") && !GDALDirName.endsWith("/"))
-            GDALDirName = GDALDirName + "/";
-        PCRasterAppDirName = PCRasterDirName;// + "bin/";
-        AguilaDirName = PCRasterAppDirName;
-
-        CondaDirName = tempdirs[2];
         opDPIscale = tempdirs[3].toDouble();
+
+        if(!CondaInstall) {
+
+             PCRasterDirName = tempdirs[0];
+             if (!PCRasterDirName.isEmpty()) {
+                 PCRasterDirName.replace("\\","/");
+                 if (!PCRasterDirName.endsWith("/"))
+                     PCRasterDirName = PCRasterDirName + "/";
+                 PCRasterAppDirName = PCRasterDirName+ "bin/";
+
+                 GDALDirName = tempdirs[1];
+                 GDALDirName.replace("\\","/");
+                 if (!GDALDirName.endsWith("/"))
+                     GDALDirName = GDALDirName + "/";
+                 GDALAppDirName = GDALDirName + "bin/gdal/apps/";
+
+                 AguilaDirName = PCRasterAppDirName;
+             }
+        } else {
+
+            CondaDirName = tempdirs[2];
+            PCRasterAppDirName = CondaDirName;
+            AguilaDirName = CondaDirName;
+            GDALAppDirName = CondaDirName;
+        }
 
         findDPIscale(false);
     }
@@ -543,7 +572,6 @@ void nutshellqt::setfontSize()
 //---------------------------------------------------------------
 void nutshellqt::checkDPIscale()
 {
-    qDebug() << "hoi";
     findDPIscale(true);
 }
 

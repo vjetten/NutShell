@@ -90,15 +90,17 @@ void nutshellqt::actionmapMap2Ilwis()
 void nutshellqt::createBatch(QString sss, QString args)
 {
     QFile efout(MapeditDirName+"_nutshell_batchjob.cmd");
- //   qDebug() << MapeditDirName+"_nutshell_doit.cmd";
     efout.open(QIODevice::WriteOnly | QIODevice::Text);
     QTextStream eout(&efout);
+    eout << "@echo off\n";
     eout << "CD "+currentPath +"\n";
-    eout << QString("PATH=") + GDALDirName+QString("bin;")+ GDALDirName+QString("bin/gdal/apps;")+ PCRasterAppDirName + "\n";
-    eout << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data\n");
+    if (!CondaInstall) {
+        eout << QString("PATH=") + GDALDirName+QString("bin;")+ GDALDirName+QString("bin/gdal/apps;")+ PCRasterAppDirName + "\n";
+        eout << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data\n");
+    } else
+        eout << QString("PATH=") + PCRasterAppDirName + "\n";
+    eout << "@echo on\n";
     eout << "call \"" + sss + "\" " + args;
-
- //   eout << "\npause";
 
     efout.flush();
     efout.close();
@@ -220,12 +222,12 @@ void nutshellqt::PerformAction(int actiontype)
         statusLabel.show();
     }
 
-    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    QString str = GDALDirName+QString("bin;")+ GDALDirName+QString("bin/gdal/apps;")+ PCRasterAppDirName;
-    env.insert("PATH",str);
-    str = GDALDirName + QString("bin/gdal-data");
-    env.insert("GDAL_DATA",str);
-    PCRProcess->setProcessEnvironment(env);
+//    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+//    QString str = GDALDirName+QString("bin;")+ GDALDirName+QString("bin/gdal/apps;")+ PCRasterAppDirName;
+//    env.insert("PATH",str);
+//    str = GDALDirName + QString("bin/gdal-data");
+//    env.insert("GDAL_DATA",str);
+//    PCRProcess->setProcessEnvironment(env);
 
     switch (actiontype)
     {
@@ -235,14 +237,14 @@ void nutshellqt::PerformAction(int actiontype)
         // but if you do not split aguila doesn't recognize two maps as one argument
         // so we use a character like ! to split and create the separate arguments
 
-        prog = AguilaDirName + "aguila.exe";
+        prog = AguilaDirName + PCRxtr + "aguila.exe";
         isAguila = true;
         break;
     case ACTIONTYPEAGUILA3D :
         args << "-3" << cmdl.split(plus);
         // a split on plus will always show as a single 3D surface,
         // two maps as two seperate surfaces
-        prog = AguilaDirName + "aguila.exe";
+        prog = AguilaDirName + PCRxtr + "aguila.exe";
         isAguila = true;
         break;
     case ACTIONTYPEDRAPE :
@@ -341,7 +343,7 @@ void nutshellqt::PerformAction(int actiontype)
     case ACTIONTYPEATTRIBUTE :
         if (isTIFF) {
             args << SelectedPathName;
-            prog = GDALDirName + "bin/gdal/apps/gdalinfo.exe";
+            prog = GDALAppDirName + "gdalinfo.exe";
             qDebug() << prog << args;
         } else
         if (fileIsMap) {
@@ -364,7 +366,7 @@ void nutshellqt::PerformAction(int actiontype)
         nameout = QFileInfo(SelectedPathName).baseName() + ".mpr";
         namein =  QFileInfo(SelectedPathName).baseName() + "." + SelectedSuffix;//QFileInfo(SelectedPathName).suffix();
         args << "-of" << "ILWIS" << namein << nameout;
-        prog = GDALDirName + "bin/gdal/apps/gdal_translate.exe";
+        prog = GDALAppDirName + "gdal_translate.exe";
         if (!QFileInfo(prog).exists())
         {
             ErrorMsg("Cannot find GDAL tools, have you installed GDAL \nand set file->options?");
@@ -376,7 +378,7 @@ void nutshellqt::PerformAction(int actiontype)
         nameout = QFileInfo(SelectedPathName).baseName() + ".tif";
         namein =  QFileInfo(SelectedPathName).baseName() + "." + SelectedSuffix;//QFileInfo(SelectedPathName).suffix();
         args << namein << nameout;
-        prog = GDALDirName + "bin/gdal/apps/gdal_translate.exe";
+        prog = GDALAppDirName + "gdal_translate.exe";
         if (!QFileInfo(prog).exists())
         {
             ErrorMsg("Cannot find GDAL tools, have you installed GDAL \nand set file->options?");
@@ -392,15 +394,16 @@ void nutshellqt::PerformAction(int actiontype)
 //        mapDisplay.ShowMap();
 //        break;
     case ACTIONTYPEWINDOWSCMD:
-//      //  QDesktopServices::openUrl(QUrl("file:///" + cmdl));
-        if (cmdl.contains("_nutshell_batchjob"))
-            break;
+  QDesktopServices::openUrl(QUrl("file:///" + cmdl));
+//        if (cmdl.contains("_nutshell_batchjob"))
+//            break;
 
-        deleteBatch();
-        createBatch(cmdl,"");
-        prog = "cmd.exe";
-        args << QString("/C " + MapeditDirName + "_nutshell_batchjob");
-        CMDProcess->startDetached(prog,args);
+//        deleteBatch();
+//        createBatch(cmdl,"");
+//        prog = "cmd.exe";
+//        args << QString("/C " + MapeditDirName + "_nutshell_batchjob");
+//        CMDProcess->startDetached(prog,args);
+
         actiontype = ACTIONTYPENONE;
         break;
     default:

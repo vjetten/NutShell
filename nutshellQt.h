@@ -188,6 +188,7 @@ public:
     nutshellqt(QWidget *parent = nullptr);
     ~nutshellqt();
 
+    bool CondaInstall;
     int genfontsize;
     double dpiscale, opDPIscale;
     void setfontSize();
@@ -241,7 +242,10 @@ public:
     QString PCRasterDocDirName;
     QString MapeditDirName;
     QString GDALDirName;
+    QString GDALAppDirName;
     QString CondaDirName;
+    QString PCRxtr;
+    QString GSALxtr;
 
 
 
@@ -315,7 +319,7 @@ public:
     bool getScriptReport(bool addBinding);
     QStringList getReportFilter();
     int getTimesteps();
-    QTime time_ms;
+    QElapsedTimer time_ms;
     int totalsteps;
     int GetActionType();
     void PerformAction(int actiontype);
@@ -353,8 +357,10 @@ public slots:
     //=======================
     void clearCommandWindow();
     void clearCommandList();
+    void saveCommandList();
     void copyCommandList();
     void outputCommand();
+    void outputCmd();
     void errorCommand();
     void setCursorLast();
 

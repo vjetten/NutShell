@@ -1,14 +1,27 @@
 ==============================================================================================================
-nutshell for PCRaster version 5.4
+nutshell for PCRaster version 5.10
 ==============================================================================================================
-Date: 24 Oct 2018
+Date: 10 Sep 2020
 Author: Victor Jetten
-uses pcraster 4.2.0 (pcraster.geo.uu.nl)
+uses pcraster 4.3.0 or lower (pcraster.geo.uu.nl)
 can use GDAL (gdal.org)
 ---------------------------------------------------------------------------------------------------------------
 
-NOTE this version uses QT5 dlls, delete the previous version and dlls.
 NOTE DO *NOT* copy the contents of this zip file in the pcraster/bin directory. PCRaster uses different versions of the Qt dll files.
+
+Changes 5.10
+- fixed a bug in finding the conda installation
+- added a save button next to the commandline dropdon list to save commands in between in nutshell.ini (in case of crashes)
+
+Changes 5.9
+- Automaticaly find Conda installation of PCRaster, which includes GDAL (much easier)
+- fixed batchfiles
+
+Changes 5.4-5.7
+- fixed bugs to better work with GDAL
+- better works with very high res screens
+- works with latest PCRaster versions
+- includes mapedit
 
 Changes 5.1-5.4
 = font control for high res screens

@@ -98,6 +98,7 @@ void nutshellqt::runModel()
     setButtons(true, false, false);
 
     QString ext = QFileInfo(ETfilePath).suffix();
+    qDebug() << ETfilePath << ext;
     if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
     {
         deleteBatch();
@@ -107,8 +108,17 @@ void nutshellqt::runModel()
             ar = lineEdit_argsubst->text();
         createBatch(ETfilePath, ar);
         args << QString("/C " + MapeditDirName + "_nutshell_batchjob");
-        CMDProcess->startDetached("cmd.exe",args);
+        QString hoi = MapeditDirName + "_nutshell_batchjob.cmd";
+QDesktopServices::openUrl(QUrl("file:///"+hoi));
+  //      CMDProcess->startDetached("cmd.exe",args,QIODevice::ReadWrite);
+//        CMDProcess->setProgram( "cmd.exe" );
+//        CMDProcess->setArguments( args );
+//        CMDProcess->setStandardOutputFile( QProcess::nullDevice() );
+//        CMDProcess->setStandardErrorFile( QProcess::nullDevice() );
+//        CMDProcess->startDetached();
+
         setButtons(false, false, true);
+
         return;
     }
     // run a batch file by passing it on to the system

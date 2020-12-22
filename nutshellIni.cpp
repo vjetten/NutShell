@@ -13,36 +13,36 @@
 //---------------------------------------------------------------
 void nutshellqt::setPCRasterDirectories()
 {
-    if(!PCRasterDirName.isEmpty())
-    {
-        if (!PCRasterDirName.endsWith("\\") && !PCRasterDirName.endsWith("/"))
-            PCRasterDirName = PCRasterDirName + "/";
+    if (CondaInstall) {
 
-        PCRasterDocDirName = PCRasterDirName + "doc/manual/";
-        PCRasterAppDirName = PCRasterDirName;// + "bin" + "/";
+        PCRasterAppDirName = CondaDirName;
+
+        GDALAppDirName = CondaDirName;
 
         AguilaDirName = PCRasterAppDirName;
-        MapeditDirName = QCoreApplication::applicationDirPath() + "/";//PCRasterAppDirName + "nutshell/";
-    }
-    /*
-    else
-    {
-        //check if the install has pcrcalc in the dir ../bin
-        PCRasterAppDirName = QDir(qApp->applicationDirPath()+"/..").absolutePath() +"/";
-        if (QFileInfo(PCRasterAppDirName+"/pcrcalc.exe").exists())
+
+    } else {
+        if(!PCRasterDirName.isEmpty())
         {
-            PCRasterDirName = QDir(PCRasterAppDirName+"/..").absolutePath()+"/";
+            PCRasterDirName.replace("\\","/");
+            if (!PCRasterDirName.endsWith("/"))
+                PCRasterDirName = PCRasterDirName + "/";
+            PCRasterAppDirName = PCRasterDirName+"bin/";
+
+            GDALDirName.replace("\\","/");
+            if (!GDALDirName.endsWith("/"))
+                GDALDirName = GDALDirName + "/";
+            GDALAppDirName = GDALDirName + "bin/gdal/apps/";
+
             AguilaDirName = PCRasterAppDirName;
-            MapeditDirName = PCRasterAppDirName + "nutshell/";
-            PCRasterDocDirName = PCRasterDirName + "doc/manual/";
         }
-        else
-        {
-            PCRasterAppDirName = "";
+        else {
+            WarningMsg("After launch, set the path to PCRaster in File->options");
         }
-     //   qDebug() << PCRasterDirName << PCRasterAppDirName << PCRasterDocDirName << MapeditDirName;
     }
-    */
+
+
+    MapeditDirName = QCoreApplication::applicationDirPath() + "/";
 }
 //---------------------------------------------------------------
 void nutshellqt::setNutshellIni()
@@ -54,6 +54,7 @@ void nutshellqt::setNutshellIni()
     settings.setValue("GDALDirectory", GDALDirName);
     settings.setValue("CondaDirectory", CondaDirName);
     settings.setValue("DPI",dpiscale);
+    settings.setValue("CondaInstall",CondaInstall);
 
     //settings.setValue(QString("workdir/current"),comboBox_workdir->currentIndex());
     for (int i = 0; i < comboBox_workdir->count(); i++)
@@ -96,6 +97,7 @@ void nutshellqt::clearNutshellIni()
 //---------------------------------------------------------------
 void nutshellqt::getNutshellIni()
 {
+
     //QSettings settings(QSettings::IniFormat,QSettings::UserScope,"NutSHell","NutShell");
     QSettings settings(qApp->applicationDirPath()+"/NutShell.ini",QSettings::IniFormat);
     //   currentPath = settings.value("workDirectory").toString();
@@ -118,22 +120,7 @@ void nutshellqt::getNutshellIni()
 
     dpiscale = settings.value("DPI").toDouble();
 
-    if (!CondaDirName.isEmpty()) {
-        PCRasterDirName = QString(CondaDirName+"envs/pcraster37/Library/bin/");
-        GDALDirName = PCRasterDirName;
-    }
-
-//    if (!PCRasterDirName.isEmpty() && !QFileInfo(PCRasterDirName + "pcrcalc.exe").exists())
-//    {
-//        PCRasterDirName = "";
-//        PCRasterAppDirName = "";
-//        AguilaDirName = "";
-//        MapeditDirName = "";
-//        PCRasterDocDirName = "";
-//    }
-
-//    if (!GDALDirName.isEmpty() && !QFileInfo(GDALDirName + "bin/gdal/apps/gdal_translate.exe").exists())
-//        GDALDirName = "";
+    CondaInstall = settings.value("CondaInstall").toString() == "true";
 
     settings.beginGroup("workdir");
     QStringList keys = settings.childKeys();
@@ -151,9 +138,7 @@ void nutshellqt::getNutshellIni()
                 str.remove(str.size()-1,1);
                 currentworkdir = i;
             }
-            //            if (str.simplified() == "")
-            //                currentworkdir = 0;
-            //            else
+
             if (str.simplified() != "")
                 dirs << str;
         }
@@ -209,6 +194,7 @@ void nutshellqt::getNutshellIni()
     settings.endGroup();
 }
 //---------------------------------------------------------------
+// OBSOLETE
 void nutshellqt::getRegPCRaster()
 {
 

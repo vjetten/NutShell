@@ -11,7 +11,6 @@ nutshellOptions::nutshellOptions(QWidget *parent) :
 
 	connect(toolButton_1, SIGNAL(clicked()), this, SLOT(findPcrcalcDir()));
     connect(toolButton_2, SIGNAL(clicked()), this, SLOT(findCondaDir()));
-//	connect(toolButton_3, SIGNAL(clicked()), this, SLOT(findMapeditDir()));
     connect(toolButton_4, SIGNAL(clicked()), this, SLOT(findGDALDir()));
 
 
@@ -22,26 +21,83 @@ nutshellOptions::~nutshellOptions()
 {
 }
 //---------------------------------------------------------------------------
-void nutshellOptions::setupOptions(QStringList SL, double dpi)
+void nutshellOptions::on_checkBoxInstallation_stateChanged(int state)
+{
+    CondaInstall = state > 0;
+    lineEdit_pcrcalcDir->setEnabled(!CondaInstall);
+    lineEdit_GDALDir->setEnabled(!CondaInstall);
+    lineEdit_CondaDir->setEnabled(CondaInstall);
+    toolButton_2->setEnabled(CondaInstall);
+    toolButton_1->setEnabled(!CondaInstall);
+    toolButton_4->setEnabled(!CondaInstall);
+
+    if (CondaInstall == true) {
+        QString dir = lineEdit_CondaDir->text();
+        if(dir.isEmpty()) {
+            QString name = qgetenv("USER");
+            if (name.isEmpty())
+                name = qgetenv("USERNAME");
+
+            name = QString("c:/Users/" + name+"/.conda/environments.txt");
+            QFile inputFile(name);
+            if (inputFile.open(QIODevice::ReadOnly))  {
+                QTextStream in(&inputFile);
+                while (!in.atEnd()) {
+                    QString line = in.readLine();
+                    if (line.contains("pcraster"))
+                        dir = line.replace("\\","/");
+                    qDebug() << ".conda"<< dir;
+                }
+                inputFile.close();
+            }
+            if (dir != "")
+                dir = dir + "/Library/bin/";
+        }
+        if (QFileInfo(dir).exists())
+        {
+            QString pcrdir = dir;
+            QString gdaldir = pcrdir;
+            baseDirs[0] = pcrdir;
+            baseDirs[1] = gdaldir;
+            lineEdit_CondaDir->setText(dir);
+        } else {
+            WarningMsg("Cannot find Conda installation dir spcified.")
+        }
+    }
+
+}
+//---------------------------------------------------------------------------
+void nutshellOptions::setupOptions(QStringList SL, double dpi, bool CI)
 {
 	baseDirs = SL;
 	lineEdit_pcrcalcDir->setText(SL[0]);
-//	lineEdit_aguilaDir->setText(SL[1]);
-//	lineEdit_mapeditDir->setText(SL[2]);
     lineEdit_GDALDir->setText(SL[1]);
     lineEdit_CondaDir->setText(SL[2]);
     dpiScale->setValue(dpi);
+    CondaInstall = CI;
+
+    checkBoxInstallation->setChecked(CI);
+    lineEdit_CondaDir->setEnabled(CI);
+    lineEdit_GDALDir->setDisabled(CI);
+    lineEdit_pcrcalcDir->setDisabled(CI);
+
+   // on_checkBoxInstallation_stateChanged();
 }
 //---------------------------------------------------------------------------
 QStringList nutshellOptions::getOptions()
 {
 	baseDirs.clear();
 	baseDirs << lineEdit_pcrcalcDir->text()
-  //          << lineEdit_aguilaDir->text()
-          //  << lineEdit_mapeditDir->text()
             << lineEdit_GDALDir->text()
             << lineEdit_CondaDir->text()
-            << dpiScale->text();
+            << dpiScale->text()
+            << QString(CondaInstall ? "1" : "0");
+    qDebug() << "bds" << baseDirs;
+
+    if (lineEdit_pcrcalcDir->text().isEmpty() && lineEdit_CondaDir->text().isEmpty()) {
+        WarningMsg("You have not specified a PCRaster directory, GIS operation will not work!");
+    }
+
     return baseDirs;
 }
 //---------------------------------------------------------------------------
@@ -59,20 +115,19 @@ void nutshellOptions::findCondaDir()
     {
         QString pcrdir = QString(dir+"envs/pcraster37/Library/bin/");
         qDebug() << pcrdir;
-        lineEdit_pcrcalcDir->setText(pcrdir);
+        lineEdit_pcrcalcDir->setText("");
         QString gdaldir = pcrdir;
-        lineEdit_GDALDir->setText(gdaldir);
-      //  baseDirs.clear();
+        lineEdit_GDALDir->setText("");
         baseDirs[0] = pcrdir;
         baseDirs[1] = gdaldir;
-        lineEdit_CondaDir->setText(dir);
+        lineEdit_CondaDir->setText(pcrdir);
     }
     else
     {
         lineEdit_CondaDir->setText(olddir);
         ErrorMsg("_conda.exe not found.");
     }
-    qDebug() << dir;
+    qDebug()<<  "miniconda found: "<< dir;
 }
 //---------------------------------------------------------------------------
 void nutshellOptions::findPcrcalcDir()
@@ -147,7 +202,9 @@ void nutshellOptions::findGDALDir()
     QString dir;
     QString olddir = lineEdit_GDALDir->text();
     dir = setExistingDirectory("GDAL main dir",baseDirs[1]);
-    if (!dir.endsWith("\\") && !dir.endsWith("/"))
+
+    dir.replace("\\","/");
+    if (!dir.endsWith("/"))
         dir = dir + "/";
 
     if (QFileInfo(dir+"bin/gdal/apps/gdal_translate.exe").exists())
@@ -155,7 +212,6 @@ void nutshellOptions::findGDALDir()
         lineEdit_GDALDir->setText(dir);
     }
     else
-      if (QFileInfo(dir+"bin/gdal_translate.exe").exists())
     {
         lineEdit_GDALDir->setText(olddir);
         ErrorMsg("GDAL executables not found.");
@@ -164,7 +220,7 @@ void nutshellOptions::findGDALDir()
 //---------------------------------------------------------------------------
 QString nutshellOptions::setExistingDirectory(QString title, QString bd)
 {
-    QFileDialog::Options options = QFileDialog::DontResolveSymlinks | QFileDialog::ShowDirsOnly;
+  //  QFileDialog::Options options = QFileDialog::DontResolveSymlinks | QFileDialog::ShowDirsOnly;
 	QString directory =
             QFileDialog::getExistingDirectory(this, title, bd);//, options);
 	if (!directory.isEmpty())

@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>nutshellOptions</class>
  <widget class="QDialog" name="nutshellOptions">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -15,7 +18,11 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0" colspan="2">
-    <widget class="QLineEdit" name="lineEdit_CondaDir"/>
+    <widget class="QLineEdit" name="lineEdit_CondaDir">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
    <item row="1" column="2">
     <widget class="QToolButton" name="toolButton_2">
@@ -88,7 +95,7 @@
    <item row="2" column="0" colspan="2">
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>PCRaster main directory (e.g. C:/pcraster-4.2.0):</string>
+      <string>Older installation: PCRaster main directory (e.g. C:/pcraster-4.2.0):</string>
      </property>
     </widget>
    </item>
@@ -113,7 +120,7 @@
    <item row="4" column="0" colspan="2">
     <widget class="QLabel" name="label_4">
      <property name="text">
-      <string>GDAL directory (e.g. c:/GDAL):</string>
+      <string>Older installation: GDAL directory (e.g. c:/GDAL):</string>
      </property>
     </widget>
    </item>
@@ -194,6 +201,22 @@
     <hint type="destinationlabel">
      <x>151</x>
      <y>153</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxInstallation</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>lineEdit_CondaDir</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>196</x>
+     <y>16</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>202</x>
+     <y>45</y>
     </hint>
    </hints>
   </connection>
