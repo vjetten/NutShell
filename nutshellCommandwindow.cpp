@@ -2,7 +2,7 @@
  * NutshellCommandwindow
 
  * functions to deal with commands given in commandwindow and cmd list
- * Author: VJ 140222
+ * Author: VJ 140222,181001
  */
 
 
@@ -16,9 +16,12 @@ void nutshellqt::setupCommandwindow()
     processError = false;
     PCRProcess->setProcessChannelMode(QProcess::MergedChannels);
     connect(PCRProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(outputCommand()) );
-    connect(PCRProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderr()) );
+    connect(PCRProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderrPCR()) );
     connect(PCRProcess, SIGNAL(error(QProcess::ProcessError)),this, SLOT(errorCommand()) );
     // process called by command window, typing pcrcalc, or aguila or any other pcr prog
+
+    CMDProcess = new QProcess(this);
+    connect(CMDProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(outputCmd()) );
 
     commandWindow = new nutshelleditor(this, 1);
     commandWindow->document()->setDocumentMargin(2);
@@ -27,13 +30,14 @@ void nutshellqt::setupCommandwindow()
 
     verticalLayoutCmdlist->insertWidget(0, commandWindow);
     commandWindow->installEventFilter(this);
-    commandWindow->document()->setDefaultFont(QFont("Consolas", 10));
-    //commandWindow->document()->setDefaultFont(QFont("Courier New", 10));
+  //  commandWindow->document()->setDefaultFont(QFont("Consolas", 10));
+    commandWindow->setFont(QFont("Consolas", 10));
+  //  commandWindow->document()->setDefaultFont(QFont("Courier New", 10));
     // declare and set the commandWindow
 
     connect(toolButton_clearcmd, SIGNAL(clicked()), this, SLOT(clearCommandWindow()));
     connect(toolButton_cmdlist, SIGNAL(clicked()), this, SLOT(clearCommandList()));
-
+    connect(toolButton_savecmd, SIGNAL(clicked()), this, SLOT(saveCommandList()));
     commandcounter = -1;
 }
 //---------------------------------------------------------------
@@ -47,6 +51,13 @@ void nutshellqt::clearCommandList()
 {
     comboBox_cmdlist->clear();
     commandcounter = -1;
+}
+//---------------------------------------------------------------
+void nutshellqt::saveCommandList()
+{
+    setNutshellIni();
+    WarningMsg("Commands are stored in nutshell.ini");
+
 }
 //---------------------------------------------------------------
 void nutshellqt::copyCommandList()
@@ -72,7 +83,6 @@ void nutshellqt::parseCommand()
     QStringList args;
     QString prog;
 
-
     lines = all.split("\n");
     args = lines[lines.count()-1].split(" ");
     bool args1 = args.count() > 1;
@@ -89,20 +99,20 @@ void nutshellqt::parseCommand()
         ErrorMsg("pcrcalc is active, wait until it is finished or press stop first");
         return;
     }
-    //qDebug() << args.count() << args;
+
     prog = PCRasterAppDirName + args[0] +".exe";
-
+    qDebug() << args.count() << args << prog;
     if (args[0].contains("gdal", Qt::CaseInsensitive))
-        prog = GDALDirName + "gdal/apps/" + args[0] +".exe";
+        prog = GDALAppDirName + args[0] +".exe";
 
-    if ((args[0].toUpper() == "PCRCALC")// || args[0].toUpper() == "OLDCALC")
+    if ((args[0].toUpper() == "PCRCALC")
             && (args1 && args[1].indexOf("-f",Qt::CaseInsensitive) == 0))
     {
         args.removeAt(0);
         runModelCommandwindow(prog, args);
     }
     else
-        if (args[0].toUpper() == "AGUILA")// || args[0].contains("gdal", Qt::CaseInsensitive))// || (args[0].toUpper() == "RESAMPLE" && args.count() > 1))
+        if (args[0].toUpper() == "AGUILA")
         {
             args.removeAt(0);
             PCRProcess->startDetached(prog, args);
@@ -112,19 +122,18 @@ void nutshellqt::parseCommand()
             if (args[0].contains("gdal", Qt::CaseInsensitive))
             {
                 args.removeAt(0);
-                QStringList env;
-                env << QString("PATH=" + GDALDirName);
-                PCRProcess->setEnvironment(env);
+                if(!CondaInstall) {
+                    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+                    QString str = GDALDirName+QString("bin;")+ GDALAppDirName+ PCRasterAppDirName;
+                    env.insert("PATH",str);
+                    str = GDALDirName + QString("bin/gdal-data");
+                    env.insert("GDAL_DATA",str);
+                    //  env.insert("PATH",GDALDirName);
+                    PCRProcess->setProcessEnvironment(env);
+                }
                 PCRProcess->start(prog, args);
             }
             else
-                //            if (args[0].toUpper() == "RESAMPLE" && args.count() > 1)
-                //            {
-                //                args.removeAt(0);
-                //                PCRProcess->startDetached(prog, args);
-                //                commandWindow->appendPlainText("");
-                //            }
-                //            else
             {
                 args.removeAt(0);
                 PCRProcess->start(prog, args);
@@ -132,6 +141,7 @@ void nutshellqt::parseCommand()
 
                 PCRProcess->waitForFinished(-1);
             }
+
     setCursorLast();
     //  if (!processError)
     comboBox_cmdlist->insertItem(0, lines[lines.count()-1]);
@@ -163,13 +173,39 @@ void nutshellqt::errorCommand()
 //---------------------------------------------------------------
 void nutshellqt::outputCommand()
 {
-    QByteArray ba = PCRProcess->readAllStandardOutput();
-    //	commandWindow->cursor = 1;
-    commandWindow->appendPlainText(ba);
-    QCoreApplication::sendPostedEvents(this, 0);
-    //	commandWindow->cursor = 1;
-}
+    QString buffer = QString(PCRProcess->readAllStandardOutput());
 
+    if (!buffer.contains('\r')) {
+        bufprev = bufprev + buffer;
+        return;
+    }
+    else {
+        bufprev = bufprev + buffer;
+        buffer = bufprev;
+        bufprev = "";
+    }
+
+    commandWindow->appendPlainText(buffer);
+    QCoreApplication::sendPostedEvents(this, 0);
+}
+//---------------------------------------------------------------
+void nutshellqt::outputCmd()
+{
+    QString buffer = QString(CMDProcess->readAllStandardOutput());
+
+    if (!buffer.contains('\r')) {
+        bufprev = bufprev + buffer;
+        return;
+    }
+    else {
+        bufprev = bufprev + buffer;
+        buffer = bufprev;
+        bufprev = "";
+    }
+
+    commandWindow->appendPlainText(buffer);
+    QCoreApplication::sendPostedEvents(this, 0);
+}
 //---------------------------------------------------------------
 void nutshellqt::prevCommand()
 {

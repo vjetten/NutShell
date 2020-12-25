@@ -33,9 +33,8 @@ void nutshellqt::setupModel()
     // pcrcalc outputs on the error channel
     //calcProcess->setTextModeEnabled (true);
     connect(calcProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderr()) );
+  //  connect(calcProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(readFromStdOutput()) );
     connect(calcProcess, SIGNAL(finished(int)),this, SLOT(finishedModel(int)) );
-    //connect(PCRProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderr()) );
-    //connect(PCRProcess, SIGNAL(stateChanged(QProcess::ProcessState)),this, SLOT(doSomething(QProcess::ProcessState)) );
 
     //    useOldCalc = false;
 
@@ -43,6 +42,10 @@ void nutshellqt::setupModel()
     connect(toolButton_startrun, SIGNAL(clicked()), this, SLOT(runModel()));
     connect(toolButton_stoprun, SIGNAL(clicked()), this, SLOT(killModel()));
     connect(toolButton_pauserun, SIGNAL(toggled(bool)), this, SLOT(suspendModel(bool)));
+
+    toolButton_startrun->setIconSize(iSize);
+    toolButton_stoprun->setIconSize(iSize);
+    toolButton_pauserun->setIconSize(iSize);
 
     setButtons(false, false, true);
 
@@ -55,15 +58,6 @@ void nutshellqt::runModelCommandwindow(QString prog, QStringList args)
 {
     ETEditor->clearerror();
     statusBar()->clearMessage();
-
-    QString ext = QFileInfo(prog).suffix();
-    if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
-    {
-        STATUS("Opening file in operating system");
-        QDesktopServices::openUrl(QUrl("\""+prog+"\""));
-        return;
-    }
-    // run a batch file by passing it on to the system
 
     if (!QFileInfo(prog).exists())
     {
@@ -104,10 +98,27 @@ void nutshellqt::runModel()
     setButtons(true, false, false);
 
     QString ext = QFileInfo(ETfilePath).suffix();
+    qDebug() << ETfilePath << ext;
     if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
     {
-        STATUS("Opening file in operating system");
-        QDesktopServices::openUrl(QUrl("\""+ETfilePath+"\""));
+        deleteBatch();
+        QString name =  ETfilePath;
+        QString ar = "";
+        if (toolButton_argSubs->isChecked())
+            ar = lineEdit_argsubst->text();
+        createBatch(ETfilePath, ar);
+        args << QString("/C " + MapeditDirName + "_nutshell_batchjob");
+        QString hoi = MapeditDirName + "_nutshell_batchjob.cmd";
+QDesktopServices::openUrl(QUrl("file:///"+hoi));
+  //      CMDProcess->startDetached("cmd.exe",args,QIODevice::ReadWrite);
+//        CMDProcess->setProgram( "cmd.exe" );
+//        CMDProcess->setArguments( args );
+//        CMDProcess->setStandardOutputFile( QProcess::nullDevice() );
+//        CMDProcess->setStandardErrorFile( QProcess::nullDevice() );
+//        CMDProcess->startDetached();
+
+        setButtons(false, false, true);
+
         return;
     }
     // run a batch file by passing it on to the system
@@ -158,8 +169,9 @@ void nutshellqt::runModel()
     statusBar()->addWidget(&statusLabel);
     setCursorLast();
 
-    args << QString("-f") <<  ETfilePath;
-    argsscreen << QString("-f") <<  ETfileName;
+    args << QString("-1");
+    args  << QString("-f") <<  ETfilePath;
+    argsscreen << QString("-1 -f") <<  ETfileName;
     if (toolButton_argSubs->isChecked())
     {
         QStringList subs;
@@ -284,13 +296,17 @@ void nutshellqt::onScreen(QString buffer)
     list = output.split("\n");
     xlast = list.count();
     // get the lines in the commandWindow
-
+//qDebug() << list;
     // first output at start run
-    if (buffer.contains("ERROR") )
-    {
-        list.replace(xlast-3,listb[0]);  // pcrcalc version
-        list.replace(xlast-2,listb[1]);  // error message
-        output=list.join("\n");
+    if (buffer.contains("ERROR") ) {
+        if (output.isEmpty()) {
+            qDebug() << "hier";
+        } else {
+            qDebug() << xlast;
+            list.replace(xlast-3,listb[0]);  // pcrcalc version
+            list.replace(xlast-2,listb[1]);  // error message
+            output=list.join("\n");
+        }
         commandWindow->setPlainText(output);
         // join new lines and replace the commandWindow
     }
@@ -351,6 +367,57 @@ void nutshellqt::onScreen(QString buffer)
 void nutshellqt::readFromStderr()
 {
     QString buffer = QString(calcProcess->readAllStandardError());
+
+    if (!buffer.contains('\r')) {
+        bufprev = bufprev + buffer;
+        return;
+    }
+    else {
+        bufprev = bufprev + buffer;
+        buffer = bufprev;
+        bufprev = "";
+    }
+
+// pcraster 4.2.0 with pcrcalc 2018 has different output: first the first chr then the rest?!
+
+    qDebug() << buffer << bufprev;
+    onScreen(buffer);
+
+    if (buffer.contains("ERROR"))
+        doRunErrorMessage(buffer);
+
+
+    //    QByteArray byteArray = calcProcess->readAllStandardError();
+    //    onScreen(byteArray);
+    //    QString buffer = QString(byteArray);
+    //    if (buffer.contains("ERROR"))
+    //        doRunErrorMessage(buffer);
+
+    //    QList<QByteArray> lines = byteArray.split('\r\n');
+    //    foreach (const QByteArray& line, lines) {
+    //        if (line.size())
+    //            qDebug() << "PIPE STDERR" << line;
+    //    }
+    //    qDebug() << calcProcess->readAllStandardError().constData();
+    //https://qt.gitorious.org/qtplayground/qtprocessmanager/commit/b3c127ab0d29f9d245a9639c216caedf4a41ca69
+}//---------------------------------------------------------------
+void nutshellqt::readFromStderrPCR()
+{
+    QString buffer = QString(PCRProcess->readAllStandardError());
+
+    if (!buffer.contains('\r')) {
+        bufprev = bufprev + buffer;
+        return;
+    }
+    else {
+        bufprev = bufprev + buffer;
+        buffer = bufprev;
+        bufprev = "";
+    }
+
+// pcraster 4.2.0 with pcrcalc 2018 has different output: first the first chr then the rest?!
+
+    //qDebug() << buffer << bufprev;
     onScreen(buffer);
 
     if (buffer.contains("ERROR"))
@@ -423,6 +490,7 @@ void nutshellqt::finishedModel(int)
         QByteArray buf;
         buf.clear();
         buf = calcProcess->readAllStandardError();
+        qDebug() << "buf" << buf;
         onScreen(QString(buf));
     }
 

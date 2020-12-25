@@ -2,50 +2,29 @@
 <ui version="4.0">
  <class>nutshellOptions</class>
  <widget class="QDialog" name="nutshellOptions">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>274</height>
+    <width>614</width>
+    <height>224</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Directories to software</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Aguila directory (../pcraster-[version]/bin/):</string>
+   <item row="1" column="0" colspan="2">
+    <widget class="QLineEdit" name="lineEdit_CondaDir">
+     <property name="enabled">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLineEdit" name="lineEdit_pcrcalcDir"/>
-   </item>
-   <item row="1" column="1">
-    <widget class="QToolButton" name="toolButton_1">
-     <property name="text">
-      <string>...</string>
-     </property>
-     <property name="icon">
-      <iconset resource="nutshellqt.qrc">
-       <normaloff>:/resources/directory_open.png</normaloff>:/resources/directory_open.png</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>PCRaster apps directory (../pcraster-[version]/bin/):</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLineEdit" name="lineEdit_aguilaDir"/>
-   </item>
-   <item row="3" column="1">
+   <item row="1" column="2">
     <widget class="QToolButton" name="toolButton_2">
      <property name="text">
       <string>...</string>
@@ -56,38 +35,46 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Mapedit directory:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
-    <widget class="QLineEdit" name="lineEdit_mapeditDir"/>
-   </item>
-   <item row="5" column="1">
-    <widget class="QToolButton" name="toolButton_3">
-     <property name="text">
-      <string>...</string>
-     </property>
-     <property name="icon">
-      <iconset resource="nutshellqt.qrc">
-       <normaloff>:/resources/directory_open.png</normaloff>:/resources/directory_open.png</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0">
-    <widget class="QLineEdit" name="lineEdit_GDALDir"/>
-   </item>
    <item row="6" column="0">
-    <widget class="QLabel" name="label_4">
-     <property name="text">
-      <string>GDAL directory (../GDAL/bin/):</string>
+    <widget class="QDoubleSpinBox" name="dpiScale">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="decimals">
+      <number>1</number>
+     </property>
+     <property name="minimum">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>3.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
      </property>
     </widget>
    </item>
-   <item row="7" column="1">
+   <item row="7" column="0" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="QLineEdit" name="lineEdit_pcrcalcDir">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2">
     <widget class="QToolButton" name="toolButton_4">
      <property name="text">
       <string>...</string>
@@ -98,13 +85,52 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="0" colspan="2">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+   <item row="6" column="1">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>DPI scaling of fonts for high res screens (1-3)</string>
      </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Older installation: PCRaster main directory (e.g. C:/pcraster-4.2.0):</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QToolButton" name="toolButton_1">
+     <property name="text">
+      <string>...</string>
+     </property>
+     <property name="icon">
+      <iconset resource="nutshellqt.qrc">
+       <normaloff>:/resources/directory_open.png</normaloff>:/resources/directory_open.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="2">
+    <widget class="QLineEdit" name="lineEdit_GDALDir">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Older installation: GDAL directory (e.g. c:/GDAL):</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QCheckBox" name="checkBoxInstallation">
+     <property name="text">
+      <string>(Mini)Conda installation dir (for PCRaster 4.3.x and GDAL 3.1.x):</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -121,8 +147,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>257</x>
+     <y>214</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -137,12 +163,60 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>325</x>
+     <y>214</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxInstallation</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>lineEdit_pcrcalcDir</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>24</x>
+     <y>17</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>52</x>
+     <y>100</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxInstallation</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>lineEdit_GDALDir</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>126</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>151</x>
+     <y>153</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxInstallation</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>lineEdit_CondaDir</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>196</x>
+     <y>16</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>202</x>
+     <y>45</y>
     </hint>
    </hints>
   </connection>

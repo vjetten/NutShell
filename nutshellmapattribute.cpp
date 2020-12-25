@@ -122,7 +122,8 @@ int nutshellmapattribute::fill(QString name, bool newmap)
     label_maxValue->text().setNum(0);
 
     if (isMap)
-        m = Mopen(filename.toAscii().data(),M_READ_WRITE);
+        m = Mopen(filename.toLatin1()
+.data(),M_READ_WRITE);
 //    if (!filename.isEmpty() && m == NULL &&!newmap)
 //    {
 //        Mclose(m); m = NULL;
@@ -200,7 +201,8 @@ int nutshellmapattribute::fill(QString name, bool newmap)
 QString nutshellmapattribute::getMapAttributes(QString mapname)
 {
     QStringList str;
-    m = Mopen(mapname.toAscii().data(),M_READ_WRITE);
+    m = Mopen(mapname.toLatin1()
+.data(),M_READ_WRITE);
     if (!filename.isEmpty() && m == NULL)
         return "";
 
@@ -357,7 +359,8 @@ void nutshellmapattribute::CreateMap()
     }
     //TODO warnning when map exists
 
-    m = Rcreate(S.toAscii().data(),a->nrRows,a->nrCols, a->cellRepr, a->valueScale,
+    m = Rcreate(S.toLatin1()
+.data(),a->nrRows,a->nrCols, a->cellRepr, a->valueScale,
                 a->projection, a->xUL, a->yUL, angle, a->cellSize);
     if (m == NULL)
     {
@@ -413,7 +416,8 @@ void nutshellmapattribute::SetAndCloseMap()
     //if (RuseAs(m, CR_REAL8))
     //goto error2;
 
-    m = Mopen(filename.toAscii().data(),M_READ_WRITE);
+    m = Mopen(filename.toLatin1()
+.data(),M_READ_WRITE);
 
     if (a->projection != PT_UNDEFINED)
         MputProjection(m,a->projection);

@@ -1,15 +1,23 @@
+/*
+ * nutshellHelp:
+ * simple help functions
 
+ * Author: VJ 140222,181001
+ */
+
+#include <QUrl>
 #include "nutshellqt.h"
-
 
 //---------------------------------------------------------------
 void nutshellqt::showNutshellHelp()
 {
     QDialog *box = new QDialog();
+    box->setWindowTitle("Overview of functions in NutShell");
+  // box->setWindowFlags(Qt::Window|Qt::WindowTitleHint);
 
     QLabel *label = new QLabel();
     label->setPixmap(QPixmap(":/resources/nutshellhelp.png"));
-
+    label->setScaledContents(true);
     QHBoxLayout *horizontalLayout = new QHBoxLayout(box);
     horizontalLayout->addWidget(label);
 
@@ -18,10 +26,10 @@ void nutshellqt::showNutshellHelp()
 //---------------------------------------------------------------
 void nutshellqt::showHelp()
 {
-    if (QFileInfo(PCRasterDocDirName+"index.html").exists())
-        QDesktopServices::openUrl(QUrl("file:///"+PCRasterDocDirName + "index.html"));
-    else
-        showWebHelp();
+//    if (QFileInfo(PCRasterDocDirName+"index.html").exists())
+//        QDesktopServices::openUrl(QUrl("file:///"+PCRasterDocDirName + "index.html"));
+//    else
+      showWebHelp();
 }
 //---------------------------------------------------------------
 void nutshellqt::showWebHelp()
@@ -40,11 +48,20 @@ void nutshellqt::showHelpOperation()
         return;
 
     QString helptxt = ETEditor->textCursor().selectedText();
-    QString URL;
 
-    URL = "file:///"+PCRasterDocDirName;
-    if (!QFileInfo(PCRasterDocDirName+"index.html").exists())
-        URL = "http://pcraster.geo.uu.nl/documentation/PCRaster/html/";
+    QString URL = "http://pcraster.geo.uu.nl/documentation/PCRaster/html/";
+
+//    if (!QUrl(URL).isValid())
+//    {
+//        QMessageBox::warning(this,"web based help",QString("Cannot find the PCRaster website"));
+//        return;
+//    }
+
+    if (helptxt.isEmpty())
+    {
+        QMessageBox::warning(this,"Context-sensitive help",QString("Highlight a keyword to find help with ctrl-F1"));
+        return;
+    }
 
     QString found = "";
 
@@ -77,21 +94,8 @@ void nutshellqt::showHelpOperation()
                         found = QString("op_%1.html").arg(helptxt);
                         // all the rest
                     }
+    qDebug() << URL+found << helptxt;
     QDesktopServices::openUrl(QUrl(URL+found));
-
-    //help.helpurl = "";
-    //   help.findOperation(cur.selectedText());
-    //   if (!help.helpurl.isEmpty())
-    //      QDesktopServices::openUrl(QUrl("file:///"+PCRasterDocDirName + help.helpurl));
-    //   else
-    //      STATUS("No help found.");
-    //	if (!help.helpurl.isEmpty())
-    //	{
-    //		help.show();
-    //		help.helpView->load(QUrl("file:///"+PCRasterDocDirName + help.helpurl));
-    //	}
-    //	else
-    //		STATUS("No help found.");
 
 }
 //---------------------------------------------------------------

@@ -2,13 +2,10 @@
  * NutshellEditor
 
  * functions to create and delete editor PlainTextEdit in tabWidget
- * Author: VJ 140222
+ * Author: VJ 140222,181001
  */
 
 #include "nutshellqt.h"
-
-/*! nutshelleditor
-*/
 
 
 //---------------------------------------------------------------
@@ -45,14 +42,6 @@ void nutshellqt::makeNewFile(bool script)
     myeditor->setTabStopWidth(60);
 
     myeditor->setWordWrapMode(QTextOption::NoWrap);
-
-// not necessary, exists by default
-//    connect(pasteAct, SIGNAL(triggered()), myeditor, SLOT(paste()));
-//    connect(copyAct, SIGNAL(triggered()), myeditor, SLOT(copy()));
-//    connect(cutAct, SIGNAL(triggered()), myeditor, SLOT(cut()));
-//    connect(undoAct, SIGNAL(triggered()), myeditor, SLOT(undo()));
-//    connect(redoAct, SIGNAL(triggered()), myeditor, SLOT(redo()));
-//    connect(redoAct, SIGNAL(triggered()), myeditor, SLOT(redo()));
 
     tabLayout->setMargin(2);
     tabLayout->addWidget(myeditor);
@@ -110,7 +99,7 @@ void nutshellqt::openFile()
     QFileDialog dialog(this);
     dialog.setViewMode(QFileDialog::Detail);
     QString fileName = dialog.getOpenFileName(this,
-                                              "Open model/script", currentPath, "*.mod *.txt;;*.*");
+                                              "Open model/script", currentPath, "*.mod *.txt *.cmd *.bat;;*.*");
     if (!fileName.isEmpty())
         AddModel(fileName, 1);
 }
@@ -281,17 +270,18 @@ void nutshellqt::findPrevfind()
 //---------------------------------------------------------------
 void nutshellqt::fontSelect()
 {
-    if (!ETExists)
-        return;
-
+    bool ok;
     if (commandWindow->hasFocus())
-        commandWindow->setFont(QFontDialog::getFont(0, commandWindow->font()));
+        commandWindow->setFont(QFontDialog::getFont(&ok, commandWindow->font()));
     else
-        ETEditor->setFont(QFontDialog::getFont(0, ETEditor->font()));
+        if (ETExists)
+        ETEditor->setFont(QFontDialog::getFont(&ok, ETEditor->font()));
 }
 //---------------------------------------------------------------
 void nutshellqt::fontDecrease()
 {
+//    dpiscale *= 0.9;
+//    setfontSize(genfontsize);
     if (commandWindow->hasFocus())
     {
         QFont f = commandWindow->font();
@@ -315,6 +305,8 @@ void nutshellqt::fontDecrease()
 //---------------------------------------------------------------
 void nutshellqt::fontIncrease()
 {
+//    dpiscale *= 1.1;
+//    setfontSize(genfontsize);
     if (commandWindow->hasFocus())
     {
         QFont f = commandWindow->font();

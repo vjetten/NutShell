@@ -2,14 +2,11 @@
  * NutShellEvent,
 
  * separate file with event catching at application level
- * Author: VJ 140222
+ * Author: VJ 140222,181001
  */
 
 
 #include "nutshellqt.h"
-
-
-
 
 //---------------------------------------------------------------
 /*!
@@ -21,19 +18,6 @@
  */
 bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
 {
-//    if (event->type() == QEvent::KeyPress)
-//    {
-
-//        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-//        if (keyEvent->key() == Qt::Key_F5)
-//        {
-//            changeFileFilter(_filternr);
-//            QCoreApplication::sendPostedEvents(this, 0);
-//            setRootIndex(dirModel->index(currentPath));
-//            return true;
-//        }
-//    }
-
     if (obj == treeView)
     {
         if (event->type() == QEvent::KeyPress)
@@ -69,8 +53,18 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
             if (keyEvent->key() == Qt::Key_F5)
             {
                 changeFileFilter(_filternr);
+
+                treeView->setVisible(false);
+                treeView->resizeColumnToContents(0);
+                treeView->setVisible(true);
+
+               // !!!!
+                fileView->setVisible(false);
+                fileView->resizeColumnsToContents();
+                fileView->resizeRowsToContents();
+                fileView->setVisible(true);
                 QCoreApplication::sendPostedEvents(this, 0);
-              //  setRootIndex(dirModel->index(currentPath)); why???
+
                 return true;
             }
             if (keyEvent->key() == Qt::Key_F2)
@@ -82,9 +76,25 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
     }
     if (obj == commandWindow)
     {
+        if (event->type() == QEvent::Wheel && crtlpressed)
+        {
+            QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
+
+            QPoint numPixels = wheelEvent->angleDelta()/120;
+            int y = numPixels.y();
+            //qDebug() << "wheel" << y;
+            crtlpressed = false;
+        }
+
         if (event->type() == QEvent::KeyPress)
         {
             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+
+
+            if (keyEvent->key() == Qt::Key_Control) {
+           //     qDebug() << "hoi";
+                crtlpressed = true;
+            }
 
             if (calcProcess && calcProcess->state() == QProcess::Running)
                 return true;
@@ -135,3 +145,15 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
 }
 
 //---------------------------------------------------------------
+void nutshellqt::resizeEvent(QResizeEvent *event)
+{
+    //qDebug() << "resizeEvent()";
+    //findDPIscale(true);
+    return QMainWindow::resizeEvent(event);
+}
+
+
+void nutshellqt::wheelEvent(QObject *obj, QWheelEvent *event)
+{
+
+}

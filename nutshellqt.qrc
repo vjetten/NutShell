@@ -23,17 +23,12 @@
         <file>resources/clearcmdlist.png</file>
         <file>resources/mapedit.png</file>
         <file>resources/header.png</file>
-        <file>resources/down.png</file>
-        <file>resources/forward.png</file>
-        <file>resources/up.png</file>
-        <file>resources/back.png</file>
         <file>resources/clearcmdwin.png</file>
         <file>resources/pause2.png</file>
         <file>resources/start1.png</file>
         <file>resources/stop1.png</file>
         <file>resources/oldcalc1.png</file>
         <file>resources/gloptions4.png</file>
-        <file>resources/workdir.png</file>
         <file>resources/dirnew.png</file>
         <file>resources/dir_up.png</file>
         <file>resources/errorline.png</file>
@@ -89,9 +84,95 @@
         <file>resources/allreport1.png</file>
         <file>resources/nutshellhelp.png</file>
         <file>resources/helpnutshell.png</file>
-        <file>resources/table_delete_row.png</file>
         <file>resources/add_16.png</file>
         <file>resources/filenewscript.png</file>
         <file>resources/showTIFF.png</file>
+        <file>resources/map2ilwis.png</file>
+        <file>resources/map2tiff.png</file>
+        <file>resources/showtif3.png</file>
+        <file>resources/2X/add_16.png</file>
+        <file>resources/2X/aguila.png</file>
+        <file>resources/2X/aguila2d.png</file>
+        <file>resources/2X/aguila3d.png</file>
+        <file>resources/2X/aguilareport.png</file>
+        <file>resources/2X/allreport.png</file>
+        <file>resources/2X/allreport1.png</file>
+        <file>resources/2X/argsubs2.png</file>
+        <file>resources/2X/clearcmdlist.png</file>
+        <file>resources/2X/clearcmdwin.png</file>
+        <file>resources/2X/Cut.png</file>
+        <file>resources/2X/deletereport1.png</file>
+        <file>resources/2X/deletereport4.png</file>
+        <file>resources/2X/deletereport5.png</file>
+        <file>resources/2X/dir_add.png</file>
+        <file>resources/2X/dir_reset.png</file>
+        <file>resources/2X/directoryNew.png</file>
+        <file>resources/2X/directoryRemove.png</file>
+        <file>resources/2X/directoryRemove1.png</file>
+        <file>resources/2X/dirnew.png</file>
+        <file>resources/2X/editCopy.png</file>
+        <file>resources/2X/editCut.png</file>
+        <file>resources/2X/editedit.png</file>
+        <file>resources/2X/editFind.png</file>
+        <file>resources/2X/editfindnext.png</file>
+        <file>resources/2X/editfindprev.png</file>
+        <file>resources/2X/edithash.png</file>
+        <file>resources/2X/edithashout.png</file>
+        <file>resources/2X/editindent.png</file>
+        <file>resources/2X/editmodel.png</file>
+        <file>resources/2X/editnoindent.png</file>
+        <file>resources/2X/editPaste.png</file>
+        <file>resources/2X/editRedo.png</file>
+        <file>resources/2X/editreplace.png</file>
+        <file>resources/2X/editreport.png</file>
+        <file>resources/2X/editUndo.png</file>
+        <file>resources/2X/errorline.png</file>
+        <file>resources/2X/fileclose.png</file>
+        <file>resources/2X/filenew.png</file>
+        <file>resources/2X/filenewscript.png</file>
+        <file>resources/2X/fileopen.png</file>
+        <file>resources/2X/filesave.png</file>
+        <file>resources/2X/filesaveas.png</file>
+        <file>resources/2X/fontbigger.png</file>
+        <file>resources/2X/fontselect.png</file>
+        <file>resources/2X/fontsmaller.png</file>
+        <file>resources/2X/gloptions4.png</file>
+        <file>resources/2X/header.png</file>
+        <file>resources/2X/header1.png</file>
+        <file>resources/2X/help.png</file>
+        <file>resources/2X/helpnutshell.png</file>
+        <file>resources/2X/helpoperation.png</file>
+        <file>resources/2X/map2ilwis.png</file>
+        <file>resources/2X/map2tiff.png</file>
+        <file>resources/2X/mapedit.png</file>
+        <file>resources/2X/maplegend1.png</file>
+        <file>resources/2X/mapnew.png</file>
+        <file>resources/2X/pause2.png</file>
+        <file>resources/2X/showallfiles.png</file>
+        <file>resources/2X/showgraph_grey.png</file>
+        <file>resources/2X/showmaps.png</file>
+        <file>resources/2X/showmaps1.png</file>
+        <file>resources/2X/showmapseries1.png</file>
+        <file>resources/2X/showmapseries3.png</file>
+        <file>resources/2X/showmods.png</file>
+        <file>resources/2X/showmods1.png</file>
+        <file>resources/2X/showmods2.png</file>
+        <file>resources/2X/showpcr1.png</file>
+        <file>resources/2X/showpcr2.png</file>
+        <file>resources/2X/showpcr3.png</file>
+        <file>resources/2X/showpcr4.png</file>
+        <file>resources/2X/showreports4.png</file>
+        <file>resources/2X/showscript.png</file>
+        <file>resources/2X/showscript1_grey.png</file>
+        <file>resources/2X/showscript_grey.png</file>
+        <file>resources/2X/showtif3.png</file>
+        <file>resources/2X/showtimeplots1.png</file>
+        <file>resources/2X/start1.png</file>
+        <file>resources/2X/stop1.png</file>
+        <file>resources/2X/syntax.png</file>
+        <file>resources/2X/timeplot.png</file>
+        <file>resources/2X/tifconvert.png</file>
+        <file>resources/tifconvert.png</file>
+        <file>resources/2X/dir_del.png</file>
     </qresource>
 </RCC>
