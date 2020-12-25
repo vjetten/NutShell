@@ -38,7 +38,6 @@ HEADERS  += nutshellqt.h \
     nutshellmapattribute.h \
     nutshelleditor.h \
     nutshellhighlighter.h \
-    stable.h \
     nutshellhelp.h \
     nutshelloptions.h \
     findreplaceform.h \
@@ -84,5 +83,5 @@ CONFIG(debug, debug|release) {
 RESOURCES += nutshellqt.qrc
 RC_FILE = nutshellqt.rc
 CONFIG += precompile_header
-PRECOMPILED_HEADER = stable.h
+PRECOMPILED_HEADER =
 
