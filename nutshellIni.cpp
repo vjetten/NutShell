@@ -14,14 +14,18 @@
 void nutshellqt::setPCRasterDirectories()
 {
     if (CondaInstall) {
-
-        PCRasterAppDirName = CondaDirName;
-
-        GDALAppDirName = CondaDirName;
-
-        AguilaDirName = PCRasterAppDirName;
-
-    } else {
+        if(CondaDirName == CondaBaseDirName) {
+           WarningMsg(QString("Multiple conda environments found with PCRaster, choose one in File->Options"));
+        } else {
+//            PCRasterAppDirName = CondaDirName;
+//            GDALAppDirName = CondaDirName;
+//            AguilaDirName = PCRasterAppDirName;
+            PCRasterAppDirName = CondaDirName+"/Library/bin/";
+            AguilaDirName = PCRasterAppDirName;
+            GDALAppDirName =PCRasterAppDirName;// CondaDirName;
+        }
+    }
+    if (PCRasterInstall){
         if(!PCRasterDirName.isEmpty())
         {
             PCRasterDirName.replace("\\","/");
@@ -37,10 +41,9 @@ void nutshellqt::setPCRasterDirectories()
             AguilaDirName = PCRasterAppDirName;
         }
         else {
-            WarningMsg("After launch, set the path to PCRaster in File->options");
+            WarningMsg("Set the path to a PCRaster installation directory in File->options");
         }
     }
-
 
     MapeditDirName = QCoreApplication::applicationDirPath() + "/";
 }
@@ -55,6 +58,7 @@ void nutshellqt::setNutshellIni()
     settings.setValue("CondaDirectory", CondaDirName);
     settings.setValue("DPI",dpiscale);
     settings.setValue("CondaInstall",CondaInstall);
+    settings.setValue("PCRasterInstall",PCRasterInstall);
 
     //settings.setValue(QString("workdir/current"),comboBox_workdir->currentIndex());
     for (int i = 0; i < comboBox_workdir->count(); i++)
@@ -121,6 +125,7 @@ void nutshellqt::getNutshellIni()
     dpiscale = settings.value("DPI").toDouble();
 
     CondaInstall = settings.value("CondaInstall").toString() == "true";
+    PCRasterInstall = settings.value("PCRasterInstall").toString() == "true";
 
     settings.beginGroup("workdir");
     QStringList keys = settings.childKeys();

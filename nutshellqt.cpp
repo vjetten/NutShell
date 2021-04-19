@@ -14,7 +14,7 @@ nutshellqt::nutshellqt(QWidget *parent) :
 {
     setupUi(this);
 
-  //  findDPIscale();
+    //  findDPIscale();
 
     setupActions();
 
@@ -35,32 +35,45 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     currentPath = "C:/";
 
-    getNutshellIni();
-   // qDebug() << "set dirs" << PCRasterAppDirName << CondaInstall << CondaDirName;
-  //  setPCRasterDirectories();
+    // check if a conda ionstallation exists
+    // CondaBaseDirName is the conda envs direstory
+    // CondaDirName = is the env with PCRaster
 
-    if (CondaInstall) {
-        CondaDirName = "";
-        QString name = qgetenv("USER");
-        if (name.isEmpty())
-            name = qgetenv("USERNAME");
-        name = QString("c:/Users/" +name + "/.conda/environments.txt");
-        QFile inputFile(name);
-        if (inputFile.open(QIODevice::ReadOnly))  {
-           QTextStream in(&inputFile);
-           while (!in.atEnd()) {
-           QString line = in.readLine();
-           if (line.contains("pcraster"))
-               CondaDirName = line.replace("\\","/");
-           }
-           inputFile.close();
+    int count = 0;
+    QString name = qgetenv("USER");
+    if (name.isEmpty())
+        name = qgetenv("USERNAME");
+    CondaBaseDirName = QString("c:/Users/" +name + "/miniconda3/envs");
+    if (QFileInfo(CondaBaseDirName).dir().exists()) {
+        CondaInstall = true;
+        int gotit = -1;
+        QDir const source(CondaBaseDirName);
+        QStringList const folders = source.entryList(QDir::NoDot | QDir::NoDotDot | QDir::Dirs);
+        for (int i = 0; i < folders.size(); i++) {
+            QString str = CondaBaseDirName+"/"+folders.at(i)+"/Library/bin/pcrcalc.exe";
+           // qDebug() << str;
+            if (QFileInfo(str).exists()) {
+                count++;
+                gotit = i;
+            }
         }
-        if (CondaDirName != "")
-            CondaDirName = CondaDirName + "/Library/bin/";
+        if (count == 0)
+            CondaInstall = false;
+        if (count >= 1)
+            CondaDirName = CondaBaseDirName+"/"+folders.at(gotit);//+"/Library/bin/";
+    }
+
+    bool CondaInstallOld = CondaInstall;
+    getNutshellIni();
+    if (!PCRasterInstall && !CondaInstall && CondaInstallOld) {
+        // if no install is given in the ini but a valid conda installation exists
+        CondaInstall = true;
+        if (count > 1)
+            CondaDirName = CondaBaseDirName; //set to base and let the user choose
     }
 
     setPCRasterDirectories();
-//qDebug() << "set dirs" << PCRasterAppDirName << CondaInstall << CondaDirName;
+
     // OBSOLETE
     //   toolButton_deletemapseries->setVisible(false);
     //       toolButton_dirRemove->setVisible(false);
@@ -69,9 +82,8 @@ nutshellqt::nutshellqt(QWidget *parent) :
     //       toolButton_dirprev->setVisible(false);
     //       toolButton_dirnew->setVisible(false);
 
-//    dirModel->setRootPath(QDir(currentPath).rootPath());
-//    setRootIndex(dirModel->index(currentPath));
-
+    //    dirModel->setRootPath(QDir(currentPath).rootPath());
+    //    setRootIndex(dirModel->index(currentPath));
 
     setWorkdirectory();
 
@@ -109,10 +121,10 @@ void nutshellqt::setupActions()
     createContextMenuActions();
     // not needed
 
-//    nextDirAct = new QAction(QIcon(":/resources/2X/forward.png"),QString("Next Directory"), this);
-//    prevDirAct = new QAction(QIcon(":/resources/2X/back.png"),QString("Prev Directory"), this);
- //   nextDirAct = new QAction(QString("Next Directory"), this);
-//    prevDirAct = new QAction(QString("Prev Directory"), this);
+    //    nextDirAct = new QAction(QIcon(":/resources/2X/forward.png"),QString("Next Directory"), this);
+    //    prevDirAct = new QAction(QIcon(":/resources/2X/back.png"),QString("Prev Directory"), this);
+    //   nextDirAct = new QAction(QString("Next Directory"), this);
+    //    prevDirAct = new QAction(QString("Prev Directory"), this);
 
 }
 //---------------------------------------------------------------
@@ -136,20 +148,20 @@ void nutshellqt::createModelActions()
     killmodelAct->setToolTip("Stop running");
     connect(killmodelAct, SIGNAL(triggered()), this, SLOT(killModel()));
 
-//    oldmodelAct = new QAction(QIcon(":/resources/oldcalc1.png"), "&Use oldcalc...", this);
-//    oldmodelAct->setCheckable (true);
-//    oldmodelAct->setToolTip("Run model script with oldcalc");
-//    connect(oldmodelAct, SIGNAL(toggled(bool)), this, SLOT(toggleOldcalc(bool)));
+    //    oldmodelAct = new QAction(QIcon(":/resources/oldcalc1.png"), "&Use oldcalc...", this);
+    //    oldmodelAct->setCheckable (true);
+    //    oldmodelAct->setToolTip("Run model script with oldcalc");
+    //    connect(oldmodelAct, SIGNAL(toggled(bool)), this, SLOT(toggleOldcalc(bool)));
 
 }
 //---------------------------------------------------------------
 void nutshellqt::createMainActions()
 {
- //   connect(QGuiApplication::focusWindow()->windowHandle(), SIGNAL(screenChanged(QScreen*)), this, SLOT(checkDPIscale()));
-     //   connect(parent()->window()->windowHandle(), SIGNAL(screenChanged(QScreen*)), this, SLOT(checkDPIscale()));
+    //   connect(QGuiApplication::focusWindow()->windowHandle(), SIGNAL(screenChanged(QScreen*)), this, SLOT(checkDPIscale()));
+    //   connect(parent()->window()->windowHandle(), SIGNAL(screenChanged(QScreen*)), this, SLOT(checkDPIscale()));
 
     //connect(this->window()->windowHandle(), SIGNAL(screenChanged(QScreen*)), this, SLOT(checkDPIscale()) );
- //   connect(QApplication::desktop(), SIGNAL(geometryChanged(int)), this, SLOT(checkDPIscale()));
+    //   connect(QApplication::desktop(), SIGNAL(geometryChanged(int)), this, SLOT(checkDPIscale()));
 
     // main actions
     connect(toolButton_workdir, SIGNAL(clicked()), this, SLOT(setWorkdirectory()));
@@ -217,29 +229,29 @@ void nutshellqt::createEditorActions()
 {
     // text edit options
     // text actions are defined here but connected with slot in myeditor construction
-//    cutAct = new QAction(QIcon(":/resources/2X/Cut.png"), tr("Cu&t text"), this);
-//    cutAct->setShortcuts(QKeySequence::Cut);
-//    cutAct->setStatusTip(tr("Cut selection"));
+    //    cutAct = new QAction(QIcon(":/resources/2X/Cut.png"), tr("Cu&t text"), this);
+    //    cutAct->setShortcuts(QKeySequence::Cut);
+    //    cutAct->setStatusTip(tr("Cut selection"));
 
-//    copyAct = new QAction(QIcon(":/resources/2X/editCopy.png"), tr("&Copy text"), this);
-//    copyAct->setShortcuts(QKeySequence::Copy);
-//    copyAct->setStatusTip(tr("Copy selection"));
+    //    copyAct = new QAction(QIcon(":/resources/2X/editCopy.png"), tr("&Copy text"), this);
+    //    copyAct->setShortcuts(QKeySequence::Copy);
+    //    copyAct->setStatusTip(tr("Copy selection"));
 
-//    pasteAct = new QAction(QIcon(":/resources/2X/editPaste.png"), tr("&Paste text"), this);
-//    pasteAct->setShortcuts(QKeySequence::Paste);
-//    pasteAct->setStatusTip(tr("Paste selection"));
+    //    pasteAct = new QAction(QIcon(":/resources/2X/editPaste.png"), tr("&Paste text"), this);
+    //    pasteAct->setShortcuts(QKeySequence::Paste);
+    //    pasteAct->setStatusTip(tr("Paste selection"));
 
-//    undoAct = new QAction(QIcon(":/resources/2X/editUndo.png"), tr("&Undo edit"), this);
-//    undoAct->setShortcuts(QKeySequence::Undo);
-//    undoAct->setStatusTip(tr("Undo"));
+    //    undoAct = new QAction(QIcon(":/resources/2X/editUndo.png"), tr("&Undo edit"), this);
+    //    undoAct->setShortcuts(QKeySequence::Undo);
+    //    undoAct->setStatusTip(tr("Undo"));
 
-//    redoAct = new QAction(QIcon(":/resources/2X/editRedo.png"), tr("&Redo edit"), this);
-//    redoAct->setShortcuts(QKeySequence::Redo);
-//    redoAct->setStatusTip(tr("Redo"));
+    //    redoAct = new QAction(QIcon(":/resources/2X/editRedo.png"), tr("&Redo edit"), this);
+    //    redoAct->setShortcuts(QKeySequence::Redo);
+    //    redoAct->setStatusTip(tr("Redo"));
 
     wheelAct = new QAction(this);
 
-//    deleteLineAct = new QAction(QIcon(":/resources/2X/table_delete_row.png"), "&Delete Line", this);
+    //    deleteLineAct = new QAction(QIcon(":/resources/2X/table_delete_row.png"), "&Delete Line", this);
     deleteLineAct = new QAction("&Delete Line", this);
     deleteLineAct->setShortcut(Qt::CTRL+Qt::Key_D);
     connect(deleteLineAct, SIGNAL(triggered()), this, SLOT(deleteLine()));
@@ -344,8 +356,8 @@ void nutshellqt::createExplorerActions()
     map2TiffAct  = new QAction(QIcon(":/resources/2X/tifconvert.png"), "Covert Map to Tif (without projection)", this);
     connect(map2TiffAct,      SIGNAL(triggered()), this, SLOT(actionmapMap2Tiff()));
 
-  //  map2IlwisAct  = new QAction(QIcon(":/resources/2X/map2ilwis.png"), "Covert Map to Ilwis mpr", this);
-  //  connect(map2IlwisAct,      SIGNAL(triggered()), this, SLOT(actionmapMap2Ilwis()));
+    //  map2IlwisAct  = new QAction(QIcon(":/resources/2X/map2ilwis.png"), "Covert Map to Ilwis mpr", this);
+    //  connect(map2IlwisAct,      SIGNAL(triggered()), this, SLOT(actionmapMap2Ilwis()));
 
 }
 //---------------------------------------------------------------
@@ -373,12 +385,12 @@ void nutshellqt::setupToolBars()
     toolBar->addAction(savefileAct);
     toolBar->addAction(saveasfileAct);
     //toolBar->addAction(closefileAct);
-//    toolBar->addSeparator ();
-//    toolBar->addAction(cutAct);
-//    toolBar->addAction(copyAct);
-//    toolBar->addAction(pasteAct);
-//    toolBar->addAction(undoAct);
-//    toolBar->addAction(redoAct);
+    //    toolBar->addSeparator ();
+    //    toolBar->addAction(cutAct);
+    //    toolBar->addAction(copyAct);
+    //    toolBar->addAction(pasteAct);
+    //    toolBar->addAction(undoAct);
+    //    toolBar->addAction(redoAct);
     toolBar->addSeparator ();
     toolBar->addAction(actionFind);
     toolBar->addAction(actionReplace);
@@ -455,18 +467,18 @@ void nutshellqt::setupMenu( )
     runMenu->addAction(runmodelAct);
     runMenu->addAction(pausemodelAct);
     runMenu->addAction(killmodelAct);
- //   runMenu->addAction(oldmodelAct);
+    //   runMenu->addAction(oldmodelAct);
 
     editMenu = menuBar()->addMenu(tr("&Edit"));
-//    editMenu->addAction(undoAct);
-//    editMenu->addAction(redoAct);
-//    editMenu->addSeparator();
-//    editMenu->addAction(cutAct);
-//    editMenu->addAction(copyAct);
-//    editMenu->addAction(pasteAct);
-//    editMenu->addAction(wheelAct);
+    //    editMenu->addAction(undoAct);
+    //    editMenu->addAction(redoAct);
+    //    editMenu->addSeparator();
+    //    editMenu->addAction(cutAct);
+    //    editMenu->addAction(copyAct);
+    //    editMenu->addAction(pasteAct);
+    //    editMenu->addAction(wheelAct);
 
-//    editMenu->addSeparator ();
+    //    editMenu->addSeparator ();
 
     findMenu = menuBar()->addMenu(tr("&Find"));
     findMenu->addAction(actionFind);
@@ -502,11 +514,15 @@ void nutshellqt::getDirectories()
     tempdirs.clear();
 
     tempdirs << PCRasterDirName  << GDALDirName << CondaDirName;
-//qDebug() << "into options" << tempdirs << CondaInstall;
+    //qDebug() << "into options" << tempdirs << CondaInstall;
+
+    // push options to window
     nutOptions.setupOptions(tempdirs, dpiscale, CondaInstall);
     nutOptions.setModal(true);
+
     if (nutOptions.exec())
     {
+        // after closing options window get vars
         tempdirs = nutOptions.getOptions();
 
         CondaInstall = tempdirs[4] == "0" ? false : true;
@@ -515,27 +531,27 @@ void nutshellqt::getDirectories()
 
         if(!CondaInstall) {
 
-             PCRasterDirName = tempdirs[0];
-             if (!PCRasterDirName.isEmpty()) {
-                 PCRasterDirName.replace("\\","/");
-                 if (!PCRasterDirName.endsWith("/"))
-                     PCRasterDirName = PCRasterDirName + "/";
-                 PCRasterAppDirName = PCRasterDirName+ "bin/";
+            PCRasterDirName = tempdirs[0];
+            if (!PCRasterDirName.isEmpty()) {
+                PCRasterDirName.replace("\\","/");
+                if (!PCRasterDirName.endsWith("/"))
+                    PCRasterDirName = PCRasterDirName + "/";
+                PCRasterAppDirName = PCRasterDirName+ "bin/";
 
-                 GDALDirName = tempdirs[1];
-                 GDALDirName.replace("\\","/");
-                 if (!GDALDirName.endsWith("/"))
-                     GDALDirName = GDALDirName + "/";
-                 GDALAppDirName = GDALDirName + "bin/gdal/apps/";
+                GDALDirName = tempdirs[1];
+                GDALDirName.replace("\\","/");
+                if (!GDALDirName.endsWith("/"))
+                    GDALDirName = GDALDirName + "/";
+                GDALAppDirName = GDALDirName + "bin/gdal/apps/";
 
-                 AguilaDirName = PCRasterAppDirName;
-             }
+                AguilaDirName = PCRasterAppDirName;
+            }
         } else {
 
             CondaDirName = tempdirs[2];
-            PCRasterAppDirName = CondaDirName;
-            AguilaDirName = CondaDirName;
-            GDALAppDirName = CondaDirName;
+            PCRasterAppDirName = CondaDirName+"/Library/bin/";
+            AguilaDirName = PCRasterAppDirName;
+            GDALAppDirName =PCRasterAppDirName;// CondaDirName;
         }
 
         findDPIscale(false);
@@ -580,7 +596,7 @@ void nutshellqt::findDPIscale(bool check)
     return;
     //QRect rect = qApp->screens();
     QRect rect = QGuiApplication::primaryScreen()->availableGeometry();
-            //->screenGeometry();
+    //->screenGeometry();
     int _H = rect.height();
 
     qDebug() << _H;

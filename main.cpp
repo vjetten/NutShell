@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
 
-    w.setWindowTitle("NutShell (version 5.10 [9 Sep 2020])");
+    w.setWindowTitle("NutShell (version 5.11 [21 Apr 2021])");
     w.showMaximized();
     w.show();
     a.setStyle("Fusion");

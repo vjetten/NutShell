@@ -21,8 +21,6 @@ public slots:
      void on_checkBoxInstallation_stateChanged(int state);
      void findCondaDir();
 	 void findPcrcalcDir();
-	 void findAguilaDir();
-	 void findMapeditDir();
      void findGDALDir();
  };
 

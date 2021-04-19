@@ -116,6 +116,7 @@ HEADERS  += include/nutshellqt.h \
     include/nutshelloptions.h \
     include/findreplaceform.h \
     include/CsfMap.h \
+	include/pcrtypes.h \
     include/nutshellmapedit.h
 FORMS    += nutshellqt.ui \
     nutshelllegend.ui \

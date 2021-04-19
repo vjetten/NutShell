@@ -25,7 +25,7 @@
 
 #define ErrorMsg(s) QMessageBox::critical(this,"NutShell",QString(s));
 #define WarningAllMsg(s) QMessageBox::warning(this,"NutShell",QString(s),QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll);
-#define WarningMsg(s) QMessageBox::warning(this,"NutShell",QString(s),QMessageBox::Yes | QMessageBox::No );
+#define WarningMsg(s) QMessageBox::warning(this,"NutShell WARNING",QString(s),QMessageBox::Yes);// | QMessageBox::No );
 #define QuestionMsg(s) QMessageBox::question(this,"NutShell",QString(s),QMessageBox::Yes | QMessageBox::No);
 
 #define max(a, b)  (((a) > (b)) ? (a) : (b))
@@ -111,13 +111,13 @@ typedef struct reportrecord{
 // used to create a millisecond delay in output
 #include <QThread>
 
-class Sleeper : public QThread
-{
-public:
-    static void usleep(unsigned long usecs){QThread::usleep(usecs);}
-    static void msleep(unsigned long msecs){QThread::msleep(msecs);}
-    static void sleep(unsigned long secs){QThread::sleep(secs);}
-};
+//class Sleeper : public QThread
+//{
+//public:
+//    static void usleep(unsigned long usecs){QThread::usleep(usecs);}
+//    static void msleep(unsigned long msecs){QThread::msleep(msecs);}
+//    static void sleep(unsigned long secs){QThread::sleep(secs);}
+//};
 
 //---------------------------------------------------------------
 //! used to paint first instance of map series in blue in file viewer
@@ -189,6 +189,7 @@ public:
     ~nutshellqt();
 
     bool CondaInstall;
+    bool PCRasterInstall;
     int genfontsize;
     double dpiscale, opDPIscale;
     void setfontSize();
@@ -244,6 +245,7 @@ public:
     QString GDALDirName;
     QString GDALAppDirName;
     QString CondaDirName;
+    QString CondaBaseDirName;
     QString PCRxtr;
     QString GSALxtr;
 
