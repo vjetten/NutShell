@@ -23,7 +23,7 @@ public:
 
 public slots:
      void on_checkBoxInstallation_stateChanged(int state);
-     void findCondaDir();
+     bool findCondaDir();
 	 void findPcrcalcDir();
      void findGDALDir();
  };

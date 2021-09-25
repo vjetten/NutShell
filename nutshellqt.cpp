@@ -33,57 +33,19 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     currentPath = "C:/";
 
+    getNutshellIni();
+
+    CondaInstall = nutOptions.findCondaDir();
     // check if a conda ionstallation exists
     // CondaBaseDirName is the conda envs direstory
     // CondaDirName = is the env with PCRaster
+    CondaBaseDirName = nutOptions.CondaBaseDirName;
 
-    int count = 0;
-    QString name = qgetenv("USER");
-    if (name.isEmpty())
-        name = qgetenv("USERNAME");
-    CondaBaseDirName = QString("c:/Users/" +name + "/miniconda3/envs");
-    if (QFileInfo(CondaBaseDirName).dir().exists()) {
-        CondaInstall = true;
-        int gotit = -1;
-        QDir const source(CondaBaseDirName);
-        QStringList const folders = source.entryList(QDir::NoDot | QDir::NoDotDot | QDir::Dirs);
-        for (int i = 0; i < folders.size(); i++) {
-            QString str = CondaBaseDirName+"/"+folders.at(i)+"/Library/bin/pcrcalc.exe";
-           // qDebug() << str;
-            if (QFileInfo(str).exists()) {
-                count++;
-                gotit = i;
-            }
-        }
-        if (count == 0)
-            CondaInstall = false;
-        if (count >= 1)
-            CondaDirName = CondaBaseDirName+"/"+folders.at(gotit);//+"/Library/bin/";
-    }
-
-    bool CondaInstallOld = CondaInstall;
-    getNutshellIni();
-    if (!PCRasterInstall && !CondaInstall && CondaInstallOld) {
-        // if no install is given in the ini but a valid conda installation exists
-        CondaInstall = true;
-        if (count > 1)
-            CondaDirName = CondaBaseDirName; //set to base and let the user choose
-    }
+   // CondaDirName = CondaBaseDirName; //set to base and let the user choose
 
     setPCRasterDirectories();
 
-    // OBSOLETE
-    //   toolButton_deletemapseries->setVisible(false);
-    //       toolButton_dirRemove->setVisible(false);
-    //       toolButton_dirup->setVisible(false);
-    //       toolButton_dirnext->setVisible(false);
-    //       toolButton_dirprev->setVisible(false);
-    //       toolButton_dirnew->setVisible(false);
-
-    //    dirModel->setRootPath(QDir(currentPath).rootPath());
-    //    setRootIndex(dirModel->index(currentPath));
-
-    setWorkdirectory();
+     setWorkdirectory();
 
     STATUS("");
 
@@ -516,7 +478,7 @@ void nutshellqt::getDirectories()
 
     // push options to window
     nutOptions.setupOptions(tempdirs, dpiscale, CondaInstall);
-    nutOptions.findCondaDir();
+    //nutOptions.findCondaDir();
     nutOptions.setModal(true);
 
     if (nutOptions.exec())

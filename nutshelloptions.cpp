@@ -33,7 +33,7 @@ void nutshellOptions::on_checkBoxInstallation_stateChanged(int state)
     label_4->setEnabled(!CondaInstall);
     label_5->setEnabled(!CondaInstall);
 
-    lineEdit_CondaDir->setEnabled(CondaInstall);
+    //lineEdit_CondaDir->setEnabled(CondaInstall);
     label_3->setEnabled(CondaInstall);
     toolButton_2->setEnabled(CondaInstall);
 }
@@ -43,7 +43,8 @@ void nutshellOptions::setupOptions(QStringList SL, double dpi, bool CI)
 	baseDirs = SL;
 	lineEdit_pcrcalcDir->setText(SL[0]);
     lineEdit_GDALDir->setText(SL[1]);
-    lineEdit_CondaDir->setText(SL[2]);
+  //  lineEdit_CondaDir->setText(SL[2]);
+    combo_envs->insertItem(0,SL[2]);
     dpiScale->setValue(dpi);
     CondaInstall = CI;
 
@@ -53,42 +54,34 @@ void nutshellOptions::setupOptions(QStringList SL, double dpi, bool CI)
 QStringList nutshellOptions::getOptions()
 {
     // after closing options get the results
-
+    CondaInstall = findCondaDir();
 	baseDirs.clear();
 	baseDirs << lineEdit_pcrcalcDir->text()
             << lineEdit_GDALDir->text()
-            << lineEdit_CondaDir->text()
+            << CondaBaseDirName
             << dpiScale->text()
             << QString(CondaInstall ? "1" : "0");
-
-    if (lineEdit_pcrcalcDir->text().isEmpty() && lineEdit_CondaDir->text().isEmpty()) {
-        WarningMsg("You have not specified a valid PCRaster directory, GIS operations will not work!");
-    }
 
     return baseDirs;
 }
 //---------------------------------------------------------------------------
-void nutshellOptions::findCondaDir()
+bool nutshellOptions::findCondaDir()
 {
     CondaInstall = GetCondaAllEnvs(0);
-    CondaInstall = GetCondaAllEnvs(1);
-    CondaInstall = GetCondaAllEnvs(2);
-    CondaInstall = GetCondaAllEnvs(3);
+    CondaInstall = CondaInstall || GetCondaAllEnvs(1);
+    CondaInstall = CondaInstall || GetCondaAllEnvs(2);
+    CondaInstall = CondaInstall || GetCondaAllEnvs(3);
+    qDebug() << CondaInstall;
 
-    QString dir;
-    QString olddir = lineEdit_CondaDir->text();
+    if (!CondaInstall) {
+        QMessageBox msgBox;
+        msgBox.setText("No valid anaconda or miniconda installation is found. Follow the instructions on the PCRaster installation website.");
+        msgBox.exec();
 
-    dir = setExistingDirectory("Select (Mini/Ana)Conda environment folder that has PCRaster",baseDirs[2]);
-
-    QString str = dir+"\\Library\\bin\\pcrcalc.exe";
-    if (!QFileInfo(str).exists()) {
-        WarningMsg(QString("The selected environment %1 does not contain a PCRaster installation").arg(str));
-    } else {
-        baseDirs[2] = dir;//+"/Library/bin/";
-        lineEdit_CondaDir->setText(dir);
     }
-    qDebug()<<  "miniconda found: "<< dir;
 
+    CondaBaseDirName = combo_envs->currentText();
+    return(CondaInstall);
 }
 //---------------------------------------------------------------------------
 void nutshellOptions::findPcrcalcDir()
@@ -163,11 +156,10 @@ bool nutshellOptions::GetCondaAllEnvs(int cda)
     if (cda == 3) {
         CondaBaseDirName = QString("c:/ProgramData/Anaconda3/envs");
     }
+
     if (QFileInfo(CondaBaseDirName).dir().exists()) {
-    //    qDebug() << CondaBaseDirName;
         QDir const source(CondaBaseDirName);
         QStringList const folders = source.entryList(QDir::NoDot | QDir::NoDotDot | QDir::Dirs);
-  //      qDebug() << folders;
         for (int i = 0; i < folders.size(); i++) {
             QString str = CondaBaseDirName+"/"+folders.at(i)+"/python.exe";
             QString str1 = CondaBaseDirName+"/"+folders.at(i)+"/Library/bin/pcrcalc.exe";
@@ -191,7 +183,7 @@ bool nutshellOptions::GetCondaAllEnvs(int cda)
                 msgBox.exec();
             }
         }
-        //install = combo_envs->count() > 0;
+        install = combo_envs->count() > 0;
     }
     return(install);
 }
