@@ -9,12 +9,13 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    nutshellqt w;
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
+    QApplication a(argc, argv);
 
-    w.setWindowTitle("NutShell (version 5.11 [21 Apr 2021])");
+    nutshellqt w;
+
+    w.setWindowTitle("NutShell (version 5.12 [25 Sep 2021])");
     w.showMaximized();
     w.show();
     a.setStyle("Fusion");

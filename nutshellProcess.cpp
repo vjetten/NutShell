@@ -109,7 +109,7 @@ void nutshellqt::runModel()
         createBatch(ETfilePath, ar);
         args << QString("/C " + MapeditDirName + "_nutshell_batchjob");
         QString hoi = MapeditDirName + "_nutshell_batchjob.cmd";
-QDesktopServices::openUrl(QUrl("file:///"+hoi));
+        QDesktopServices::openUrl(QUrl("file:///"+hoi));
   //      CMDProcess->startDetached("cmd.exe",args,QIODevice::ReadWrite);
 //        CMDProcess->setProgram( "cmd.exe" );
 //        CMDProcess->setArguments( args );
@@ -529,6 +529,8 @@ void nutshellqt::finishedModel(int)
         getScriptLinks();
         getScriptLinks();
     }
+
+    qDebug() << "hier";
 }
 //---------------------------------------------------------------
 //void nutshellqt::toggleOldcalc(bool checked)

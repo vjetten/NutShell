@@ -100,8 +100,22 @@ void nutshellqt::parseCommand()
         return;
     }
 
+    if (args[0].contains(".cmd", Qt::CaseInsensitive) || QFileInfo(args[0] +".cmd").exists()) {
+        prog = args[0] +".cmd";
+        deleteBatch();
+        createBatch(prog, "");
+        args << QString("/C " + MapeditDirName + "_nutshell_batchjob");
+        QString hoi = MapeditDirName + "_nutshell_batchjob.cmd";
+        QDesktopServices::openUrl(QUrl("file:///"+hoi));
+        setCursorLast();
+        comboBox_cmdlist->insertItem(0, lines[lines.count()-1]);
+        commandcounter = -1;
+        return;
+    }
+
     prog = PCRasterAppDirName + args[0] +".exe";
-    qDebug() << args.count() << args << prog;
+   // qDebug() << args.count() << args << prog;
+
     if (args[0].contains("gdal", Qt::CaseInsensitive))
         prog = GDALAppDirName + args[0] +".exe";
 
@@ -140,6 +154,16 @@ void nutshellqt::parseCommand()
                 //     PCRProcess->waitForReadyRead(10000);
 
                 PCRProcess->waitForFinished(-1);
+
+                QStringList S = args[0].split("=");
+                if (QFileInfo(S[0]).exists()) {
+                    MAP *m = Mopen(S[0].toLatin1().data(),M_WRITE);
+                    if (m != nullptr) {
+                        MputProjection(m,PT_YDECT2B);
+                        qDebug() << S[0] << "changed projection";
+                        Mclose(m);
+                    }
+                }
             }
 
     setCursorLast();

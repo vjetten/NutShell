@@ -122,8 +122,7 @@ int nutshellmapattribute::fill(QString name, bool newmap)
     label_maxValue->text().setNum(0);
 
     if (isMap)
-        m = Mopen(filename.toLatin1()
-.data(),M_READ_WRITE);
+        m = Mopen(filename.toLatin1().data(),M_READ_WRITE);
 //    if (!filename.isEmpty() && m == NULL &&!newmap)
 //    {
 //        Mclose(m); m = NULL;
@@ -416,8 +415,7 @@ void nutshellmapattribute::SetAndCloseMap()
     //if (RuseAs(m, CR_REAL8))
     //goto error2;
 
-    m = Mopen(filename.toLatin1()
-.data(),M_READ_WRITE);
+    m = Mopen(filename.toLatin1().data(),M_READ_WRITE);
 
     if (a->projection != PT_UNDEFINED)
         MputProjection(m,a->projection);

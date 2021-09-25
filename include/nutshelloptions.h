@@ -17,6 +17,10 @@ public:
 	 QStringList getOptions();
      void setupOptions(QStringList SL, double dpi, bool CI);
      bool CondaInstall;
+     bool GetCondaAllEnvs(int cda);
+
+     QString CondaBaseDirName;
+
 public slots:
      void on_checkBoxInstallation_stateChanged(int state);
      void findCondaDir();

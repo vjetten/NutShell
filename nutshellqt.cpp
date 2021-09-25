@@ -14,8 +14,6 @@ nutshellqt::nutshellqt(QWidget *parent) :
 {
     setupUi(this);
 
-    //  findDPIscale();
-
     setupActions();
 
     setupToolBars();
@@ -518,6 +516,7 @@ void nutshellqt::getDirectories()
 
     // push options to window
     nutOptions.setupOptions(tempdirs, dpiscale, CondaInstall);
+    nutOptions.findCondaDir();
     nutOptions.setModal(true);
 
     if (nutOptions.exec())
@@ -593,43 +592,50 @@ void nutshellqt::checkDPIscale()
 
 void nutshellqt::findDPIscale(bool check)
 {
-    return;
     //QRect rect = qApp->screens();
     QRect rect = QGuiApplication::primaryScreen()->availableGeometry();
     //->screenGeometry();
     int _H = rect.height();
 
-    qDebug() << _H;
-    QFont font = qApp->font();
-    genfontsize=font.pointSize();
+//    qDebug() << _H;
+//    QFont font = qApp->font();
+//    genfontsize=font.pointSize();
 
     // do a bit of size teaking for large displays becvause QT 5.5.0 does not have that yet
     iSize = QSize(16,16);
     // the "20" margin is because not all mon itors are exactly the pixel size, e.g. 1210
     if (_H > 800) {
-        genfontsize = 12;
+        genfontsize = 1;//12;
         QSize(24,24);
     }
     if (_H > 1080-5) {
-        genfontsize = 14;
+        genfontsize = 2;// 14;
         iSize = QSize(24,24);
     }
     if (_H > 1200-5) {
         dpiscale = 1.2;
-        genfontsize = 14;
+        genfontsize = 3;//14;
     }
     if (_H > 1440) {
         dpiscale = 2.0;
-        genfontsize = 12;
+        genfontsize = 4;//12;
         iSize = QSize(48,48);
     }
+
 
     if (!check)
         dpiscale = opDPIscale;
 
     toolBar->setIconSize(iSize);
-    setfontSize();
+  //  setfontSize();
 
-
+    const QWidgetList allWidgets = QApplication::allWidgets();
+    for (QWidget *widget : allWidgets) {
+        QFont font = widget->font();
+        int ps = 8 + genfontsize;
+        font.setPointSize(ps);
+        widget->setFont(font);
+        widget->update();
+    }
     //qDebug() << "dpi" << _H << dpiscale;
 }

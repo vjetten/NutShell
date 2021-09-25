@@ -118,7 +118,7 @@ int nutshellqt::GetActionType()
     int at;
 
     QString ext = SelectedSuffix; //QFileInfo(SelectedPathName).suffix();
-    MAP *m = Mopen(SelectedPathName.toLatin1(),M_READ);
+    MAP *m = Mopen(SelectedPathName.toLatin1(),M_READ_WRITE);
 
     if (m != nullptr || ext.toUpper() == "TIF" || ext.toUpper() == "MPR")
     {
@@ -187,11 +187,14 @@ void nutshellqt::PerformAction(int actiontype)
         cmdl = getFileListString();
     // also makes mapseries if needed
 
-    m = Mopen(SelectedPathName.toLatin1().data(),M_READ);
+    m = Mopen(SelectedPathName.toLatin1().data(),M_READ_WRITE);
     if (m == nullptr)
         fileIsMap = false;
-    else
+    else {
+        MputProjection(m,PT_YDECT2B);
         Mclose(m);
+    }
+
 
     isTIFF = SelectedSuffix.toUpper() == "TIF";// ||
       //      QFileInfo(SelectedPathName).suffix().toUpper() == "MPR";
@@ -344,7 +347,7 @@ void nutshellqt::PerformAction(int actiontype)
         if (isTIFF) {
             args << SelectedPathName;
             prog = GDALAppDirName + "gdalinfo.exe";
-            qDebug() << prog << args;
+            //qDebug() << prog << args;
         } else
         if (fileIsMap) {
             if (mapattribute.fill(SelectedPathName, false) == 0) {
@@ -395,6 +398,7 @@ void nutshellqt::PerformAction(int actiontype)
 //        break;
     case ACTIONTYPEWINDOWSCMD:
   QDesktopServices::openUrl(QUrl("file:///" + cmdl));
+  //qDebug() << "desktopservices" << cmdl;
 //        if (cmdl.contains("_nutshell_batchjob"))
 //            break;
 
