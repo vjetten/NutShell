@@ -41,7 +41,7 @@ nutshellqt::nutshellqt(QWidget *parent) :
     // CondaDirName = is the env with PCRaster
     CondaBaseDirName = nutOptions.CondaBaseDirName;
 
-   // CondaDirName = CondaBaseDirName; //set to base and let the user choose
+    CondaDirName = CondaBaseDirName; //set to base and let the user choose
 
     setPCRasterDirectories();
 
