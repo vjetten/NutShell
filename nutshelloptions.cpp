@@ -38,17 +38,17 @@ void nutshellOptions::on_checkBoxInstallation_stateChanged(int state)
     toolButton_2->setEnabled(CondaInstall);
 }
 //---------------------------------------------------------------------------
-void nutshellOptions::setupOptions(QStringList SL, double dpi, bool CI)
+void nutshellOptions::setupOptions(QStringList SL)
 {
 	baseDirs = SL;
-	lineEdit_pcrcalcDir->setText(SL[0]);
-    lineEdit_GDALDir->setText(SL[1]);
-  //  lineEdit_CondaDir->setText(SL[2]);
-    combo_envs->insertItem(0,SL[2]);
-    dpiScale->setValue(dpi);
-    CondaInstall = CI;
-
-    on_checkBoxInstallation_stateChanged(CI ? 1 : 0);
+    CondaInstall = SL[4].toInt() == 1;
+    dpiScale->setValue(SL[3].toDouble());
+    if (!CondaInstall) {
+        lineEdit_pcrcalcDir->setText(SL[0]);
+        lineEdit_GDALDir->setText(SL[1]);
+    } else
+        combo_envs->insertItem(0,SL[2]);
+    on_checkBoxInstallation_stateChanged(CondaInstall ? 1 : 0);
 }
 //---------------------------------------------------------------------------
 QStringList nutshellOptions::getOptions()
@@ -58,7 +58,7 @@ QStringList nutshellOptions::getOptions()
 	baseDirs.clear();
 	baseDirs << lineEdit_pcrcalcDir->text()
             << lineEdit_GDALDir->text()
-            << CondaBaseDirName
+            << CondaDirName
             << dpiScale->text()
             << QString(CondaInstall ? "1" : "0");
 
@@ -67,20 +67,16 @@ QStringList nutshellOptions::getOptions()
 //---------------------------------------------------------------------------
 bool nutshellOptions::findCondaDir()
 {
-    CondaInstall = GetCondaAllEnvs(0);
-    CondaInstall = CondaInstall || GetCondaAllEnvs(1);
-    CondaInstall = CondaInstall || GetCondaAllEnvs(2);
-    CondaInstall = CondaInstall || GetCondaAllEnvs(3);
+    CondaInstall = GetCondaAllEnvs();
     qDebug() << CondaInstall;
 
     if (!CondaInstall) {
         QMessageBox msgBox;
         msgBox.setText("No valid anaconda or miniconda installation is found. Follow the instructions on the PCRaster installation website.");
         msgBox.exec();
-
-    }
-
-    CondaBaseDirName = combo_envs->currentText();
+        CondaDirName = "";
+    } else
+        CondaDirName = combo_envs->currentText();
     return(CondaInstall);
 }
 //---------------------------------------------------------------------------
@@ -137,53 +133,54 @@ QString nutshellOptions::setExistingDirectory(QString title, QString bd)
 		return "";
 }
 //---------------------------------------------------------------------------
-bool nutshellOptions::GetCondaAllEnvs(int cda)
+bool nutshellOptions::GetCondaAllEnvs()
 {
-    bool install = false;
     QString name = qgetenv("USER");
     if (name.isEmpty())
         name = qgetenv("USERNAME");
 
-    if (cda == 0) {
-        CondaBaseDirName = QString("c:/Users/" +name + "/Miniconda3/envs");
-    }
-    if (cda == 1) {
-        CondaBaseDirName = QString("c:/Users/" +name + "/Anaconda3/envs");
-    }
-    if (cda == 2) {
-        CondaBaseDirName = QString("c:/ProgramData/Miniconda3/envs");
-    }
-    if (cda == 3) {
-        CondaBaseDirName = QString("c:/ProgramData/Anaconda3/envs");
-    }
+    for (int cda = 0; cda < 4; cda++) {
+        QString CondaBaseDirName;
+        if (cda == 0) {
+            CondaBaseDirName = QString("c:/Users/" +name + "/Miniconda3/envs");
+        }
+        if (cda == 1) {
+            CondaBaseDirName = QString("c:/Users/" +name + "/Anaconda3/envs");
+        }
+        if (cda == 2) {
+            CondaBaseDirName = QString("c:/ProgramData/Miniconda3/envs");
+        }
+        if (cda == 3) {
+            CondaBaseDirName = QString("c:/ProgramData/Anaconda3/envs");
+        }
 
-    if (QFileInfo(CondaBaseDirName).dir().exists()) {
-        QDir const source(CondaBaseDirName);
-        QStringList const folders = source.entryList(QDir::NoDot | QDir::NoDotDot | QDir::Dirs);
-        for (int i = 0; i < folders.size(); i++) {
-            QString str = CondaBaseDirName+"/"+folders.at(i)+"/python.exe";
-            QString str1 = CondaBaseDirName+"/"+folders.at(i)+"/Library/bin/pcrcalc.exe";
-            QString str2 = CondaBaseDirName+"/"+folders.at(i)+"/Library/bin/gdalinfo.exe";
-            bool pythonfound = QFileInfo(str).exists();
-            bool pcrasterfound = QFileInfo(str1).exists();
-            bool gdalfound = QFileInfo(str2).exists();
+        if (QFileInfo(CondaBaseDirName).dir().exists()) {
+            QDir const source(CondaBaseDirName);
+            QStringList const folders = source.entryList(QDir::NoDot | QDir::NoDotDot | QDir::Dirs);
+            for (int i = 0; i < folders.size(); i++) {
+                QString str = CondaBaseDirName+"/"+folders.at(i)+"/python.exe";
+                QString str1 = CondaBaseDirName+"/"+folders.at(i)+"/Library/bin/pcrcalc.exe";
+                QString str2 = CondaBaseDirName+"/"+folders.at(i)+"/Library/bin/gdalinfo.exe";
+                bool pythonfound = QFileInfo(str).exists();
+                bool pcrasterfound = QFileInfo(str1).exists();
+                bool gdalfound = QFileInfo(str2).exists();
 
-            if (pythonfound && pcrasterfound && gdalfound)
-                combo_envs->addItem(CondaBaseDirName+"/"+folders.at(i));
-            else {
-                QString error;
-                if (!pythonfound) error = QString("Python not found in Anaconda environment "+folders.at(i)+"\nThis environment is ignored.");
-                else
-                if (!pcrasterfound) error = QString("PCRaster not found in Anaconda environment "+folders.at(i)+"\nThis environment is ignored.");
-                else
-                if (!gdalfound) error = QString("GDAL not found in Anaconda environment "+folders.at(i)+"\nThis environment is ignored.");
+                if (pythonfound && pcrasterfound && gdalfound)
+                    combo_envs->addItem(CondaBaseDirName+"/"+folders.at(i));
+                else {
+                    QString error;
+                    if (!pythonfound) error = QString("Python not found in Anaconda environment "+folders.at(i)+"\nThis environment is ignored.");
+                    else
+                        if (!pcrasterfound) error = QString("PCRaster not found in Anaconda environment "+folders.at(i)+"\nThis environment is ignored.");
+                        else
+                            if (!gdalfound) error = QString("GDAL not found in Anaconda environment "+folders.at(i)+"\nThis environment is ignored.");
 
-                QMessageBox msgBox;
-                msgBox.setText(error);
-                msgBox.exec();
+                    QMessageBox msgBox;
+                    msgBox.setText(error);
+                    msgBox.exec();
+                }
             }
         }
-        install = combo_envs->count() > 0;
     }
-    return(install);
+    return(combo_envs->count() > 0);
 }

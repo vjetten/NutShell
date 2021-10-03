@@ -18,7 +18,7 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     setupToolBars();
 
-    setupMenu();
+    //setupMenu();
 
     setupModel();
 
@@ -35,17 +35,15 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     getNutshellIni();
 
-    CondaInstall = nutOptions.findCondaDir();
-    // check if a conda ionstallation exists
-    // CondaBaseDirName is the conda envs direstory
-    // CondaDirName = is the env with PCRaster
-    CondaBaseDirName = nutOptions.CondaBaseDirName;
-
-    CondaDirName = CondaBaseDirName; //set to base and let the user choose
+    if (CondaInstall && !QFileInfo(CondaDirName).exists())
+        CondaInstall = nutOptions.findCondaDir();
+    // find conda installations
+   if (CondaInstall)
+        CondaDirName = nutOptions.CondaDirName;
 
     setPCRasterDirectories();
 
-     setWorkdirectory();
+    setWorkdirectory();
 
     STATUS("");
 
@@ -117,18 +115,19 @@ void nutshellqt::createModelActions()
 //---------------------------------------------------------------
 void nutshellqt::createMainActions()
 {
-    //   connect(QGuiApplication::focusWindow()->windowHandle(), SIGNAL(screenChanged(QScreen*)), this, SLOT(checkDPIscale()));
-    //   connect(parent()->window()->windowHandle(), SIGNAL(screenChanged(QScreen*)), this, SLOT(checkDPIscale()));
-
-    //connect(this->window()->windowHandle(), SIGNAL(screenChanged(QScreen*)), this, SLOT(checkDPIscale()) );
-    //   connect(QApplication::desktop(), SIGNAL(geometryChanged(int)), this, SLOT(checkDPIscale()));
-
+    toolButton_workdir->setVisible(false);
+    toolButton_returnWorkdir->setVisible(false);
+    toolButton_dirprev->setVisible(false);
+    toolButton_dirnext->setVisible(false);
     // main actions
-    connect(toolButton_workdir, SIGNAL(clicked()), this, SLOT(setWorkdirectory()));
+   // connect(toolButton_workdir, SIGNAL(clicked()), this, SLOT(setWorkdirectory()));
     connect(toolButton_delWorkdir, SIGNAL(clicked()), this, SLOT(removeWorkdirectory()));
-    connect(toolButton_returnWorkdir, SIGNAL(clicked()), this, SLOT(returnToWorkdirectory()));
+   // connect(toolButton_returnWorkdir, SIGNAL(clicked()), this, SLOT(returnToWorkdirectory()));
     connect(comboBox_workdir, SIGNAL(currentIndexChanged(int)), this, SLOT(setWorkdirectoryNr(int)));
     //	connect(tabWidget, SIGNAL(currentChanged(int)),this, SLOT(changeSyntax(int)));
+
+    optionsAct = new QAction(QIcon(":/resources/2X/filenew.png"), "&Options...", this);
+    connect(optionsAct, SIGNAL(triggered()), this, SLOT(getOptions()));
 
     newfileAct = new QAction(QIcon(":/resources/2X/filenew.png"), "&New empty file...", this);
     newfileAct->setShortcuts(QKeySequence::New);
@@ -179,9 +178,6 @@ void nutshellqt::createMainActions()
 
     clearOptionsAct = new QAction(QIcon(""), "&Clear nutshell.ini...", this);
     connect(clearOptionsAct, SIGNAL(triggered()), this, SLOT(clearNutshellIni()));
-
-    optionsAct = new QAction(QIcon(""), "&Options...", this);
-    connect(optionsAct, SIGNAL(triggered()), this, SLOT(getDirectories()));
 
 }
 //---------------------------------------------------------------
@@ -238,8 +234,8 @@ void nutshellqt::createEditorActions()
     actionFindPrev->setShortcut(Qt::SHIFT+Qt::Key_F3);
     connect(actionFindPrev, SIGNAL(triggered()), this, SLOT(findPrevfind()));
 
-    fontAct = new QAction(QIcon(":/resources/2X/fontselect.png"), "&Select font", this);
-    connect(fontAct, SIGNAL(triggered()), this, SLOT(fontSelect()));
+ //   fontAct = new QAction(QIcon(":/resources/2X/fontselect.png"), "&Select font", this);
+ //   connect(fontAct, SIGNAL(triggered()), this, SLOT(fontSelect()));
 
     fontIncreaseAct = new QAction(QIcon(":/resources/2X/fontbigger.png"), "&Increase font size", this);
     connect(fontIncreaseAct, SIGNAL(triggered()), this, SLOT(fontIncrease()));
@@ -326,12 +322,14 @@ void nutshellqt::createContextMenuActions()
     //    cutFileAct = new QAction(tr("Cu&t"), this);
     //    copyFileAct = new QAction(tr("Copy"), this);
     //    pasteFileAct = new QAction(tr("Paste"), this);
+    setDirAct = new QAction(QIcon(":/resources/2X/dir_add.png"),QString("Set as Working Directory"), this);
     newDirAct = new QAction(QIcon(":/resources/2X/dirnew.png"),QString("Create Directory"), this);
     delDirAct = new QAction(QIcon(":/resources/2X/dir_delete.png"),QString("Delete Directory"), this);
 
     //    connect(cutFileAct, SIGNAL(triggered()), this, SLOT(cutFile()));
     //    connect(copyFileAct, SIGNAL(triggered()), this, SLOT(copyFile()));
     //    connect(pasteFileAct, SIGNAL(triggered()), this, SLOT(pasteFile()));
+    connect(setDirAct, SIGNAL(triggered()), this, SLOT(setWorkdirectory()));
     connect(newDirAct, SIGNAL(triggered()), this, SLOT(newDirectory()));
     connect(delDirAct, SIGNAL(triggered()), this, SLOT(deleteDirectory()));
 }
@@ -339,6 +337,7 @@ void nutshellqt::createContextMenuActions()
 void nutshellqt::setupToolBars()
 {
     // toolBar->addAction(newDirAct);
+    toolBar->addAction(optionsAct);
     toolBar->addAction(newfileAct);
     toolBar->addAction(newfileScriptAct);
     toolBar->addAction(openfileAct);
@@ -360,7 +359,7 @@ void nutshellqt::setupToolBars()
 
     //toolBar->addAction(syntaxAct);
 
-    toolBar->addAction(fontAct);
+  //  toolBar->addAction(fontAct);
     toolBar->addAction(fontIncreaseAct);
     toolBar->addAction(fontDecreaseAct);
     toolBar->addSeparator ();
@@ -429,7 +428,7 @@ void nutshellqt::setupMenu( )
     runMenu->addAction(killmodelAct);
     //   runMenu->addAction(oldmodelAct);
 
-    editMenu = menuBar()->addMenu(tr("&Edit"));
+    //editMenu = menuBar()->addMenu(tr("&Edit"));
     //    editMenu->addAction(undoAct);
     //    editMenu->addAction(redoAct);
     //    editMenu->addSeparator();
@@ -449,7 +448,7 @@ void nutshellqt::setupMenu( )
     formatMenu = menuBar()->addMenu(tr("F&ormat"));
     formatMenu->addAction(syntaxAct);
     formatMenu->addSeparator ();
-    formatMenu->addAction(fontAct);
+  //  formatMenu->addAction(fontAct);
     formatMenu->addAction(fontIncreaseAct);
     formatMenu->addAction(fontDecreaseAct);
     formatMenu->addSeparator ();
@@ -468,16 +467,16 @@ void nutshellqt::setupMenu( )
     helpMenu->addAction(helpNutshellAct);
 }
 //---------------------------------------------------------------
-void nutshellqt::getDirectories()
+void nutshellqt::getOptions()
 {
     QStringList tempdirs;
     tempdirs.clear();
 
-    tempdirs << PCRasterDirName  << GDALDirName << CondaDirName;
+    tempdirs << PCRasterDirName  << GDALDirName << CondaDirName << QString::number(dpiscale) << (CondaInstall ? "1" : "0");
     //qDebug() << "into options" << tempdirs << CondaInstall;
 
     // push options to window
-    nutOptions.setupOptions(tempdirs, dpiscale, CondaInstall);
+    nutOptions.setupOptions(tempdirs);
     //nutOptions.findCondaDir();
     nutOptions.setModal(true);
 
@@ -567,20 +566,20 @@ void nutshellqt::findDPIscale(bool check)
     iSize = QSize(16,16);
     // the "20" margin is because not all mon itors are exactly the pixel size, e.g. 1210
     if (_H > 800) {
-        genfontsize = 1;//12;
+        genfontsize = 0;//12;
         QSize(24,24);
     }
     if (_H > 1080-5) {
-        genfontsize = 2;// 14;
+        genfontsize = 1;// 14;
         iSize = QSize(24,24);
     }
     if (_H > 1200-5) {
         dpiscale = 1.2;
-        genfontsize = 3;//14;
+        genfontsize = 2;//14;
     }
     if (_H > 1440) {
         dpiscale = 2.0;
-        genfontsize = 4;//12;
+        genfontsize = 3;//12;
         iSize = QSize(48,48);
     }
 

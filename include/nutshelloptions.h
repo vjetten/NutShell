@@ -15,11 +15,11 @@ public:
 	 QString setExistingDirectory(QString title, QString bd);
 	 QStringList baseDirs;
 	 QStringList getOptions();
-     void setupOptions(QStringList SL, double dpi, bool CI);
+     void setupOptions(QStringList SL);
      bool CondaInstall;
-     bool GetCondaAllEnvs(int cda);
+     bool GetCondaAllEnvs();
 
-     QString CondaBaseDirName;
+     QString CondaDirName;
 
 public slots:
      void on_checkBoxInstallation_stateChanged(int state);

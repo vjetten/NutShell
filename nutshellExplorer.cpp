@@ -107,7 +107,7 @@ void nutshellqt::setupExplorer()
 //    treeView->setVisible(false);
 //    treeView->resizeColumnToContents(0);
 //    treeView->setVisible(true);
-      treeView->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    treeView->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
 
     fileView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     fileView->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -116,8 +116,6 @@ void nutshellqt::setupExplorer()
     QCoreApplication::sendPostedEvents(this, 0);
     fileView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     fileView->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
-
-
 
     fileView->setShowGrid(false);
     fileView->setWordWrap(false);
@@ -146,13 +144,14 @@ void nutshellqt::setupExplorer()
 
     treeView->setEditTriggers(QAbstractItemView::NoEditTriggers | QAbstractItemView::EditKeyPressed);
     connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(setRootIndex(QModelIndex)));
+   // connect(treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(setWorkDirectoryIndex(QModelIndex)));
     // single click on tree sets also fileView
     connect(fileView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(selectFiles(QModelIndex)));
     // double clicked activate pcraster stuff
 
     // OBSOLETE:
-    connect(toolButton_dirprev, SIGNAL(clicked()), this, SLOT(goBack()));
-    connect(toolButton_dirnext, SIGNAL(clicked()), this, SLOT(goForward()));
+    //connect(toolButton_dirprev, SIGNAL(clicked()), this, SLOT(goBack()));
+    //connect(toolButton_dirnext, SIGNAL(clicked()), this, SLOT(goForward()));
     //    connect(toolButton_dirup, SIGNAL(clicked()), this, SLOT(goUp()));
     //    connect(toolButton_dirnew, SIGNAL(clicked()), this, SLOT(newDirectory()));
     //    connect(toolButton_dirRemove, SIGNAL(clicked()), this, SLOT(removeDirectory()));
@@ -214,6 +213,7 @@ void nutshellqt::setupExplorer()
 void nutshellqt::contextualMenu(const QPoint  &point)
 {
     QMenu *menu = new QMenu;
+    menu->addAction(setDirAct);
     menu->addAction(newDirAct);
     menu->addAction(delDirAct);
     //    QModelIndex index = treeView->currentIndex();
@@ -227,7 +227,13 @@ void nutshellqt::contextualMenu(const QPoint  &point)
 // Getactiontype is in nutshellaction.cpp
 void nutshellqt::selectFiles(const QModelIndex& index)
 {
+    qDebug() <<"hoi";
     PerformAction(GetActionType());
+}
+//---------------------------------------------------------------
+void nutshellqt::setWorkDirectoryIndex(const QModelIndex& index)
+{
+    setWorkdirectory();
 }
 //---------------------------------------------------------------
 //! simplified set rootindex of filelist based on treeview click
@@ -359,15 +365,15 @@ void nutshellqt::changeFileFilter(int filterNr)
     // set the global file filter nr
 
     switch(filterNr){
-    case fPCR: toolButton_showPCR->setChecked(true); break;
-    case fMaps: toolButton_showMaps->setChecked(true); break;
-    case fPlot: toolButton_showPlot->setChecked(true); break;
-    case fScript: toolButton_showScript->setChecked(true); break;
-    case fSeries: toolButton_showSeries->setChecked(true); break;
-    case freport: toolButton_showOutput->setChecked(true); break;
-    case fdelreport: toolButton_deletereport->setChecked(true); break;
-    case fTIFF: toolButton_showTIF->setChecked(true); break;
-    case fall: toolButton_showAll->setChecked(true); break;
+        case fPCR: toolButton_showPCR->setChecked(true); break;
+        case fMaps: toolButton_showMaps->setChecked(true); break;
+        case fPlot: toolButton_showPlot->setChecked(true); break;
+        case fScript: toolButton_showScript->setChecked(true); break;
+        case fSeries: toolButton_showSeries->setChecked(true); break;
+        case freport: toolButton_showOutput->setChecked(true); break;
+        case fdelreport: toolButton_deletereport->setChecked(true); break;
+        case fTIFF: toolButton_showTIF->setChecked(true); break;
+        case fall: toolButton_showAll->setChecked(true); break;
     }
 
     currentFilter.clear();

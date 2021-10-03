@@ -14,17 +14,11 @@
 void nutshellqt::setPCRasterDirectories()
 {
     if (CondaInstall) {
-        if(CondaDirName == CondaBaseDirName) {
-           WarningMsg(QString("Multiple conda environments found with PCRaster, choose one in File->Options"));
-        } else {
-//            PCRasterAppDirName = CondaDirName;
-//            GDALAppDirName = CondaDirName;
-//            AguilaDirName = PCRasterAppDirName;
-            PCRasterAppDirName = CondaDirName+"/Library/bin/";
-            AguilaDirName = PCRasterAppDirName;
-            GDALAppDirName =PCRasterAppDirName;// CondaDirName;
-        }
+        PCRasterAppDirName = CondaDirName+"/Library/bin/";
+        AguilaDirName = PCRasterAppDirName;
+        GDALAppDirName =PCRasterAppDirName;
     }
+    else
     if (PCRasterInstall){
         if(!PCRasterDirName.isEmpty())
         {
@@ -200,41 +194,35 @@ void nutshellqt::getNutshellIni()
 }
 //---------------------------------------------------------------
 // OBSOLETE
-void nutshellqt::getRegPCRaster()
-{
+//void nutshellqt::getRegPCRaster()
+//{
 
-    PCRasterDirName = "";
-    // for pcraster iunstall previous to version 4.0.0
+//    PCRasterDirName = "";
+//    // for pcraster iunstall previous to version 4.0.0
 
-    bool regv3 = false;
-    bool regv2 = false;
+//    bool regv3 = false;
+//    bool regv2 = false;
 
-    QSettings settings(QSettings::SystemScope,"PCRaster","Install");
-    QSettings rsettings("HKEY_CURRENT_USER\\Software\\PCRaster\\PCRaster", QSettings::NativeFormat);
+//    QSettings settings(QSettings::SystemScope,"PCRaster","Install");
+//    QSettings rsettings("HKEY_CURRENT_USER\\Software\\PCRaster\\PCRaster", QSettings::NativeFormat);
 
-    if (rsettings.contains("Default"))
-    {
-        regv3 = true;
-        PCRasterDirName = rsettings.value("Default", "").toString();
-    }
-
-    if (!regv3 && settings.contains("Default"))
-    {
-        regv2 = true;
-        PCRasterDirName = settings.value("Default", "").toString();
-    }
-
-    if (!regv3 && !regv2)
-        return;
-
-//    if (!dir.exists() || PCRasterDirName.isEmpty())
+//    if (rsettings.contains("Default"))
 //    {
-//        ErrorMsg(QString("PCRaster directory not found: %1\nSet dirs in File->Options").arg(PCRasterDirName));
-//        return;
+//        regv3 = true;
+//        PCRasterDirName = rsettings.value("Default", "").toString();
 //    }
 
-    WarningMsg(QString("Old PCRaster version found. This will probably work but you should upgrade to version 4.0.x @ pcraster.geo.uu.nl"));
+//    if (!regv3 && settings.contains("Default"))
+//    {
+//        regv2 = true;
+//        PCRasterDirName = settings.value("Default", "").toString();
+//    }
 
-    QDir dir(PCRasterDirName);
-}
+//    if (!regv3 && !regv2)
+//        return;
+
+//    WarningMsg(QString("Old PCRaster version found. This will probably work but you should upgrade to version 4.0.x @ pcraster.geo.uu.nl"));
+
+//    QDir dir(PCRasterDirName);
+//}
 //---------------------------------------------------------------

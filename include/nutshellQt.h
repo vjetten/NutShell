@@ -212,7 +212,6 @@ public:
 
     void setNutshellIni();
     void getNutshellIni();
-    void getRegPCRaster();
     void setPCRasterDirectories();
 
     void createBatch(QString sss, QString args);
@@ -245,7 +244,7 @@ public:
     QString GDALDirName;
     QString GDALAppDirName;
     QString CondaDirName;
-    QString CondaBaseDirName;
+    //QString CondaBaseDirName;
     QString PCRxtr;
     QString GSALxtr;
 
@@ -397,7 +396,7 @@ public slots:
     void showsyntax(bool doit);
     void changeSyntax(int index);
     void displayVar();
-    void getDirectories();
+    void getOptions();
     void clearNutshellIni();
     // void findScriptReport();
     void deleteLine();
@@ -463,17 +462,20 @@ public slots:
     void changeFileFilter(int filterNr);
 
     void setRootIndex(const QModelIndex& index);
+    void setWorkDirectoryIndex(const QModelIndex& index);
 
     void getScriptLinks();
 
 private:
 
     //editor toolbar actions
+    QAction *setDirAct;
     QAction *newDirAct;
     QAction *delDirAct;
-    QAction *nextDirAct;
-    QAction *prevDirAct;
+    //QAction *nextDirAct;
+    //QAction *prevDirAct;
 
+    QAction *optionsAct;
     QAction *newfileAct;
     QAction *newfileScriptAct;
     QAction *closefileAct;
@@ -495,7 +497,6 @@ private:
     QAction *wheelAct;
 
     QAction *clearOptionsAct;
-    QAction *optionsAct;
     QAction *cutFileAct;
     QAction *copyFileAct;
     QAction *pasteFileAct;
