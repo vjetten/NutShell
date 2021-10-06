@@ -14,9 +14,10 @@
 void nutshellqt::setPCRasterDirectories()
 {
     if (CondaInstall) {
-        PCRasterAppDirName = CondaDirName+"/Library/bin/";
+        PCRasterAppDirName = CondaDirName+"Library/bin/";
         AguilaDirName = PCRasterAppDirName;
         GDALAppDirName =PCRasterAppDirName;
+        qDebug() << PCRasterAppDirName;
     }
     else
     if (PCRasterInstall){
@@ -53,16 +54,17 @@ void nutshellqt::setNutshellIni()
     settings.setValue("DPI",dpiscale);
     settings.setValue("CondaInstall",CondaInstall);
     settings.setValue("PCRasterInstall",PCRasterInstall);
+    settings.setValue("workdir",currentPath);
 
     //settings.setValue(QString("workdir/current"),comboBox_workdir->currentIndex());
-    for (int i = 0; i < comboBox_workdir->count(); i++)
-    {
-    //    qDebug() << comboBox_workdir->itemText(i);
-        if (i == comboBox_workdir->currentIndex())
-            settings.setValue(QString("workdir/workdir%1").arg(i),comboBox_workdir->itemText(i)+"<");
-        else
-            settings.setValue(QString("workdir/workdir%1").arg(i),comboBox_workdir->itemText(i));
-    }
+//    for (int i = 0; i < comboBox_workdir->count(); i++)
+//    {
+//    //    qDebug() << comboBox_workdir->itemText(i);
+//        if (i == comboBox_workdir->currentIndex())
+//            settings.setValue(QString("workdir/workdir%1").arg(i),comboBox_workdir->itemText(i)+"<");
+//        else
+//            settings.setValue(QString("workdir/workdir%1").arg(i),comboBox_workdir->itemText(i));
+//    }
 
     //settings.setValue(QString("modelnr/active"),tabWidget->currentIndex());
     settings.setValue("models/current",tabWidget->currentIndex());
@@ -121,35 +123,42 @@ void nutshellqt::getNutshellIni()
     CondaInstall = settings.value("CondaInstall").toString() == "true";
     PCRasterInstall = settings.value("PCRasterInstall").toString() == "true";
 
-    settings.beginGroup("workdir");
-    QStringList keys = settings.childKeys();
-    int currentworkdir = 0;
-    comboBox_workdir->setInsertPolicy(QComboBox::InsertAtBottom);
-    QStringList dirs;
-    for (int i = 0; i < keys.count(); i++)
-    {
-        QString str = settings.value(keys[i]).toString().simplified();
+    str = settings.value("workdir").toString();
+    if (!str.isEmpty())
+        if (!str.endsWith("\\") && !str.endsWith("/"))
+            str = str + "/";
+    currentPath = str;
+    comboBox_workdir->addItem(currentPath);
 
-        if (!str.isEmpty())
-        {
-            if(str.contains("<"))
-            {
-                str.remove(str.size()-1,1);
-                currentworkdir = i;
-            }
+ //   settings.beginGroup("workdir");
+//    QStringList keys = settings.childKeys();
+//    int currentworkdir = 0;
+//    comboBox_workdir->setInsertPolicy(QComboBox::InsertAtBottom);
+//    QStringList dirs;
+//    for (int i = 0; i < keys.count(); i++)
+//    {
+//        QString str = settings.value(keys[i]).toString().simplified();
 
-            if (str.simplified() != "")
-                dirs << str;
-        }
-    }
-    comboBox_workdir->clear();
-    if (dirs.isEmpty())
-        dirs << "C:/";
+//        if (!str.isEmpty())
+//        {
+//            if(str.contains("<"))
+//            {
+//                str.remove(str.size()-1,1);
+//                currentworkdir = i;
+//            }
 
-    comboBox_workdir->addItems(dirs);
-    comboBox_workdir->setCurrentIndex(currentworkdir);
-    currentPath = comboBox_workdir->itemText(currentworkdir);
-    settings.endGroup();
+//            if (str.simplified() != "")
+//                dirs << str;
+//        }
+//    }
+//    comboBox_workdir->clear();
+//    if (dirs.isEmpty())
+//        dirs << "C:/";
+
+//    comboBox_workdir->addItems(dirs);
+//    comboBox_workdir->setCurrentIndex(currentworkdir);
+//    currentPath = comboBox_workdir->itemText(currentworkdir);
+//    settings.endGroup();
 
     //    settings.beginGroup("layout");
     //    splitter->restoreState(settings.value("splitter1").toByteArray());
@@ -158,7 +167,7 @@ void nutshellqt::getNutshellIni()
     //    settings.endGroup();
 
     settings.beginGroup("models");
-    keys = settings.childKeys();
+    QStringList keys = settings.childKeys();
     int currentmodel = 0;
     for (int i = 0; i < keys.count(); i++)
     {

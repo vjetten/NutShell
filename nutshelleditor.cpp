@@ -175,6 +175,7 @@ void nutshellqt::AddModel(QString name, int syntax)
     ET[nr].filePath = name;
     ET[nr].fileName = QFileInfo(name).fileName();
     tabWidget->setTabText(nr, ET.at(nr).fileName);
+    tabWidget->setTabToolTip(nr,ET.at(nr).filePath);
     syntax = 1;
     ET[nr].syntax = syntax;
     syntaxAct->setChecked(syntax == 1);

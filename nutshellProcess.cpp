@@ -84,7 +84,6 @@ void nutshellqt::runModelCommandwindow(QString prog, QStringList args)
     calcProcess->start(prog, args, QIODevice::ReadWrite);
 
     runPaused = false;
-
 }
 //---------------------------------------------------------------
 // called from pressing start speed buttons
@@ -98,7 +97,7 @@ void nutshellqt::runModel()
     setButtons(true, false, false);
 
     QString ext = QFileInfo(ETfilePath).suffix();
-    qDebug() << ETfilePath << ext;
+    //qDebug() << ETfilePath << ext;
     if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
     {
         deleteBatch();
@@ -198,7 +197,7 @@ void nutshellqt::runModel()
     commandWindow->appendPlainText(" ");
     // make room in the plainTextEdit for the pcrcalc counter
     //QCoreApplication::sendPostedEvents(this, 0);
-
+    setWorkdirectory();
     calcProcess->start(prog, args, QIODevice::ReadWrite);
 
     setCursorLast();
@@ -300,9 +299,9 @@ void nutshellqt::onScreen(QString buffer)
     // first output at start run
     if (buffer.contains("ERROR") ) {
         if (output.isEmpty()) {
-            qDebug() << "hier";
+            qDebug() << "empty error output";
         } else {
-            qDebug() << xlast;
+            //qDebug() << xlast;
             list.replace(xlast-3,listb[0]);  // pcrcalc version
             list.replace(xlast-2,listb[1]);  // error message
             output=list.join("\n");
@@ -380,7 +379,7 @@ void nutshellqt::readFromStderr()
 
 // pcraster 4.2.0 with pcrcalc 2018 has different output: first the first chr then the rest?!
 
-    qDebug() << buffer << bufprev;
+    //qDebug() << buffer << bufprev;
     onScreen(buffer);
 
     if (buffer.contains("ERROR"))
@@ -490,7 +489,7 @@ void nutshellqt::finishedModel(int)
         QByteArray buf;
         buf.clear();
         buf = calcProcess->readAllStandardError();
-        qDebug() << "buf" << buf;
+        //qDebug() << "buf" << buf;
         onScreen(QString(buf));
     }
 
@@ -529,8 +528,6 @@ void nutshellqt::finishedModel(int)
         getScriptLinks();
         getScriptLinks();
     }
-
-    qDebug() << "hier";
 }
 //---------------------------------------------------------------
 //void nutshellqt::toggleOldcalc(bool checked)

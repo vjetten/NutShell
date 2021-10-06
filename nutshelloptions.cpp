@@ -68,11 +68,11 @@ QStringList nutshellOptions::getOptions()
 bool nutshellOptions::findCondaDir()
 {
     CondaInstall = GetCondaAllEnvs();
-    qDebug() << CondaInstall;
+    qDebug() << CondaInstall << CondaDirName;
 
     if (!CondaInstall) {
         QMessageBox msgBox;
-        msgBox.setText("No valid anaconda or miniconda installation is found. Follow the instructions on the PCRaster installation website.");
+        msgBox.setText("No anaconda or miniconda installation with Python, PCRaster and GDAL is found. Follow the instructions on the PCRaster installation website.");
         msgBox.exec();
         CondaDirName = "";
     } else
@@ -135,12 +135,13 @@ QString nutshellOptions::setExistingDirectory(QString title, QString bd)
 //---------------------------------------------------------------------------
 bool nutshellOptions::GetCondaAllEnvs()
 {
+    QString CondaBaseDirName;
     QString name = qgetenv("USER");
+    combo_envs->clear();
     if (name.isEmpty())
         name = qgetenv("USERNAME");
 
     for (int cda = 0; cda < 4; cda++) {
-        QString CondaBaseDirName;
         if (cda == 0) {
             CondaBaseDirName = QString("c:/Users/" +name + "/Miniconda3/envs");
         }
@@ -175,12 +176,14 @@ bool nutshellOptions::GetCondaAllEnvs()
                         else
                             if (!gdalfound) error = QString("GDAL not found in Anaconda environment "+folders.at(i)+"\nThis environment is ignored.");
 
-                    QMessageBox msgBox;
-                    msgBox.setText(error);
-                    msgBox.exec();
+                 //   QMessageBox msgBox;
+                 //   msgBox.setText(error);
+                 //   msgBox.exec();
                 }
             }
         }
     }
+    if (combo_envs->count() > 0)
+        CondaDirName = combo_envs->currentText();
     return(combo_envs->count() > 0);
 }

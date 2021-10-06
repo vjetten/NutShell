@@ -1,95 +1,7 @@
 <RCC>
     <qresource prefix="/">
-        <file>resources/showmapseries1.png</file>
-        <file>resources/showpcr1.png</file>
-        <file>resources/showtimeplots.png</file>
-        <file>resources/showmods.png</file>
-        <file>resources/showreports1.png</file>
-        <file>resources/aguila2d.png</file>
-        <file>resources/mapnew.png</file>
-        <file>resources/plus-button.png</file>
-        <file>resources/aguila.png</file>
-        <file>resources/aguila3d.png</file>
-        <file>resources/editmodel.png</file>
-        <file>resources/directory_up.png</file>
-        <file>resources/directory_prev.png</file>
-        <file>resources/directory_next.png</file>
-        <file>resources/maplegend1.png</file>
         <file>resources/nutshell.png</file>
-        <file>resources/filenew.png</file>
-        <file>resources/fileopen.png</file>
-        <file>resources/filesave.png</file>
-        <file>resources/filesaveas.png</file>
-        <file>resources/clearcmdlist.png</file>
-        <file>resources/mapedit.png</file>
-        <file>resources/header.png</file>
-        <file>resources/clearcmdwin.png</file>
-        <file>resources/pause2.png</file>
-        <file>resources/start1.png</file>
-        <file>resources/stop1.png</file>
-        <file>resources/oldcalc1.png</file>
-        <file>resources/gloptions4.png</file>
-        <file>resources/dirnew.png</file>
-        <file>resources/dir_up.png</file>
-        <file>resources/errorline.png</file>
-        <file>resources/showmaps.png</file>
-        <file>resources/editCopy.png</file>
-        <file>resources/editPaste.png</file>
-        <file>resources/Cut.png</file>
-        <file>resources/fileclose.png</file>
-        <file>resources/fileclose1.png</file>
-        <file>resources/editedit.png</file>
-        <file>resources/editFind.png</file>
-        <file>resources/timeplot.png</file>
-        <file>resources/editfindnext.png</file>
-        <file>resources/editfindprev.png</file>
-        <file>resources/editreplace.png</file>
-        <file>resources/fontselect.png</file>
-        <file>resources/fontsmaller.png</file>
-        <file>resources/fontbigger.png</file>
-        <file>resources/editindent.png</file>
-        <file>resources/editnoindent.png</file>
-        <file>resources/edithash.png</file>
-        <file>resources/editreport.png</file>
-        <file>resources/syntax.png</file>
         <file>resources/nutshell1.png</file>
-        <file>resources/help.png</file>
-        <file>resources/helpoperation.png</file>
-        <file>resources/directory_open.png</file>
-        <file>resources/showmods1.png</file>
-        <file>resources/showscript.png</file>
-        <file>resources/deletereport2.png</file>
-        <file>resources/showmaps1.png</file>
-        <file>resources/header1.png</file>
-        <file>resources/showtimeplots1.png</file>
-        <file>resources/showmapseries3.png</file>
-        <file>resources/showpcr2.png</file>
-        <file>resources/showallfiles.png</file>
-        <file>resources/showreports3.png</file>
-        <file>resources/deletereport3.png</file>
-        <file>resources/deletereport4.png</file>
-        <file>resources/showreports4.png</file>
-        <file>resources/deletereport5.png</file>
-        <file>resources/showmods2.png</file>
-        <file>resources/editRedo.png</file>
-        <file>resources/editUndo.png</file>
-        <file>resources/dir_del.png</file>
-        <file>resources/dir_add.png</file>
-        <file>resources/showpcr4.png</file>
-        <file>resources/argsubs2.png</file>
-        <file>resources/dir_delete.png</file>
-        <file>resources/dir_reset.png</file>
-        <file>resources/aguilareport.png</file>
-        <file>resources/allreport.png</file>
-        <file>resources/allreport1.png</file>
-        <file>resources/nutshellhelp.png</file>
-        <file>resources/helpnutshell.png</file>
-        <file>resources/add_16.png</file>
-        <file>resources/filenewscript.png</file>
-        <file>resources/showTIFF.png</file>
-        <file>resources/map2ilwis.png</file>
-        <file>resources/map2tiff.png</file>
-        <file>resources/showtif3.png</file>
         <file>resources/2X/add_16.png</file>
         <file>resources/2X/aguila.png</file>
         <file>resources/2X/aguila2d.png</file>
@@ -172,7 +84,7 @@
         <file>resources/2X/syntax.png</file>
         <file>resources/2X/timeplot.png</file>
         <file>resources/2X/tifconvert.png</file>
-        <file>resources/tifconvert.png</file>
         <file>resources/2X/dir_del.png</file>
+        <file>resources/2X/options2.png</file>
     </qresource>
 </RCC>

@@ -84,7 +84,7 @@ void nutshellqt::actionmapMap2Tiff()
 //---------------------------------------------------------------------------
 void nutshellqt::actionmapMap2Ilwis()
 {
-    PerformAction(ACTIONTYPEMAP2ILWIS);
+   // PerformAction(ACTIONTYPEMAP2ILWIS);
 }
 //---------------------------------------------------------------------------
 void nutshellqt::createBatch(QString sss, QString args)
@@ -365,18 +365,18 @@ void nutshellqt::PerformAction(int actiontype)
         prog = PCRasterAppDirName + "gstat.exe";
         //actiontype = ACTIONTYPENONE;
         break;
-    case ACTIONTYPEMAP2ILWIS:
-        nameout = QFileInfo(SelectedPathName).baseName() + ".mpr";
-        namein =  QFileInfo(SelectedPathName).baseName() + "." + SelectedSuffix;//QFileInfo(SelectedPathName).suffix();
-        args << "-of" << "ILWIS" << namein << nameout;
-        prog = GDALAppDirName + "gdal_translate.exe";
-        if (!QFileInfo(prog).exists())
-        {
-            ErrorMsg("Cannot find GDAL tools, have you installed GDAL \nand set file->options?");
-            actiontype = ACTIONTYPENONE;
-        }
-        commandWindow->appendPlainText("gdal_translate "+args.join(" "));
-        break;
+//    case ACTIONTYPEMAP2ILWIS:
+//        nameout = QFileInfo(SelectedPathName).baseName() + ".mpr";
+//        namein =  QFileInfo(SelectedPathName).baseName() + "." + SelectedSuffix;//QFileInfo(SelectedPathName).suffix();
+//        args << "-of" << "ILWIS" << namein << nameout;
+//        prog = GDALAppDirName + "gdal_translate.exe";
+//        if (!QFileInfo(prog).exists())
+//        {
+//            ErrorMsg("Cannot find GDAL tools, have you installed GDAL \nand set file->options?");
+//            actiontype = ACTIONTYPENONE;
+//        }
+//        commandWindow->appendPlainText("gdal_translate "+args.join(" "));
+//        break;
     case ACTIONTYPEMAP2TIFF:
         nameout = QFileInfo(SelectedPathName).baseName() + ".tif";
         namein =  QFileInfo(SelectedPathName).baseName() + "." + SelectedSuffix;//QFileInfo(SelectedPathName).suffix();
@@ -419,6 +419,7 @@ void nutshellqt::PerformAction(int actiontype)
 
     if (actiontype != ACTIONTYPENONE)
     {
+        setWorkdirectory();
         if (isAguila)
             PCRProcess->startDetached(prog,args);
         else

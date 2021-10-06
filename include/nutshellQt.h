@@ -54,7 +54,7 @@
 #define ACTIONTYPEMAPDISPLAY 13
 #define ACTIONTYPEWINDOWSCMD 14
 #define ACTIONTYPEMAP2TIFF 15
-#define ACTIONTYPEMAP2ILWIS 16
+//#define ACTIONTYPEMAP2ILWIS 16
 
 #define ETfilePath ET[tabWidget->currentIndex()].filePath
 #define ETfileName ET[tabWidget->currentIndex()].fileName
@@ -378,8 +378,9 @@ public slots:
     bool saveFileName(const QString &fileName);
     void AddModel(QString name, int syntax);
     void setWorkdirectory();
-    void returnToWorkdirectory();
+   // void returnToWorkdirectory();
     void removeWorkdirectory();
+    void clearWorkdirectories();
     void setWorkdirectoryNr(int index);
     void findDialog();
     void findReplaceDialog();

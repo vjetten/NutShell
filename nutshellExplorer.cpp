@@ -94,8 +94,8 @@ void nutshellqt::setupExplorer()
     treeView->setIndentation(10);
     treeView->setHeaderHidden(false);
     treeView->setSortingEnabled(true);
-    //   treeView->sortByColumn(0, Qt::AscendingOrder);
-    //   treeView->sortByColumn(1, Qt::AscendingOrder);
+    treeView->sortByColumn(0, Qt::AscendingOrder);
+    treeView->sortByColumn(1, Qt::AscendingOrder);
     //   treeView->setDragEnabled(true);
     treeView->setAcceptDrops(true);
     treeView->setDropIndicatorShown(true);
@@ -144,7 +144,7 @@ void nutshellqt::setupExplorer()
 
     treeView->setEditTriggers(QAbstractItemView::NoEditTriggers | QAbstractItemView::EditKeyPressed);
     connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(setRootIndex(QModelIndex)));
-   // connect(treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(setWorkDirectoryIndex(QModelIndex)));
+    //connect(treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(setWorkDirectoryIndex(QModelIndex)));
     // single click on tree sets also fileView
     connect(fileView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(selectFiles(QModelIndex)));
     // double clicked activate pcraster stuff
@@ -227,7 +227,6 @@ void nutshellqt::contextualMenu(const QPoint  &point)
 // Getactiontype is in nutshellaction.cpp
 void nutshellqt::selectFiles(const QModelIndex& index)
 {
-    qDebug() <<"hoi";
     PerformAction(GetActionType());
 }
 //---------------------------------------------------------------
@@ -813,10 +812,17 @@ void nutshellqt::goForward()
 //---------------------------------------------------------------
 void nutshellqt::removeWorkdirectory()
 {
-    comboBox_workdir->removeItem(comboBox_workdir->currentIndex());
+   comboBox_workdir->removeItem(comboBox_workdir->currentIndex());
+   setWorkdirectory();
     //   initExplorer();
 }
 //---------------------------------------------------------------
+void nutshellqt::clearWorkdirectories()
+{
+   comboBox_workdir->clear();
+   setWorkdirectory();
+    //   initExplorer();
+}//---------------------------------------------------------------
 void nutshellqt::setWorkdirectory()
 {
     int place = comboBox_workdir->findText(currentPath);
@@ -830,10 +836,10 @@ void nutshellqt::setWorkdirectory()
         comboBox_workdir->setCurrentIndex(place);
 }
 //---------------------------------------------------------------
-void nutshellqt::returnToWorkdirectory()
-{
-    setWorkdirectoryNr(0);
-}
+//void nutshellqt::returnToWorkdirectory()
+//{
+//    setWorkdirectoryNr(0);
+//}
 //---------------------------------------------------------------
 void nutshellqt::setWorkdirectoryNr(int index)
 {
@@ -842,6 +848,8 @@ void nutshellqt::setWorkdirectoryNr(int index)
     treeView->collapse(dirModel->index(currentPath));
 
     currentPath = comboBox_workdir->currentText();
+    if (currentPath.isEmpty())
+        currentPath = QDir::currentPath();
     // set current working path
 
     //    QString root = QDir(currentPath).rootPath();

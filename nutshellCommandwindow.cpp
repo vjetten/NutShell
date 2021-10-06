@@ -100,6 +100,8 @@ void nutshellqt::parseCommand()
         return;
     }
 
+    setWorkdirectory();
+
     if (args[0].contains(".cmd", Qt::CaseInsensitive) || QFileInfo(args[0] +".cmd").exists()) {
         prog = args[0] +".cmd";
         deleteBatch();
@@ -113,8 +115,10 @@ void nutshellqt::parseCommand()
         return;
     }
 
+
+    setWorkdirectory();
+
     prog = PCRasterAppDirName + args[0] +".exe";
-   // qDebug() << args.count() << args << prog;
 
     if (args[0].contains("gdal", Qt::CaseInsensitive))
         prog = GDALAppDirName + args[0] +".exe";
@@ -122,7 +126,7 @@ void nutshellqt::parseCommand()
     if ((args[0].toUpper() == "PCRCALC")
             && (args1 && args[1].indexOf("-f",Qt::CaseInsensitive) == 0))
     {
-        args.removeAt(0);
+        args.removeAt(0);        
         runModelCommandwindow(prog, args);
     }
     else
@@ -148,20 +152,22 @@ void nutshellqt::parseCommand()
                 PCRProcess->start(prog, args);
             }
             else
-            {
+            {                            
                 args.removeAt(0);
                 PCRProcess->start(prog, args);
                 //     PCRProcess->waitForReadyRead(10000);
 
                 PCRProcess->waitForFinished(-1);
 
-                QStringList S = args[0].split("=");
-                if (QFileInfo(S[0]).exists()) {
-                    MAP *m = Mopen(S[0].toLatin1().data(),M_WRITE);
-                    if (m != nullptr) {
-                        MputProjection(m,PT_YDECT2B);
-                        qDebug() << S[0] << "changed projection";
-                        Mclose(m);
+                if (args.count() > 0) {
+                    QStringList S = args[0].split("=");
+                    if (QFileInfo(S[0]).exists()) {
+                        MAP *m = Mopen(S[0].toLatin1().data(),M_WRITE);
+                        if (m != nullptr) {
+                            MputProjection(m,PT_YDECT2B);
+                            qDebug() << S[0] << "changed projection";
+                            Mclose(m);
+                        }
                     }
                 }
             }

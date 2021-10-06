@@ -33,13 +33,19 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     currentPath = "C:/";
 
+    comboBox_workdir->clear();
+    comboBox_workdir->setInsertPolicy(QComboBox::InsertAtBottom);
+    comboBox_workdir->addItem(currentPath);
+
     getNutshellIni();
 
-    if (CondaInstall && !QFileInfo(CondaDirName).exists())
+    if (CondaDirName.isEmpty() || !QFileInfo(CondaDirName).exists()) {
         CondaInstall = nutOptions.findCondaDir();
+        QStringList sss = nutOptions.getOptions();
+        CondaDirName = sss[2];
+        qDebug() << CondaDirName;
+    }
     // find conda installations
-   if (CondaInstall)
-        CondaDirName = nutOptions.CondaDirName;
 
     setPCRasterDirectories();
 
@@ -115,18 +121,18 @@ void nutshellqt::createModelActions()
 //---------------------------------------------------------------
 void nutshellqt::createMainActions()
 {
-    toolButton_workdir->setVisible(false);
-    toolButton_returnWorkdir->setVisible(false);
-    toolButton_dirprev->setVisible(false);
-    toolButton_dirnext->setVisible(false);
+
+    widget_workDir->setVisible(false);
+
     // main actions
    // connect(toolButton_workdir, SIGNAL(clicked()), this, SLOT(setWorkdirectory()));
-    connect(toolButton_delWorkdir, SIGNAL(clicked()), this, SLOT(removeWorkdirectory()));
+  //  connect(toolButton_delWorkdir, SIGNAL(clicked()), this, SLOT(removeWorkdirectory()));
+  //  connect(toolButton_clearWorkdirs, SIGNAL(clicked()), this, SLOT(clearWorkdirectories()));
    // connect(toolButton_returnWorkdir, SIGNAL(clicked()), this, SLOT(returnToWorkdirectory()));
     connect(comboBox_workdir, SIGNAL(currentIndexChanged(int)), this, SLOT(setWorkdirectoryNr(int)));
     //	connect(tabWidget, SIGNAL(currentChanged(int)),this, SLOT(changeSyntax(int)));
 
-    optionsAct = new QAction(QIcon(":/resources/2X/filenew.png"), "&Options...", this);
+    optionsAct = new QAction(QIcon(":/resources/2X/options2.png"), "&Options...", this);
     connect(optionsAct, SIGNAL(triggered()), this, SLOT(getOptions()));
 
     newfileAct = new QAction(QIcon(":/resources/2X/filenew.png"), "&New empty file...", this);
@@ -329,7 +335,7 @@ void nutshellqt::createContextMenuActions()
     //    connect(cutFileAct, SIGNAL(triggered()), this, SLOT(cutFile()));
     //    connect(copyFileAct, SIGNAL(triggered()), this, SLOT(copyFile()));
     //    connect(pasteFileAct, SIGNAL(triggered()), this, SLOT(pasteFile()));
-    connect(setDirAct, SIGNAL(triggered()), this, SLOT(setWorkdirectory()));
+    //connect(setDirAct, SIGNAL(triggered()), this, SLOT(setWorkdirectory()));
     connect(newDirAct, SIGNAL(triggered()), this, SLOT(newDirectory()));
     connect(delDirAct, SIGNAL(triggered()), this, SLOT(deleteDirectory()));
 }
@@ -509,7 +515,7 @@ void nutshellqt::getOptions()
         } else {
 
             CondaDirName = tempdirs[2];
-            PCRasterAppDirName = CondaDirName+"/Library/bin/";
+            PCRasterAppDirName = CondaDirName+"Library/bin/";
             AguilaDirName = PCRasterAppDirName;
             GDALAppDirName =PCRasterAppDirName;// CondaDirName;
         }

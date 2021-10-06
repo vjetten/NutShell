@@ -94,7 +94,7 @@ void nutshellqt::showHelpOperation()
                         found = QString("op_%1.html").arg(helptxt);
                         // all the rest
                     }
-    qDebug() << URL+found << helptxt;
+    //qDebug() << URL+found << helptxt;
     QDesktopServices::openUrl(QUrl(URL+found));
 
 }
