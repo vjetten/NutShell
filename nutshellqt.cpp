@@ -121,14 +121,17 @@ void nutshellqt::createModelActions()
 //---------------------------------------------------------------
 void nutshellqt::createMainActions()
 {
-
-    widget_workDir->setVisible(false);
+ //   toolButton_workdir->setVisible(false);
+//    toolButton_returnWorkdir->setVisible(false);
+    toolButton_dirprev->setVisible(false);
+    toolButton_dirnext->setVisible(false);
+   // widget_workDir->setVisible(false);
 
     // main actions
-   // connect(toolButton_workdir, SIGNAL(clicked()), this, SLOT(setWorkdirectory()));
-  //  connect(toolButton_delWorkdir, SIGNAL(clicked()), this, SLOT(removeWorkdirectory()));
-  //  connect(toolButton_clearWorkdirs, SIGNAL(clicked()), this, SLOT(clearWorkdirectories()));
-   // connect(toolButton_returnWorkdir, SIGNAL(clicked()), this, SLOT(returnToWorkdirectory()));
+    connect(toolButton_workdir, SIGNAL(clicked()), this, SLOT(setWorkdirectory()));
+    connect(toolButton_delWorkdir, SIGNAL(clicked()), this, SLOT(removeWorkdirectory()));
+    connect(toolButton_clearWorkdirs, SIGNAL(clicked()), this, SLOT(clearWorkdirectories()));
+    connect(toolButton_returnWorkdir, SIGNAL(clicked()), this, SLOT(returnToWorkdirectory()));
     connect(comboBox_workdir, SIGNAL(currentIndexChanged(int)), this, SLOT(setWorkdirectoryNr(int)));
     //	connect(tabWidget, SIGNAL(currentChanged(int)),this, SLOT(changeSyntax(int)));
 

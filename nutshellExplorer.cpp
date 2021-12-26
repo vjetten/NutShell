@@ -104,9 +104,10 @@ void nutshellqt::setupExplorer()
 
     treeView->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(treeView,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(contextualMenu(const QPoint &)));
-//    treeView->setVisible(false);
-//    treeView->resizeColumnToContents(0);
-//    treeView->setVisible(true);
+
+    treeView->setVisible(false);
+    treeView->resizeColumnToContents(0);
+    treeView->setVisible(true);
     treeView->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
 
     fileView->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -144,7 +145,7 @@ void nutshellqt::setupExplorer()
 
     treeView->setEditTriggers(QAbstractItemView::NoEditTriggers | QAbstractItemView::EditKeyPressed);
     connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(setRootIndex(QModelIndex)));
-    //connect(treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(setWorkDirectoryIndex(QModelIndex)));
+    connect(treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(setWorkDirectoryIndex(QModelIndex)));
     // single click on tree sets also fileView
     connect(fileView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(selectFiles(QModelIndex)));
     // double clicked activate pcraster stuff
