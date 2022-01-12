@@ -131,7 +131,7 @@ void nutshellqt::createMainActions()
     connect(toolButton_workdir, SIGNAL(clicked()), this, SLOT(setWorkdirectory()));
     connect(toolButton_delWorkdir, SIGNAL(clicked()), this, SLOT(removeWorkdirectory()));
     connect(toolButton_clearWorkdirs, SIGNAL(clicked()), this, SLOT(clearWorkdirectories()));
-    connect(toolButton_returnWorkdir, SIGNAL(clicked()), this, SLOT(returnToWorkdirectory()));
+   // connect(toolButton_returnWorkdir, SIGNAL(clicked()), this, SLOT(returnToWorkdirectory()));
     connect(comboBox_workdir, SIGNAL(currentIndexChanged(int)), this, SLOT(setWorkdirectoryNr(int)));
     //	connect(tabWidget, SIGNAL(currentChanged(int)),this, SLOT(changeSyntax(int)));
 

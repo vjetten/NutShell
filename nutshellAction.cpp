@@ -208,9 +208,7 @@ void nutshellqt::PerformAction(int actiontype)
                 actiontype == ACTIONTYPEDRAPE ||
                 actiontype == ACTIONTYPEMAPEDIT ||
                 actiontype == ACTIONTYPEMAP2TIFF ||
-              //  actiontype == ACTIONTYPEMAP2ILWIS ||
                 actiontype == ACTIONTYPELEGEND ))
-        //|| actiontype == ACTIONTYPEATTRIBUTE))
     {
         ErrorMsg(QString("%1 is not a PCRaster map.").arg(SelectedPathName));
         actiontype = ACTIONTYPENONE;
@@ -294,14 +292,12 @@ void nutshellqt::PerformAction(int actiontype)
         }
         break;
     case ACTIONTYPEMAPEDIT :
-        if (!fileIsMap) {
-            ErrorMsg(QString("%1 is not a PCRaster map and cannot be loaded in MapEdit.").arg(SelectedFileName));
-            actiontype = ACTIONTYPENONE;
-            break;
-        }
-//        mapedit.loadmap(SelectedPathName);
-//        mapedit.show();
-        args << cmdl;
+        cmdl.replace("!", "");
+        if (cmdl.contains("+"))
+            args << cmdl.split("+");
+        else args << cmdl;
+        qDebug() << cmdl << args;
+
         prog = MapeditDirName + "mapedit.exe";
         break;
     case ACTIONTYPELEGEND:
@@ -424,6 +420,7 @@ void nutshellqt::PerformAction(int actiontype)
             PCRProcess->startDetached(prog,args);
         else
         {
+            qDebug() << prog << args;
             PCRProcess->start(prog,args);
         }
     }

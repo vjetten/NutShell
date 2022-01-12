@@ -31,7 +31,6 @@ SOURCES += main.cpp\
     nutshellevent.cpp \
     nutshelltreeview.cpp \
     nutshellCommandwindow.cpp \
-    nutshellmapedit.cpp \
     pcrlib/angle.c \
     pcrlib/attravai.c \
     pcrlib/attrsize.c \
@@ -103,6 +102,7 @@ SOURCES += main.cpp\
     pcrlib/_gsomece.c \
     pcrlib/_putcell.c \
     pcrlib/_rputrow.c
+
 HEADERS  += include/nutshellqt.h \
     include/csfattr.h \
     include/csfimpl.h \
@@ -116,16 +116,17 @@ HEADERS  += include/nutshellqt.h \
     include/nutshelloptions.h \
     include/findreplaceform.h \
     include/CsfMap.h \
-	include/pcrtypes.h \
-    include/nutshellmapedit.h
+    include/pcrtypes.h
+
 FORMS    += nutshellqt.ui \
     nutshelllegend.ui \
     nutshellmapattribute.ui \
     nutshelloptions.ui \
     findreplaceform.ui \
-    mapedit.ui \
-    nutshellmapedit.ui
+    mapedit.ui
+
 #INCLUDEPATH+=$${QTDIR}/lib
+
 CONFIG(debug, debug|release) {
   MOC_DIR = debug/moc
   OBJECTS_DIR= debug/objs

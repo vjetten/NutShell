@@ -17,7 +17,6 @@
 #include "findreplaceform.h"
 #include "nutshellhelp.h"
 #include "nutshelloptions.h"
-#include "nutshellmapedit.h"
 
 //---------------------------------------------------------------
 
@@ -261,11 +260,6 @@ public:
 
     QTextCursor calcCursor;
     int cursorPosition;
-    //========================
-    //map edit
-    //========================
-
-    nutshellmapedit mapedit;
 
     //========================
     //Vars for pcrcalc process
