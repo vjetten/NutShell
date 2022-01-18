@@ -415,12 +415,12 @@ void nutshellqt::PerformAction(int actiontype)
 
     if (actiontype != ACTIONTYPENONE)
     {
+ //       qDebug() << prog << args;
         setWorkdirectory();
         if (isAguila)
             PCRProcess->startDetached(prog,args);
         else
         {
-            qDebug() << prog << args;
             PCRProcess->start(prog,args);
         }
     }
