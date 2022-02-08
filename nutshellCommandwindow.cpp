@@ -165,7 +165,7 @@ void nutshellqt::parseCommand()
                         MAP *m = Mopen(S[0].toLatin1().data(),M_WRITE);
                         if (m != nullptr) {
                             MputProjection(m,PT_YDECT2B);
-                            qDebug() << S[0] << "changed projection";
+                            //qDebug() << S[0] << "changed projection";
                             Mclose(m);
                         }
                     }

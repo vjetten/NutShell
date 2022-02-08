@@ -17,7 +17,7 @@ void nutshellqt::setPCRasterDirectories()
         PCRasterAppDirName = CondaDirName+"Library/bin/";
         AguilaDirName = PCRasterAppDirName;
         GDALAppDirName =PCRasterAppDirName;
-        qDebug() << PCRasterAppDirName;
+        //qDebug() << PCRasterAppDirName;
     }
     else
     if (PCRasterInstall){

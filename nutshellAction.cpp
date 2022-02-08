@@ -296,7 +296,7 @@ void nutshellqt::PerformAction(int actiontype)
         if (cmdl.contains("+"))
             args << cmdl.split("+");
         else args << cmdl;
-        qDebug() << cmdl << args;
+        //qDebug() << cmdl << args;
 
         prog = MapeditDirName + "mapedit.exe";
         break;

@@ -26,6 +26,8 @@ public slots:
      bool findCondaDir();
 	 void findPcrcalcDir();
      void findGDALDir();
- };
+private slots:
+     void on_toolButton_2_clicked();
+};
 
 #endif // NUTSHELLOPTIONS_H

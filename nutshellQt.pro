@@ -5,7 +5,6 @@
 #-------------------------------------------------
 
 QT       += core gui widgets
-#QWTDIR = C:/Qt/qwt-6.1.4
 TARGET = nutshell
 TEMPLATE = app
 CONFIG += exceptions
@@ -140,9 +139,14 @@ CONFIG(debug, debug|release) {
   RCC_DIR= release/rcc
   DESTDIR = release
 }
-#INCLUDEPATH += "C:\Qt\qwt-6.1.4\src" # $${QWTDIR}/src
-#INCLUDEPATH += $${QWTDIR}/include
+
 INCLUDEPATH += ./include
-#LIBS += $${QWTDIR}/lib
+#INCLUDEPATH += C:\Qt\qwtma\src
+#LIBS += c:/qt/qwtma/lib/libqwt.dll.a
+INCLUDEPATH += C:\Qt\msys64\mingw64\include\qwt-qt5
+LIBS += c:/qt/msys64/mingw64/lib/libqwt-qt5.dll.a
+LIBS += c:/qt/msys64/mingw64/lib/libgdal.dll.a
+
+
 RESOURCES +=  nutshellqt.qrc
 RC_FILE = nutshellqt.rc
