@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 
     nutshellqt w;
 
-    w.setWindowTitle("NutShell (version 5.132 [6 Feb 2022])");
+    w.setWindowTitle("NutShell (version 5.132 [8 Feb 2022])");
     w.showMaximized();
     w.show();
     a.setStyle("Fusion");

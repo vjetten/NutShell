@@ -30,7 +30,10 @@ nutshellqt::nutshellqt(QWidget *parent) :
     // set display filter to all PCR type files
 
     setupCommandwindow();
-
+  //  QString name = qgetenv("USERPROFILE");
+  //  QString name1 = qgetenv("ALLUSERSPROFILE");
+ //commandWindow->appendPlainText(name);
+ //commandWindow->appendPlainText(name1);
     currentPath = "C:/";
 
     comboBox_workdir->clear();
@@ -39,12 +42,13 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     getNutshellIni();
 
-    if (CondaDirName.isEmpty() || !QFileInfo(CondaDirName).exists()) {
+    //if (CondaDirName.isEmpty() || !QFileInfo(CondaDirName).exists()) {
         CondaInstall = nutOptions.findCondaDir();
         QStringList sss = nutOptions.getOptions();
         CondaDirName = sss[2];
-        qDebug() << CondaDirName;
-    }
+       // qDebug() << CondaDirName;
+       // commandWindow->appendPlainText(CondaDirName);
+  //  }
     // find conda installations
 
     setPCRasterDirectories();
@@ -517,7 +521,7 @@ void nutshellqt::getOptions()
             }
         } else {
 
-            CondaDirName = tempdirs[2];
+            CondaDirName = tempdirs[2]+"/";
             PCRasterAppDirName = CondaDirName+"Library/bin/";
             AguilaDirName = PCRasterAppDirName;
             GDALAppDirName =PCRasterAppDirName;// CondaDirName;

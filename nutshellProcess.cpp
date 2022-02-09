@@ -182,7 +182,7 @@ void nutshellqt::runModel()
 
     prog = PCRasterAppDirName + "pcrcalc.exe";
     commandWindow->appendPlainText("pcrcalc "+argsscreen.join(" "));
-
+qDebug() << prog;
     if (!QFileInfo(prog).exists())
     {
         ErrorMsg("pcrcalc not found. Specify directory in File->Options.");
