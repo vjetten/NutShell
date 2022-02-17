@@ -216,7 +216,7 @@ public:
     void createBatch(QString sss, QString args);
     void deleteBatch();
 
-    void findDPIscale(bool check);
+    void findDPIscale();
 
 
     QStringList setEnvironment();
@@ -344,7 +344,7 @@ public slots:
     //void toggleOldcalc(bool checked);
     void readFromStderr();
     void readFromStderrPCR();
-    void checkDPIscale();
+    //void checkDPIscale();
 
 
     //=======================

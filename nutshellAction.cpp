@@ -296,9 +296,11 @@ void nutshellqt::PerformAction(int actiontype)
         if (cmdl.contains("+"))
             args << cmdl.split("+");
         else args << cmdl;
-        //qDebug() << cmdl << args;
 
         prog = MapeditDirName + "mapedit.exe";
+        if (!QFileInfo(prog).exists())
+            WarningMsg("Mapedit not found in Nutshell install directory.")
+       // qDebug() << prog << cmdl << args;
         break;
     case ACTIONTYPELEGEND:
         if (fileIsMap)

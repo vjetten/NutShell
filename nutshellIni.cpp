@@ -46,10 +46,10 @@ void nutshellqt::setNutshellIni()
 {
     QSettings settings(qApp->applicationDirPath()+"/NutShell.ini",QSettings::IniFormat);
     settings.clear();
-    //   settings.setValue("workDirectory", currentPath);
+
     settings.setValue("PCRasterDirectory", PCRasterDirName);
     settings.setValue("GDALDirectory", GDALDirName);
-    settings.setValue("CondaDirectory", CondaDirName);
+   // settings.setValue("CondaDirectory", CondaDirName);
     settings.setValue("DPI",dpiscale);
     settings.setValue("CondaInstall",CondaInstall);
     settings.setValue("PCRasterInstall",PCRasterInstall);
@@ -111,11 +111,11 @@ void nutshellqt::getNutshellIni()
         if (!str.endsWith("\\") && !str.endsWith("/"))
             str = str + "/";
     GDALDirName = str;
-    str = settings.value("CondaDirectory").toString();
-    if (!str.isEmpty())
-        if (!str.endsWith("\\") && !str.endsWith("/"))
-            str = str + "/";
-    CondaDirName = str;
+//    str = settings.value("CondaDirectory").toString();
+//    if (!str.isEmpty())
+//        if (!str.endsWith("\\") && !str.endsWith("/"))
+//            str = str + "/";
+//    CondaDirName = str;
 
     dpiscale = settings.value("DPI").toDouble();
 
@@ -128,42 +128,6 @@ void nutshellqt::getNutshellIni()
             str = str + "/";
     currentPath = str;
     comboBox_workdir->addItem(currentPath);
-
- //   settings.beginGroup("workdir");
-//    QStringList keys = settings.childKeys();
-//    int currentworkdir = 0;
-//    comboBox_workdir->setInsertPolicy(QComboBox::InsertAtBottom);
-//    QStringList dirs;
-//    for (int i = 0; i < keys.count(); i++)
-//    {
-//        QString str = settings.value(keys[i]).toString().simplified();
-
-//        if (!str.isEmpty())
-//        {
-//            if(str.contains("<"))
-//            {
-//                str.remove(str.size()-1,1);
-//                currentworkdir = i;
-//            }
-
-//            if (str.simplified() != "")
-//                dirs << str;
-//        }
-//    }
-//    comboBox_workdir->clear();
-//    if (dirs.isEmpty())
-//        dirs << "C:/";
-
-//    comboBox_workdir->addItems(dirs);
-//    comboBox_workdir->setCurrentIndex(currentworkdir);
-//    currentPath = comboBox_workdir->itemText(currentworkdir);
-//    settings.endGroup();
-
-    //    settings.beginGroup("layout");
-    //    splitter->restoreState(settings.value("splitter1").toByteArray());
-    //    splitter_2->restoreState(settings.value("splitter2").toByteArray());
-    //    splitter_3->restoreState(settings.value("splitter3").toByteArray());
-    //    settings.endGroup();
 
     settings.beginGroup("models");
     QStringList keys = settings.childKeys();
@@ -200,37 +164,4 @@ void nutshellqt::getNutshellIni()
     }
     settings.endGroup();
 }
-//---------------------------------------------------------------
-// OBSOLETE
-//void nutshellqt::getRegPCRaster()
-//{
-
-//    PCRasterDirName = "";
-//    // for pcraster iunstall previous to version 4.0.0
-
-//    bool regv3 = false;
-//    bool regv2 = false;
-
-//    QSettings settings(QSettings::SystemScope,"PCRaster","Install");
-//    QSettings rsettings("HKEY_CURRENT_USER\\Software\\PCRaster\\PCRaster", QSettings::NativeFormat);
-
-//    if (rsettings.contains("Default"))
-//    {
-//        regv3 = true;
-//        PCRasterDirName = rsettings.value("Default", "").toString();
-//    }
-
-//    if (!regv3 && settings.contains("Default"))
-//    {
-//        regv2 = true;
-//        PCRasterDirName = settings.value("Default", "").toString();
-//    }
-
-//    if (!regv3 && !regv2)
-//        return;
-
-//    WarningMsg(QString("Old PCRaster version found. This will probably work but you should upgrade to version 4.0.x @ pcraster.geo.uu.nl"));
-
-//    QDir dir(PCRasterDirName);
-//}
 //---------------------------------------------------------------

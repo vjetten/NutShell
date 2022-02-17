@@ -18,16 +18,21 @@ public:
      void setupOptions(QStringList SL);
      bool CondaInstall;
      bool GetCondaAllEnvs();
+     QString getFileorDir(QString inputdir,QString title, QStringList filters, int doFile);
 
      QString CondaDirName;
 
 public slots:
-     void on_checkBoxInstallation_stateChanged(int state);
+     //void on_checkBoxInstallation_stateChanged(int state);
      bool findCondaDir();
 	 void findPcrcalcDir();
      void findGDALDir();
 private slots:
-     void on_toolButton_2_clicked();
+     //void on_toolButton_2_clicked();
+     void on_groupBox_Conda_clicked(bool checked);
+     void on_groupBox_PCR_clicked(bool checked);
+     void on_toolButton_1_clicked();
+     void on_toolButton_4_clicked();
 };
 
 #endif // NUTSHELLOPTIONS_H

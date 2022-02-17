@@ -30,10 +30,7 @@ nutshellqt::nutshellqt(QWidget *parent) :
     // set display filter to all PCR type files
 
     setupCommandwindow();
-  //  QString name = qgetenv("USERPROFILE");
-  //  QString name1 = qgetenv("ALLUSERSPROFILE");
- //commandWindow->appendPlainText(name);
- //commandWindow->appendPlainText(name1);
+
     currentPath = "C:/";
 
     comboBox_workdir->clear();
@@ -42,13 +39,8 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     getNutshellIni();
 
-    //if (CondaDirName.isEmpty() || !QFileInfo(CondaDirName).exists()) {
-        CondaInstall = nutOptions.findCondaDir();
-        QStringList sss = nutOptions.getOptions();
-        CondaDirName = sss[2];
-       // qDebug() << CondaDirName;
-       // commandWindow->appendPlainText(CondaDirName);
-  //  }
+    QStringList sss = nutOptions.getOptions();
+    CondaDirName = sss[1];
     // find conda installations
 
     setPCRasterDirectories();
@@ -61,7 +53,7 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     changeName = false;
 
-    findDPIscale(true);
+    findDPIscale();
 
 }
 //---------------------------------------------------------------
@@ -485,8 +477,8 @@ void nutshellqt::getOptions()
     QStringList tempdirs;
     tempdirs.clear();
 
-    tempdirs << PCRasterDirName  << GDALDirName << CondaDirName << QString::number(dpiscale) << (CondaInstall ? "1" : "0");
-    //qDebug() << "into options" << tempdirs << CondaInstall;
+    //tempdirs << PCRasterDirName  << GDALDirName << CondaDirName << QString::number(dpiscale) << (CondaInstall ? "1" : "0");
+    tempdirs << (CondaInstall ? "1" : "0") << CondaDirName << PCRasterDirName  << GDALDirName;
 
     // push options to window
     nutOptions.setupOptions(tempdirs);
@@ -498,20 +490,18 @@ void nutshellqt::getOptions()
         // after closing options window get vars
         tempdirs = nutOptions.getOptions();
 
-        CondaInstall = tempdirs[4] == "0" ? false : true;
-
-        opDPIscale = tempdirs[3].toDouble();
+        CondaInstall = tempdirs[0] == "0" ? false : true;
 
         if(!CondaInstall) {
 
-            PCRasterDirName = tempdirs[0];
+            PCRasterDirName = tempdirs[2];
             if (!PCRasterDirName.isEmpty()) {
                 PCRasterDirName.replace("\\","/");
                 if (!PCRasterDirName.endsWith("/"))
                     PCRasterDirName = PCRasterDirName + "/";
                 PCRasterAppDirName = PCRasterDirName+ "bin/";
 
-                GDALDirName = tempdirs[1];
+                GDALDirName = tempdirs[3];
                 GDALDirName.replace("\\","/");
                 if (!GDALDirName.endsWith("/"))
                     GDALDirName = GDALDirName + "/";
@@ -521,13 +511,13 @@ void nutshellqt::getOptions()
             }
         } else {
 
-            CondaDirName = tempdirs[2]+"/";
+            CondaDirName = tempdirs[1]+"/";
             PCRasterAppDirName = CondaDirName+"Library/bin/";
             AguilaDirName = PCRasterAppDirName;
             GDALAppDirName =PCRasterAppDirName;// CondaDirName;
         }
 
-        findDPIscale(false);
+        //findDPIscale(false);
     }
 }
 //---------------------------------------------------------------
@@ -559,12 +549,12 @@ void nutshellqt::setfontSize()
 
 }
 //---------------------------------------------------------------
-void nutshellqt::checkDPIscale()
-{
-    findDPIscale(true);
-}
+//void nutshellqt::checkDPIscale()
+//{
+//    findDPIscale(true);
+//}
 
-void nutshellqt::findDPIscale(bool check)
+void nutshellqt::findDPIscale()
 {
     //QRect rect = qApp->screens();
     QRect rect = QGuiApplication::primaryScreen()->availableGeometry();
@@ -597,8 +587,8 @@ void nutshellqt::findDPIscale(bool check)
     }
 
 
-    if (!check)
-        dpiscale = opDPIscale;
+   // if (!check)
+     //   dpiscale = opDPIscale;
 
     toolBar->setIconSize(iSize);
   //  setfontSize();
