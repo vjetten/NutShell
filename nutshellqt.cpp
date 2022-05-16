@@ -38,15 +38,15 @@ nutshellqt::nutshellqt(QWidget *parent) :
     comboBox_workdir->addItem(currentPath);
 
     getNutshellIni();
-
+qDebug() <<"1";
     QStringList sss = nutOptions.getOptions();
     CondaDirName = sss[1];
     // find conda installations
-
+qDebug() <<"2";
     setPCRasterDirectories();
-
+qDebug() <<"3";
     setWorkdirectory();
-
+qDebug() <<"4";
     STATUS("");
 
     commandcounter = -1;
