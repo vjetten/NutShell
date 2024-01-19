@@ -38,15 +38,15 @@ nutshellqt::nutshellqt(QWidget *parent) :
     comboBox_workdir->addItem(currentPath);
 
     getNutshellIni();
-qDebug() <<"1";
+
     QStringList sss = nutOptions.getOptions();
     CondaDirName = sss[1];
     // find conda installations
-qDebug() <<"2";
+
     setPCRasterDirectories();
-qDebug() <<"3";
+
     setWorkdirectory();
-qDebug() <<"4";
+
     STATUS("");
 
     commandcounter = -1;
@@ -54,7 +54,7 @@ qDebug() <<"4";
     changeName = false;
 
     findDPIscale();
-
+qDebug() <<">>> init done";
 }
 //---------------------------------------------------------------
 nutshellqt::~nutshellqt()
@@ -126,7 +126,7 @@ void nutshellqt::createMainActions()
     // main actions
     connect(toolButton_workdir, SIGNAL(clicked()), this, SLOT(setWorkdirectory()));
     connect(toolButton_delWorkdir, SIGNAL(clicked()), this, SLOT(removeWorkdirectory()));
-    connect(toolButton_clearWorkdirs, SIGNAL(clicked()), this, SLOT(clearWorkdirectories()));
+   // connect(toolButton_clearWorkdirs, SIGNAL(clicked()), this, SLOT(clearWorkdirectories()));
    // connect(toolButton_returnWorkdir, SIGNAL(clicked()), this, SLOT(returnToWorkdirectory()));
     connect(comboBox_workdir, SIGNAL(currentIndexChanged(int)), this, SLOT(setWorkdirectoryNr(int)));
     //	connect(tabWidget, SIGNAL(currentChanged(int)),this, SLOT(changeSyntax(int)));

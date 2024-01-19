@@ -160,6 +160,7 @@ Makefile: nutshellQt.pro ../../../Qt/msys64/mingw64/share/qt5/mkspecs/win32-g++/
 		../../../Qt/msys64/mingw64/share/qt5/mkspecs/features/qt_config.prf \
 		../../../Qt/msys64/mingw64/share/qt5/mkspecs/win32-g++/qmake.conf \
 		../../../Qt/msys64/mingw64/share/qt5/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		../../../Qt/msys64/mingw64/share/qt5/mkspecs/features/exclusive_builds.prf \
 		../../../Qt/msys64/mingw64/share/qt5/mkspecs/features/toolchain.prf \
 		../../../Qt/msys64/mingw64/share/qt5/mkspecs/features/default_pre.prf \
@@ -185,7 +186,6 @@ Makefile: nutshellQt.pro ../../../Qt/msys64/mingw64/share/qt5/mkspecs/win32-g++/
 		../../../Qt/msys64/mingw64/share/qt5/mkspecs/features/lex.prf \
 		nutshellQt.pro \
 		../../../Qt/msys64/mingw64/lib/qtmain.prl \
-		.qmake.stash \
 		../../../Qt/msys64/mingw64/share/qt5/mkspecs/features/build_pass.prf \
 		nutshellqt.qrc
 	$(QMAKE) -o Makefile nutshellQt.pro -spec win32-g++ "CONFIG+=qtquickcompiler"
@@ -279,6 +279,7 @@ Makefile: nutshellQt.pro ../../../Qt/msys64/mingw64/share/qt5/mkspecs/win32-g++/
 ../../../Qt/msys64/mingw64/share/qt5/mkspecs/features/qt_config.prf:
 ../../../Qt/msys64/mingw64/share/qt5/mkspecs/win32-g++/qmake.conf:
 ../../../Qt/msys64/mingw64/share/qt5/mkspecs/features/spec_post.prf:
+.qmake.stash:
 ../../../Qt/msys64/mingw64/share/qt5/mkspecs/features/exclusive_builds.prf:
 ../../../Qt/msys64/mingw64/share/qt5/mkspecs/features/toolchain.prf:
 ../../../Qt/msys64/mingw64/share/qt5/mkspecs/features/default_pre.prf:
@@ -304,7 +305,6 @@ Makefile: nutshellQt.pro ../../../Qt/msys64/mingw64/share/qt5/mkspecs/win32-g++/
 ../../../Qt/msys64/mingw64/share/qt5/mkspecs/features/lex.prf:
 nutshellQt.pro:
 ../../../Qt/msys64/mingw64/lib/qtmain.prl:
-.qmake.stash:
 ../../../Qt/msys64/mingw64/share/qt5/mkspecs/features/build_pass.prf:
 nutshellqt.qrc:
 qmake: FORCE

@@ -18,6 +18,7 @@
  */
 
 //---------------------------------------------------------------
+/*
 /// SLOT triggered when the tableview is populated: resize the columns but keep user control of column width
 void nutshellqt::initExplorer2(QString)
 {
@@ -56,6 +57,7 @@ void nutshellqt::initExplorer(QString)
 
     changeFileFilter(_filternr);
 }
+*/
 //---------------------------------------------------------------
 void nutshellqt::setupExplorer()
 {
@@ -78,46 +80,39 @@ void nutshellqt::setupExplorer()
     dirModel->setFilter ( QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Drives );
     dirModel->setNameFilterDisables(false);
     // directory tree view model, show only dirs
+    dirModel->setHeaderData(1, Qt::Horizontal, QVariant("Date Modified"));
+    // Set the order of the columns (0 - Name, 1 - Date Modified, 2 - Size)
+   //   dirModel->setHeaderData(1, Qt::Horizontal, QVariant());
+    //  dirModel->setHeaderData(3, Qt::Horizontal, QVariant());
 
-    fileModel = new FSM(this);//QFileSystemModel(this); //
+    fileModel = new QFileSystemModel(this); //new FSM(this);
     fileModel->setReadOnly(false);
     fileModel->setFilter( QDir::Files | QDir::NoDotAndDotDot );
     fileModel->setNameFilterDisables(false);
     // file list view model, show only files
 
-
     treeView = new myTreeView();
     verticalLayout_tree->insertWidget(0, treeView);
-
+    treeView->setModel(dirModel);
     treeView->header()->setStretchLastSection(true);
     treeView->setUniformRowHeights(true);
-    treeView->setIndentation(10);
-    treeView->setHeaderHidden(false);
     treeView->setSortingEnabled(true);
     treeView->sortByColumn(0, Qt::AscendingOrder);
     treeView->sortByColumn(1, Qt::AscendingOrder);
-    //   treeView->setDragEnabled(true);
-    treeView->setAcceptDrops(true);
-    treeView->setDropIndicatorShown(true);
-
-    treeView->setModel(dirModel);
-
-    treeView->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(treeView,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(contextualMenu(const QPoint &)));
-
-    treeView->setVisible(false);
+//    treeView->setDragEnabled(true);
+//    treeView->setAcceptDrops(true);
+//    treeView->setDropIndicatorShown(true);
     treeView->resizeColumnToContents(0);
-    treeView->setVisible(true);
     treeView->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+
+    treeView->setContextMenuPolicy(Qt::NoContextMenu);
+ //   connect(treeView,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(contextualMenu(const QPoint &)));
 
     fileView->setSelectionMode(QAbstractItemView::ExtendedSelection);
     fileView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    //fileView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
     fileView->horizontalHeader()->setStretchLastSection(true);
-    QCoreApplication::sendPostedEvents(this, 0);
     fileView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    fileView->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
-
+    fileView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);//Interactive);
     fileView->setShowGrid(false);
     fileView->setWordWrap(false);
     fileView->sortByColumn(0, Qt::AscendingOrder);
@@ -134,18 +129,18 @@ void nutshellqt::setupExplorer()
     // delegate paints filenames for mapseries blue
 
     selectionModel = new QItemSelectionModel(fileModel);
-
     fileView->setSelectionModel(selectionModel);
     selectionDirModel = new QItemSelectionModel(dirModel);
     treeView->setSelectionModel(selectionDirModel);
 
-    connect(fileModel, SIGNAL(directoryLoaded(QString)),this, SLOT(initExplorer(QString)));
-    connect(fileModel, SIGNAL(rootPathChanged(QString)),this, SLOT(initExplorer2(QString)));
+ //   connect(fileModel, SIGNAL(directoryLoaded(QString)),this, SLOT(initExplorer(QString)));
+ //   connect(fileModel, SIGNAL(rootPathChanged(QString)),this, SLOT(initExplorer2(QString)));
     // link finished updating tableview to resizing columns
 
-    treeView->setEditTriggers(QAbstractItemView::NoEditTriggers | QAbstractItemView::EditKeyPressed);
+ //   treeView->setEditTriggers(QAbstractItemView::NoEditTriggers | QAbstractItemView::EditKeyPressed);
     connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(setRootIndex(QModelIndex)));
-    connect(treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(setWorkDirectoryIndex(QModelIndex)));
+   // connect(treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(setWorkDirectoryIndex(QModelIndex)));
+
     // single click on tree sets also fileView
     connect(fileView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(selectFiles(QModelIndex)));
     // double clicked activate pcraster stuff
@@ -168,10 +163,12 @@ void nutshellqt::setupExplorer()
     connect(toolButton_showOutput, SIGNAL(clicked()), this, SLOT(showReport()));
     connect(toolButton_deletereport, SIGNAL(clicked()), this, SLOT(showDelReport())); //deleteScriptReport()));
 
+//QCoreApplication::sendPostedEvents(this, 0);
+
 
     expToolBar = new QToolBar();
     expToolBar->setOrientation(Qt::Vertical);
-        expToolBar->setIconSize(iSize);
+    expToolBar->setIconSize(iSize);
     verticalLayout->insertWidget(0, expToolBar);
     expToolBar->addWidget(toolButton_showPCR);
     expToolBar->addWidget(toolButton_showMaps);
@@ -183,14 +180,12 @@ void nutshellqt::setupExplorer()
     expToolBar->addWidget(toolButton_showTIF);
     expToolBar->addWidget(toolButton_showAll);
 
-
-
     statusBarProgress.setMaximum(100);
     statusBarProgress.setValue(0);
     statusBarProgress.setMinimumHeight(16);
     statusBarProgress.setMaximumHeight(16);
     statusBarProgress.setMaximumWidth(250);
-    statusBarProgress.setFormat ( "%v");
+    statusBarProgress.setFormat ("%v");
 
     fileView->installEventFilter(this);
     // react to single and double click for pcraster
@@ -209,6 +204,9 @@ void nutshellqt::setupExplorer()
     future.clear();
 
     expFont = 32;
+
+    qDebug() << "setup explorer done";
+
 }
 //---------------------------------------------------------------
 void nutshellqt::contextualMenu(const QPoint  &point)
@@ -238,12 +236,18 @@ void nutshellqt::setWorkDirectoryIndex(const QModelIndex& index)
 //---------------------------------------------------------------
 //! simplified set rootindex of filelist based on treeview click
 //! treeview click is always a dir so no need to check
+//!
+
 void nutshellqt::setRootIndex(const QModelIndex& index)
 {
-    QString oldpath = currentPath;
+
+  //  QString oldpath = currentPath;
 
     currentPath = dirModel->fileInfo(index).absoluteFilePath();
     // get current path from the dirmodel
+
+    treeView->setRootIndex(dirModel->index(QDir::rootPath()));
+    // this is c:\\ or d:\\ etc else only part of the tree is shown
 
     treeView->setCurrentIndex(index);
     dirModel->setRootPath(currentPath);
@@ -255,18 +259,22 @@ void nutshellqt::setRootIndex(const QModelIndex& index)
 
     changeFileFilter(_filternr);
     // to update getMapSeries when changing dir with mouseclick
+    treeView->hideColumn(1);
+    treeView->hideColumn(2);
 
-    if(oldpath != currentPath)
-    {
-        future.clear();
-        history.push(currentPath);
-    }
+//    if(oldpath != currentPath)
+//    {
+//        future.clear();
+//        history.push(currentPath);
+//    }
 
-    toolButton_dirprev->setEnabled(!history.isEmpty());
-    toolButton_dirnext->setEnabled(!future.isEmpty());
+//    toolButton_dirprev->setEnabled(!history.isEmpty());
+//    toolButton_dirnext->setEnabled(!future.isEmpty());
+    qDebug() << "setrootindex" << currentPath;
+  //  QCoreApplication::sendPostedEvents(this, 0);
 
-    QCoreApplication::sendPostedEvents(this, 0);
 }
+
 //---------------------------------------------------------------
 // the following show actions trigger fileFilterChange(QString S)
 void nutshellqt::showPCR()
@@ -392,6 +400,7 @@ void nutshellqt::changeFileFilter(int filterNr)
             toolButton_showPCR->setChecked(true);
         }
         currentFilter << baseFilters[filterNr].split(";");
+
         // get the right base filter from the hardcoded list
         if (ismapseries)
             currentFilter << getMapSeries().split(";");
@@ -409,19 +418,6 @@ void nutshellqt::changeFileFilter(int filterNr)
 
     fileModel->setNameFilters(currentFilter);
     // set the file model to the filtered output
-
-//   fileView->setVisible(false);
-   // fileView->resizeColumnsToContents();
-   // fileView->resizeRowsToContents();
-//  //  fileView->setVisible(true);
-
-//    fileView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-//    fileView->resizeColumnsToContents();
-//    QCoreApplication::sendPostedEvents(this, 0);
-
-//    fileView->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
-
-
 }
 //---------------------------------------------------------------
 //! OBSOLETE this function is not used anymore

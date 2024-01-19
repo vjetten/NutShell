@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>244</width>
-    <height>484</height>
+    <width>271</width>
+    <height>579</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Map header information</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="nutshellqt.qrc">
+   <iconset>
     <normaloff>:/resources/header.png</normaloff>:/resources/header.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
@@ -59,7 +59,6 @@
      </property>
      <property name="font">
       <font>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -129,7 +128,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <bold>false</bold>
          </font>
         </property>
@@ -137,7 +135,7 @@
          <string>Boolean</string>
         </property>
         <attribute name="buttonGroup">
-         <string>buttonGroup</string>
+         <string notr="true">buttonGroup</string>
         </attribute>
        </widget>
       </item>
@@ -182,7 +180,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <bold>false</bold>
          </font>
         </property>
@@ -190,7 +187,7 @@
          <string>Scalar</string>
         </property>
         <attribute name="buttonGroup">
-         <string>buttonGroup</string>
+         <string notr="true">buttonGroup</string>
         </attribute>
        </widget>
       </item>
@@ -235,7 +232,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <bold>false</bold>
          </font>
         </property>
@@ -243,7 +239,7 @@
          <string>Nominal</string>
         </property>
         <attribute name="buttonGroup">
-         <string>buttonGroup</string>
+         <string notr="true">buttonGroup</string>
         </attribute>
        </widget>
       </item>
@@ -288,7 +284,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <bold>false</bold>
          </font>
         </property>
@@ -296,7 +291,7 @@
          <string>Directional</string>
         </property>
         <attribute name="buttonGroup">
-         <string>buttonGroup</string>
+         <string notr="true">buttonGroup</string>
         </attribute>
        </widget>
       </item>
@@ -341,7 +336,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <bold>false</bold>
          </font>
         </property>
@@ -349,7 +343,7 @@
          <string>Ordinal</string>
         </property>
         <attribute name="buttonGroup">
-         <string>buttonGroup</string>
+         <string notr="true">buttonGroup</string>
         </attribute>
        </widget>
       </item>
@@ -394,7 +388,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <bold>false</bold>
          </font>
         </property>
@@ -402,7 +395,7 @@
          <string>LDD</string>
         </property>
         <attribute name="buttonGroup">
-         <string>buttonGroup</string>
+         <string notr="true">buttonGroup</string>
         </attribute>
        </widget>
       </item>
@@ -450,7 +443,6 @@
      </property>
      <property name="font">
       <font>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -511,7 +503,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <bold>false</bold>
          </font>
         </property>
@@ -519,7 +510,7 @@
          <string>Y top to bottom</string>
         </property>
         <attribute name="buttonGroup">
-         <string>buttonGroup_2</string>
+         <string notr="true">buttonGroup_2</string>
         </attribute>
        </widget>
       </item>
@@ -564,7 +555,6 @@
         </property>
         <property name="font">
          <font>
-          <weight>50</weight>
           <bold>false</bold>
          </font>
         </property>
@@ -572,7 +562,7 @@
          <string>Y bottom to Top</string>
         </property>
         <attribute name="buttonGroup">
-         <string>buttonGroup_2</string>
+         <string notr="true">buttonGroup_2</string>
         </attribute>
        </widget>
       </item>
@@ -582,7 +572,7 @@
    <item row="5" column="0">
     <widget class="QGroupBox" name="groupBox">
      <layout class="QGridLayout" name="gridLayout">
-      <property name="margin">
+      <property name="margin" stdset="0">
        <number>6</number>
       </property>
       <item row="0" column="0">
@@ -684,9 +674,9 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="groupBoxRowCol">
      <layout class="QGridLayout" name="gridLayout_2">
-      <property name="margin">
+      <property name="margin" stdset="0">
        <number>6</number>
       </property>
       <item row="0" column="0">
@@ -815,7 +805,6 @@
     <widget class="QLabel" name="label_header">
      <property name="font">
       <font>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -826,9 +815,7 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="nutshellqt.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>

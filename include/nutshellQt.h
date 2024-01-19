@@ -332,8 +332,8 @@ protected:
 public slots:
     //void doSomething(QProcess::ProcessState hoi);
 
-    void initExplorer(QString);
-    void initExplorer2(QString);
+//    void initExplorer(QString);
+//    void initExplorer2(QString);
     //=========================
     //slots to run model script
     //=========================
@@ -534,8 +534,8 @@ private:
 
     // explorer variables
     QFileSystemModel *dirModel;
-//    QFileSystemModel *fileModel;
-    FSM *fileModel;
+    QFileSystemModel *fileModel;
+   // FSM *fileModel;
     QItemSelectionModel *selectionModel;
     QItemSelectionModel *selectionDirModel;
 
