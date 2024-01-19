@@ -53,17 +53,11 @@ void nutshellqt::setNutshellIni()
     settings.setValue("DPI",dpiscale);
     settings.setValue("CondaInstall",CondaInstall);
     settings.setValue("PCRasterInstall",PCRasterInstall);
-    settings.setValue("workdir",currentPath);
 
-    //settings.setValue(QString("workdir/current"),comboBox_workdir->currentIndex());
-//    for (int i = 0; i < comboBox_workdir->count(); i++)
-//    {
-//    //    qDebug() << comboBox_workdir->itemText(i);
-//        if (i == comboBox_workdir->currentIndex())
-//            settings.setValue(QString("workdir/workdir%1").arg(i),comboBox_workdir->itemText(i)+"<");
-//        else
-//            settings.setValue(QString("workdir/workdir%1").arg(i),comboBox_workdir->itemText(i));
-//    }
+    QStringList L;
+    for (int i = 0; i < comboBox_workdir->count(); i++)
+        L << comboBox_workdir->itemText(i);
+    settings.setValue("workdir",L.join(';'));
 
     //settings.setValue(QString("modelnr/active"),tabWidget->currentIndex());
     settings.setValue("models/current",tabWidget->currentIndex());
@@ -123,11 +117,19 @@ void nutshellqt::getNutshellIni()
     PCRasterInstall = settings.value("PCRasterInstall").toString() == "true";
 
     str = settings.value("workdir").toString();
-    if (!str.isEmpty())
-        if (!str.endsWith("\\") && !str.endsWith("/"))
-            str = str + "/";
-    currentPath = str;
-    comboBox_workdir->addItem(currentPath);
+    QStringList L;
+    L = str.split(';');
+//    for (int i = 0; i < L.count(); i++)
+//        if (!L[i].isEmpty()) {
+//            if (!L[i].endsWith("\\") && !L[i].endsWith("/"))
+//                L[i] = L[i] + "/";
+//            if (!comboBox_workdir->findText(L[i]))
+//                comboBox_workdir->addItem(L[i]);
+//        }
+    comboBox_workdir->addItems(str.split(';'));
+    currentPath = comboBox_workdir->itemText(0);
+    qDebug() << currentPath;
+    if (currentPath == "") currentPath = "c:/";
 
     settings.beginGroup("models");
     QStringList keys = settings.childKeys();

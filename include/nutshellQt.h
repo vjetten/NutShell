@@ -153,6 +153,7 @@ public:
       return QFileSystemModel::data(index, role);
     }
 };
+
 //---------------------------------------------------------------
 class QDetachableProcess : public QProcess
 {
@@ -170,13 +171,45 @@ class QDropEvent;
 
 class myTreeView : public QTreeView
 {
+//    myTreeView(QWidget *parent = nullptr) : QTreeView(parent), hasFocus(false) {}
+
 public:
     myTreeView(QTreeView *parent = nullptr);
     QList <filenameseries> fns;
     QString StripForName(QString S);
 
 protected:
+    void focusInEvent(QFocusEvent *event) override {
+        hasFocus = true;
+        QTreeView::focusInEvent(event);
+    }
+
+    void focusOutEvent(QFocusEvent *event) override {
+        hasFocus = false;
+        QTreeView::focusOutEvent(event);
+    }
+
+    void mouseDoubleClickEvent(QMouseEvent *event) override {
+        if (hasFocus) {
+            QModelIndex index = indexAt(event->pos());
+            if (index.isValid() && model()->hasChildren(index)) {
+                if (isExpanded(index)) {
+                    collapse(index);
+                } else {
+                    expand(index);
+                }
+            } else {
+                QTreeView::mouseDoubleClickEvent(event);
+            }
+        } else {
+            QTreeView::mouseDoubleClickEvent(event);
+        }
+    }
+
     void dropEvent(QDropEvent *event);
+
+private:
+    bool hasFocus;
 };
 //---------------------------------------------------------------
 class nutshellqt : public QMainWindow, private Ui::nutshellqt
@@ -372,7 +405,7 @@ public slots:
     bool saveFileName(const QString &fileName);
     void AddModel(QString name, int syntax);
     void setWorkdirectory();
-   // void returnToWorkdirectory();
+    void returnToWorkdirectory();
     void removeWorkdirectory();
     void clearWorkdirectories();
     void setWorkdirectoryNr(int index);
@@ -547,8 +580,6 @@ private:
     bool processError;
     QProcess *calcProcess;
     QProcess *CMDProcess;
-
-
 };
 
 #endif // NUTSHELLQT_H

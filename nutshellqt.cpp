@@ -31,11 +31,12 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     setupCommandwindow();
 
-    currentPath = "C:/";
+   // currentPath = "C:/";
 
     comboBox_workdir->clear();
     comboBox_workdir->setInsertPolicy(QComboBox::InsertAtBottom);
-    comboBox_workdir->addItem(currentPath);
+    comboBox_workdir->setDuplicatesEnabled(false);
+   // comboBox_workdir->addItem(currentPath);
 
     getNutshellIni();
 
@@ -54,7 +55,7 @@ nutshellqt::nutshellqt(QWidget *parent) :
     changeName = false;
 
     findDPIscale();
-qDebug() <<">>> init done";
+
 }
 //---------------------------------------------------------------
 nutshellqt::~nutshellqt()
@@ -127,7 +128,7 @@ void nutshellqt::createMainActions()
     connect(toolButton_workdir, SIGNAL(clicked()), this, SLOT(setWorkdirectory()));
     connect(toolButton_delWorkdir, SIGNAL(clicked()), this, SLOT(removeWorkdirectory()));
    // connect(toolButton_clearWorkdirs, SIGNAL(clicked()), this, SLOT(clearWorkdirectories()));
-   // connect(toolButton_returnWorkdir, SIGNAL(clicked()), this, SLOT(returnToWorkdirectory()));
+    connect(toolButton_returnWorkdir, SIGNAL(clicked()), this, SLOT(returnToWorkdirectory()));
     connect(comboBox_workdir, SIGNAL(currentIndexChanged(int)), this, SLOT(setWorkdirectoryNr(int)));
     //	connect(tabWidget, SIGNAL(currentChanged(int)),this, SLOT(changeSyntax(int)));
 

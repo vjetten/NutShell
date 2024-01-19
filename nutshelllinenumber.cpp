@@ -163,6 +163,7 @@ void nutshelleditor::clearerror()
 //---------------------------------------------------------------
 void nutshelleditor::mouseDoubleClickEvent ( QMouseEvent * event )
 {
+
    QTextCursor cur = textCursor();
    cur.select(QTextCursor::WordUnderCursor);
 

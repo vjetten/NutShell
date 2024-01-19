@@ -170,7 +170,7 @@
                </sizepolicy>
               </property>
               <property name="toolTip">
-               <string>Return explorer to work directory</string>
+               <string>Return to work directory</string>
               </property>
               <property name="text">
                <string>...</string>

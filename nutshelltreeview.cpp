@@ -95,18 +95,9 @@ void myTreeView::dropEvent(QDropEvent *event)
             {
                dir.rename(filePath,filePath+"tmpqt");
                // rename the old file to a temp name
-//               if (first)
-//               {
-//                  QTreeView::dropEvent(event);
-//                  first = false;
-//               }
-//               else
-//               {
-                  QFile(str).copy(filePath);
-                  if (event->dropAction() == (Qt::MoveAction))
-                     QFile(str).remove();
-             //  }
-
+               QFile(str).copy(filePath);
+               if (event->dropAction() == (Qt::MoveAction))
+                   QFile(str).remove();
                // continue to execute the drop event
                dir.rename(filePath,newFilePath);
                // rename the new file to the one with _copy(s) in it
@@ -115,17 +106,9 @@ void myTreeView::dropEvent(QDropEvent *event)
             }
             else
             {
-//               if (first)
-//               {
-//                  QTreeView::dropEvent(event);
-//                  first = false;
-//               }
-//               else
-//               {
-                  QFile(str).copy(filePath);
-                  if (event->dropAction() == (Qt::MoveAction))
-                     QFile(str).remove();
-             //  }
+                QFile(str).copy(filePath);
+                if (event->dropAction() == (Qt::MoveAction))
+                    QFile(str).remove();
             }
             bar->setValue(k++);
          }

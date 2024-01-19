@@ -18,46 +18,6 @@
  */
 
 //---------------------------------------------------------------
-/*
-/// SLOT triggered when the tableview is populated: resize the columns but keep user control of column width
-void nutshellqt::initExplorer2(QString)
-{
- //   qDebug() << "initexplorer";
-    // cannot be done earlier because treeview is not populated yet
-    treeView->hideColumn(1);
-    treeView->hideColumn(2);
-    treeView->setVisible(false);
-    treeView->resizeColumnToContents(0);
-    treeView->setVisible(true);
-
-    // !!!!
-//        fileView->setVisible(false);
-//        fileView->resizeColumnsToContents();
-//        fileView->resizeRowsToContents();
-//        fileView->setVisible(true);
-
-    changeFileFilter(_filternr);
-}
-
-void nutshellqt::initExplorer(QString)
-{
- //   qDebug() << "initexplorer";
-    // cannot be done earlier because treeview is not populated yet
-    treeView->hideColumn(1);
-    treeView->hideColumn(2);
-    treeView->setVisible(false);
-    treeView->resizeColumnToContents(0);
-    treeView->setVisible(true);
-
-    // !!!!
-//        fileView->setVisible(false);
-//        fileView->resizeColumnsToContents();
-//        fileView->resizeRowsToContents();
-//        fileView->setVisible(true);
-
-    changeFileFilter(_filternr);
-}
-*/
 //---------------------------------------------------------------
 void nutshellqt::setupExplorer()
 {
@@ -80,10 +40,6 @@ void nutshellqt::setupExplorer()
     dirModel->setFilter ( QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Drives );
     dirModel->setNameFilterDisables(false);
     // directory tree view model, show only dirs
-    dirModel->setHeaderData(1, Qt::Horizontal, QVariant("Date Modified"));
-    // Set the order of the columns (0 - Name, 1 - Date Modified, 2 - Size)
-   //   dirModel->setHeaderData(1, Qt::Horizontal, QVariant());
-    //  dirModel->setHeaderData(3, Qt::Horizontal, QVariant());
 
     fileModel = new QFileSystemModel(this); //new FSM(this);
     fileModel->setReadOnly(false);
@@ -133,13 +89,9 @@ void nutshellqt::setupExplorer()
     selectionDirModel = new QItemSelectionModel(dirModel);
     treeView->setSelectionModel(selectionDirModel);
 
- //   connect(fileModel, SIGNAL(directoryLoaded(QString)),this, SLOT(initExplorer(QString)));
- //   connect(fileModel, SIGNAL(rootPathChanged(QString)),this, SLOT(initExplorer2(QString)));
-    // link finished updating tableview to resizing columns
-
  //   treeView->setEditTriggers(QAbstractItemView::NoEditTriggers | QAbstractItemView::EditKeyPressed);
     connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(setRootIndex(QModelIndex)));
-   // connect(treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(setWorkDirectoryIndex(QModelIndex)));
+    connect(treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(setRootIndex(QModelIndex)));
 
     // single click on tree sets also fileView
     connect(fileView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(selectFiles(QModelIndex)));
@@ -259,8 +211,8 @@ void nutshellqt::setRootIndex(const QModelIndex& index)
 
     changeFileFilter(_filternr);
     // to update getMapSeries when changing dir with mouseclick
-    treeView->hideColumn(1);
-    treeView->hideColumn(2);
+    treeView->hideColumn(1); // hide column 'folder'
+    treeView->hideColumn(2); // hide column 'size'
 
 //    if(oldpath != currentPath)
 //    {
@@ -270,7 +222,7 @@ void nutshellqt::setRootIndex(const QModelIndex& index)
 
 //    toolButton_dirprev->setEnabled(!history.isEmpty());
 //    toolButton_dirnext->setEnabled(!future.isEmpty());
-    qDebug() << "setrootindex" << currentPath;
+
   //  QCoreApplication::sendPostedEvents(this, 0);
 
 }
@@ -833,10 +785,10 @@ void nutshellqt::setWorkdirectory()
         comboBox_workdir->setCurrentIndex(place);
 }
 //---------------------------------------------------------------
-//void nutshellqt::returnToWorkdirectory()
-//{
-//    setWorkdirectoryNr(0);
-//}
+void nutshellqt::returnToWorkdirectory()
+{
+    setWorkdirectoryNr(0);
+}
 //---------------------------------------------------------------
 void nutshellqt::setWorkdirectoryNr(int index)
 {
