@@ -6,6 +6,7 @@
 #include <QtGui>
 #include <QtWidgets>
 //#include <QStyledItemDelegate>
+#include <QFileInfo>
 
 #include "csf.h"
 //#include "CsfMap.h"
@@ -167,6 +168,21 @@ public:
     }
 };
 //---------------------------------------------------------------
+class CustomFileSystemModel : public QFileSystemModel {
+public:
+    CustomFileSystemModel(QObject *parent = nullptr) : QFileSystemModel(parent) {}
+
+    bool hasChildren(const QModelIndex &index) const override {
+        if (!index.isValid()) {
+            return true; // The root always has children
+        }
+
+        QFileInfo fileInfo(filePath(index));
+
+        return fileInfo.isDir() && QFileSystemModel::hasChildren(index);
+    }
+};
+
 class QDropEvent;
 
 class myTreeView : public QTreeView

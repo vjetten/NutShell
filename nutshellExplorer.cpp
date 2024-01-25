@@ -35,7 +35,7 @@ void nutshellqt::setupExplorer()
     _filternr = 0;
     // predefined filters to show PCRaster relevant files
 
-    dirModel = new QFileSystemModel(this);
+    dirModel = new CustomFileSystemModel(this);//QFileSystemModel(this);
     dirModel->setReadOnly(false);
     dirModel->setFilter ( QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Drives );
     dirModel->setNameFilterDisables(false);
