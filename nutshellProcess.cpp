@@ -33,7 +33,7 @@ void nutshellqt::setupModel()
     // pcrcalc outputs on the error channel
     //calcProcess->setTextModeEnabled (true);
     connect(calcProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderr()) );
-  //  connect(calcProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(readFromStdOutput()) );
+    //connect(calcProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(readFromStdOutput()) );
     connect(calcProcess, SIGNAL(finished(int)),this, SLOT(finishedModel(int)) );
 
     //    useOldCalc = false;
@@ -59,11 +59,11 @@ void nutshellqt::runModelCommandwindow(QString prog, QStringList args)
     ETEditor->clearerror();
     statusBar()->clearMessage();
 
-    if (!QFileInfo(prog).exists())
-    {
-        ErrorMsg("pcrcalc not found. Specify directory in File->Options.");
-        return;
-    }
+//    if (!QFileInfo(prog).exists())
+//    {
+//        ErrorMsg("pcrcalc not found. Specify directory in File->Options.");
+//        return;
+//    }
 
     if (!runPaused && calcProcess && calcProcess->state() == QProcess::Running)
     {
@@ -182,7 +182,7 @@ void nutshellqt::runModel()
 
     prog = PCRasterAppDirName + "pcrcalc.exe";
     commandWindow->appendPlainText("pcrcalc "+argsscreen.join(" "));
-qDebug() << prog;
+
     if (!QFileInfo(prog).exists())
     {
         ErrorMsg("pcrcalc not found. Specify directory in File->Options.");
@@ -385,25 +385,11 @@ void nutshellqt::readFromStderr()
     if (buffer.contains("ERROR"))
         doRunErrorMessage(buffer);
 
-
-    //    QByteArray byteArray = calcProcess->readAllStandardError();
-    //    onScreen(byteArray);
-    //    QString buffer = QString(byteArray);
-    //    if (buffer.contains("ERROR"))
-    //        doRunErrorMessage(buffer);
-
-    //    QList<QByteArray> lines = byteArray.split('\r\n');
-    //    foreach (const QByteArray& line, lines) {
-    //        if (line.size())
-    //            qDebug() << "PIPE STDERR" << line;
-    //    }
-    //    qDebug() << calcProcess->readAllStandardError().constData();
-    //https://qt.gitorious.org/qtplayground/qtprocessmanager/commit/b3c127ab0d29f9d245a9639c216caedf4a41ca69
 }//---------------------------------------------------------------
 void nutshellqt::readFromStderrPCR()
 {
-    QString buffer = QString(PCRProcess->readAllStandardError());
-
+    QString buffer = QString(allProcess->readAllStandardError());
+    qDebug() << "hier";
     if (!buffer.contains('\r')) {
         bufprev = bufprev + buffer;
         return;
@@ -422,20 +408,6 @@ void nutshellqt::readFromStderrPCR()
     if (buffer.contains("ERROR"))
         doRunErrorMessage(buffer);
 
-
-    //    QByteArray byteArray = calcProcess->readAllStandardError();
-    //    onScreen(byteArray);
-    //    QString buffer = QString(byteArray);
-    //    if (buffer.contains("ERROR"))
-    //        doRunErrorMessage(buffer);
-
-    //    QList<QByteArray> lines = byteArray.split('\r\n');
-    //    foreach (const QByteArray& line, lines) {
-    //        if (line.size())
-    //            qDebug() << "PIPE STDERR" << line;
-    //    }
-    //    qDebug() << calcProcess->readAllStandardError().constData();
-    //https://qt.gitorious.org/qtplayground/qtprocessmanager/commit/b3c127ab0d29f9d245a9639c216caedf4a41ca69
 }
 
 //---------------------------------------------------------------

@@ -303,6 +303,7 @@ public:
     //======================
     nutshelleditor *commandWindow;
     void parseCommand();
+    void executeCommand(QStringList args);
     void prevCommand();
     void nextCommand();
     int commandcounter;
@@ -404,7 +405,6 @@ public slots:
     void saveCommandList();
     void copyCommandList();
     void outputCommand();
-    void outputCmd();
     void errorCommand();
     void setCursorLast();
 
@@ -596,6 +596,7 @@ private:
     bool processError;
     QProcess *calcProcess;
     QProcess *CMDProcess;
+    QProcess *allProcess;
 };
 
 #endif // NUTSHELLQT_H

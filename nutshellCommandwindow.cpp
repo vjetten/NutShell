@@ -21,7 +21,7 @@ void nutshellqt::setupCommandwindow()
     // process called by command window, typing pcrcalc, or aguila or any other pcr prog
 
     CMDProcess = new QProcess(this);
-    connect(CMDProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(outputCmd()) );
+    connect(CMDProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(outputCommand()) );
 
     commandWindow = new nutshelleditor(this, 1);
     commandWindow->document()->setDocumentMargin(2);
@@ -69,8 +69,7 @@ void nutshellqt::copyCommandList()
 //---------------------------------------------------------------
 void nutshellqt::parseCommand()
 {
-    QString all;
-    all = commandWindow->toPlainText();
+    QString all = commandWindow->toPlainText();
 
     processError = false;
 
@@ -85,7 +84,6 @@ void nutshellqt::parseCommand()
 
     lines = all.split("\n");
     args = lines[lines.count()-1].split(" ");
-    bool args1 = args.count() > 1;
 
     if (args[0].isEmpty())
     {
@@ -93,90 +91,120 @@ void nutshellqt::parseCommand()
         return;
     }
 
-    if ((args[0].toUpper() == "PCRCALC")// || args[0].toUpper() == "OLDCALC")
+    if ((args[0].toUpper() == "PCRCALC")
             && (calcProcess && calcProcess->state() == QProcess::Running))
     {
         ErrorMsg("pcrcalc is active, wait until it is finished or press stop first");
         return;
     }
-
-    setWorkdirectory();
-
-    if (args[0].contains(".cmd", Qt::CaseInsensitive) || QFileInfo(args[0] +".cmd").exists()) {
-        prog = args[0] +".cmd";
-        deleteBatch();
-        createBatch(prog, "");
-        args << QString("/C " + MapeditDirName + "_nutshell_batchjob");
-        QString hoi = MapeditDirName + "_nutshell_batchjob.cmd";
-        QDesktopServices::openUrl(QUrl("file:///"+hoi));
-        setCursorLast();
-        comboBox_cmdlist->insertItem(0, lines[lines.count()-1]);
-        commandcounter = -1;
+    if (PCRProcess && PCRProcess->state() == QProcess::Running)
+    {
+        ErrorMsg("A process is active, wait until it is finished or press stop first");
         return;
     }
 
-
     setWorkdirectory();
 
-    prog = PCRasterAppDirName + args[0] +".exe";
+//    if (args[0].contains(".cmd", Qt::CaseInsensitive) || QFileInfo(args[0] +".cmd").exists()) {
+//        prog = args[0] +".cmd";
+//        deleteBatch();
+//        createBatch(prog, "");
+//        args << QString("/C " + MapeditDirName + "_nutshell_batchjob");
+//        QDesktopServices::openUrl(QUrl("file:///" + MapeditDirName + "_nutshell_batchjob.cmd"));
+//        setCursorLast();
+//        comboBox_cmdlist->insertItem(0, lines[lines.count()-1]);
+//        commandcounter = -1;
+//        return;
+//    }
 
-    if (args[0].contains("gdal", Qt::CaseInsensitive))
-        prog = GDALAppDirName + args[0] +".exe";
+    //setWorkdirectory();
 
     if ((args[0].toUpper() == "PCRCALC")
-            && (args1 && args[1].indexOf("-f",Qt::CaseInsensitive) == 0))
+            && (args.count() > 1 && args[1].indexOf("-f",Qt::CaseInsensitive) == 0))
     {
         args.removeAt(0);        
         runModelCommandwindow(prog, args);
-    }
-    else
-        if (args[0].toUpper() == "AGUILA")
-        {
-            args.removeAt(0);
-            PCRProcess->startDetached(prog, args);
-            commandWindow->appendPlainText("");
+    } else {
+
+        executeCommand(args);
+        // hack to avoid wrong projection
+        if (args.count() > 0) {
+            QStringList S = args[0].split("=");
+            if (QFileInfo(S[0]).exists()) {
+                MAP *m = Mopen(S[0].toLatin1().data(),M_WRITE);
+                if (m != nullptr) {
+                    MputProjection(m,PT_YDECT2B);
+                    //qDebug() << S[0] << "changed projection";
+                    Mclose(m);
+                }
+            }
         }
-        else
-            if (args[0].contains("gdal", Qt::CaseInsensitive))
-            {
-                args.removeAt(0);
-                if(!CondaInstall) {
-                    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-                    QString str = GDALDirName+QString("bin;")+ GDALAppDirName+ PCRasterAppDirName;
-                    env.insert("PATH",str);
-                    str = GDALDirName + QString("bin/gdal-data");
-                    env.insert("GDAL_DATA",str);
-                    //  env.insert("PATH",GDALDirName);
-                    PCRProcess->setProcessEnvironment(env);
-                }
-                PCRProcess->start(prog, args);
-            }
-            else
-            {                            
-                args.removeAt(0);
-                PCRProcess->start(prog, args);
-                //     PCRProcess->waitForReadyRead(10000);
-
-                PCRProcess->waitForFinished(-1);
-
-                if (args.count() > 0) {
-                    QStringList S = args[0].split("=");
-                    if (QFileInfo(S[0]).exists()) {
-                        MAP *m = Mopen(S[0].toLatin1().data(),M_WRITE);
-                        if (m != nullptr) {
-                            MputProjection(m,PT_YDECT2B);
-                            //qDebug() << S[0] << "changed projection";
-                            Mclose(m);
-                        }
-                    }
-                }
-            }
+    }
 
     setCursorLast();
-    //  if (!processError)
     comboBox_cmdlist->insertItem(0, lines[lines.count()-1]);
     commandcounter = -1;
     // add command to commandlist
+}
+//---------------------------------------------------------------
+void nutshellqt::executeCommand(QStringList args)
+{
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    // Add or modify custom environment variables as needed
+
+    env.insert("CONDA_DEFAULT_ENV","lisem");
+    env.insert("CONDA_EXE","C:\\Users\\vjett\\miniconda3\\Scripts\\conda.exe");
+    env.insert("CONDA_PREFIX","C:\\Users\\vjett\\miniconda3\\envs\\lisem");
+    env.insert("CONDA_PREFIX_1","C:\\Users\\vjett\\miniconda3");
+    env.insert("CONDA_PYTHON_EXE","C:\\Users\\vjett\\miniconda3\\python.exe");
+    env.insert("CONDA_SHLVL","2");
+    env.insert("GDAL_DATA","C:\\Users\\vjett\\miniconda3\\envs\\lisem\\Library\\share\\gdal");
+    env.insert("GDAL_DRIVER_PATH","C:\\Users\\vjett\\miniconda3\\envs\\lisem\\Library\\lib\\gdalplugins");
+    env.insert("GEOTIFF_CSV","C:\\Users\\vjett\\miniconda3\\envs\\lisem\\Library\\share\\epsg_csv");
+    env.insert("SSL_CERT_FILE","C:\\Users\\vjett\\miniconda3\\Library\\ssl\\cacert.pem");
+    env.insert("XML_CATALOG_FILES","file://C:\\Users\\vjett\\miniconda3\\envs\\lisem\\etc\\xml\\catalog");
+    env.insert("__CONDA_OPENSLL_CERT_FILE_SET","\"1\"");
+
+    QString cPath = "C:\\Users\\vjett\\miniconda3\\envs\\lisem;\
+C:\\Users\\vjett\\miniconda3\\envs\\lisem\\Library\\mingw-w64\\bin;\
+C:\\Users\\vjett\\miniconda3\\envs\\lisem\\Library\\usr\\bin;\
+C:\\Users\\vjett\\miniconda3\\envs\\lisem\\Library\\bin;\
+C:\\Users\\vjett\\miniconda3\\envs\\lisem\\Scripts;\
+C:\\Users\\vjett\\miniconda3\\envs\\lisem\\bin;\
+C:\\Users\\vjett\\miniconda3\\condabin;";
+
+    QString ePath = env.value("PATH");
+    env.insert("PATH", cPath + ePath);
+     // qDebug() << cPath + QDir::separator() + ePath;
+    // Set the process environment
+    PCRProcess->setProcessEnvironment(env);
+
+    // Set the working directory for the process
+    PCRProcess->setWorkingDirectory(currentPath);
+
+    // Set the command to run
+
+    QString prog;
+    if (args[0].toUpper() == "PYTHON" && )
+        prog = CondaDirName+args[0]+".exe";
+    else
+    if (args[0].contains(".cmd"))
+        prog = currentPath+"/"+args[0];
+    else
+        prog = CondaDirName+"Library/bin/"+args[0]+".exe";
+
+    // Set the command arguments if needed
+    PCRProcess->setProgram(prog);
+    args.removeAt(0);
+    PCRProcess->setArguments(args);
+    qDebug() << prog << args << currentPath;
+
+    bufprev = "";
+    PCRProcess->start();
+    PCRProcess->waitForFinished(-1);
+
+    qDebug() << "done";
+
 }
 //---------------------------------------------------------------
 void nutshellqt::setCursorLast()
@@ -199,29 +227,11 @@ void nutshellqt::errorCommand()
     QCoreApplication::sendPostedEvents(this, 0);
     processError = true;
 }
-
 //---------------------------------------------------------------
+
 void nutshellqt::outputCommand()
 {
     QString buffer = QString(PCRProcess->readAllStandardOutput());
-
-    if (!buffer.contains('\r')) {
-        bufprev = bufprev + buffer;
-        return;
-    }
-    else {
-        bufprev = bufprev + buffer;
-        buffer = bufprev;
-        bufprev = "";
-    }
-
-    commandWindow->appendPlainText(buffer);
-    QCoreApplication::sendPostedEvents(this, 0);
-}
-//---------------------------------------------------------------
-void nutshellqt::outputCmd()
-{
-    QString buffer = QString(CMDProcess->readAllStandardOutput());
 
     if (!buffer.contains('\r')) {
         bufprev = bufprev + buffer;
@@ -243,7 +253,7 @@ void nutshellqt::prevCommand()
     QString all;
 
     if (commandcounter == -1)
-        commandcounter = 0;//comboBox_cmdlist->count();
+        commandcounter = 0;
     else
     {
         commandcounter--;
