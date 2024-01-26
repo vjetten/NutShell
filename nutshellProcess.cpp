@@ -59,15 +59,9 @@ void nutshellqt::runModelCommandwindow(QString prog, QStringList args)
     ETEditor->clearerror();
     statusBar()->clearMessage();
 
-//    if (!QFileInfo(prog).exists())
-//    {
-//        ErrorMsg("pcrcalc not found. Specify directory in File->Options.");
-//        return;
-//    }
-
     if (!runPaused && calcProcess && calcProcess->state() == QProcess::Running)
     {
-        ErrorMsg("Another pcrcalc process is active, wait until it is finished or press stop first");
+        ErrorMsg("Pcrcalc process is still active, wait until it is finished or press stop first");
         return;
     }
 
@@ -388,7 +382,7 @@ void nutshellqt::readFromStderr()
 }//---------------------------------------------------------------
 void nutshellqt::readFromStderrPCR()
 {
-    QString buffer = QString(allProcess->readAllStandardError());
+    QString buffer = QString(PCRProcess->readAllStandardError());
     qDebug() << "hier";
     if (!buffer.contains('\r')) {
         bufprev = bufprev + buffer;

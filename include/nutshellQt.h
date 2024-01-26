@@ -257,6 +257,7 @@ public:
     void setupExplorer();
     void setupEditor();
     void setupCommandwindow();
+    bool isTextFile(const QString& filename);
 
     void setNutshellIni();
     void getNutshellIni();
@@ -595,8 +596,8 @@ private:
     QProcess *PCRProcess;
     bool processError;
     QProcess *calcProcess;
-    QProcess *CMDProcess;
-    QProcess *allProcess;
+    //QProcess *CMDProcess;
+    //QProcess *allProcess;
 };
 
 #endif // NUTSHELLQT_H

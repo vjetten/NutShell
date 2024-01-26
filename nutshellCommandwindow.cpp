@@ -15,13 +15,13 @@ void nutshellqt::setupCommandwindow()
     PCRProcess = new QProcess(this);
     processError = false;
     PCRProcess->setProcessChannelMode(QProcess::MergedChannels);
-    connect(PCRProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(outputCommand()) );
-    connect(PCRProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderrPCR()) );
+   // connect(PCRProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(outputCommand()) );
+   // connect(PCRProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderrPCR()) );
     connect(PCRProcess, SIGNAL(error(QProcess::ProcessError)),this, SLOT(errorCommand()) );
     // process called by command window, typing pcrcalc, or aguila or any other pcr prog
 
-    CMDProcess = new QProcess(this);
-    connect(CMDProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(outputCommand()) );
+//    CMDProcess = new QProcess(this);
+//    connect(CMDProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(outputCommand()) );
 
     commandWindow = new nutshelleditor(this, 1);
     commandWindow->document()->setDocumentMargin(2);
@@ -105,6 +105,7 @@ void nutshellqt::parseCommand()
 
     setWorkdirectory();
 
+    //OBSOLETE
 //    if (args[0].contains(".cmd", Qt::CaseInsensitive) || QFileInfo(args[0] +".cmd").exists()) {
 //        prog = args[0] +".cmd";
 //        deleteBatch();
@@ -116,32 +117,23 @@ void nutshellqt::parseCommand()
 //        commandcounter = -1;
 //        return;
 //    }
-
     //setWorkdirectory();
 
-    if ((args[0].toUpper() == "PCRCALC")
-            && (args.count() > 1 && args[1].indexOf("-f",Qt::CaseInsensitive) == 0))
-    {
-        args.removeAt(0);        
-        runModelCommandwindow(prog, args);
-    } else {
+//    // run pcrcalc with -f: because of timer treat differently
+//    if ((args[0].toUpper() == "PCRCALC")
+//            && (args.count() > 1 && args[1].indexOf("-f",Qt::CaseInsensitive) == 0))
+//    {
+//        args.removeAt(0);
+//        runModelCommandwindow(prog, args);
+//        // do this different because of counter timesteps
+//    } else {
 
         executeCommand(args);
-        // hack to avoid wrong projection
-        if (args.count() > 0) {
-            QStringList S = args[0].split("=");
-            if (QFileInfo(S[0]).exists()) {
-                MAP *m = Mopen(S[0].toLatin1().data(),M_WRITE);
-                if (m != nullptr) {
-                    MputProjection(m,PT_YDECT2B);
-                    //qDebug() << S[0] << "changed projection";
-                    Mclose(m);
-                }
-            }
-        }
-    }
+
+//    }
 
     setCursorLast();
+
     comboBox_cmdlist->insertItem(0, lines[lines.count()-1]);
     commandcounter = -1;
     // add command to commandlist
@@ -184,27 +176,67 @@ C:\\Users\\vjett\\miniconda3\\condabin;";
 
     // Set the command to run
 
+    // run pcrcalc with -f: because of timer treat differently
+    if ((args[0].toUpper() == "PCRCALC")
+            && (args.count() > 1 && args[1].indexOf("-f",Qt::CaseInsensitive) == 0))
+    {
+        args.removeAt(0);
+        QString prog = CondaDirName+"Library/bin/pcrcalc.exe";
+        runModelCommandwindow(prog, args);
+        return;
+    }
+
+
     QString prog;
-    if (args[0].toUpper() == "PYTHON" && )
+    bool isCMD = false;
+    bool moreArgs = args.count() > 1;
+    if (args[0].toUpper() == "PYTHON" && moreArgs && args[1].toUpper().contains(".PY"))
         prog = CondaDirName+args[0]+".exe";
     else
-    if (args[0].contains(".cmd"))
-        prog = currentPath+"/"+args[0];
-    else
-        prog = CondaDirName+"Library/bin/"+args[0]+".exe";
+        if (args[0].toUpper() == "AGUILA") {
+            prog = CondaDirName+"Library/bin/"+args[0]+".exe";
+            isCMD = true;
+        } else
+            if (args[0].toUpper().contains(".CMD") || args[0].toUpper().contains(".BAT")) {
+                prog = currentPath+"/"+args[0];
+                //TODO if not exist in currentPath give wanring()
+                isCMD = true;
+            } else
+                if (args[0].toUpper().contains("MAPEDIT")) {
+                    prog = MapeditDirName + args[0]+".exe";
+                    isCMD = true;
+                }
+                else
+                    prog = CondaDirName+"Library/bin/"+args[0]+".exe";
+
 
     // Set the command arguments if needed
-    PCRProcess->setProgram(prog);
     args.removeAt(0);
-    PCRProcess->setArguments(args);
-    qDebug() << prog << args << currentPath;
+   // qDebug() << prog << args << currentPath;
 
-    bufprev = "";
-    PCRProcess->start();
-    PCRProcess->waitForFinished(-1);
+    if (isCMD) {
+        PCRProcess->startDetached(prog, args);
+    } else {
+        bufprev = "";
+        PCRProcess->start(prog, args, QIODevice::ReadWrite);
+        PCRProcess->waitForFinished(-1);
 
-    qDebug() << "done";
+        QString buffer = QString(PCRProcess->readAllStandardOutput());
+        commandWindow->appendPlainText(buffer);
+        QCoreApplication::sendPostedEvents(this, 0);
 
+        // hack to avoid wrong projection in created pcraster maps
+        if (moreArgs && prog.toUpper().contains("PCRCALC")) {
+            QStringList S = args[0].split("=");
+            if (QFileInfo(S[0]).exists()) {
+                MAP *m = Mopen(S[0].toLatin1().data(),M_WRITE);
+                if (m != nullptr) {
+                    MputProjection(m,PT_YDECT2B);
+                    Mclose(m);
+                }
+            }
+        }
+    }
 }
 //---------------------------------------------------------------
 void nutshellqt::setCursorLast()

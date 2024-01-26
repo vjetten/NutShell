@@ -7,6 +7,29 @@
 
 #include "nutshellqt.h"
 
+bool nutshellqt::isTextFile(const QString& filename)
+{
+    qint64 bufferSize = 1024;
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+         return false;
+    }
+
+    char buffer[bufferSize];
+    qint64 bytesRead = file.read(buffer, bufferSize);
+
+    for (int i = 0; i < bytesRead; ++i) {
+        // Check if the character is outside the typical ASCII text range
+        if (buffer[i] < 0 || buffer[i] > 127) {
+            file.close();
+            return false;  // Binary file
+        }
+    }
+
+    file.close();
+    return true;  // Text file
+}
+
 
 //---------------------------------------------------------------
 void nutshellqt::setupEditor()
@@ -160,10 +183,8 @@ bool nutshellqt::saveFileName(const QString &fileName)
 void nutshellqt::AddModel(QString name, int syntax)
 {
     QFile file(name);
-    if (!file.open(QFile::ReadOnly | QFile::Text))
-    {
-        ErrorMsg(QString("Cannot read file %1:\n%2.").arg(name)
-                 .arg(file.errorString()));
+    if (!isTextFile(name)) {
+        ErrorMsg(QString("Cannot read file %1 as text file:\n%2.").arg(name).arg(file.errorString()));
         return;
     }
 

@@ -134,9 +134,9 @@ int nutshellqt::GetActionType()
             if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
                 at = ACTIONTYPEWINDOWSCMD;
         else
-            if (ext.toUpper() == "PCR")
-                at = ACTIONTYPEPCRASTER;
-            else
+//            if (ext.toUpper() == "PCR")
+//                at = ACTIONTYPEPCRASTER;
+//            else
                 if (ext.toUpper() == "MOD")
                 {
                     at = ACTIONTYPEMODEL;
@@ -152,9 +152,9 @@ int nutshellqt::GetActionType()
                         syntaxAct->setChecked(false);
                     }
                     else
-                        if (ext.toUpper() == "GST")
-                            at = ACTIONTYPEGSTAT;
-                        else
+//                        if (ext.toUpper() == "GST")
+//                            at = ACTIONTYPEGSTAT;
+//                        else
                             at = ACTIONTYPEUNDEFINED;
 
     return at;
@@ -210,7 +210,7 @@ void nutshellqt::PerformAction(int actiontype)
                 actiontype == ACTIONTYPEMAP2TIFF ||
                 actiontype == ACTIONTYPELEGEND ))
     {
-        ErrorMsg(QString("%1 is not a PCRaster map.").arg(SelectedPathName));
+        ErrorMsg(QString("%1 is not a raster map.").arg(SelectedPathName));
         actiontype = ACTIONTYPENONE;
     }
 
@@ -233,28 +233,28 @@ void nutshellqt::PerformAction(int actiontype)
     switch (actiontype)
     {
     case ACTIONTYPEAGUILA2D :
-        args << "-2" << cmdl.split("!");
+        args << "aguila" << "-2" << cmdl.split("!");
         //you cannot split on a space when the path name has a space in it!!!
         // but if you do not split aguila doesn't recognize two maps as one argument
         // so we use a character like ! to split and create the separate arguments
 
-        prog = AguilaDirName + PCRxtr + "aguila.exe";
+        //prog = AguilaDirName + PCRxtr + "aguila.exe";
         isAguila = true;
         break;
     case ACTIONTYPEAGUILA3D :
-        args << "-3" << cmdl.split(plus);
+        args << "aguila" << "-3" << cmdl.split(plus);
         // a split on plus will always show as a single 3D surface,
         // two maps as two seperate surfaces
-        prog = AguilaDirName + PCRxtr + "aguila.exe";
+        //prog = AguilaDirName + PCRxtr + "aguila.exe";
         isAguila = true;
         break;
     case ACTIONTYPEDRAPE :
         if (cmdl.contains("!+!"))
-            args << "-3" << cmdl.split("!");
+            args << "aguila" << "-3" << cmdl.split("!");
         // cmdl already contains more maps with +, first map will be base
         else
         {
-            // cmdl contains one or moremaps without +
+            // cmdl contains one or more maps without +
             args = cmdl.split("!");
             // splt first if possible
 
@@ -265,42 +265,43 @@ void nutshellqt::PerformAction(int actiontype)
             cmdl = args.join("!+!");
             // join allways with a + for drape effect in aguila
             args.clear();
-            args << "-3" << cmdl.split("!");
+            args << "aguila" << "-3" << cmdl.split("!");
         }
-        prog = AguilaDirName + "aguila.exe";
+        //prog = AguilaDirName + "aguila.exe";
         isAguila = true;
         break;
     case ACTIONTYPETIMEPLOT :
-        args << "-t" << cmdl.split("!");
-        prog = AguilaDirName + "aguila.exe";
+        args << "aguila" << "-t" << cmdl.split("!");
+        //prog = AguilaDirName + "aguila.exe";
         isAguila = true;
         break;
-    case ACTIONTYPEPCRASTER :
-        args << cmdl;
-        prog = PCRasterAppDirName + "pcraster.exe";
-        break;
+//    case ACTIONTYPEPCRASTER :
+//        args << cmdl;
+//        prog = PCRasterAppDirName + "pcraster.exe";
+//        break;
     case ACTIONTYPEMODEL :
-        if (fileIsMap)
-        {
-            ErrorMsg(QString("%1 is a PCRaster map and cannot be loaded in the editor. Use MapEdit.").arg(SelectedFileName));
+//        if (fileIsMap) {
+//            ErrorMsg(QString("%1 is a PCRaster map and cannot be loaded in the editor. Use MapEdit.").arg(SelectedFileName));
+//            actiontype = ACTIONTYPENONE;
+//        }
+//        else
+//        {
+            AddModel(SelectedPathName,1);
             actiontype = ACTIONTYPENONE;
-        }
-        else
-        {
-            AddModel(SelectedPathName,1);// dosyntax ? 1 : 0);
-            actiontype = ACTIONTYPENONE;
-        }
+ //       }
         break;
     case ACTIONTYPEMAPEDIT :
-        cmdl.replace("!", "");
-        if (cmdl.contains("+"))
-            args << cmdl.split("+");
-        else args << cmdl;
-
-        prog = MapeditDirName + "mapedit.exe";
-        if (!QFileInfo(prog).exists())
+        if (!QFileInfo(MapeditDirName + "mapedit.exe").exists()) {
             WarningMsg("Mapedit not found in Nutshell install directory.")
-       // qDebug() << prog << cmdl << args;
+            actiontype = ACTIONTYPENONE;
+        } else {
+            cmdl.replace("!", "");
+            if (cmdl.contains("+"))
+                args << "mapedit" << cmdl.split("+");
+            else
+                args << "mapedit" << cmdl;
+        }
+
         break;
     case ACTIONTYPELEGEND:
         if (fileIsMap)
@@ -315,7 +316,7 @@ void nutshellqt::PerformAction(int actiontype)
                 //maplegend.raise();
             }
             else
-                ErrorMsg("Only nominal, ordinal or boolean maps can have a legend.");
+                ErrorMsg("Only the legend of nominal, ordinal or boolean PCRaster maps can be read.");
             Mclose(m);
         }
         else
@@ -338,14 +339,12 @@ void nutshellqt::PerformAction(int actiontype)
             mapattribute.show();
             mapattribute.raise();
         }
-        //         ErrorMsg("Error opening file as PCRaster map.");
         actiontype = ACTIONTYPENONE;
         break;
     case ACTIONTYPEATTRIBUTE :
         if (isTIFF) {
-            args << SelectedPathName;
-            prog = GDALAppDirName + "gdalinfo.exe";
-            //qDebug() << prog << args;
+            args << "gdalinfo" << SelectedPathName;
+            //prog = GDALAppDirName + "gdalinfo.exe";
         } else
         if (fileIsMap) {
             if (mapattribute.fill(SelectedPathName, false) == 0) {
@@ -358,44 +357,21 @@ void nutshellqt::PerformAction(int actiontype)
              ErrorMsg("File is not recognised as PCRaster or GeoTIFF map.p");
         }
         break;
-    case ACTIONTYPEGSTAT :
-        args << cmdl;
-        prog = PCRasterAppDirName + "gstat.exe";
-        //actiontype = ACTIONTYPENONE;
-        break;
-//    case ACTIONTYPEMAP2ILWIS:
-//        nameout = QFileInfo(SelectedPathName).baseName() + ".mpr";
-//        namein =  QFileInfo(SelectedPathName).baseName() + "." + SelectedSuffix;//QFileInfo(SelectedPathName).suffix();
-//        args << "-of" << "ILWIS" << namein << nameout;
-//        prog = GDALAppDirName + "gdal_translate.exe";
+    case ACTIONTYPEMAP2TIFF:
+        nameout = QFileInfo(SelectedPathName).baseName() + ".tif";
+        namein =  QFileInfo(SelectedPathName).baseName() + "." + SelectedSuffix;//QFileInfo(SelectedPathName).suffix();
+        args << "gdal_translate" << namein << nameout;
+        //prog = GDALAppDirName + "gdal_translate.exe";
 //        if (!QFileInfo(prog).exists())
 //        {
 //            ErrorMsg("Cannot find GDAL tools, have you installed GDAL \nand set file->options?");
 //            actiontype = ACTIONTYPENONE;
 //        }
 //        commandWindow->appendPlainText("gdal_translate "+args.join(" "));
-//        break;
-    case ACTIONTYPEMAP2TIFF:
-        nameout = QFileInfo(SelectedPathName).baseName() + ".tif";
-        namein =  QFileInfo(SelectedPathName).baseName() + "." + SelectedSuffix;//QFileInfo(SelectedPathName).suffix();
-        args << namein << nameout;
-        prog = GDALAppDirName + "gdal_translate.exe";
-        if (!QFileInfo(prog).exists())
-        {
-            ErrorMsg("Cannot find GDAL tools, have you installed GDAL \nand set file->options?");
-            actiontype = ACTIONTYPENONE;
-        }
-        commandWindow->appendPlainText("gdal_translate "+args.join(" "));
         break;
-//    case ACTIONTYPEMAPDISPLAY :
-//        //      args << cmdl;
-//        mapDisplay.mapDisplayNames = SelectedPathName;
-//        mapDisplay.initMapPlot();
-//        mapDisplay.show();
-//        mapDisplay.ShowMap();
-//        break;
     case ACTIONTYPEWINDOWSCMD:
-  QDesktopServices::openUrl(QUrl("file:///" + cmdl));
+         args << cmdl;
+ // QDesktopServices::openUrl(QUrl("file:///" + cmdl));
   //qDebug() << "desktopservices" << cmdl;
 //        if (cmdl.contains("_nutshell_batchjob"))
 //            break;
@@ -406,7 +382,7 @@ void nutshellqt::PerformAction(int actiontype)
 //        args << QString("/C " + MapeditDirName + "_nutshell_batchjob");
 //        CMDProcess->startDetached(prog,args);
 
-        actiontype = ACTIONTYPENONE;
+ //       actiontype = ACTIONTYPENONE;
         break;
     default:
         STATUS("Opening file in operating system");
@@ -417,14 +393,15 @@ void nutshellqt::PerformAction(int actiontype)
 
     if (actiontype != ACTIONTYPENONE)
     {
+        executeCommand(args);
  //       qDebug() << prog << args;
-        setWorkdirectory();
-        if (isAguila)
-            PCRProcess->startDetached(prog,args);
-        else
-        {
-            PCRProcess->start(prog,args);
-        }
+//        setWorkdirectory();
+//        if (isAguila)
+//            PCRProcess->startDetached(prog,args);
+//        else
+//        {
+//            PCRProcess->start(prog,args);
+//        }
     }
 
     actiontype = ACTIONTYPENONE;
