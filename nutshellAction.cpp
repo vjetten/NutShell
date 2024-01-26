@@ -120,23 +120,19 @@ int nutshellqt::GetActionType()
     QString ext = SelectedSuffix; //QFileInfo(SelectedPathName).suffix();
     MAP *m = Mopen(SelectedPathName.toLatin1(),M_READ_WRITE);
 
-    if (m != nullptr || ext.toUpper() == "TIF" || ext.toUpper() == "MPR")
+    if (m != nullptr || ext.toUpper() == "TIF")
     {
-        at = ACTIONTYPEAGUILA2D; //ACTIONTYPEDISPLAY;
+        at = ACTIONTYPEAGUILA2D;
         Mclose(m);
         m=nullptr;
     }
     else
-        //		if (ext.toUpper() == "TSS")
         if( isTSSfile(SelectedPathName))
             at = ACTIONTYPETIMEPLOT;
         else
             if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
                 at = ACTIONTYPEWINDOWSCMD;
-        else
-//            if (ext.toUpper() == "PCR")
-//                at = ACTIONTYPEPCRASTER;
-//            else
+            else
                 if (ext.toUpper() == "MOD")
                 {
                     at = ACTIONTYPEMODEL;
@@ -152,10 +148,7 @@ int nutshellqt::GetActionType()
                         syntaxAct->setChecked(false);
                     }
                     else
-//                        if (ext.toUpper() == "GST")
-//                            at = ACTIONTYPEGSTAT;
-//                        else
-                            at = ACTIONTYPEUNDEFINED;
+                        at = ACTIONTYPEUNDEFINED;
 
     return at;
 }
@@ -187,6 +180,7 @@ void nutshellqt::PerformAction(int actiontype)
         cmdl = getFileListString();
     // also makes mapseries if needed
 
+    // hack to force a map tio have the correct projection, that is depreciated anyway
     m = Mopen(SelectedPathName.toLatin1().data(),M_READ_WRITE);
     if (m == nullptr)
         fileIsMap = false;
@@ -195,20 +189,16 @@ void nutshellqt::PerformAction(int actiontype)
         Mclose(m);
     }
 
-
-    isTIFF = SelectedSuffix.toUpper() == "TIF";// ||
-      //      QFileInfo(SelectedPathName).suffix().toUpper() == "MPR";
-    // geotiff or ILWIS file only from extension
+    isTIFF = SelectedSuffix.toUpper() == "TIF";
 
     // check if selection is a pcraster map
     if (!fileIsMap && !isTIFF && (
-                actiontype == ACTIONTYPEDISPLAY ||
-                actiontype == ACTIONTYPEAGUILA3D ||
-                actiontype == ACTIONTYPEAGUILA2D ||
-                actiontype == ACTIONTYPEDRAPE ||
-                actiontype == ACTIONTYPEMAPEDIT ||
-                actiontype == ACTIONTYPEMAP2TIFF ||
-                actiontype == ACTIONTYPELEGEND ))
+        actiontype == ACTIONTYPEAGUILA3D ||
+        actiontype == ACTIONTYPEAGUILA2D ||
+        actiontype == ACTIONTYPEDRAPE ||
+        actiontype == ACTIONTYPEMAPEDIT ||
+        actiontype == ACTIONTYPEMAP2TIFF ||
+        actiontype == ACTIONTYPELEGEND ))
     {
         ErrorMsg(QString("%1 is not a raster map.").arg(SelectedPathName));
         actiontype = ACTIONTYPENONE;
@@ -223,18 +213,11 @@ void nutshellqt::PerformAction(int actiontype)
         statusLabel.show();
     }
 
-//    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-//    QString str = GDALDirName+QString("bin;")+ GDALDirName+QString("bin/gdal/apps;")+ PCRasterAppDirName;
-//    env.insert("PATH",str);
-//    str = GDALDirName + QString("bin/gdal-data");
-//    env.insert("GDAL_DATA",str);
-//    PCRProcess->setProcessEnvironment(env);
-
     switch (actiontype)
     {
     case ACTIONTYPEAGUILA2D :
         args << "aguila" << "-2" << cmdl.split("!");
-        //you cannot split on a space when the path name has a space in it!!!
+        // you cannot split on a space when the path name has a space in it!!!
         // but if you do not split aguila doesn't recognize two maps as one argument
         // so we use a character like ! to split and create the separate arguments
 
@@ -275,10 +258,6 @@ void nutshellqt::PerformAction(int actiontype)
         //prog = AguilaDirName + "aguila.exe";
         isAguila = true;
         break;
-//    case ACTIONTYPEPCRASTER :
-//        args << cmdl;
-//        prog = PCRasterAppDirName + "pcraster.exe";
-//        break;
     case ACTIONTYPEMODEL :
 //        if (fileIsMap) {
 //            ErrorMsg(QString("%1 is a PCRaster map and cannot be loaded in the editor. Use MapEdit.").arg(SelectedFileName));

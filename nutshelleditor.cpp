@@ -12,12 +12,12 @@ bool nutshellqt::isTextFile(const QString& filename)
     qint64 bufferSize = 1024;
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-         return false;
+        return false;
     }
 
     char buffer[bufferSize];
     qint64 bytesRead = file.read(buffer, bufferSize);
-
+    qDebug() << buffer;
     for (int i = 0; i < bytesRead; ++i) {
         // Check if the character is outside the typical ASCII text range
         if (buffer[i] < 0 || buffer[i] > 127) {
@@ -169,8 +169,8 @@ bool nutshellqt::saveFileName(const QString &fileName)
     QFile file(fileName);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
         ErrorMsg(QString("Cannot write file %1:\n%2.")
-                 .arg(fileName)
-                 .arg(file.errorString()));
+                     .arg(fileName)
+                     .arg(file.errorString()));
         return false;
     }
 
@@ -182,13 +182,20 @@ bool nutshellqt::saveFileName(const QString &fileName)
 //---------------------------------------------------------------
 void nutshellqt::AddModel(QString name, int syntax)
 {
-    QFile file(name);
-    if (!isTextFile(name)) {
-        ErrorMsg(QString("Cannot read file %1 as text file:\n%2.").arg(name).arg(file.errorString()));
-        return;
-    }
 
-    makeNewFile();
+    //   if (!isTextFile(name)) {
+    //        ErrorMsg(QString("Cannot read file %1 as text file:\n%2.").arg(name).arg(file.errorString()));
+    //        return;
+    //    }
+    QFile fff(name);
+    QTextStream in(&fff);
+    QString txt = in.readAll();
+    fff.close();
+    qDebug() << txt;
+
+    if (txt == "")
+        return;
+    makeNewFile(false);
     // make a new tab with an empty edit
 
     int nr = tabWidget->currentIndex();
@@ -202,11 +209,8 @@ void nutshellqt::AddModel(QString name, int syntax)
     syntaxAct->setChecked(syntax == 1);
     showsyntax(syntax == 1);
 
-
-    QTextStream in(&file);
-    ET[nr].editor->setPlainText(in.readAll());
+    ET[nr].editor->setPlainText(txt);
     // fill empty tab editor with file text
-    file.close();
 
 }
 //---------------------------------------------------------------
@@ -297,13 +301,13 @@ void nutshellqt::fontSelect()
         commandWindow->setFont(QFontDialog::getFont(&ok, commandWindow->font()));
     else
         if (ETExists)
-        ETEditor->setFont(QFontDialog::getFont(&ok, ETEditor->font()));
+            ETEditor->setFont(QFontDialog::getFont(&ok, ETEditor->font()));
 }
 //---------------------------------------------------------------
 void nutshellqt::fontDecrease()
 {
-//    dpiscale *= 0.9;
-//    setfontSize(genfontsize);
+    //    dpiscale *= 0.9;
+    //    setfontSize(genfontsize);
     if (commandWindow->hasFocus())
     {
         QFont f = commandWindow->font();
@@ -327,8 +331,8 @@ void nutshellqt::fontDecrease()
 //---------------------------------------------------------------
 void nutshellqt::fontIncrease()
 {
-//    dpiscale *= 1.1;
-//    setfontSize(genfontsize);
+    //    dpiscale *= 1.1;
+    //    setfontSize(genfontsize);
     if (commandWindow->hasFocus())
     {
         QFont f = commandWindow->font();
@@ -545,7 +549,7 @@ void nutshellqt::displayVar()
     for (int i = 0; i < reportNames.count(); i++)
     {
         if (var == reportNames[i].reportName ||
-                var == reportNames[i].fileName)
+            var == reportNames[i].fileName)
         {
             var = reportNames[i].fileName;
             nr = i;
