@@ -74,8 +74,8 @@ void nutshellLegend::makelegend(QString name)
 
    if (legendmap == NULL)
    {
-      ErrorMsg("Error reading the legend information.")
-            Mclose(legendmap);
+      ErrorMsg("Error reading the legend information.");
+      Mclose(legendmap);
       return;
    }
 

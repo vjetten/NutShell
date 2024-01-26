@@ -15,13 +15,10 @@ void nutshellqt::setupCommandwindow()
     PCRProcess = new QProcess(this);
     processError = false;
     PCRProcess->setProcessChannelMode(QProcess::MergedChannels);
-   // connect(PCRProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(outputCommand()) );
-   // connect(PCRProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderrPCR()) );
+    connect(PCRProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(outputCommand()) );
+    connect(PCRProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderrPCR()) );
     connect(PCRProcess, SIGNAL(error(QProcess::ProcessError)),this, SLOT(errorCommand()) );
     // process called by command window, typing pcrcalc, or aguila or any other pcr prog
-
-//    CMDProcess = new QProcess(this);
-//    connect(CMDProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(outputCommand()) );
 
     commandWindow = new nutshelleditor(this, 1);
     commandWindow->document()->setDocumentMargin(2);
@@ -30,14 +27,13 @@ void nutshellqt::setupCommandwindow()
 
     verticalLayoutCmdlist->insertWidget(0, commandWindow);
     commandWindow->installEventFilter(this);
-  //  commandWindow->document()->setDefaultFont(QFont("Consolas", 10));
     commandWindow->setFont(QFont("Consolas", 10));
-  //  commandWindow->document()->setDefaultFont(QFont("Courier New", 10));
     // declare and set the commandWindow
 
+    toolButton_savecmd->setVisible(false);
     connect(toolButton_clearcmd, SIGNAL(clicked()), this, SLOT(clearCommandWindow()));
     connect(toolButton_cmdlist, SIGNAL(clicked()), this, SLOT(clearCommandList()));
-    connect(toolButton_savecmd, SIGNAL(clicked()), this, SLOT(saveCommandList()));
+   // connect(toolButton_savecmd, SIGNAL(clicked()), this, SLOT(saveCommandList()));
     commandcounter = -1;
 }
 //---------------------------------------------------------------
@@ -105,32 +101,7 @@ void nutshellqt::parseCommand()
 
     setWorkdirectory();
 
-    //OBSOLETE
-//    if (args[0].contains(".cmd", Qt::CaseInsensitive) || QFileInfo(args[0] +".cmd").exists()) {
-//        prog = args[0] +".cmd";
-//        deleteBatch();
-//        createBatch(prog, "");
-//        args << QString("/C " + MapeditDirName + "_nutshell_batchjob");
-//        QDesktopServices::openUrl(QUrl("file:///" + MapeditDirName + "_nutshell_batchjob.cmd"));
-//        setCursorLast();
-//        comboBox_cmdlist->insertItem(0, lines[lines.count()-1]);
-//        commandcounter = -1;
-//        return;
-//    }
-    //setWorkdirectory();
-
-//    // run pcrcalc with -f: because of timer treat differently
-//    if ((args[0].toUpper() == "PCRCALC")
-//            && (args.count() > 1 && args[1].indexOf("-f",Qt::CaseInsensitive) == 0))
-//    {
-//        args.removeAt(0);
-//        runModelCommandwindow(prog, args);
-//        // do this different because of counter timesteps
-//    } else {
-
-        executeCommand(args);
-
-//    }
+    executeCommand(args);
 
     setCursorLast();
 
@@ -190,6 +161,13 @@ C:\\Users\\vjett\\miniconda3\\condabin;";
     QString prog;
     bool isCMD = false;
     bool moreArgs = args.count() > 1;
+
+    if (!args[0].contains(".")) {
+        QFile fff(args[0]+".cmd");
+        if (fff.exists())
+            args[0] += ".cmd";
+    }
+
     if (args[0].toUpper() == "PYTHON" && moreArgs && args[1].toUpper().contains(".PY"))
         prog = CondaDirName+args[0]+".exe";
     else
@@ -199,7 +177,9 @@ C:\\Users\\vjett\\miniconda3\\condabin;";
         } else
             if (args[0].toUpper().contains(".CMD") || args[0].toUpper().contains(".BAT")) {
                 prog = currentPath+"/"+args[0];
-                //TODO if not exist in currentPath give wanring()
+                createBatch(prog, "");
+                prog = MapeditDirName + "_nutshell_batchjob.cmd";
+                args.clear();
                 isCMD = true;
             } else
                 if (args[0].toUpper().contains("MAPEDIT")) {
@@ -212,7 +192,7 @@ C:\\Users\\vjett\\miniconda3\\condabin;";
 
     // Set the command arguments if needed
     args.removeAt(0);
-   // qDebug() << prog << args << currentPath;
+    //qDebug() << prog << args;
 
     if (isCMD) {
         PCRProcess->startDetached(prog, args);

@@ -86,5 +86,7 @@
         <file>resources/2X/tifconvert.png</file>
         <file>resources/2X/dir_del.png</file>
         <file>resources/2X/options2.png</file>
+        <file>resources/2X/filesaveini.png</file>
+        <file>resources/2X/map2tiff1.png</file>
     </qresource>
 </RCC>

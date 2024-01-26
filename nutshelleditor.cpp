@@ -21,7 +21,7 @@ bool nutshellqt::isTextFile(const QString& filename)
     if (okay) {
         char buffer[bufferSize];
         qint64 bytesRead = file.read(buffer, bufferSize);
-        qDebug() << buffer;
+
         for (int i = 0; i < bytesRead; ++i) {
             // Check if the character is outside the typical ASCII text range
             if (buffer[i] < 0 || buffer[i] > 127) {

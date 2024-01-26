@@ -40,9 +40,18 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     getNutshellIni();
 
-    QStringList sss = nutOptions.getOptions();
-    CondaDirName = sss[1];
-    // find conda installations
+    QFileInfo inf(CondaDirName);
+    if (CondaDirName.isEmpty() || !inf.exists() || !inf.isDir())
+        CondaDirName = nutOptions.getOptions();
+    else
+        nutOptions.setOptions(CondaDirName);
+
+    //CondaInstall = false;
+    QFileInfo inff(CondaDirName);
+    if (CondaDirName.isEmpty() || !inff.exists() || !inff.isDir())
+        ErrorMsg("Invalid conda install. NutShell will not work!");
+    else
+        CondaInstall = true;
 
     setPCRasterDirectories();
 
@@ -66,9 +75,7 @@ nutshellqt::~nutshellqt()
     if (calcProcess && calcProcess->state() == QProcess::Running) {
         calcProcess->kill();
     }
-//    if (CMDProcess && CMDProcess->state() == QProcess::Running) {
-//        CMDProcess->kill();
-//    }
+
     deleteBatch();
     setNutshellIni();
 }
@@ -127,6 +134,7 @@ void nutshellqt::createMainActions()
     // main actions
     connect(toolButton_workdir, SIGNAL(clicked()), this, SLOT(setWorkdirectory()));
     connect(toolButton_delWorkdir, SIGNAL(clicked()), this, SLOT(removeWorkdirectory()));
+    connect(toolButton_saveWorkdir, SIGNAL(clicked()), this, SLOT(saveWorkdirectory()));
    // connect(toolButton_clearWorkdirs, SIGNAL(clicked()), this, SLOT(clearWorkdirectories()));
     connect(toolButton_returnWorkdir, SIGNAL(clicked()), this, SLOT(returnToWorkdirectory()));
     connect(comboBox_workdir, SIGNAL(currentIndexChanged(int)), this, SLOT(setWorkdirectoryNr(int)));
@@ -312,14 +320,11 @@ void nutshellqt::createExplorerActions()
     mapeditAct  = new QAction(QIcon(":/resources/2X/mapedit.png"), "Map edit", this);
     connect(mapeditAct,      SIGNAL(triggered()), this, SLOT(actionmapedit()));
 
-    mapDisplayAct  = new QAction(QIcon(":/resources/2X/aguila2d.png"), "", this);
-    connect(mapDisplayAct,      SIGNAL(triggered()), this, SLOT(actionmapDisplay()));
+ //   mapDisplayAct  = new QAction(QIcon(":/resources/2X/aguila2d.png"), "", this);
+ //   connect(mapDisplayAct,      SIGNAL(triggered()), this, SLOT(actionmapDisplay()));
 
-    map2TiffAct  = new QAction(QIcon(":/resources/2X/tifconvert.png"), "Covert Map to Tif (without projection)", this);
+    map2TiffAct  = new QAction(QIcon(":/resources/2X/map2tiff1.png"), "Covert Map to Tif (without projection)", this);
     connect(map2TiffAct,      SIGNAL(triggered()), this, SLOT(actionmapMap2Tiff()));
-
-    //  map2IlwisAct  = new QAction(QIcon(":/resources/2X/map2ilwis.png"), "Covert Map to Ilwis mpr", this);
-    //  connect(map2IlwisAct,      SIGNAL(triggered()), this, SLOT(actionmapMap2Ilwis()));
 
 }
 //---------------------------------------------------------------
@@ -475,56 +480,20 @@ void nutshellqt::setupMenu( )
 //---------------------------------------------------------------
 void nutshellqt::getOptions()
 {
-    QStringList tempdirs;
-    tempdirs.clear();
-
-    //tempdirs << PCRasterDirName  << GDALDirName << CondaDirName << QString::number(dpiscale) << (CondaInstall ? "1" : "0");
-    tempdirs << (CondaInstall ? "1" : "0") << CondaDirName << PCRasterDirName  << GDALDirName;
-
     // push options to window
-    nutOptions.setupOptions(tempdirs);
-    //nutOptions.findCondaDir();
+    nutOptions.setOptions(CondaDirName);
     nutOptions.setModal(true);
 
     if (nutOptions.exec())
     {
-        // after closing options window get vars
-        tempdirs = nutOptions.getOptions();
-
-        CondaInstall = tempdirs[0] == "0" ? false : true;
-
-        if(!CondaInstall) {
-
-            PCRasterDirName = tempdirs[2];
-            if (!PCRasterDirName.isEmpty()) {
-                PCRasterDirName.replace("\\","/");
-                if (!PCRasterDirName.endsWith("/"))
-                    PCRasterDirName = PCRasterDirName + "/";
-                PCRasterAppDirName = PCRasterDirName+ "bin/";
-
-                GDALDirName = tempdirs[3];
-                GDALDirName.replace("\\","/");
-                if (!GDALDirName.endsWith("/"))
-                    GDALDirName = GDALDirName + "/";
-                GDALAppDirName = GDALDirName + "bin/gdal/apps/";
-
-                AguilaDirName = PCRasterAppDirName;
-            }
-        } else {
-
-            CondaDirName = tempdirs[1]+"/";
-            PCRasterAppDirName = CondaDirName+"Library/bin/";
-            AguilaDirName = PCRasterAppDirName;
-            GDALAppDirName =PCRasterAppDirName;// CondaDirName;
-        }
-
-        //findDPIscale(false);
+        if(!CondaInstall) //{
+            ErrorMsg("Cannot proceed, PCRaster and GDAL not found in the Conda environment");
     }
 }
 //---------------------------------------------------------------
 void nutshellqt::setfontSize()
 {
-    qDebug() << "fs" << genfontsize << dpiscale;
+    //qDebug() << "fs" << genfontsize << dpiscale;
     int fs = genfontsize;
 
     int fsdpi = int(fs*dpiscale);

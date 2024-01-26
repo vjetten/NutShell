@@ -72,10 +72,10 @@ void nutshellqt::actionmapedit()
     PerformAction(ACTIONTYPEMAPEDIT);
 }
 //---------------------------------------------------------------------------
-void nutshellqt::actionmapDisplay()
-{
-    PerformAction(ACTIONTYPEMAPDISPLAY);
-}
+//void nutshellqt::actionmapDisplay()
+//{
+//    PerformAction(ACTIONTYPEMAPDISPLAY);
+//}
 //---------------------------------------------------------------------------
 void nutshellqt::actionmapMap2Tiff()
 {
@@ -90,15 +90,13 @@ void nutshellqt::actionmapMap2Ilwis()
 void nutshellqt::createBatch(QString sss, QString args)
 {
     QFile efout(MapeditDirName+"_nutshell_batchjob.cmd");
+    if (efout.exists())
+        efout.remove();
     efout.open(QIODevice::WriteOnly | QIODevice::Text);
     QTextStream eout(&efout);
     eout << "@echo off\n";
     eout << "CD "+currentPath +"\n";
-    if (!CondaInstall) {
-        eout << QString("PATH=") + GDALDirName+QString("bin;")+ GDALDirName+QString("bin/gdal/apps;")+ PCRasterAppDirName + "\n";
-        eout << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data\n");
-    } else
-        eout << QString("PATH=") + PCRasterAppDirName + "\n";
+    eout << QString("PATH=") + PCRasterAppDirName + "\n";
     eout << "@echo on\n";
     eout << "call \"" + sss + "\" " + args;
 
@@ -108,7 +106,7 @@ void nutshellqt::createBatch(QString sss, QString args)
 //---------------------------------------------------------------------------
 void nutshellqt::deleteBatch()
 {
-    QFile efout(MapeditDirName+"_nutshell_batchjob.cmd");
+  //  QFile efout(MapeditDirName+"_nutshell_batchjob.cmd");
  //   efout.remove();
 }
 //---------------------------------------------------------------------------
@@ -250,28 +248,19 @@ void nutshellqt::PerformAction(int actiontype)
             args.clear();
             args << "aguila" << "-3" << cmdl.split("!");
         }
-        //prog = AguilaDirName + "aguila.exe";
         isAguila = true;
         break;
     case ACTIONTYPETIMEPLOT :
         args << "aguila" << "-t" << cmdl.split("!");
-        //prog = AguilaDirName + "aguila.exe";
         isAguila = true;
         break;
     case ACTIONTYPEMODEL :
-//        if (fileIsMap) {
-//            ErrorMsg(QString("%1 is a PCRaster map and cannot be loaded in the editor. Use MapEdit.").arg(SelectedFileName));
-//            actiontype = ACTIONTYPENONE;
-//        }
-//        else
-//        {
             AddModel(SelectedPathName,1);
             actiontype = ACTIONTYPENONE;
- //       }
         break;
     case ACTIONTYPEMAPEDIT :
         if (!QFileInfo(MapeditDirName + "mapedit.exe").exists()) {
-            WarningMsg("Mapedit not found in Nutshell install directory.")
+            WarningMsg("Mapedit not found in Nutshell install directory.");
             actiontype = ACTIONTYPENONE;
         } else {
             cmdl.replace("!", "");
@@ -280,7 +269,6 @@ void nutshellqt::PerformAction(int actiontype)
             else
                 args << "mapedit" << cmdl;
         }
-
         break;
     case ACTIONTYPELEGEND:
         if (fileIsMap)
@@ -333,35 +321,17 @@ void nutshellqt::PerformAction(int actiontype)
             }
         } else {
             statusBar()->removeWidget(&statusLabel);
-             ErrorMsg("File is not recognised as PCRaster or GeoTIFF map.p");
+             ErrorMsg("File is not recognised as PCRaster or GeoTIFF map.");
         }
         break;
     case ACTIONTYPEMAP2TIFF:
         nameout = QFileInfo(SelectedPathName).baseName() + ".tif";
         namein =  QFileInfo(SelectedPathName).baseName() + "." + SelectedSuffix;//QFileInfo(SelectedPathName).suffix();
         args << "gdal_translate" << namein << nameout;
-        //prog = GDALAppDirName + "gdal_translate.exe";
-//        if (!QFileInfo(prog).exists())
-//        {
-//            ErrorMsg("Cannot find GDAL tools, have you installed GDAL \nand set file->options?");
-//            actiontype = ACTIONTYPENONE;
-//        }
-//        commandWindow->appendPlainText("gdal_translate "+args.join(" "));
+        commandWindow->appendPlainText(args.join(" "));
         break;
     case ACTIONTYPEWINDOWSCMD:
-         args << cmdl;
- // QDesktopServices::openUrl(QUrl("file:///" + cmdl));
-  //qDebug() << "desktopservices" << cmdl;
-//        if (cmdl.contains("_nutshell_batchjob"))
-//            break;
-
-//        deleteBatch();
-//        createBatch(cmdl,"");
-//        prog = "cmd.exe";
-//        args << QString("/C " + MapeditDirName + "_nutshell_batchjob");
-//        CMDProcess->startDetached(prog,args);
-
- //       actiontype = ACTIONTYPENONE;
+        args << cmdl;
         break;
     default:
         STATUS("Opening file in operating system");
@@ -370,17 +340,9 @@ void nutshellqt::PerformAction(int actiontype)
         actiontype = ACTIONTYPENONE;
     }
 
-    if (actiontype != ACTIONTYPENONE)
-    {
+    if (actiontype != ACTIONTYPENONE) {
+        //qDebug() << args;
         executeCommand(args);
- //       qDebug() << prog << args;
-//        setWorkdirectory();
-//        if (isAguila)
-//            PCRProcess->startDetached(prog,args);
-//        else
-//        {
-//            PCRProcess->start(prog,args);
-//        }
     }
 
     actiontype = ACTIONTYPENONE;

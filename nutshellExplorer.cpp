@@ -157,7 +157,7 @@ void nutshellqt::setupExplorer()
 
     expFont = 32;
 
-    qDebug() << "setup explorer done";
+    //qDebug() << "setup explorer done";
 
 }
 //---------------------------------------------------------------
@@ -763,7 +763,12 @@ void nutshellqt::removeWorkdirectory()
 {
    comboBox_workdir->removeItem(comboBox_workdir->currentIndex());
    setWorkdirectory();
-    //   initExplorer();
+}
+//---------------------------------------------------------------
+void nutshellqt::saveWorkdirectory()
+{
+   setNutshellIni();
+   WarningMsg("All work directories and commands are saved to nutshell.ini.");
 }
 //---------------------------------------------------------------
 void nutshellqt::clearWorkdirectories()

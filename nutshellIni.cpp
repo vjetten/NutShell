@@ -18,27 +18,6 @@ void nutshellqt::setPCRasterDirectories()
         AguilaDirName = PCRasterAppDirName;
         GDALAppDirName =PCRasterAppDirName;
     }
-    else
-    if (PCRasterInstall){
-        if(!PCRasterDirName.isEmpty())
-        {
-            PCRasterDirName.replace("\\","/");
-            if (!PCRasterDirName.endsWith("/"))
-                PCRasterDirName = PCRasterDirName + "/";
-            PCRasterAppDirName = PCRasterDirName+"bin/";
-
-            GDALDirName.replace("\\","/");
-            if (!GDALDirName.endsWith("/"))
-                GDALDirName = GDALDirName + "/";
-            GDALAppDirName = GDALDirName + "bin/gdal/apps/";
-
-            AguilaDirName = PCRasterAppDirName;
-        }
-        else {
-            WarningMsg("Set the path to a PCRaster installation directory in File->options");
-        }
-    }
-
     MapeditDirName = QCoreApplication::applicationDirPath() + "/";
 }
 //---------------------------------------------------------------
@@ -47,17 +26,16 @@ void nutshellqt::setNutshellIni()
     QSettings settings(qApp->applicationDirPath()+"/NutShell.ini",QSettings::IniFormat);
     settings.clear();
 
-    settings.setValue("PCRasterDirectory", PCRasterDirName);
-    settings.setValue("GDALDirectory", GDALDirName);
-   // settings.setValue("CondaDirectory", CondaDirName);
+    settings.setValue("CondaDirectory", CondaDirName);
     settings.setValue("DPI",dpiscale);
-    settings.setValue("CondaInstall",CondaInstall);
-    settings.setValue("PCRasterInstall",PCRasterInstall);
+//    settings.setValue("CondaInstall",CondaInstall);
+//    settings.setValue("PCRasterInstall",PCRasterInstall);
 
     QStringList L;
     for (int i = 0; i < comboBox_workdir->count(); i++)
         L << comboBox_workdir->itemText(i);
     settings.setValue("workdir",L.join(';'));
+    settings.setValue("active",comboBox_workdir->currentIndex());
 
     //settings.setValue(QString("modelnr/active"),tabWidget->currentIndex());
     settings.setValue("models/current",tabWidget->currentIndex());
@@ -91,44 +69,20 @@ void nutshellqt::clearNutshellIni()
 void nutshellqt::getNutshellIni()
 {
 
-    //QSettings settings(QSettings::IniFormat,QSettings::UserScope,"NutSHell","NutShell");
     QSettings settings(qApp->applicationDirPath()+"/NutShell.ini",QSettings::IniFormat);
-    //   currentPath = settings.value("workDirectory").toString();
 
-    QString str = settings.value("PCRasterDirectory").toString();
+    QString str = settings.value("CondaDirectory").toString();
     if (!str.isEmpty())
         if (!str.endsWith("\\") && !str.endsWith("/"))
             str = str + "/";
-    PCRasterDirName = str;
-    str = settings.value("GDALDirectory").toString();
-    if (!str.isEmpty())
-        if (!str.endsWith("\\") && !str.endsWith("/"))
-            str = str + "/";
-    GDALDirName = str;
-//    str = settings.value("CondaDirectory").toString();
-//    if (!str.isEmpty())
-//        if (!str.endsWith("\\") && !str.endsWith("/"))
-//            str = str + "/";
-//    CondaDirName = str;
+    CondaDirName = str;
 
     dpiscale = settings.value("DPI").toDouble();
-
-    CondaInstall = settings.value("CondaInstall").toString() == "true";
-    PCRasterInstall = settings.value("PCRasterInstall").toString() == "true";
-
     str = settings.value("workdir").toString();
-    QStringList L;
-    L = str.split(';');
-//    for (int i = 0; i < L.count(); i++)
-//        if (!L[i].isEmpty()) {
-//            if (!L[i].endsWith("\\") && !L[i].endsWith("/"))
-//                L[i] = L[i] + "/";
-//            if (!comboBox_workdir->findText(L[i]))
-//                comboBox_workdir->addItem(L[i]);
-//        }
+    QStringList L = str.split(';');
     comboBox_workdir->addItems(str.split(';'));
-    currentPath = comboBox_workdir->itemText(0);
-    qDebug() << currentPath;
+    int i = settings.value("active").toInt();
+    currentPath = comboBox_workdir->itemText(i);
     if (currentPath == "") currentPath = "c:/";
 
     settings.beginGroup("models");

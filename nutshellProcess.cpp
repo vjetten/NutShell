@@ -91,24 +91,16 @@ void nutshellqt::runModel()
     setButtons(true, false, false);
 
     QString ext = QFileInfo(ETfilePath).suffix();
-    //qDebug() << ETfilePath << ext;
     if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
     {
         deleteBatch();
-        QString name =  ETfilePath;
         QString ar = "";
         if (toolButton_argSubs->isChecked())
             ar = lineEdit_argsubst->text();
         createBatch(ETfilePath, ar);
-        args << QString("/C " + MapeditDirName + "_nutshell_batchjob");
-        QString hoi = MapeditDirName + "_nutshell_batchjob.cmd";
-        QDesktopServices::openUrl(QUrl("file:///"+hoi));
-  //      CMDProcess->startDetached("cmd.exe",args,QIODevice::ReadWrite);
-//        CMDProcess->setProgram( "cmd.exe" );
-//        CMDProcess->setArguments( args );
-//        CMDProcess->setStandardOutputFile( QProcess::nullDevice() );
-//        CMDProcess->setStandardErrorFile( QProcess::nullDevice() );
-//        CMDProcess->startDetached();
+        args.clear();
+        prog = MapeditDirName + "_nutshell_batchjob.cmd";
+        PCRProcess->startDetached(prog, args);
 
         setButtons(false, false, true);
 
@@ -293,7 +285,7 @@ void nutshellqt::onScreen(QString buffer)
     // first output at start run
     if (buffer.contains("ERROR") ) {
         if (output.isEmpty()) {
-            qDebug() << "empty error output";
+            //qDebug() << "empty error output";
         } else {
             //qDebug() << xlast;
             list.replace(xlast-3,listb[0]);  // pcrcalc version

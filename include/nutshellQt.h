@@ -23,10 +23,10 @@
 
 #define STATUS(s) statusBar()->showMessage(QString(s),1000);
 
-#define ErrorMsg(s) QMessageBox::critical(this,"NutShell",QString(s));
-#define WarningAllMsg(s) QMessageBox::warning(this,"NutShell",QString(s),QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll);
-#define WarningMsg(s) QMessageBox::warning(this,"NutShell WARNING",QString(s),QMessageBox::Yes);// | QMessageBox::No );
-#define QuestionMsg(s) QMessageBox::question(this,"NutShell",QString(s),QMessageBox::Yes | QMessageBox::No);
+#define ErrorMsg(s) QMessageBox::critical(this,"NutShell",QString(s))
+#define WarningAllMsg(s) QMessageBox::warning(this,"NutShell",QString(s),QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll)
+#define WarningMsg(s) QMessageBox::warning(this,"NutShell WARNING",QString(s),QMessageBox::Yes)// | QMessageBox::No )
+#define QuestionMsg(s) QMessageBox::question(this,"NutShell",QString(s),QMessageBox::Yes | QMessageBox::No)
 
 #define max(a, b)  (((a) > (b)) ? (a) : (b))
 #define min(a, b)  (((a) < (b)) ? (a) : (b))
@@ -39,19 +39,19 @@
 
 #define ACTIONTYPEUNDEFINED -1
 #define ACTIONTYPENONE       0
-#define ACTIONTYPEDISPLAY    1
+//#define ACTIONTYPEDISPLAY    1
 #define ACTIONTYPEAGUILA3D   2
 #define ACTIONTYPEDRAPE      3
 #define ACTIONTYPETIMEPLOT   4
-#define ACTIONTYPEPCRASTER   5
+//#define ACTIONTYPEPCRASTER   5
 #define ACTIONTYPEMAPEDIT    6
 #define ACTIONTYPEMODEL      7
 #define ACTIONTYPELEGEND     8
 #define ACTIONTYPEAGUILA2D   9
 #define ACTIONTYPEATTRIBUTE 10
 #define ACTIONTYPEATTRIBUTENEW 11
-#define ACTIONTYPEGSTAT     12
-#define ACTIONTYPEMAPDISPLAY 13
+//#define ACTIONTYPEGSTAT     12
+//#define ACTIONTYPEMAPDISPLAY 13
 #define ACTIONTYPEWINDOWSCMD 14
 #define ACTIONTYPEMAP2TIFF 15
 //#define ACTIONTYPEMAP2ILWIS 16
@@ -424,6 +424,7 @@ public slots:
     void setWorkdirectory();
     void returnToWorkdirectory();
     void removeWorkdirectory();
+    void saveWorkdirectory();
     void clearWorkdirectories();
     void setWorkdirectoryNr(int index);
     void findDialog();
@@ -490,7 +491,7 @@ public slots:
     void actionmapnew();
     void actionmapedit();
     void actioneditor();
-    void actionmapDisplay();
+   // void actionmapDisplay();
     void actionmapMap2Tiff();
     void actionmapMap2Ilwis();
 
