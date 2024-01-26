@@ -383,7 +383,6 @@ void nutshellqt::readFromStderr()
 void nutshellqt::readFromStderrPCR()
 {
     QString buffer = QString(PCRProcess->readAllStandardError());
-    qDebug() << "hier";
     if (!buffer.contains('\r')) {
         bufprev = bufprev + buffer;
         return;
@@ -394,9 +393,6 @@ void nutshellqt::readFromStderrPCR()
         bufprev = "";
     }
 
-// pcraster 4.2.0 with pcrcalc 2018 has different output: first the first chr then the rest?!
-
-    //qDebug() << buffer << bufprev;
     onScreen(buffer);
 
     if (buffer.contains("ERROR"))

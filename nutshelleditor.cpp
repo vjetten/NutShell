@@ -10,24 +10,33 @@
 bool nutshellqt::isTextFile(const QString& filename)
 {
     qint64 bufferSize = 1024;
+    bool okay = true;
+
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        return false;
+        okay = false;
+        //return false;
     }
 
-    char buffer[bufferSize];
-    qint64 bytesRead = file.read(buffer, bufferSize);
-    qDebug() << buffer;
-    for (int i = 0; i < bytesRead; ++i) {
-        // Check if the character is outside the typical ASCII text range
-        if (buffer[i] < 0 || buffer[i] > 127) {
-            file.close();
-            return false;  // Binary file
+    if (okay) {
+        char buffer[bufferSize];
+        qint64 bytesRead = file.read(buffer, bufferSize);
+        qDebug() << buffer;
+        for (int i = 0; i < bytesRead; ++i) {
+            // Check if the character is outside the typical ASCII text range
+            if (buffer[i] < 0 || buffer[i] > 127) {
+                file.close();
+                okay = false;  // Binary file
+            }
         }
     }
 
     file.close();
-    return true;  // Text file
+
+    if (!okay)
+        ErrorMsg(QString("File %1 cannot be read as text file").arg(filename));
+
+    return okay;  // Text file
 }
 
 
@@ -183,18 +192,15 @@ bool nutshellqt::saveFileName(const QString &fileName)
 void nutshellqt::AddModel(QString name, int syntax)
 {
 
-    //   if (!isTextFile(name)) {
-    //        ErrorMsg(QString("Cannot read file %1 as text file:\n%2.").arg(name).arg(file.errorString()));
-    //        return;
-    //    }
+    if (!isTextFile(name))
+        return;
+
     QFile fff(name);
+    fff.open(QIODevice::ReadOnly | QIODevice::Text);
     QTextStream in(&fff);
     QString txt = in.readAll();
     fff.close();
-    qDebug() << txt;
 
-    if (txt == "")
-        return;
     makeNewFile(false);
     // make a new tab with an empty edit
 

@@ -597,7 +597,7 @@ private:
     bool processError;
     QProcess *calcProcess;
     //QProcess *CMDProcess;
-    //QProcess *allProcess;
+
 };
 
 #endif // NUTSHELLQT_H
