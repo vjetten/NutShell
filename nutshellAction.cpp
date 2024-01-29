@@ -9,13 +9,6 @@
 
 #include "nutshellqt.h"
 
-QStringList nutshellqt::setEnvironment()
-{
-    QStringList env;
-    env << QString("PATH=") + GDALDirName+QString("bin;")+ GDALDirName+QString("bin/gdal/apps;")+ PCRasterAppDirName;
-    env << QString("set GDAL_DATA=") + GDALDirName + QString("bin/gdal-data");
-    return env;
-}
 //---------------------------------------------------------------------------
 // the following functions determine which action to take
 // when a toolbutton is pressed or enter or doubleclick on the fileView is executed
@@ -89,14 +82,14 @@ void nutshellqt::actionmapMap2Ilwis()
 //---------------------------------------------------------------------------
 void nutshellqt::createBatch(QString sss, QString args)
 {
-    QFile efout(MapeditDirName+"_nutshell_batchjob.cmd");
+    QFile efout(NutshellDirName+"_nutshell_batchjob.cmd");
     if (efout.exists())
         efout.remove();
     efout.open(QIODevice::WriteOnly | QIODevice::Text);
     QTextStream eout(&efout);
     eout << "@echo off\n";
     eout << "CD "+currentPath +"\n";
-    eout << QString("PATH=") + PCRasterAppDirName + "\n";
+    eout << QString("PATH="+CondaDirName+"Library/bin/\n");
     eout << "@echo on\n";
     eout << "call \"" + sss + "\" " + args;
 
@@ -259,7 +252,7 @@ void nutshellqt::PerformAction(int actiontype)
             actiontype = ACTIONTYPENONE;
         break;
     case ACTIONTYPEMAPEDIT :
-        if (!QFileInfo(MapeditDirName + "mapedit.exe").exists()) {
+        if (!QFileInfo(NutshellDirName + "mapedit.exe").exists()) {
             WarningMsg("Mapedit not found in Nutshell install directory.");
             actiontype = ACTIONTYPENONE;
         } else {

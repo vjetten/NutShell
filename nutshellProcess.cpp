@@ -99,13 +99,27 @@ void nutshellqt::runModel()
             ar = lineEdit_argsubst->text();
         createBatch(ETfilePath, ar);
         args.clear();
-        prog = MapeditDirName + "_nutshell_batchjob.cmd";
+        prog = NutshellDirName + "_nutshell_batchjob.cmd";
         PCRProcess->startDetached(prog, args);
 
         setButtons(false, false, true);
 
         return;
     }
+    if (ext.toUpper() == "PY")
+    {
+        QStringList args;
+        args << "python" << ETfilePath;
+        if (toolButton_argSubs->isChecked())
+            args << lineEdit_argsubst->text().split(" ",QString::SkipEmptyParts);
+
+        commandWindow->appendPlainText(args.join(" "));
+        executeCommand(args);
+        setButtons(false, false, true);
+
+        return;
+    }
+
     // run a batch file by passing it on to the system
 
     if (!runPaused && calcProcess && calcProcess->state() == QProcess::Running)
@@ -166,7 +180,7 @@ void nutshellqt::runModel()
     }
     // make argument list
 
-    prog = PCRasterAppDirName + "pcrcalc.exe";
+    prog = CondaDirName+"Library/bin/pcrcalc.exe";
     commandWindow->appendPlainText("pcrcalc "+argsscreen.join(" "));
 
     if (!QFileInfo(prog).exists())

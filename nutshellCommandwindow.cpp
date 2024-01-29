@@ -112,34 +112,43 @@ void nutshellqt::parseCommand()
 //---------------------------------------------------------------
 void nutshellqt::executeCommand(QStringList args)
 {
+    QString condaenv = CondaDirName;
+    QStringList Sn = condaenv.split('/');
+    QString envname = Sn.at(Sn.count()-2);
+
+    QString condabase = QDir(condaenv+"/../..").absolutePath();
+    QString condascripts = QDir(condabase+"/Scripts").absolutePath();
+
+    qDebug() << CondaDirName << envname << condabase << condascripts;
+
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    // Add or modify custom environment variables as needed
+    env.insert("CONDA_DEAFULT_ENV",envname);
+    env.insert("CONDA_EXE",condascripts+"conda.exe");
+    env.insert("CONDA_PREFIX", condaenv);
+    env.insert("CONDA_PREFIX_1", condabase);
+    env.insert("CONDA_PYTHON_EXE",condabase+"/python.exe");
+    env.insert("CONDA_SHLVL","2"); // 1 ?
 
-    env.insert("CONDA_DEFAULT_ENV","lisem");
-    env.insert("CONDA_EXE","C:\\Users\\vjett\\miniconda3\\Scripts\\conda.exe");
-    env.insert("CONDA_PREFIX","C:\\Users\\vjett\\miniconda3\\envs\\lisem");
-    env.insert("CONDA_PREFIX_1","C:\\Users\\vjett\\miniconda3");
-    env.insert("CONDA_PYTHON_EXE","C:\\Users\\vjett\\miniconda3\\python.exe");
-    env.insert("CONDA_SHLVL","2");
-    env.insert("GDAL_DATA","C:\\Users\\vjett\\miniconda3\\envs\\lisem\\Library\\share\\gdal");
-    env.insert("GDAL_DRIVER_PATH","C:\\Users\\vjett\\miniconda3\\envs\\lisem\\Library\\lib\\gdalplugins");
-    env.insert("GEOTIFF_CSV","C:\\Users\\vjett\\miniconda3\\envs\\lisem\\Library\\share\\epsg_csv");
-    env.insert("SSL_CERT_FILE","C:\\Users\\vjett\\miniconda3\\Library\\ssl\\cacert.pem");
-    env.insert("XML_CATALOG_FILES","file://C:\\Users\\vjett\\miniconda3\\envs\\lisem\\etc\\xml\\catalog");
-    env.insert("__CONDA_OPENSLL_CERT_FILE_SET","\"1\"");
+    env.insert("USE_PATH_FOR_GDAL_PYTHON","YES");
+    env.insert("CONDA_ACTIVATE_SCRIPT",condascripts+"/activate");
+    env.insert("CONDA_ENV_PATH",condaenv);
+    env.insert("CONDA_ENV_PYTHON",condaenv+"python.exe");
 
-    QString cPath = "C:\\Users\\vjett\\miniconda3\\envs\\lisem;\
-C:\\Users\\vjett\\miniconda3\\envs\\lisem\\Library\\mingw-w64\\bin;\
-C:\\Users\\vjett\\miniconda3\\envs\\lisem\\Library\\usr\\bin;\
-C:\\Users\\vjett\\miniconda3\\envs\\lisem\\Library\\bin;\
-C:\\Users\\vjett\\miniconda3\\envs\\lisem\\Scripts;\
-C:\\Users\\vjett\\miniconda3\\envs\\lisem\\bin;\
-C:\\Users\\vjett\\miniconda3\\condabin;";
+    env.insert("GDAL_DATA",condaenv+"Library/share/gdal");
+    env.insert("GDAL_DRIVER",condaenv+"Library/share/gdal");
+    env.insert("GDAL_DRIVER_PATH",condaenv+ "Library/lib/gdalplugins");
+    env.insert("GEOTIFF_CSV",condaenv+"Library/share/epsg_csv");
+    QString addpath = condaenv+";"
+                      +condaenv+"Library/bin/minw-w64/bin;"
+                      +condaenv+"Library/usr/bin;"
+                      +condaenv+"Library/bin;"
+                      +condaenv+"Scripts;"
+                      +condaenv+"bin;"
+                      +condaenv+"condabin;"
+                      +condaenv+"/Scripts;";
 
-    QString ePath = env.value("PATH");
-    env.insert("PATH", cPath + ePath);
-     // qDebug() << cPath + QDir::separator() + ePath;
-    // Set the process environment
+    env.insert("PATH", addpath + env.value("Path"));
+
     PCRProcess->setProcessEnvironment(env);
 
     // Set the working directory for the process
@@ -157,7 +166,6 @@ C:\\Users\\vjett\\miniconda3\\condabin;";
         return;
     }
 
-
     QString prog;
     bool isCMD = false;
     bool moreArgs = args.count() > 1;
@@ -167,23 +175,24 @@ C:\\Users\\vjett\\miniconda3\\condabin;";
         if (fff.exists())
             args[0] += ".cmd";
     }
+    // add .cmd if it exists
 
-    if (args[0].toUpper() == "PYTHON" && moreArgs && args[1].toUpper().contains(".PY"))
+    if (args[0].toUpper() == "PYTHON" && moreArgs && args[1].toUpper().contains(".PY")) {
         prog = CondaDirName+args[0]+".exe";
-    else
+    } else
         if (args[0].toUpper() == "AGUILA") {
             prog = CondaDirName+"Library/bin/"+args[0]+".exe";
-            isCMD = true;
+           // isCMD = true;
         } else
             if (args[0].toUpper().contains(".CMD") || args[0].toUpper().contains(".BAT")) {
                 prog = currentPath+"/"+args[0];
                 createBatch(prog, "");
-                prog = MapeditDirName + "_nutshell_batchjob.cmd";
+                prog = NutshellDirName + "_nutshell_batchjob.cmd";
                 args.clear();
                 isCMD = true;
             } else
                 if (args[0].toUpper().contains("MAPEDIT")) {
-                    prog = MapeditDirName + args[0]+".exe";
+                    prog = NutshellDirName + args[0]+".exe";
                     isCMD = true;
                 }
                 else
@@ -192,7 +201,7 @@ C:\\Users\\vjett\\miniconda3\\condabin;";
 
     // Set the command arguments if needed
     args.removeAt(0);
-    //qDebug() << prog << args;
+    qDebug() << prog << args;
 
     if (isCMD) {
         PCRProcess->startDetached(prog, args);

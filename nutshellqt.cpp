@@ -52,8 +52,7 @@ nutshellqt::nutshellqt(QWidget *parent) :
         ErrorMsg("Invalid conda install. NutShell will not work!");
     else
         CondaInstall = true;
-
-    setPCRasterDirectories();
+    NutshellDirName = QCoreApplication::applicationDirPath() + "/";
 
     setWorkdirectory();
 
@@ -227,10 +226,10 @@ void nutshellqt::createEditorActions()
     connect(deleteLineAct, SIGNAL(triggered()), this, SLOT(deleteLine()));
 
     // the rest is done here3
-    syntaxAct = new QAction(QIcon(":/resources/2X/syntax.png"), "&Show syntax", this);
-    syntaxAct->setCheckable(true);
-    syntaxAct->setChecked(true);
-    connect(syntaxAct , SIGNAL(toggled(bool)), this, SLOT(showsyntax(bool)));
+//    syntaxAct = new QAction(QIcon(":/resources/2X/syntax.png"), "&Show syntax", this);
+//    syntaxAct->setCheckable(true);
+//    syntaxAct->setChecked(true);
+//    connect(syntaxAct , SIGNAL(toggled(bool)), this, SLOT(showsyntax(bool)));
 
     actionFind = new QAction(QIcon(":/resources/2X/editFind.png"), "&Find", this);
     actionFind->setShortcuts(QKeySequence::Find);
@@ -419,6 +418,7 @@ void nutshellqt::setupToolBars()
 //---------------------------------------------------------------
 void nutshellqt::setupMenu( )
 {
+    /*
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(newDirAct);
     fileMenu->addAction(newfileAct);
@@ -476,6 +476,7 @@ void nutshellqt::setupMenu( )
     helpMenu->addAction(helpAguilaAct);
     helpMenu->addAction(helppcrcalcAct);
     helpMenu->addAction(helpNutshellAct);
+*/
 }
 //---------------------------------------------------------------
 void nutshellqt::getOptions()

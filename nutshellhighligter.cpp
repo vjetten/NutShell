@@ -8,6 +8,8 @@
 #include "nutshellqt.h"
 //! Synax highlighter rules for pcraster operations and sections
 //---------------------------------------------------------------
+/*
+
 Highlighter::Highlighter(QTextDocument *parent)
    : QSyntaxHighlighter(parent)
 {
@@ -41,7 +43,6 @@ Highlighter::Highlighter(QTextDocument *parent)
 
    //sections
    keywordFormat.setBackground(QColor(132,132,132,255));
-   //keywordFormat.setBackground(QColor(0,110,161,255));
    keywordFormat.setForeground(QColor(Qt::yellow));//.lighter(140));//QColor(255,255,65,255));
    keywordFormat.setFontWeight(QFont::Bold);
    QStringList sectionPatterns;
@@ -71,8 +72,6 @@ Highlighter::Highlighter(QTextDocument *parent)
 
 
    // all pcrcalc functions
-   //keywordFormat.setForeground(Qt::darkBlue);
-   //keywordFormat.setFontWeight(QFont::Black);
    keywordFormat.setForeground(Qt::black);
    keywordFormat.setFontWeight(QFont::Bold);
    QStringList keywordPatterns;
@@ -286,3 +285,4 @@ void Highlighter::highlightBlock(const QString &text)
 }
 //---------------------------------------------------------------
 
+*/

@@ -10,16 +10,7 @@
 #include "nutshellqt.h"
 
 
-//---------------------------------------------------------------
-void nutshellqt::setPCRasterDirectories()
-{
-    if (CondaInstall) {
-        PCRasterAppDirName = CondaDirName+"Library/bin/";
-        AguilaDirName = PCRasterAppDirName;
-        GDALAppDirName =PCRasterAppDirName;
-    }
-    MapeditDirName = QCoreApplication::applicationDirPath() + "/";
-}
+
 //---------------------------------------------------------------
 void nutshellqt::setNutshellIni()
 {
@@ -28,9 +19,6 @@ void nutshellqt::setNutshellIni()
 
     settings.setValue("CondaDirectory", CondaDirName);
     settings.setValue("DPI",dpiscale);
-//    settings.setValue("CondaInstall",CondaInstall);
-//    settings.setValue("PCRasterInstall",PCRasterInstall);
-
     QStringList L;
     for (int i = 0; i < comboBox_workdir->count(); i++)
         L << comboBox_workdir->itemText(i);
@@ -45,7 +33,7 @@ void nutshellqt::setNutshellIni()
     {
         if (!ETfileName.contains("empty"))
             settings.setValue(QString("models/Script%1").arg(i),
-                              QString("%1<%2").arg(ET[i].filePath).arg("1"));//.arg(ET[i].syntax));
+                              QString("%1<%2").arg(ET[i].filePath).arg(ET[i].syntax));
     }
 
     for (int i = 0; i < comboBox_cmdlist->count(); i++)
@@ -106,7 +94,10 @@ void nutshellqt::getNutshellIni()
                 {
                     QString name = settings.value(keys[i]).toString();
                     QStringList list = name.split("<");
-                    AddModel(list[0],1);// list[1].toInt());
+                    if(QFileInfo(list[0]).suffix().toUpper() == "PY")
+                        AddModel(list[0],2);
+                    else
+                        AddModel(list[0],list[1].toInt());
                 }
     }
     tabWidget->setCurrentIndex(currentmodel);

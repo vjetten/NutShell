@@ -13,15 +13,14 @@ CONFIG += exceptions
 CONFIG += warn_off
 SOURCES += main.cpp\
     nutshellIni.cpp \
-        nutshellqt.cpp \
-        nutshellExplorer.cpp \
+    nutshellqt.cpp \
+    nutshellExplorer.cpp \
     nutshellAction.cpp \
     nutshelllegend.cpp \
     nutshellmapattribute.cpp \
     nutshellfilenames.cpp \
     nutshelleditor.cpp \
     nutshelllinenumber.cpp \
-    nutshellhighligter.cpp \
     nutshellProcess.cpp \
     nutshellhelp.cpp \
     nutshelloptions.cpp \

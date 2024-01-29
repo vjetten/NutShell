@@ -50,7 +50,7 @@ void nutshellqt::setupEditor()
     tabWidget->setTabsClosable(true);
 
     connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
-    connect(tabWidget, SIGNAL(currentChanged(int)),this, SLOT(changeSyntax(int)));
+    //connect(tabWidget, SIGNAL(currentChanged(int)),this, SLOT(changeSyntax(int)));
 
     dosyntax = true;
 
@@ -58,10 +58,10 @@ void nutshellqt::setupEditor()
 //---------------------------------------------------------------
 void nutshellqt::makeNewScriptFile()
 {
-    makeNewFile(true);
+    makeNewFile(true, 1);
 }
 //---------------------------------------------------------------
-void nutshellqt::makeNewFile(bool script)
+void nutshellqt::makeNewFile(bool script, int typ)
 {
     QWidget *tabWidg = new QWidget;
     QHBoxLayout *tabLayout = new QHBoxLayout;
@@ -83,8 +83,12 @@ void nutshellqt::makeNewFile(bool script)
     newedit.editor = myeditor;
     newedit.fileName = QString("<empty %1>").arg(tabWidget->currentIndex()+1);
     newedit.filePath.isEmpty();
-    newedit.highlighter = new Highlighter(myeditor->document());
-    newedit.syntax = 0;
+    if (typ == 1)
+        newedit.highlighter = new PCRHighlighter(myeditor->document());
+    else
+        if (typ == 2)
+            newedit.highlighter = new PythonHighlighter(myeditor->document());
+    newedit.syntax = typ;
     newedit.editor->doReport = false;
     newedit.editor->fold_binding = false;
     newedit.editor->fold_areamap = false;
@@ -131,9 +135,13 @@ void nutshellqt::openFile()
     QFileDialog dialog(this);
     dialog.setViewMode(QFileDialog::Detail);
     QString fileName = dialog.getOpenFileName(this,
-                                              "Open model/script", currentPath, "*.mod *.txt *.cmd *.bat;;*.*");
-    if (!fileName.isEmpty())
-        AddModel(fileName, 1);
+        "Open model/script", currentPath, "*.mod *.txt *.cmd *.bat;;*.py;;*.*");
+    if (!fileName.isEmpty()) {
+        if (QFileInfo(fileName).suffix().toUpper() == "PY")
+            AddModel(fileName, 2);
+        else
+            AddModel(fileName, 1);
+    }
 }
 //---------------------------------------------------------------
 bool nutshellqt::saveFile()
@@ -201,7 +209,7 @@ void nutshellqt::AddModel(QString name, int syntax)
     QString txt = in.readAll();
     fff.close();
 
-    makeNewFile(false);
+    makeNewFile(false, syntax);
     // make a new tab with an empty edit
 
     int nr = tabWidget->currentIndex();
@@ -210,10 +218,10 @@ void nutshellqt::AddModel(QString name, int syntax)
     ET[nr].fileName = QFileInfo(name).fileName();
     tabWidget->setTabText(nr, ET.at(nr).fileName);
     tabWidget->setTabToolTip(nr,ET.at(nr).filePath);
-    syntax = 1;
+
     ET[nr].syntax = syntax;
-    syntaxAct->setChecked(syntax == 1);
-    showsyntax(syntax == 1);
+  //  syntaxAct->setChecked(syntax == 1);
+  //  showsyntax(syntax == 1);
 
     ET[nr].editor->setPlainText(txt);
     // fill empty tab editor with file text
@@ -468,23 +476,24 @@ void nutshellqt::doIndent(bool back)
     // put the whole thing back into the main text
 }
 //---------------------------------------------------------------
-void nutshellqt::showsyntax(bool doit)
-{
-    if (!ETExists)
-        return;
-    doit = true;
-    ETHighlighter->dosyntax = doit;
-    ET[tabWidget->currentIndex()].syntax = (doit ? 1 : 0);
-    ETHighlighter->rehighlight();
-}
+//void nutshellqt::showsyntax(bool doit)
+//{
+//    if (!ETExists)
+//        return;
+//    doit = true;
+//   // ETHighlighter->dosyntax = doit;
+//    ET[tabWidget->currentIndex()].syntax = (doit ? 1 : 0);
+//    ETHighlighter->rehighlight();
+//}
 //---------------------------------------------------------------
-void nutshellqt::changeSyntax(int index)
-{
-    if (index >= 0)
-        syntaxAct->setChecked(ET[index].highlighter->dosyntax);
-    if (index >= 0)
-        changeFileFilter(_filternr);
-}
+//void nutshellqt::changeSyntax(int index)
+//{
+//    if (index >= 0) {
+//        syntaxAct->setChecked(true);//ET[index].highlighter->dosyntax);
+//    }
+//    if (index >= 0)
+//        changeFileFilter(_filternr);
+//}
 //---------------------------------------------------------------
 void nutshellqt::displayVar()
 {

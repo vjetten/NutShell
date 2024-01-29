@@ -93,7 +93,9 @@ typedef struct filenameseries{
 //! list of editor tabs and corrsponding filenames
 typedef struct editortabs{
     nutshelleditor *editor;
-    Highlighter *highlighter;
+//    PythonHighlighter *highlighter;
+//    PCRHighlighter *pHighlighter;
+    QSyntaxHighlighter *highlighter;
     QString filePath;
     QString fileName;
     int syntax;
@@ -261,15 +263,11 @@ public:
 
     void setNutshellIni();
     void getNutshellIni();
-    void setPCRasterDirectories();
 
     void createBatch(QString sss, QString args);
     void deleteBatch();
 
     void findDPIscale();
-
-
-    QStringList setEnvironment();
 
     QList<editortabs> ET;
 
@@ -285,19 +283,8 @@ public:
     QToolBar *dirToolBar;
     QToolBar *expToolBar;
 
-    QString AguilaDirName;
-    QString PCRasterDirName;
-    QString PCRasterAppDirName;
-    QString PCRasterDocDirName;
-    QString MapeditDirName;
-    QString GDALDirName;
-    QString GDALAppDirName;
+    QString NutshellDirName;
     QString CondaDirName;
-    //QString CondaBaseDirName;
-    QString PCRxtr;
-    QString GSALxtr;
-
-
 
     //======================
     //Vars for commandWindow
@@ -412,7 +399,7 @@ public slots:
     //=====================
     //slots for main/editor
     //=====================
-    void makeNewFile(bool script =  false);
+    void makeNewFile(bool script =  false, int typ = 1);
     void makeNewScriptFile();
     void closeFile();
     void closeTab(int index);
@@ -439,8 +426,8 @@ public slots:
     void increaseHash();
     void increaseReport();
     void doIndent(bool back);
-    void showsyntax(bool doit);
-    void changeSyntax(int index);
+   // void showsyntax(bool doit);
+   // void changeSyntax(int index);
     void displayVar();
     void getOptions();
     void clearNutshellIni();
