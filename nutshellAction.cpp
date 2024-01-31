@@ -118,28 +118,24 @@ int nutshellqt::GetActionType()
         m=nullptr;
     }
     else
-        if( isTSSfile(SelectedPathName))
-            at = ACTIONTYPETIMEPLOT;
-        else
-            if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
-                at = ACTIONTYPEWINDOWSCMD;
+        if (isTextFile(SelectedPathName)) {
+            if(isTSSfile(SelectedPathName))
+                at = ACTIONTYPETIMEPLOT;
             else
-                if (ext.toUpper() == "MOD")
-                {
-                    at = ACTIONTYPEMODEL;
-                    syntaxAct->setChecked(true);
-                }
+                if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
+                    at = ACTIONTYPEWINDOWSCMD;
                 else
                     if (ext.toUpper() == "TXT" ||
                             ext.toUpper() == "TBL" ||
                             ext.toUpper() == "DAT" ||
-                            ext.toUpper() == "INI")
+                            ext.toUpper() == "INI" ||
+                            ext.toUpper() == "MOD")
                     {
                         at = ACTIONTYPEMODEL;
-                        syntaxAct->setChecked(false);
                     }
-                    else
-                        at = ACTIONTYPEUNDEFINED;
+        }
+        else
+            at = ACTIONTYPEUNDEFINED;
 
     return at;
 }

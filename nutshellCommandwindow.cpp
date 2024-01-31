@@ -182,14 +182,15 @@ void nutshellqt::executeCommand(QStringList args)
     } else
         if (args[0].toUpper() == "AGUILA") {
             prog = CondaDirName+"Library/bin/"+args[0]+".exe";
-           // isCMD = true;
+            isCMD = true;
         } else
             if (args[0].toUpper().contains(".CMD") || args[0].toUpper().contains(".BAT")) {
-                prog = currentPath+"/"+args[0];
-                createBatch(prog, "");
-                prog = NutshellDirName + "_nutshell_batchjob.cmd";
+               // prog = currentPath+"/"+args[0];
+                createBatch(args[0],"");//prog, "");
+                prog = "cmd.exe";
                 args.clear();
-                isCMD = true;
+                args << "cmd.exe" << "/c" << NutshellDirName + "_nutshell_batchjob.cmd";
+              //  isCMD = true;
             } else
                 if (args[0].toUpper().contains("MAPEDIT")) {
                     prog = NutshellDirName + args[0]+".exe";
@@ -201,7 +202,6 @@ void nutshellqt::executeCommand(QStringList args)
 
     // Set the command arguments if needed
     args.removeAt(0);
-    qDebug() << prog << args;
 
     if (isCMD) {
         PCRProcess->startDetached(prog, args);

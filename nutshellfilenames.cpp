@@ -490,3 +490,34 @@ bool nutshellqt::isExtentionInt(QString name)
     return (val > 0 && ok);
 }
 //---------------------------------------------------------------------------
+bool nutshellqt::isTextFile(const QString& filename)
+{
+    qint64 bufferSize = 1024;
+    bool okay = true;
+
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        okay = false;
+        //return false;
+    }
+
+    if (okay) {
+        char buffer[bufferSize];
+        qint64 bytesRead = file.read(buffer, bufferSize);
+
+        for (int i = 0; i < bytesRead; ++i) {
+            // Check if the character is outside the typical ASCII text range
+            if (buffer[i] < 0 || buffer[i] > 127) {
+                file.close();
+                okay = false;  // Binary file
+            }
+        }
+    }
+
+    file.close();
+
+    if (!okay)
+        ErrorMsg(QString("File %1 cannot be read as text file").arg(filename));
+
+    return okay;  // Text file
+}

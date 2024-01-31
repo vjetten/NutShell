@@ -93,14 +93,11 @@ void nutshellqt::runModel()
     QString ext = QFileInfo(ETfilePath).suffix();
     if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
     {
-        deleteBatch();
-        QString ar = "";
-        if (toolButton_argSubs->isChecked())
-            ar = lineEdit_argsubst->text();
-        createBatch(ETfilePath, ar);
         args.clear();
-        prog = NutshellDirName + "_nutshell_batchjob.cmd";
-        PCRProcess->startDetached(prog, args);
+        args << ETfilePath;
+        if (toolButton_argSubs->isChecked())
+            args << lineEdit_argsubst->text();
+        executeCommand(args);
 
         setButtons(false, false, true);
 

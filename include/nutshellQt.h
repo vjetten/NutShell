@@ -562,7 +562,7 @@ private:
     QAction *toggleHashAct;
     QAction *toggleReportAct;
     QAction *displayvarAct;
-    QAction *syntaxAct;
+   // QAction *syntaxAct;
     QAction *getdisplayvarAct;
     QAction *helpAct;
     QAction *helpWebAct;
