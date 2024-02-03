@@ -19,6 +19,7 @@
 #include "nutshellhelp.h"
 #include "nutshelloptions.h"
 
+
 //---------------------------------------------------------------
 
 #define STATUS(s) statusBar()->showMessage(QString(s),1000);
@@ -259,10 +260,14 @@ public:
     void setupExplorer();
     void setupEditor();
     void setupCommandwindow();
-    bool isTextFile(const QString& filename);
-
     void setNutshellIni();
     void getNutshellIni();
+
+    bool isTextFile(const QString& filename);
+    bool isMapFile(const QString& filename);
+    bool isTSSFile(const QString& filename);
+    bool isTiffFile(const QString& filename);
+
 
     void createBatch(QString sss, QString args);
     void deleteBatch();
@@ -356,7 +361,6 @@ public:
     int totalsteps;
     int GetActionType();
     void PerformAction(int actiontype);
-    bool isTSSfile(QString name);
     bool isExtentionInt(QString name);
     void scriptFold(int section);
     bool changeName;
@@ -383,6 +387,8 @@ public slots:
     void readFromStderr();
     void readFromStderrPCR();
     //void checkDPIscale();
+//    void setWaitingCursor();
+//    void restoreCursor();
 
 
     //=======================
@@ -478,9 +484,7 @@ public slots:
     void actionmapnew();
     void actionmapedit();
     void actioneditor();
-   // void actionmapDisplay();
     void actionmapMap2Tiff();
-    void actionmapMap2Ilwis();
 
     void cutFile();
     void copyFile();
@@ -582,7 +586,8 @@ private:
     QStack<QString> future;
 
     QProcess *PCRProcess;
-    bool processError;
+    QProcess *CMDProcess;
+    //bool processError;
     QProcess *calcProcess;
     //QProcess *CMDProcess;
 

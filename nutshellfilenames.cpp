@@ -8,6 +8,9 @@
 
 
 #include "nutshellqt.h"
+#include <gdal_priv.h>
+#include <gdal.h>
+
 /*
  *QString nutshellqt::StripForName(QString S)
  *QString nutshellqt::StripForNumber(QString S)
@@ -449,11 +452,11 @@ int nutshellqt::getTimesteps()
     return -1;
 }
 //---------------------------------------------------------------
-bool nutshellqt::isTSSfile(QString name)
+bool nutshellqt::isTSSFile(const QString& filename)
 {
     bool istss = true;
 
-    QFile file(name);
+    QFile file(filename);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return false;
 
@@ -516,8 +519,45 @@ bool nutshellqt::isTextFile(const QString& filename)
 
     file.close();
 
-    if (!okay)
-        ErrorMsg(QString("File %1 cannot be read as text file").arg(filename));
+//    if (!okay)
+//        ErrorMsg(QString("File %1 cannot be read as text file").arg(filename));
 
     return okay;  // Text file
+}
+//---------------------------------------------------------------------------
+bool nutshellqt::isMapFile(const QString& filename)
+{
+    MAP *m = Mopen(filename.toLatin1(),M_READ_WRITE);
+
+    if (m != nullptr)
+    {
+        MputProjection(m,PT_YDECT2B);
+        // HACK to force axis direction
+
+        Mclose(m);
+        m=nullptr;
+        return true;
+    }
+    return false;
+}
+//---------------------------------------------------------------------------
+bool nutshellqt::isTiffFile(const QString& filePath)
+{
+    if (QFileInfo(filePath).suffix().toUpper() == "TIF")
+        return true;
+    else
+        return false;
+    //    GDALDataset *dataset = (GDALDataset *)GDALOpen(filePath.toLatin1(), GA_ReadOnly);
+//    if (dataset != nullptr) {
+//        GDALDriver *driver = dataset->GetDriver();
+//        if (driver != nullptr) {
+//            const char* format = driver->GetDescription();
+//            if (QString(format).contains("GeoTIFF")) {
+//                GDALClose(dataset);
+//                return true;
+//            }
+//        }
+//        GDALClose(dataset);
+//    }
+//    return false;
 }

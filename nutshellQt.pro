@@ -140,11 +140,12 @@ CONFIG(debug, debug|release) {
 }
 
 INCLUDEPATH += ./include
+INCLUDEPATH += C:\Qt\msys64\mingw64\include
 INCLUDEPATH += C:\Qt\qwtma\src
 #LIBS += c:/qt/qwtma/lib/libqwt.dll.a
 #INCLUDEPATH += C:\Qt\msys64\mingw64\include\qwt-qt5
 LIBS += C:\Qt\qwt-6.1-ma\lib\libqwt.dll.a
-#LIBS += c:/qt/msys64/mingw64/lib/libgdal.dll.a
+LIBS += c:/qt/msys64/mingw64/lib/libgdal.dll.a
 
 
 RESOURCES +=  nutshellqt.qrc

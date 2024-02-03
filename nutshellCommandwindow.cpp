@@ -8,17 +8,32 @@
 
 #include "nutshellqt.h"
 
+void setWaitingCursor() {
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    qApp->processEvents(); // Ensure the cursor change takes effect immediately
+}
 
+void restoreCursor() {
+    QApplication::restoreOverrideCursor();
+    qApp->processEvents(); // Ensure the cursor change takes effect immediately
+}
 //---------------------------------------------------------------
 void nutshellqt::setupCommandwindow()
 {
     PCRProcess = new QProcess(this);
-    processError = false;
+    //processError = false;
     PCRProcess->setProcessChannelMode(QProcess::MergedChannels);
     connect(PCRProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(outputCommand()) );
     connect(PCRProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderrPCR()) );
     connect(PCRProcess, SIGNAL(error(QProcess::ProcessError)),this, SLOT(errorCommand()) );
-    // process called by command window, typing pcrcalc, or aguila or any other pcr prog
+    connect(PCRProcess, &QProcess::started,setWaitingCursor);
+    connect(PCRProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), restoreCursor);
+
+    CMDProcess = new QProcess(this);
+    CMDProcess->setProcessChannelMode(QProcess::MergedChannels);
+    connect(CMDProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(outputCommand()) );
+    connect(CMDProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderrPCR()) );
+    connect(CMDProcess, SIGNAL(error(QProcess::ProcessError)),this, SLOT(errorCommand()) );
 
     commandWindow = new nutshelleditor(this, 1);
     commandWindow->document()->setDocumentMargin(2);
@@ -67,7 +82,7 @@ void nutshellqt::parseCommand()
 {
     QString all = commandWindow->toPlainText();
 
-    processError = false;
+    //processError = false;
 
     if (all.isEmpty())
     {
@@ -98,6 +113,11 @@ void nutshellqt::parseCommand()
         ErrorMsg("A process is active, wait until it is finished or press stop first");
         return;
     }
+    if (CMDProcess && CMDProcess->state() == QProcess::Running)
+    {
+        ErrorMsg("A process is active, wait until it is finished or press stop first");
+        return;
+    }
 
     setWorkdirectory();
 
@@ -119,7 +139,7 @@ void nutshellqt::executeCommand(QStringList args)
     QString condabase = QDir(condaenv+"/../..").absolutePath();
     QString condascripts = QDir(condabase+"/Scripts").absolutePath();
 
-    qDebug() << CondaDirName << envname << condabase << condascripts;
+    //qDebug() << CondaDirName << envname << condabase << condascripts;
 
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     env.insert("CONDA_DEAFULT_ENV",envname);
@@ -150,9 +170,11 @@ void nutshellqt::executeCommand(QStringList args)
     env.insert("PATH", addpath + env.value("Path"));
 
     PCRProcess->setProcessEnvironment(env);
+    CMDProcess->setProcessEnvironment(env);
 
     // Set the working directory for the process
     PCRProcess->setWorkingDirectory(currentPath);
+    CMDProcess->setWorkingDirectory(currentPath);
 
     // Set the command to run
 
@@ -185,12 +207,14 @@ void nutshellqt::executeCommand(QStringList args)
             isCMD = true;
         } else
             if (args[0].toUpper().contains(".CMD") || args[0].toUpper().contains(".BAT")) {
-               // prog = currentPath+"/"+args[0];
-                createBatch(args[0],"");//prog, "");
+                createBatch(args[0],"");
                 prog = "cmd.exe";
                 args.clear();
-                args << "cmd.exe" << "/c" << NutshellDirName + "_nutshell_batchjob.cmd";
-              //  isCMD = true;
+                QString batchFilePath = NutshellDirName + "_nutshell_batchjob.cmd";
+                args << "xxx" << "/c" << batchFilePath;
+                //   isCMD = true;
+                //    QDesktopServices::openUrl(QUrl("file:///"+batchFilePath));
+                //  return;
             } else
                 if (args[0].toUpper().contains("MAPEDIT")) {
                     prog = NutshellDirName + args[0]+".exe";
@@ -203,16 +227,12 @@ void nutshellqt::executeCommand(QStringList args)
     // Set the command arguments if needed
     args.removeAt(0);
 
+    // difference between CMD Process and PCR process is only change of cursor
     if (isCMD) {
-        PCRProcess->startDetached(prog, args);
-    } else {
-        bufprev = "";
+        CMDProcess->startDetached(prog, args);
+    } else {        
         PCRProcess->start(prog, args, QIODevice::ReadWrite);
         PCRProcess->waitForFinished(-1);
-
-        QString buffer = QString(PCRProcess->readAllStandardOutput());
-        commandWindow->appendPlainText(buffer);
-        QCoreApplication::sendPostedEvents(this, 0);
 
         // hack to avoid wrong projection in created pcraster maps
         if (moreArgs && prog.toUpper().contains("PCRCALC")) {
@@ -246,7 +266,7 @@ void nutshellqt::errorCommand()
 {
     commandWindow->appendPlainText(PCRProcess->errorString());
     QCoreApplication::sendPostedEvents(this, 0);
-    processError = true;
+    //processError = true;
 }
 //---------------------------------------------------------------
 

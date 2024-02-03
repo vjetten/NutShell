@@ -50,7 +50,7 @@ void nutshellqt::setupModel()
     setButtons(false, false, true);
 
     runPaused = false;
-
+    bufprev = "";
 }
 //---------------------------------------------------------------
 // called from command window, only if option -f

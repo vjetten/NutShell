@@ -9,6 +9,7 @@
 
 #include "nutshellqt.h"
 
+
 //---------------------------------------------------------------------------
 // the following functions determine which action to take
 // when a toolbutton is pressed or enter or doubleclick on the fileView is executed
@@ -75,11 +76,6 @@ void nutshellqt::actionmapMap2Tiff()
     PerformAction(ACTIONTYPEMAP2TIFF);
 }
 //---------------------------------------------------------------------------
-void nutshellqt::actionmapMap2Ilwis()
-{
-   // PerformAction(ACTIONTYPEMAP2ILWIS);
-}
-//---------------------------------------------------------------------------
 void nutshellqt::createBatch(QString sss, QString args)
 {
     QFile efout(NutshellDirName+"_nutshell_batchjob.cmd");
@@ -111,28 +107,29 @@ int nutshellqt::GetActionType()
     QString ext = SelectedSuffix; //QFileInfo(SelectedPathName).suffix();
     MAP *m = Mopen(SelectedPathName.toLatin1(),M_READ_WRITE);
 
-    if (m != nullptr || ext.toUpper() == "TIF")
-    {
+    bool isTIFF = isTiffFile(SelectedPathName);
+    bool isMap = isMapFile(SelectedPathName);
+    bool isTXT = isTextFile(SelectedPathName);
+    bool isTSS = isTSSFile(SelectedPathName);
+
+    if (isMap || isTIFF)
         at = ACTIONTYPEAGUILA2D;
-        Mclose(m);
-        m=nullptr;
-    }
     else
-        if (isTextFile(SelectedPathName)) {
-            if(isTSSfile(SelectedPathName))
+        if (isTXT) {
+            if(isTSS)
                 at = ACTIONTYPETIMEPLOT;
             else
                 if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
                     at = ACTIONTYPEWINDOWSCMD;
-                else
-                    if (ext.toUpper() == "TXT" ||
-                            ext.toUpper() == "TBL" ||
-                            ext.toUpper() == "DAT" ||
-                            ext.toUpper() == "INI" ||
-                            ext.toUpper() == "MOD")
-                    {
+            else {
+//                    if (ext.toUpper() == "TXT" ||
+//                            ext.toUpper() == "TBL" ||
+//                            ext.toUpper() == "DAT" ||
+//                            ext.toUpper() == "INI" ||
+//                            ext.toUpper() == "MOD")
+//                    {
                         at = ACTIONTYPEMODEL;
-                    }
+            }
         }
         else
             at = ACTIONTYPEUNDEFINED;
@@ -142,15 +139,13 @@ int nutshellqt::GetActionType()
 //---------------------------------------------------------------------------
 void nutshellqt::PerformAction(int actiontype)
 {
-    QString prog;
     QString cmdl;
     QStringList args;
     QString nameout;
     QString namein;
     MAP *m = nullptr;
-    bool fileIsMap = true;
-    bool isAguila = false;
-    bool isTIFF = false;
+   // bool isMap = true;
+   // bool isTIFF = false;
 
     changeFileFilter(_filternr);
     args.clear();
@@ -167,19 +162,13 @@ void nutshellqt::PerformAction(int actiontype)
         cmdl = getFileListString();
     // also makes mapseries if needed
 
-    // hack to force a map tio have the correct projection, that is depreciated anyway
-    m = Mopen(SelectedPathName.toLatin1().data(),M_READ_WRITE);
-    if (m == nullptr)
-        fileIsMap = false;
-    else {
-        MputProjection(m,PT_YDECT2B);
-        Mclose(m);
-    }
-
-    isTIFF = SelectedSuffix.toUpper() == "TIF";
+    bool isTIFF = isTiffFile(SelectedPathName);
+    bool isMap = isMapFile(SelectedPathName);
+    //bool isTXT = isTextFile(SelectedPathName);
+    //bool isTSS = isTSSFile(SelectedPathName);
 
     // check if selection is a pcraster map
-    if (!fileIsMap && !isTIFF && (
+    if (!isMap && !isTIFF && (
         actiontype == ACTIONTYPEAGUILA3D ||
         actiontype == ACTIONTYPEAGUILA2D ||
         actiontype == ACTIONTYPEDRAPE ||
@@ -189,9 +178,10 @@ void nutshellqt::PerformAction(int actiontype)
     {
         ErrorMsg(QString("%1 is not a raster map.").arg(SelectedPathName));
         actiontype = ACTIONTYPENONE;
+        return;
     }
 
-    if (fileIsMap)
+    if (isMap)
     {
         QString mapatts;
         mapatts = mapattribute.getMapAttributes(SelectedPathName);
@@ -207,16 +197,11 @@ void nutshellqt::PerformAction(int actiontype)
         // you cannot split on a space when the path name has a space in it!!!
         // but if you do not split aguila doesn't recognize two maps as one argument
         // so we use a character like ! to split and create the separate arguments
-
-        //prog = AguilaDirName + PCRxtr + "aguila.exe";
-        isAguila = true;
         break;
     case ACTIONTYPEAGUILA3D :
         args << "aguila" << "-3" << cmdl.split(plus);
         // a split on plus will always show as a single 3D surface,
         // two maps as two seperate surfaces
-        //prog = AguilaDirName + PCRxtr + "aguila.exe";
-        isAguila = true;
         break;
     case ACTIONTYPEDRAPE :
         if (cmdl.contains("!+!"))
@@ -237,11 +222,9 @@ void nutshellqt::PerformAction(int actiontype)
             args.clear();
             args << "aguila" << "-3" << cmdl.split("!");
         }
-        isAguila = true;
         break;
     case ACTIONTYPETIMEPLOT :
         args << "aguila" << "-t" << cmdl.split("!");
-        isAguila = true;
         break;
     case ACTIONTYPEMODEL :
             AddModel(SelectedPathName,1);
@@ -260,7 +243,7 @@ void nutshellqt::PerformAction(int actiontype)
         }
         break;
     case ACTIONTYPELEGEND:
-        if (fileIsMap)
+        if (isMap)
         {
             m = Mopen(SelectedPathName.toLatin1().data(),M_READ);
             if (RgetValueScale(m) == VS_NOMINAL ||
@@ -281,7 +264,7 @@ void nutshellqt::PerformAction(int actiontype)
         actiontype = ACTIONTYPENONE;
         break;
     case ACTIONTYPEATTRIBUTENEW :
-        if (fileIsMap)
+        if (isMap)
         {
             if (mapattribute.fill(SelectedPathName, true) == 0)
             {
@@ -302,7 +285,7 @@ void nutshellqt::PerformAction(int actiontype)
             args << "gdalinfo" << SelectedPathName;
             //prog = GDALAppDirName + "gdalinfo.exe";
         } else
-        if (fileIsMap) {
+        if (isMap) {
             if (mapattribute.fill(SelectedPathName, false) == 0) {
                 mapattribute.show();
                 mapattribute.raise();
@@ -310,14 +293,18 @@ void nutshellqt::PerformAction(int actiontype)
             }
         } else {
             statusBar()->removeWidget(&statusLabel);
-             ErrorMsg("File is not recognised as PCRaster or GeoTIFF map.");
+            ErrorMsg("File is not recognised as PCRaster or GeoTIFF map.");
+            actiontype = ACTIONTYPENONE;
         }
         break;
     case ACTIONTYPEMAP2TIFF:
-        nameout = QFileInfo(SelectedPathName).baseName() + ".tif";
-        namein =  QFileInfo(SelectedPathName).baseName() + "." + SelectedSuffix;//QFileInfo(SelectedPathName).suffix();
-        args << "gdal_translate" << namein << nameout;
-        commandWindow->appendPlainText(args.join(" "));
+        if (isMap) {
+            nameout = QFileInfo(SelectedPathName).baseName() + ".tif";
+            namein =  QFileInfo(SelectedPathName).baseName() + "." + SelectedSuffix;//QFileInfo(SelectedPathName).suffix();
+            args << "gdal_translate" << namein << nameout;
+            commandWindow->appendPlainText(args.join(" "));
+        } else
+            actiontype = ACTIONTYPENONE;
         break;
     case ACTIONTYPEWINDOWSCMD:
         args << cmdl;
@@ -325,12 +312,11 @@ void nutshellqt::PerformAction(int actiontype)
     default:
         STATUS("Opening file in operating system");
         QDesktopServices::openUrl(QUrl("file:///" + cmdl));
-        //open process in its standard OS application
+        //open process in its standard OS application, whatever the user has defined
         actiontype = ACTIONTYPENONE;
     }
 
     if (actiontype != ACTIONTYPENONE) {
-        //qDebug() << args;
         executeCommand(args);
     }
 

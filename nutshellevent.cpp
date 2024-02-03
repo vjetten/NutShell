@@ -18,6 +18,12 @@
  */
 bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
 {
+//    QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+//    if (keyEvent->key() == Qt::Key_S && (keyEvent->modifiers() & Qt::ControlModifier)) {
+//        // Handle Ctrl+S shortcut here
+//        qDebug() << "save";
+//        saveFile();
+//    }
     if (obj == treeView)
     {
         if (event->type() == QEvent::KeyPress)

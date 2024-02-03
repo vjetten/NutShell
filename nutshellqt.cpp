@@ -154,7 +154,7 @@ void nutshellqt::createMainActions()
     openfileAct->setShortcuts(QKeySequence::Open);
     connect(openfileAct, SIGNAL(triggered()), this, SLOT(openFile()));
 
-    savefileAct = new QAction(QIcon(":/resources/2X/filesave.png"), "&Save script file...", this);
+    savefileAct = new QAction(QIcon(":/r esources/2X/filesave.png"), "&Save script file...", this);
     savefileAct->setShortcuts(QKeySequence::Save);
     connect(savefileAct, SIGNAL(triggered()), this, SLOT(saveFile()));
 
@@ -163,7 +163,7 @@ void nutshellqt::createMainActions()
     connect(saveasfileAct , SIGNAL(triggered()), this, SLOT(saveasFile()));
 
     closefileAct = new QAction(QIcon(":/resources/2X/fileclose.png"), "&Close script file...", this);
-    //closefileAct->setShortcut(Qt::CTRL+Qt::Key_W);
+    closefileAct->setShortcut(QKeySequence::Close);
     connect(closefileAct, SIGNAL(triggered()), this, SLOT(closeFile()));
 
 
