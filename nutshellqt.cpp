@@ -114,12 +114,6 @@ void nutshellqt::createModelActions()
     killmodelAct->setChecked (true);
     killmodelAct->setToolTip("Stop running");
     connect(killmodelAct, SIGNAL(triggered()), this, SLOT(killModel()));
-
-    //    oldmodelAct = new QAction(QIcon(":/resources/oldcalc1.png"), "&Use oldcalc...", this);
-    //    oldmodelAct->setCheckable (true);
-    //    oldmodelAct->setToolTip("Run model script with oldcalc");
-    //    connect(oldmodelAct, SIGNAL(toggled(bool)), this, SLOT(toggleOldcalc(bool)));
-
 }
 //---------------------------------------------------------------
 void nutshellqt::createMainActions()
@@ -154,7 +148,7 @@ void nutshellqt::createMainActions()
     openfileAct->setShortcuts(QKeySequence::Open);
     connect(openfileAct, SIGNAL(triggered()), this, SLOT(openFile()));
 
-    savefileAct = new QAction(QIcon(":/r esources/2X/filesave.png"), "&Save script file...", this);
+    savefileAct = new QAction(QIcon(":/resources/2X/filesave.png"), "&Save script file...", this);
     savefileAct->setShortcuts(QKeySequence::Save);
     connect(savefileAct, SIGNAL(triggered()), this, SLOT(saveFile()));
 
@@ -495,10 +489,18 @@ void nutshellqt::getOptions()
 void nutshellqt::setfontSize()
 {
     //qDebug() << "fs" << genfontsize << dpiscale;
-    int fs = genfontsize;
+//    int fs = genfontsize;
+//    int fsdpi = int(fs*dpiscale);
 
-    int fsdpi = int(fs*dpiscale);
-    QFont font = qApp->font();
+    const QWidgetList allWidgets = QApplication::allWidgets();
+    for (QWidget *widget : allWidgets) {
+        QFont font = widget->font();
+        font.setPointSize(genfontsize);
+        widget->setFont(font);
+        widget->update();
+    }
+
+/*
     font.setPixelSize((int)(fs*dpiscale));
     qApp->setFont(font);
     qApp->setStyleSheet(QString("QComboBox {font: %1px; padding: 1px 0px 1px 3px;}").arg(fsdpi));
@@ -517,16 +519,13 @@ void nutshellqt::setfontSize()
 
     qApp->setStyleSheet(QString("QCheckBox::indicator {width: %1px; height: %1px;}\
                                 QRadioButton::indicator {width: %1px; height: %1px;}").arg(fsdpi));
+*/
 
 }
 //---------------------------------------------------------------
-//void nutshellqt::checkDPIscale()
-//{
-//    findDPIscale(true);
-//}
-
 void nutshellqt::findDPIscale()
 {
+    /*
     //QRect rect = qApp->screens();
     QRect rect = QGuiApplication::primaryScreen()->availableGeometry();
     //->screenGeometry();
@@ -560,17 +559,56 @@ void nutshellqt::findDPIscale()
 
    // if (!check)
      //   dpiscale = opDPIscale;
+*/
 
-    toolBar->setIconSize(iSize);
-  //  setfontSize();
+    int _H = QApplication::desktop()->height();
+
+    int disp = 3;
+
+    if(_H < 1400) disp = 2;
+    if(_H < 1200) disp = 1;
+    if(_H < 1080) disp = 0;
+    if(_H < 800) disp = -1;
+    // qDebug() << _H << disp;
+
+    // do a bit of size tweaking for large displays
+    QSize iSize = QSize(16,16);
+    if (disp == -1) {
+        iSize = QSize(16,16);
+        this->setStyleSheet(QString("QToolButton * {icon-size: 16px 16px}"));
+    }
+    if (disp == 0) {
+        this->setStyleSheet(QString("QToolButton * {icon-size: 16px 16px}"));
+        iSize = QSize(16,16);
+    }
+    if (disp == 1) {
+        this->setStyleSheet(QString("QToolButton * {icon-size: 16px 16px}"));
+        iSize = QSize(24,24);
+    }
+    if (disp == 2) {
+        this->setStyleSheet(QString("QToolButton * {icon-size: 24px 24px}"));
+        iSize = QSize(24,24);
+    }
+    if (disp == 3) {
+        this->setStyleSheet(QString("QToolButton * {icon-size: 24px 24px}"));
+        iSize = QSize(32,32);
+    }
+    if (disp > 3) {
+        this->setStyleSheet(QString("QToolButton * {icon-size: 32px 32px}"));
+        iSize = QSize(32,32);
+    }
+
+      toolBar->setIconSize(iSize);
+   pcrToolBar->setIconSize(iSize);
 
     const QWidgetList allWidgets = QApplication::allWidgets();
     for (QWidget *widget : allWidgets) {
         QFont font = widget->font();
-        int ps = 8 + genfontsize;
+        int ps = 8 + disp;
         font.setPointSize(ps);
         widget->setFont(font);
         widget->update();
     }
     //qDebug() << "dpi" << _H << dpiscale;
+
 }
