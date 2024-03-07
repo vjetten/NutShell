@@ -218,6 +218,7 @@ void nutshellqt::executeCommand(QStringList args)
             } else
                 if (args[0].toUpper().contains("MAPEDIT")) {
                     prog = NutshellDirName + args[0]+".exe";
+                qDebug() << prog;
                     isCMD = true;
                 }
                 else

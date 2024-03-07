@@ -231,6 +231,7 @@ void nutshellqt::PerformAction(int actiontype)
             actiontype = ACTIONTYPENONE;
         break;
     case ACTIONTYPEMAPEDIT :
+        qDebug() << NutshellDirName + "mapedit.exe";
         if (!QFileInfo(NutshellDirName + "mapedit.exe").exists()) {
             WarningMsg("Mapedit not found in Nutshell install directory.");
             actiontype = ACTIONTYPENONE;
@@ -241,6 +242,7 @@ void nutshellqt::PerformAction(int actiontype)
             else
                 args << "mapedit" << cmdl;
         }
+        qDebug() << args;
         break;
     case ACTIONTYPELEGEND:
         if (isMap)
