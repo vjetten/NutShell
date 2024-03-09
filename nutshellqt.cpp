@@ -14,6 +14,12 @@ nutshellqt::nutshellqt(QWidget *parent) :
 {
     setupUi(this);
 
+    NutshellDirName = qApp->applicationDirPath() + "/";
+    rootPath = NutshellDirName.left(3);
+    comboBox_workdir->clear();
+    comboBox_workdir->setInsertPolicy(QComboBox::InsertAtBottom);
+    comboBox_workdir->setDuplicatesEnabled(false);
+
     setupActions();
 
     setupToolBars();
@@ -31,22 +37,14 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     setupCommandwindow();
 
-   // currentPath = "C:/";
-
-    comboBox_workdir->clear();
-    comboBox_workdir->setInsertPolicy(QComboBox::InsertAtBottom);
-    comboBox_workdir->setDuplicatesEnabled(false);
-   // comboBox_workdir->addItem(currentPath);
-
     getNutshellIni();
 
     // check if the ini conda dir exist on this pc?
     // this gets all valid econda dirs and sets to the ini-dir if it can
     CondaInstall = nutOptions.findCondaDir(CondaDirName);
+    CondaDirName = nutOptions.CondaDirName;
 
-    NutshellDirName = QCoreApplication::applicationDirPath() + "/";
-
-    setWorkdirectory();    
+    setWorkdirectory();
 
     STATUS("");
 

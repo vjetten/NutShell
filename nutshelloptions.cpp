@@ -99,8 +99,12 @@ bool nutshellOptions::GetCondaAllEnvs()
         }
     }
     allCondaDirNames.clear();
-     for (int i = 0; i < combo_envs->count(); i++)
-         allCondaDirNames << combo_envs->itemText(i);
+    condalist->clear();
+    condalist->appendPlainText("Conda environments with GDAL and PCRaster:");
+    for (int i = 0; i < combo_envs->count(); i++) {
+        allCondaDirNames << combo_envs->itemText(i);
+        condalist->appendPlainText(">" + combo_envs->itemText(i));
+    }
 
     return(combo_envs->count() > 0);
 }

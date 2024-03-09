@@ -66,12 +66,14 @@ void nutshellqt::getNutshellIni()
     CondaDirName = str;
 
     dpiscale = settings.value("DPI").toDouble();
+
     str = settings.value("workdir").toString();
-    QStringList L = str.split(';');
     comboBox_workdir->addItems(str.split(';'));
+
     int i = settings.value("active").toInt();
     currentPath = comboBox_workdir->itemText(i);
-    if (currentPath == "") currentPath = "c:/";
+    if (currentPath == "")
+        currentPath = rootPath;// initialised in setupExplorer as the root of nutshell dir
 
     settings.beginGroup("models");
     QStringList keys = settings.childKeys();

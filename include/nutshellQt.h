@@ -247,6 +247,7 @@ public:
     QSize iSize;
 
     myTreeView *treeView;
+   // QTableView  *fileView; // is defined in ui
     void setupActions();
     void createMainActions();
     void createEditorActions();
@@ -290,6 +291,7 @@ public:
 
     QString NutshellDirName;
     QString CondaDirName;
+    QString rootPath;
 
     //======================
     //Vars for commandWindow
@@ -419,7 +421,7 @@ public slots:
     void removeWorkdirectory();
     void saveWorkdirectory();
     void clearWorkdirectories();
-    void setWorkdirectoryNr(int index);
+    void setWorkdirectoryNr(int);
     void findDialog();
     void findReplaceDialog();
     void findNextfind();
@@ -498,7 +500,7 @@ public slots:
 
     void changeFileFilter(int filterNr);
 
-    void setRootIndex(const QModelIndex& index);
+    void setNSRootIndex(const QModelIndex& index);
     void setWorkDirectoryIndex(const QModelIndex& index);
 
     void getScriptLinks();
