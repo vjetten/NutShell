@@ -50,7 +50,7 @@ void nutshellqt::setupExplorer()
     treeView->setDragEnabled(true);
     treeView->setAcceptDrops(true);
     treeView->setDropIndicatorShown(true);
-    treeView->resizeColumnToContents(0);
+   // treeView->resizeColumnToContents(0);
     treeView->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     treeView->setContextMenuPolicy(Qt::NoContextMenu);
     treeView->setRootIndex(dirModel->index(rootPath));
@@ -85,7 +85,9 @@ void nutshellqt::setupExplorer()
 
  //   treeView->setEditTriggers(QAbstractItemView::NoEditTriggers | QAbstractItemView::EditKeyPressed);
     connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(setNSRootIndex(QModelIndex)));
-    connect(treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(setNSRootIndex(QModelIndex)));
+  //  connect(treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(setNSRootIndex(QModelIndex)));
+    //NOT SURE ABOUT double click
+
     // single click on tree sets also fileView
     connect(fileView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(selectFiles(QModelIndex)));
     // double clicked activate pcraster stuff
@@ -150,7 +152,7 @@ void nutshellqt::setupExplorer()
 
     expFont = 32;
 
-    qDebug() << "setup explorer done";
+    //qDebug() << "setup explorer done";
 
 }
 //---------------------------------------------------------------
@@ -181,10 +183,10 @@ void nutshellqt::setWorkDirectoryIndex(const QModelIndex& index)
 //---------------------------------------------------------------
 void nutshellqt::setNSRootIndex(const QModelIndex& index)
 {
-qDebug() << "setNSrootindex";
 
     currentPath = dirModel->fileInfo(index).absoluteFilePath();
     // get current path from the dirmodel
+    //qDebug() << "setNSrootindex" << currentPath;
 
     treeView->setRootIndex(dirModel->index(rootPath));
     // this is c:\\ or d:\\ etc else only part of the tree is shown
@@ -203,6 +205,11 @@ qDebug() << "setNSrootindex";
     changeFileFilter(_filternr);
     treeView->hideColumn(1); // hide column 'folder'
     treeView->hideColumn(2); // hide column 'size'
+    treeView->sortByColumn(0, Qt::AscendingOrder);
+    treeView->sortByColumn(3, Qt::AscendingOrder);
+
+    //qDebug() << "setNSrootindex" << currentPath;
+
 }
 
 //---------------------------------------------------------------
@@ -497,7 +504,7 @@ void nutshellqt::deleteFiles()
     // each file has 4 indexes (name, date, type, size)
     QMessageBox::StandardButton reply =
             WarningMsg(QString("Delete highlighted maps and map series ?\n"
-                               "To delete single files form a series select the \"*.*\" speedbutton"));
+                               "To delete single files from a series select the \"*.*\" speedbutton"));
     if (reply == QMessageBox::No)
         return;
 
@@ -533,6 +540,7 @@ void nutshellqt::deleteFiles()
             }
             else // not a series
             {
+                //qDebug() << fileModel->filePath(index);
                 file.setFileName(fileModel->filePath(index));
                 file.remove();
             }
@@ -776,7 +784,7 @@ void nutshellqt::returnToWorkdirectory()
 //---------------------------------------------------------------
 void nutshellqt::setWorkdirectoryNr(int)
 {
-    qDebug() << "setWorkdirectoryNr(int)" << currentPath;
+    //qDebug() << "setWorkdirectoryNr(int)" << currentPath;
     treeView->collapse(dirModel->index(currentPath));
 
     QString drive = QFileInfo(comboBox_workdir->currentText()).absolutePath().left(3);
@@ -802,7 +810,7 @@ void nutshellqt::setWorkdirectoryNr(int)
     // set the path in the operating system
 
     treeView->expand(dirModel->index(currentPath) );
-        qDebug() << "new" << currentPath;
+        //qDebug() << "new" << currentPath;
 }
 //---------------------------------------------------------------
 //OBSOLETE
