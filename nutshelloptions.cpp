@@ -17,14 +17,14 @@ nutshellOptions::~nutshellOptions()
 //---------------------------------------------------------------------------
 void nutshellOptions::setOptions(QString S)
 {
-    CondaInstall = findCondaDir();
+   // CondaInstall = findCondaDir(S);
     combo_envs->setCurrentText(S);
 }
 //---------------------------------------------------------------------------
 QString nutshellOptions::getOptions()
 {
-    // after closing options get the results
-    CondaInstall = findCondaDir();
+    // after closing options get the results    
+    CondaInstall = findCondaDir(CondaDirName);
     QFileInfo inff(CondaDirName);
     if (CondaDirName.isEmpty() || !inff.exists() || !inff.isDir()) {
         ErrorMsg("Invalid conda install. NutShell will not work!");
@@ -34,21 +34,23 @@ QString nutshellOptions::getOptions()
     return CondaDirName;
 }
 //---------------------------------------------------------------------------
-bool nutshellOptions::findCondaDir()
+bool nutshellOptions::findCondaDir(QString dirS)
 {
     CondaInstall = GetCondaAllEnvs();
-
-    if (!CondaInstall) {        
+    if (CondaInstall) {
+        for (int i; i < combo_envs->count(); i++) {
+             if (dirS == combo_envs->itemText(i))
+                 combo_envs->setCurrentText(dirS);
+        }
+    } else {
         WarningMsg("No valid Anaconda or Miniconda installation with Python, PCRaster and GDAL is found.\nFollow the instructions on https://pcraster.geo.uu.nl/.");
-        CondaDirName = "";
-    } else
-        CondaDirName = combo_envs->currentText();
+        CondaDirName = "";        
+    }
     return(CondaInstall);
 }
 //---------------------------------------------------------------------------
 bool nutshellOptions::GetCondaAllEnvs()
 {
-    QStringList folders;
     QString name = qgetenv("USERPROFILE");
   //  QString name1 = qgetenv("ALLUSERSPROFILE");
     combo_envs->clear();
@@ -67,7 +69,7 @@ bool nutshellOptions::GetCondaAllEnvs()
                     S.remove(QChar('\n'));
                     S.replace("\\","/");
                     S = S + "/";
-                    folders << S;
+                    allCondaDirNames << S;
                 }
             }
         }
@@ -77,28 +79,34 @@ bool nutshellOptions::GetCondaAllEnvs()
         return false;
     }
 
-
-    for (int i = 0; i < folders.size(); i++) {
-        QString str = folders.at(i)+"python.exe";
-        QString str1 = folders.at(i)+"Library/bin/pcrcalc.exe";
-        QString str2 = folders.at(i)+"Library/bin/gdalinfo.exe";
+    for (int i = 0; i < allCondaDirNames.size(); i++) {
+        QString str = allCondaDirNames.at(i)+"python.exe";
+        QString str1 = allCondaDirNames.at(i)+"Library/bin/pcrcalc.exe";
+        QString str2 = allCondaDirNames.at(i)+"Library/bin/gdalinfo.exe";
         bool pythonfound = QFileInfo(str).exists();
         bool pcrasterfound = QFileInfo(str1).exists();
         bool gdalfound = QFileInfo(str2).exists();
 
         if (pythonfound && pcrasterfound && gdalfound)
-            combo_envs->addItem(folders.at(i));
+            combo_envs->addItem(allCondaDirNames.at(i));
         else {
             QString error = "";
-            if (!pythonfound) error = QString("Python not found in Anaconda environment "+folders.at(i)+"\nThis environment is ignored.");
+            if (!pythonfound) error = QString("Python not found in Anaconda environment "+allCondaDirNames.at(i)+"\nThis environment is ignored.");
             else
-                if (!pcrasterfound) error = QString("PCRaster not found in Anaconda environment "+folders.at(i)+"\nThis environment is ignored.");
+                if (!pcrasterfound) error = QString("PCRaster not found in Anaconda environment "+allCondaDirNames.at(i)+"\nThis environment is ignored.");
                 else
-                    if (!gdalfound) error = QString("GDAL not found in Anaconda environment "+folders.at(i)+"\nThis environment is ignored.");
+                    if (!gdalfound) error = QString("GDAL not found in Anaconda environment "+allCondaDirNames.at(i)+"\nThis environment is ignored.");
         }
     }
-    if (combo_envs->count() > 0)
-        CondaDirName = combo_envs->currentText();
+    allCondaDirNames.clear();
+     for (int i = 0; i < combo_envs->count(); i++)
+         allCondaDirNames << combo_envs->itemText(i);
 
     return(combo_envs->count() > 0);
 }
+
+void nutshellOptions::on_combo_envs_currentTextChanged(const QString &arg1)
+{
+    CondaDirName = arg1;
+}
+

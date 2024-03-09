@@ -40,18 +40,23 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     getNutshellIni();
 
-    QFileInfo inf(CondaDirName);
-    if (CondaDirName.isEmpty() || !inf.exists() || !inf.isDir())
-        CondaDirName = nutOptions.getOptions();
-    else
-        nutOptions.setOptions(CondaDirName);
+    // check if the ini conda dir exist on this pc?
+    CondaInstall = nutOptions.findCondaDir(CondaDirName);
+    // this gets all valid econda dirs and sets to the ini dir if it can
+
+    // QFileInfo inf(CondaDirName);
+    // if (CondaDirName.isEmpty() || !inf.exists() || !inf.isDir()) {
+    //     CondaDirName = nutOptions.getOptions();
+    //     //CondaInstall = nutOptions.findCondaDir(CondaDirName);
+    // } else
+    //     nutOptions.setOptions(CondaDirName);
 
     //CondaInstall = false;
-    QFileInfo inff(CondaDirName);
-    if (CondaDirName.isEmpty() || !inff.exists() || !inff.isDir())
-        ErrorMsg("Invalid conda install. NutShell will not work!");
-    else
-        CondaInstall = true;
+    // QFileInfo inff(CondaDirName);
+    // if (CondaDirName.isEmpty() || !inff.exists() || !inff.isDir())
+    //     ErrorMsg("Invalid conda install. NutShell will not work!");
+    // else
+    //     CondaInstall = true;
     NutshellDirName = QCoreApplication::applicationDirPath() + "/";
 
     setWorkdirectory();
@@ -484,6 +489,7 @@ void nutshellqt::getOptions()
         if(!CondaInstall) //{
             ErrorMsg("Cannot proceed, PCRaster and GDAL not found in the Conda environment");
     }
+    CondaDirName = nutOptions.CondaDirName;
 }
 //---------------------------------------------------------------
 void nutshellqt::setfontSize()

@@ -17,9 +17,12 @@ public:
      bool CondaInstall;
      bool GetCondaAllEnvs();
      QString CondaDirName;
+     QStringList allCondaDirNames;
 
 public slots:
-     bool findCondaDir();
+     bool findCondaDir(QString dirS);
+private slots:
+     void on_combo_envs_currentTextChanged(const QString &arg1);
 };
 
 #endif // NUTSHELLOPTIONS_H
