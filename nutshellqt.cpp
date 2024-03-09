@@ -41,25 +41,12 @@ nutshellqt::nutshellqt(QWidget *parent) :
     getNutshellIni();
 
     // check if the ini conda dir exist on this pc?
+    // this gets all valid econda dirs and sets to the ini-dir if it can
     CondaInstall = nutOptions.findCondaDir(CondaDirName);
-    // this gets all valid econda dirs and sets to the ini dir if it can
 
-    // QFileInfo inf(CondaDirName);
-    // if (CondaDirName.isEmpty() || !inf.exists() || !inf.isDir()) {
-    //     CondaDirName = nutOptions.getOptions();
-    //     //CondaInstall = nutOptions.findCondaDir(CondaDirName);
-    // } else
-    //     nutOptions.setOptions(CondaDirName);
-
-    //CondaInstall = false;
-    // QFileInfo inff(CondaDirName);
-    // if (CondaDirName.isEmpty() || !inff.exists() || !inff.isDir())
-    //     ErrorMsg("Invalid conda install. NutShell will not work!");
-    // else
-    //     CondaInstall = true;
     NutshellDirName = QCoreApplication::applicationDirPath() + "/";
 
-    setWorkdirectory();
+    setWorkdirectory();    
 
     STATUS("");
 

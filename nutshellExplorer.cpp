@@ -206,11 +206,11 @@ void nutshellqt::setRootIndex(const QModelIndex& index)
     // set the view to currentpath en also the model
     // set the treeview to the current index when a dir is selected as workdir
 
+    changeFileFilter(_filternr);
+    // to update getMapSeries when changing dir with mouseclick
     fileView->setRootIndex(fileModel->setRootPath(currentPath));
     // set the root index of the listview so that is shows files of the new dir
 
-    changeFileFilter(_filternr);
-    // to update getMapSeries when changing dir with mouseclick
     treeView->hideColumn(1); // hide column 'folder'
     treeView->hideColumn(2); // hide column 'size'
 
@@ -812,6 +812,7 @@ void nutshellqt::setWorkdirectoryNr(int index)
 
     setRootIndex(dirModel->index(currentPath));
     // set the explorer to this path
+
     dir.setCurrent(currentPath);
     // set the path in the operating system
 
