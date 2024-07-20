@@ -50,7 +50,7 @@ nutshellqt::nutshellqt(QWidget *parent) :
 
     commandcounter = -1;
 
-    changeName = false;
+   // changeName = false;
 
     findDPIscale();
 
@@ -552,54 +552,54 @@ void nutshellqt::findDPIscale()
      //   dpiscale = opDPIscale;
 */
 
-    int _H = QApplication::desktop()->height();
+   //  int _H = QApplication::desktop()->height();
 
-    int disp = 3;
+   //  int disp = 3;
 
-    if(_H < 1400) disp = 2;
-    if(_H < 1200) disp = 1;
-    if(_H < 1080) disp = 0;
-    if(_H < 800) disp = -1;
-    // qDebug() << _H << disp;
+   //  if(_H < 1400) disp = 2;
+   //  if(_H < 1200) disp = 1;
+   //  if(_H < 1080) disp = 0;
+   //  if(_H < 800) disp = -1;
+   //  // qDebug() << _H << disp;
 
-    // do a bit of size tweaking for large displays
-    QSize iSize = QSize(16,16);
-    if (disp == -1) {
-        iSize = QSize(16,16);
-        this->setStyleSheet(QString("QToolButton * {icon-size: 16px 16px}"));
-    }
-    if (disp == 0) {
-        this->setStyleSheet(QString("QToolButton * {icon-size: 16px 16px}"));
-        iSize = QSize(16,16);
-    }
-    if (disp == 1) {
-        this->setStyleSheet(QString("QToolButton * {icon-size: 16px 16px}"));
-        iSize = QSize(24,24);
-    }
-    if (disp == 2) {
-        this->setStyleSheet(QString("QToolButton * {icon-size: 24px 24px}"));
-        iSize = QSize(24,24);
-    }
-    if (disp == 3) {
-        this->setStyleSheet(QString("QToolButton * {icon-size: 24px 24px}"));
-        iSize = QSize(32,32);
-    }
-    if (disp > 3) {
-        this->setStyleSheet(QString("QToolButton * {icon-size: 32px 32px}"));
-        iSize = QSize(32,32);
-    }
+   //  // do a bit of size tweaking for large displays
+   //  QSize iSize = QSize(16,16);
+   //  if (disp == -1) {
+   //      iSize = QSize(16,16);
+   //      this->setStyleSheet(QString("QToolButton * {icon-size: 16px 16px}"));
+   //  }
+   //  if (disp == 0) {
+   //      this->setStyleSheet(QString("QToolButton * {icon-size: 16px 16px}"));
+   //      iSize = QSize(16,16);
+   //  }
+   //  if (disp == 1) {
+   //      this->setStyleSheet(QString("QToolButton * {icon-size: 16px 16px}"));
+   //      iSize = QSize(24,24);
+   //  }
+   //  if (disp == 2) {
+   //      this->setStyleSheet(QString("QToolButton * {icon-size: 24px 24px}"));
+   //      iSize = QSize(24,24);
+   //  }
+   //  if (disp == 3) {
+   //      this->setStyleSheet(QString("QToolButton * {icon-size: 24px 24px}"));
+   //      iSize = QSize(32,32);
+   //  }
+   //  if (disp > 3) {
+   //      this->setStyleSheet(QString("QToolButton * {icon-size: 32px 32px}"));
+   //      iSize = QSize(32,32);
+   //  }
 
-      toolBar->setIconSize(iSize);
-   pcrToolBar->setIconSize(iSize);
+   //    toolBar->setIconSize(iSize);
+   // pcrToolBar->setIconSize(iSize);
 
-    const QWidgetList allWidgets = QApplication::allWidgets();
-    for (QWidget *widget : allWidgets) {
-        QFont font = widget->font();
-        int ps = 8 + disp;
-        font.setPointSize(ps);
-        widget->setFont(font);
-        widget->update();
-    }
+   //  const QWidgetList allWidgets = QApplication::allWidgets();
+   //  for (QWidget *widget : allWidgets) {
+   //      QFont font = widget->font();
+   //      int ps = 8 + disp;
+   //      font.setPointSize(ps);
+   //      widget->setFont(font);
+   //      widget->update();
+   //  }
     //qDebug() << "dpi" << _H << dpiscale;
 
 }

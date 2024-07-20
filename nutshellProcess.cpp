@@ -108,7 +108,7 @@ void nutshellqt::runModel()
         QStringList args;
         args << "python" << ETfilePath;
         if (toolButton_argSubs->isChecked())
-            args << lineEdit_argsubst->text().split(" ",QString::SkipEmptyParts);
+            args << lineEdit_argsubst->text().split(" ",Qt::SkipEmptyParts);
 
         commandWindow->appendPlainText(args.join(" "));
         executeCommand(args);
@@ -171,7 +171,7 @@ void nutshellqt::runModel()
     if (toolButton_argSubs->isChecked())
     {
         QStringList subs;
-        subs = lineEdit_argsubst->text().split(" ",QString::SkipEmptyParts);
+        subs = lineEdit_argsubst->text().split(" ",Qt::SkipEmptyParts);
         args << subs;
         argsscreen << subs;
     }
@@ -215,25 +215,25 @@ void nutshellqt::suspendModel(bool pause)
     setButtons(!pause, pause, false);
 
 
-#ifdef Q_OS_WIN32
-    // only windows uses PROCESS_INFORMATION in this way, on UNIX systems pid
-    // returns an integer of the proces number
-    // needs to be implemented
-    PROCESS_INFORMATION *pi = calcProcess->pid();
+// #ifdef Q_OS_WIN32
+//     // only windows uses PROCESS_INFORMATION in this way, on UNIX systems pid
+//     // returns an integer of the proces number
+//     // needs to be implemented
+//     PROCESS_INFORMATION *pi = calcProcess->pid();
 
-    if (pause)
-    {
-        SuspendThread(pi->hThread);
-        runPaused = true;
-    }
-    else
-    {
-        ResumeThread(pi->hThread);
-        runPaused = false;
-    }
-#else
-    ErrorMsg("Only implemented on Windows systems");
-#endif
+//     if (pause)
+//     {
+//         SuspendThread(pi->hThread);
+//         runPaused = true;
+//     }
+//     else
+//     {
+//         ResumeThread(pi->hThread);
+//         runPaused = false;
+//     }
+// #else
+//     ErrorMsg("Only implemented on Windows systems");
+// #endif
 }
 //---------------------------------------------------------------
 void nutshellqt::killModel()

@@ -82,34 +82,46 @@ public:
         };
 
         for (const QString &keyword : keywords) {
-            highlightingRules.append(QPair<QRegExp, QTextCharFormat>(QRegExp("\\b" + keyword + "\\b"), keywordFormat));
+            highlightingRules.append(QPair<QRegularExpression, QTextCharFormat>(QRegularExpression("\\b" + keyword + "\\b"), keywordFormat));
         }
         for (const QString &keyword : PCRkeywords) {
-            highlightingRules.append(QPair<QRegExp, QTextCharFormat>(QRegExp("\\b" + keyword + "\\b"), PCRFormat));
+            highlightingRules.append(QPair<QRegularExpression, QTextCharFormat>(QRegularExpression("\\b" + keyword + "\\b"), PCRFormat));
         }
         for (const QString &keyword : Reportkeywords) {
-            highlightingRules.append(QPair<QRegExp, QTextCharFormat>(QRegExp("\\b" + keyword + "\\b"), ReportFormat));
+            highlightingRules.append(QPair<QRegularExpression, QTextCharFormat>(QRegularExpression("\\b" + keyword + "\\b"), ReportFormat));
         }
-        highlightingRules.append(QPair<QRegExp, QTextCharFormat>(QRegExp("#[^\n]*"), commentFormat));
-        highlightingRules.append(QPair<QRegExp, QTextCharFormat>(QRegExp("'[^']*'"), stringFormat));
-        highlightingRules.append(QPair<QRegExp, QTextCharFormat>(QRegExp("\"[^\"]*\""), stringFormat));
+        highlightingRules.append(QPair<QRegularExpression, QTextCharFormat>(QRegularExpression("#[^\n]*"), commentFormat));
+        highlightingRules.append(QPair<QRegularExpression, QTextCharFormat>(QRegularExpression("'[^']*'"), stringFormat));
+        highlightingRules.append(QPair<QRegularExpression, QTextCharFormat>(QRegularExpression("\"[^\"]*\""), stringFormat));
     }
     bool dosyntax;
 protected:
     void highlightBlock(const QString &text) override {
-        for (const auto &rule : highlightingRules) {
-            QRegExp expression(rule.first);
-            int index = expression.indexIn(text);
-            while (index >= 0) {
-                int length = expression.matchedLength();
-                setFormat(index, length, rule.second);
-                index = expression.indexIn(text, index + length);
+            for (const auto &rule : highlightingRules) {
+                QRegularExpression expression(rule.first);
+                QRegularExpressionMatchIterator i = expression.globalMatch(text);
+                while (i.hasNext()) {
+                    QRegularExpressionMatch match = i.next();
+                    int index = match.capturedStart();
+                    int length = match.capturedLength();
+                    setFormat(index, length, rule.second);
+                }
             }
         }
-    }
+    // void highlightBlock(const QString &text) override {
+    //     for (const auto &rule : highlightingRules) {
+    //         QRegularExpression expression(rule.first);
+    //         int index = expression.indexIn(text);
+    //         while (index >= 0) {
+    //             int length = expression.matchedLength();
+    //             setFormat(index, length, rule.second);
+    //             index = expression.indexIn(text, index + length);
+    //         }
+    //     }
+    // }
 
 private:
-    QVector<QPair<QRegExp, QTextCharFormat>> highlightingRules;
+    QVector<QPair<QRegularExpression, QTextCharFormat>> highlightingRules;
 };
 
 
@@ -158,34 +170,46 @@ public:
         };
 
         for (const QString &keyword : keywords) {
-            highlightingRules.append(QPair<QRegExp, QTextCharFormat>(QRegExp("\\b" + keyword + "\\b"), keywordFormat));
+            highlightingRules.append(QPair<QRegularExpression, QTextCharFormat>(QRegularExpression("\\b" + keyword + "\\b"), keywordFormat));
         }
         for (const QString &keyword : Reportkeywords) {
-            highlightingRules.append(QPair<QRegExp, QTextCharFormat>(QRegExp("\\b" + keyword + "\\b"), ReportFormat));
+            highlightingRules.append(QPair<QRegularExpression, QTextCharFormat>(QRegularExpression("\\b" + keyword + "\\b"), ReportFormat));
         }
         for (const QString &keyword : PYkeywords) {
-            highlightingRules.append(QPair<QRegExp, QTextCharFormat>(QRegExp("\\b" + keyword + "\\b"), PYFormat));
+            highlightingRules.append(QPair<QRegularExpression, QTextCharFormat>(QRegularExpression("\\b" + keyword + "\\b"), PYFormat));
         }
-        highlightingRules.append(QPair<QRegExp, QTextCharFormat>(QRegExp("#[^\n]*"), commentFormat));
-        highlightingRules.append(QPair<QRegExp, QTextCharFormat>(QRegExp("'[^']*'"), stringFormat));
-        highlightingRules.append(QPair<QRegExp, QTextCharFormat>(QRegExp("\"[^\"]*\""), stringFormat));
+        highlightingRules.append(QPair<QRegularExpression, QTextCharFormat>(QRegularExpression("#[^\n]*"), commentFormat));
+        highlightingRules.append(QPair<QRegularExpression, QTextCharFormat>(QRegularExpression("'[^']*'"), stringFormat));
+        highlightingRules.append(QPair<QRegularExpression, QTextCharFormat>(QRegularExpression("\"[^\"]*\""), stringFormat));
     }
     bool dosyntax;
 protected:
     void highlightBlock(const QString &text) override {
-        for (const auto &rule : highlightingRules) {
-            QRegExp expression(rule.first);
-            int index = expression.indexIn(text);
-            while (index >= 0) {
-                int length = expression.matchedLength();
-                setFormat(index, length, rule.second);
-                index = expression.indexIn(text, index + length);
+            for (const auto &rule : highlightingRules) {
+                QRegularExpression expression(rule.first);
+                QRegularExpressionMatchIterator i = expression.globalMatch(text);
+                while (i.hasNext()) {
+                    QRegularExpressionMatch match = i.next();
+                    int index = match.capturedStart();
+                    int length = match.capturedLength();
+                    setFormat(index, length, rule.second);
+                }
             }
         }
-    }
+    // void highlightBlock(const QString &text) override {
+    //     for (const auto &rule : highlightingRules) {
+    //         QRegularExpression expression(rule.first);
+    //         int index = expression.indexIn(text);
+    //         while (index >= 0) {
+    //             int length = expression.matchedLength();
+    //             setFormat(index, length, rule.second);
+    //             index = expression.indexIn(text, index + length);
+    //         }
+    //     }
+    // }
 
 private:
-    QVector<QPair<QRegExp, QTextCharFormat>> highlightingRules;
+    QVector<QPair<QRegularExpression, QTextCharFormat>> highlightingRules;
 };
 
 #endif // NUTSHELLHIGHLIGHTER_H

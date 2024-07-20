@@ -84,8 +84,8 @@ void FindReplaceForm::validateRegExp(const QString &text)
         return; // nothing to validate
     }
 
-    QRegExp reg(text,
-                (caseCheckBox->isChecked() ? Qt::CaseSensitive : Qt::CaseInsensitive));
+    QRegularExpression reg(text,
+                (caseCheckBox->isChecked() ? QRegularExpression::NoPatternOption : QRegularExpression::CaseInsensitiveOption));
 
     if (reg.isValid()) {
         showError("");
@@ -178,7 +178,9 @@ void FindReplaceForm::_find(bool next)
 
     if (regexCheckBox->isChecked())
     {
-        QRegExp reg(toSearch, (caseCheckBox->isChecked() ? Qt::CaseSensitive : Qt::CaseInsensitive));
+//        QRegularExpression reg(toSearch, (caseCheckBox->isChecked() ? Qt::CaseSensitive : Qt::CaseInsensitive));
+        QRegularExpression reg(toSearch,
+                    (caseCheckBox->isChecked() ? QRegularExpression::NoPatternOption : QRegularExpression::CaseInsensitiveOption));
 
         textCursor = textEdit->document()->find(reg, textCursor, flags);
         textEdit->setTextCursor(textCursor);

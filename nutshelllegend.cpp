@@ -48,7 +48,7 @@ int nutshellLegend::CountClasses(MAP *in)
 
    delete[] Data;
 
-   qSort(list.begin(), list.end());
+   std::sort(list.begin(), list.end());
 
    return(list.count());
 }

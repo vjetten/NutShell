@@ -38,11 +38,11 @@ void nutshellqt::makeNewFile(bool script, int typ)
     myeditor->document()->setDefaultFont(QFont("Consolas", 11));
     myeditor->setFont(QFont("Consolas", 11));
     //myeditor->document()->setDefaultFont(QFont("Courier New", 10));
-    myeditor->setTabStopWidth(60);
+    myeditor->setTabStopDistance(60);
 
     myeditor->setWordWrapMode(QTextOption::NoWrap);
 
-    tabLayout->setMargin(2);
+   // tabLayout->setMargin(2);
     tabLayout->addWidget(myeditor);
 
     editortabs newedit;

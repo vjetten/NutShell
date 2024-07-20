@@ -32,7 +32,7 @@ int nutshelleditor::lineNumberAreaWidth()
    int w = 5;
    if (cursor > 0)
       w = 3;
-   return  (fontMetrics().width(QLatin1Char('9')) * w);
+   return  (fontMetrics().horizontalAdvance(QLatin1Char('9')) * w);
 }
 //---------------------------------------------------------------
 void nutshelleditor::updateLineNumberAreaWidth(int /* newBlockCount */)

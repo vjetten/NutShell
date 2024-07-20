@@ -245,7 +245,7 @@ bool nutshellqt::getScriptReport(bool addBinding)
         if (checksubs)
         {
             QStringList subs;
-            subs = lineEdit_argsubst->text().split(" ", QString::SkipEmptyParts);
+            subs = lineEdit_argsubst->text().split(" ", Qt::SkipEmptyParts);
 
             for(int i = 0; i < SL.count(); i++)
             {
@@ -328,7 +328,7 @@ bool nutshellqt::getScriptReport(bool addBinding)
                     str.remove(stra);
                 // strip keywords under timer, reports only in initial and dynamic
 
-                str.remove(QRegExp("\\([^\\)]*\\)"));
+                str.remove(QRegularExpression("\\([^\\)]*\\)"));
                 //strip report (...)
                 str.remove(str.indexOf("="),str.count()+10);
                 //strip from '=' to end of line
@@ -479,7 +479,7 @@ bool nutshellqt::isTSSFile(const QString& filename)
         if (line.simplified().isEmpty())
             continue;
         QStringList vals;
-        vals = line.split(QRegExp("\\s"),QString::SkipEmptyParts);
+        vals = line.split(QRegularExpression("\\s"),Qt::SkipEmptyParts);
         if (vals.count() != nr )
             istss = false;
     }
@@ -543,21 +543,23 @@ bool nutshellqt::isMapFile(const QString& filename)
 //---------------------------------------------------------------------------
 bool nutshellqt::isTiffFile(const QString& filePath)
 {
-    if (QFileInfo(filePath).suffix().toUpper() == "TIF")
-        return true;
-    else
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "Cannot open file:" << filePath;
         return false;
-    //    GDALDataset *dataset = (GDALDataset *)GDALOpen(filePath.toLatin1(), GA_ReadOnly);
-//    if (dataset != nullptr) {
-//        GDALDriver *driver = dataset->GetDriver();
-//        if (driver != nullptr) {
-//            const char* format = driver->GetDescription();
-//            if (QString(format).contains("GeoTIFF")) {
-//                GDALClose(dataset);
-//                return true;
-//            }
-//        }
-//        GDALClose(dataset);
-//    }
-//    return false;
+    }
+
+    // Read the first 4 bytes
+    QByteArray header = file.read(4);
+    if (header.size() < 4) {
+        qWarning() << "Error reading file:" << filePath;
+        return false;
+    }
+
+    // Check for TIFF headers
+    bool isTiff = (header[0] == 'I' && header[1] == 'I' && header[2] == 42 && header[3] == 0) ||
+                  (header[0] == 'M' && header[1] == 'M' && header[2] == 0 && header[3] == 42);
+
+    file.close();
+    return isTiff;
 }

@@ -169,12 +169,6 @@ void nutshellqt::executeCommand(QStringList args)
 
     env.insert("PATH", addpath + env.value("Path"));
 
-    PCRProcess->setProcessEnvironment(env);
-    CMDProcess->setProcessEnvironment(env);
-
-    // Set the working directory for the process
-    PCRProcess->setWorkingDirectory(currentPath);
-    CMDProcess->setWorkingDirectory(currentPath);
 
     // Set the command to run
 
@@ -212,13 +206,12 @@ void nutshellqt::executeCommand(QStringList args)
                 args.clear();
                 QString batchFilePath = NutshellDirName + "_nutshell_batchjob.cmd";
                 args << "xxx" << "/c" << batchFilePath;
-                //   isCMD = true;
-                //    QDesktopServices::openUrl(QUrl("file:///"+batchFilePath));
-                //  return;
+                isCMD = true;
+                QDesktopServices::openUrl(QUrl("file:///"+batchFilePath));
+                return;
             } else
                 if (args[0].toUpper().contains("MAPEDIT")) {
                     prog = NutshellDirName + args[0]+".exe";
-                //qDebug() << prog;
                     isCMD = true;
                 }
                 else
@@ -230,8 +223,18 @@ void nutshellqt::executeCommand(QStringList args)
 
     // difference between CMD Process and PCR process is only change of cursor
     if (isCMD) {
+        CMDProcess->setProcessEnvironment(env);
+        CMDProcess->setWorkingDirectory(currentPath);
         CMDProcess->startDetached(prog, args);
-    } else {        
+        //CProcess->waitForFinished(-1);
+        // qint64 pid;
+        // QProcess::startDetached(prog, args, currentPath, &pid);
+        // qDebug() << pid;
+        // QProcess::startDetached("kill", {QString::number(pid)});
+
+    } else {
+        PCRProcess->setProcessEnvironment(env);
+        PCRProcess->setWorkingDirectory(currentPath);
         PCRProcess->start(prog, args, QIODevice::ReadWrite);
         PCRProcess->waitForFinished(-1);
 

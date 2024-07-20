@@ -104,8 +104,7 @@ int nutshellqt::GetActionType()
 {
     int at;
 
-    QString ext = SelectedSuffix; //QFileInfo(SelectedPathName).suffix();
-    MAP *m = Mopen(SelectedPathName.toLatin1(),M_READ_WRITE);
+    QString ext = SelectedSuffix;
 
     bool isTIFF = isTiffFile(SelectedPathName);
     bool isMap = isMapFile(SelectedPathName);
@@ -114,25 +113,19 @@ int nutshellqt::GetActionType()
 
     if (isMap || isTIFF)
         at = ACTIONTYPEAGUILA2D;
-    else
+    else {
         if (isTXT) {
             if(isTSS)
                 at = ACTIONTYPETIMEPLOT;
             else
                 if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
                     at = ACTIONTYPEWINDOWSCMD;
-            else {
-//                    if (ext.toUpper() == "TXT" ||
-//                            ext.toUpper() == "TBL" ||
-//                            ext.toUpper() == "DAT" ||
-//                            ext.toUpper() == "INI" ||
-//                            ext.toUpper() == "MOD")
-//                    {
-                        at = ACTIONTYPEMODEL;
-            }
-        }
-        else
+                else
+                    at = ACTIONTYPEMODEL;
+        } else {
             at = ACTIONTYPEUNDEFINED;
+        }
+    }
 
     return at;
 }
@@ -143,9 +136,6 @@ void nutshellqt::PerformAction(int actiontype)
     QStringList args;
     QString nameout;
     QString namein;
-    MAP *m = nullptr;
-   // bool isMap = true;
-   // bool isTIFF = false;
 
     changeFileFilter(_filternr);
     args.clear();
@@ -245,9 +235,8 @@ void nutshellqt::PerformAction(int actiontype)
         //qDebug() << args;
         break;
     case ACTIONTYPELEGEND:
-        if (isMap)
-        {
-            m = Mopen(SelectedPathName.toLatin1().data(),M_READ);
+        if (isMap) {
+            MAP *m = Mopen(SelectedPathName.toLatin1().data(),M_READ);
             if (RgetValueScale(m) == VS_NOMINAL ||
                     RgetValueScale(m) == VS_ORDINAL ||
                     RgetValueScale(m) == VS_BOOLEAN)
@@ -262,7 +251,6 @@ void nutshellqt::PerformAction(int actiontype)
         }
         else
             ErrorMsg("Error opening file as PCRaster map.");
-        m = nullptr;
         actiontype = ACTIONTYPENONE;
         break;
     case ACTIONTYPEATTRIBUTENEW :
