@@ -24,7 +24,7 @@
 
 #define STATUS(s) statusBar()->showMessage(QString(s),1000);
 
-#define ErrorMsg(s) QMessageBox::critical(this,"NutShell",QString(s))
+#define ErrorMsg(s) QMessageBox::warning(this,QString("NutShell"),QString(s),QMessageBox::Ok)
 #define WarningAllMsg(s) QMessageBox::warning(this,"NutShell",QString(s),QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll)
 #define WarningMsg(s) QMessageBox::warning(this,"NutShell WARNING",QString(s),QMessageBox::Yes)// | QMessageBox::No )
 #define QuestionMsg(s) QMessageBox::question(this,"NutShell",QString(s),QMessageBox::Yes | QMessageBox::No)

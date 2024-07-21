@@ -27,7 +27,7 @@ CSF_PT MputProjection(
 		goto error;
 	}
     //map->main.projection =  (p) ? PT_YDECT2B : PT_YINCT2B;
-    map->main.projection =  PT_YDECT2B;
+    map->main.projection = p;// PT_YDECT2B;
     return map->main.projection;
 error:	return(MV_UINT2);
 }

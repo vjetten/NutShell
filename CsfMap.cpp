@@ -23,9 +23,11 @@
 */
 
 
+#include <QtWidgets>
 #include "CsfMap.h"
-//#include "error.h"
+//#include "nutshellqt.h"
 
+#define ErrorMsg(s) QMessageBox::warning(NULL,QString("NutShell WARNING"),QString(s),QMessageBox::Discard)
 
 //---------------------------------------------------------------------------
 cTMap::cTMap()
@@ -60,12 +62,10 @@ void cTMap::GetMapHeader(QString Name)
    MAP *m = Mopen(Name.toLatin1(), M_READ);
 //   originalPixmap.save(fileName, format.toLatin1());
 
-   if (m == NULL)
-      Error(QString("Map %1 cannot be opened.").arg(Name));
-//   {
-//      Error(QString("Map %1 cannot be opened.").arg(Name));
-//      throw 1;
-//   }
+   if (m == NULL) {
+      ErrorMsg(QString("Map %1 cannot be opened.").arg(Name));
+      return;
+   }
 
    MH = m->raster;
    projection = m->main.projection;
@@ -90,12 +90,11 @@ void cTMap::CreateMap(QString Name)
    for(int r=0; r < nrRows; r++)
       Data[r] = new REAL8[nrCols];
 
-   if (Data == NULL)
-      Error(QString("Cannot create data structure for map: %1").arg(Name));
-//   {
-//      Error(QString("Cannot create data structure for map: %1").arg(Name));
-//      throw 1;
-//   }
+   if (Data == NULL) {
+      ErrorMsg(QString("Cannot create data structure for map: %1").arg(Name));
+      Created = false;
+      return;
+   }
 
    Created = true;
 }
@@ -105,12 +104,10 @@ bool cTMap::LoadFromFile()
    MAP *m;
    QFileInfo fi(PathName);
 
-   if (!fi.exists())
-      Error(QString("Map %1 does not exist.").arg(PathName));
-//   {
-//      Error(QString("Map %1 does not exist.").arg(PathName));
-//      throw 1;
-//   }
+   if (!fi.exists()) {
+      ErrorMsg(QString("Map %1 does not exist.").arg(PathName));
+      return false;
+   }
 
    // make map structure
    CreateMap(PathName);
@@ -120,8 +117,7 @@ bool cTMap::LoadFromFile()
 
    MapName = PathName;
 
-   m = Mopen(MapName.toLatin1()
-.constData(), M_READ);
+   m = Mopen(MapName.toLatin1().constData(), M_READ);
 
    if (!m)
       return(false);
@@ -207,8 +203,10 @@ void cTMap::WriteMap(QString Name)
 
    if (Name.isEmpty())
    {
-      ErrorString = "Cannot write file, file name empty";
-      throw 1;
+    //  ErrorString = "Cannot write file, file name empty";
+    //  throw 1;
+       ErrorMsg("Cannot write file, file name empty");
+       return;
    }
 
    ResetMinMax();
@@ -229,8 +227,11 @@ void cTMap::WriteMap(QString Name)
 
       if (RputRow(out, r, Dt) != (UINT4)nrCols)
       {
-         ErrorString = "rputrow write error with" + Name;
-    	   throw 1;
+     //    ErrorString = "rputrow write error with" + Name;
+        // throw 1;
+        ErrorMsg("rputrow write error with" + Name);
+        return;
+
       }
    }
 

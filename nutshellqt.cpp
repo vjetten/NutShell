@@ -479,17 +479,18 @@ void nutshellqt::getOptions()
 //---------------------------------------------------------------
 void nutshellqt::setfontSize()
 {
+    qApp->setStyleSheet(QString("* { font-size: %1px; }").arg(genfontsize));
     //qDebug() << "fs" << genfontsize << dpiscale;
 //    int fs = genfontsize;
 //    int fsdpi = int(fs*dpiscale);
 
-    const QWidgetList allWidgets = QApplication::allWidgets();
-    for (QWidget *widget : allWidgets) {
-        QFont font = widget->font();
-        font.setPointSize(genfontsize);
-        widget->setFont(font);
-        widget->update();
-    }
+    // const QWidgetList allWidgets = QApplication::allWidgets();
+    // for (QWidget *widget : allWidgets) {
+    //     QFont font = widget->font();
+    //     font.setPointSize(genfontsize);
+    //     widget->setFont(font);
+    //     widget->update();
+    // }
 
 /*
     font.setPixelSize((int)(fs*dpiscale));
@@ -516,90 +517,55 @@ void nutshellqt::setfontSize()
 //---------------------------------------------------------------
 void nutshellqt::findDPIscale()
 {
-    /*
-    //QRect rect = qApp->screens();
-    QRect rect = QGuiApplication::primaryScreen()->availableGeometry();
-    //->screenGeometry();
-    int _H = rect.height();
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->geometry();
+    int _H = screenGeometry.height();// * screen->devicePixelRatio();
 
-//    qDebug() << _H;
-//    QFont font = qApp->font();
-//    genfontsize=font.pointSize();
+    int disp = 3;
+    // for (int i = 0; i < screens.size(); ++i) {
+    //     QScreen *screen = screens.at(i);
+    //     qreal logicalDpi = screen->logicalDotsPerInch();
+    //     qreal physicalDpi = screen->physicalDotsPerInch();
+    //     qreal devicePixelRatio = screen->devicePixelRatio();
+    //     qDebug() << "Screen" << i << ":";
+    //     qDebug() << "  Logical DPI:" << logicalDpi;
+    //     qDebug() << "  Physical DPI:" << physicalDpi;
+    //     qDebug() << "  Device Pixel Ratio:" << devicePixelRatio;
+    // }
 
-    // do a bit of size teaking for large displays becvause QT 5.5.0 does not have that yet
-    iSize = QSize(16,16);
-    // the "20" margin is because not all mon itors are exactly the pixel size, e.g. 1210
-    if (_H > 800) {
-        genfontsize = 0;//12;
-        QSize(24,24);
+
+    if(_H < 1400) disp = 2;
+    if(_H < 1200) disp = 1;
+    if(_H < 1080) disp = 0;
+    if(_H < 800) disp = -1;
+    qDebug() << _H << disp;
+
+    // do a bit of size tweaking for large displays
+    if (disp <= 0) {
+        this->setStyleSheet(QString("QToolButton * {icon-size: 16px 16px}"));
+        iSize = QSize(16,16);
     }
-    if (_H > 1080-5) {
-        genfontsize = 1;// 14;
+    if (disp == 1) {
+        this->setStyleSheet(QString("QToolButton * {icon-size: 16px 16px}"));
         iSize = QSize(24,24);
     }
-    if (_H > 1200-5) {
-        dpiscale = 1.2;
-        genfontsize = 2;//14;
+    if (disp == 2) {
+        this->setStyleSheet(QString("QToolButton * {icon-size: 24px 24px}"));
+        iSize = QSize(24,24);
     }
-    if (_H > 1440) {
-        dpiscale = 2.0;
-        genfontsize = 3;//12;
-        iSize = QSize(48,48);
+    if (disp == 3) {
+        this->setStyleSheet(QString("QToolButton * {icon-size: 24px 24px}"));
+        iSize = QSize(32,32);
+    }
+    if (disp > 3) {
+        this->setStyleSheet(QString("QToolButton * {icon-size: 32px 32px}"));
+        iSize = QSize(32,32);
     }
 
+    toolBar->setIconSize(iSize);
+    pcrToolBar->setIconSize(iSize);
 
-   // if (!check)
-     //   dpiscale = opDPIscale;
-*/
-
-   //  int _H = QApplication::desktop()->height();
-
-   //  int disp = 3;
-
-   //  if(_H < 1400) disp = 2;
-   //  if(_H < 1200) disp = 1;
-   //  if(_H < 1080) disp = 0;
-   //  if(_H < 800) disp = -1;
-   //  // qDebug() << _H << disp;
-
-   //  // do a bit of size tweaking for large displays
-   //  QSize iSize = QSize(16,16);
-   //  if (disp == -1) {
-   //      iSize = QSize(16,16);
-   //      this->setStyleSheet(QString("QToolButton * {icon-size: 16px 16px}"));
-   //  }
-   //  if (disp == 0) {
-   //      this->setStyleSheet(QString("QToolButton * {icon-size: 16px 16px}"));
-   //      iSize = QSize(16,16);
-   //  }
-   //  if (disp == 1) {
-   //      this->setStyleSheet(QString("QToolButton * {icon-size: 16px 16px}"));
-   //      iSize = QSize(24,24);
-   //  }
-   //  if (disp == 2) {
-   //      this->setStyleSheet(QString("QToolButton * {icon-size: 24px 24px}"));
-   //      iSize = QSize(24,24);
-   //  }
-   //  if (disp == 3) {
-   //      this->setStyleSheet(QString("QToolButton * {icon-size: 24px 24px}"));
-   //      iSize = QSize(32,32);
-   //  }
-   //  if (disp > 3) {
-   //      this->setStyleSheet(QString("QToolButton * {icon-size: 32px 32px}"));
-   //      iSize = QSize(32,32);
-   //  }
-
-   //    toolBar->setIconSize(iSize);
-   // pcrToolBar->setIconSize(iSize);
-
-   //  const QWidgetList allWidgets = QApplication::allWidgets();
-   //  for (QWidget *widget : allWidgets) {
-   //      QFont font = widget->font();
-   //      int ps = 8 + disp;
-   //      font.setPointSize(ps);
-   //      widget->setFont(font);
-   //      widget->update();
-   //  }
-    //qDebug() << "dpi" << _H << dpiscale;
-
+    genfontsize = screen->devicePixelRatio()*(disp+10);
+    qDebug() << genfontsize << screen->devicePixelRatio();
+    qApp->setStyleSheet(QString("* { font-size: %1px; }").arg(genfontsize));
 }

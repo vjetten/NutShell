@@ -284,129 +284,21 @@ void nutshellqt::fontSelect()
         if (ETExists)
             ETEditor->setFont(QFontDialog::getFont(&ok, ETEditor->font()));
 }
-
-//void increaseFontSize(QWidget *widget, int increaseBy) {
-//    QFont font = widget->font();
-//    font.setPointSize(font.pointSize() + increaseBy);
-//    widget->setFont(font);
-//}
-
-//void recursivelyIncreaseFontSize(QWidget *widget, int increaseBy) {
-//    if (widget->layout()) {
-//            for (int i = 0; i < widget->layout()->count(); ++i) {
-//            if (auto childWidget = qobject_cast<QWidget *>(widget->layout()->itemAt(i)->widget())) {
-//                recursivelyIncreaseFontSize(childWidget, increaseBy);
-//            }
-//        }
-//    }
-//    qDebug() << "HERE";
-//    //if (widget->metaObject()->indexOfProperty("text") >= 0) {
-//            increaseFontSize(widget, increaseBy);
-//    //}
-//}
 //---------------------------------------------------------------
 void nutshellqt::fontDecrease()
 {
-    //    dpiscale *= 0.9;
-    //    setfontSize(genfontsize);
-//    if (commandWindow->hasFocus())
-//    {
-//        QFont f = commandWindow->font();
-//        int size = f.pointSize();
-//        size--;
-//        size = max(6, size);
-//        f.setPointSize(size);
-//        commandWindow->setFont(f);
-//    }
-//    else
-//        if (ETExists)
-//        {
-//            QFont f = ETEditor->font();
-//            int size = f.pointSize();
-//            size--;
-//            size = max(6, size);
-//            f.setPointSize(size);
-//            ETEditor->setFont(f);
-//        }
-//    QMainWindow mainWindow;
-//    recursivelyIncreaseFontSize(&mainWindow,-1);
+    genfontsize--;
+    genfontsize =  max(6,genfontsize);
 
-//    int iisize = 0;
-    const QWidgetList allWidgets = QApplication::allWidgets();
-    for (QWidget *widget : allWidgets) {
-        QFont font = widget->font();
-        int size = font.pointSize();
-        size--;
-     //   iisize--;
-        int ps = max(6,size);//8 + disp;
-        font.setPointSize(ps);
-        widget->setFont(font);
-        widget->update();
-    }
-//    int w = iSize.width()+iisize/2;
-//    int h = iSize.height()+iisize/2;
-//    iSize.setWidth(w);
-//    iSize.setHeight(h);
-//    toolBar->setIconSize(iSize);
-//    pcrToolBar->setIconSize(iSize);
+    qApp->setStyleSheet(QString("* { font-size: %1px; }").arg(genfontsize));
 }
 //---------------------------------------------------------------
 void nutshellqt::fontIncrease()
 {
-    //    dpiscale *= 1.1;
-    //    setfontSize(genfontsize);
-//    if (commandWindow->hasFocus())
-//    {
-//        QFont f = commandWindow->font();
-//        int size = f.pointSize();
-//        size++;
-//        size = min(32, size);
-//        f.setPointSize(size);
-//        commandWindow->setFont(f);
-//    }
-//    else
-//        if (ETExists)
-//        {
-//            QFont f = ETEditor->font();
-//            int size = f.pointSize();
-//            size++;
-//            size = min(32, size);
-//            f.setPointSize(size);
-//            ETEditor->setFont(f);
-//        }
+    genfontsize++;
+    genfontsize =  min(32,genfontsize);
 
-    int iisize = 0;
-    const QWidgetList allWidgets = QApplication::allWidgets();
-    for (QWidget *widget : allWidgets) {
-            QFont font = widget->font();
-            int size = font.pointSize();
-            size++;
-            iisize++;
-            int ps = min(32,size);//8 + disp;
-            font.setPointSize(ps);
-            widget->setFont(font);
-            widget->update();
-    }
-//    int w = iSize.width()+iisize/2;
-//    int h = iSize.height()+iisize/2;
-//    iSize.setWidth(w);
-//    iSize.setHeight(h);
-//    toolBar->setIconSize(iSize);
-//    pcrToolBar->setIconSize(iSize);
-
-    if (ETExists)
-    {
-        for (int i = 0; i < tabWidget->count(); i++) {
-            QFont f = ET[i].editor->font();
-                int size = f.pointSize();
-                size++;
-                size = min(32, size);
-                f.setPointSize(size);
-                ET[i].editor->setFont(f);
-        }
-    }
-
-
+    qApp->setStyleSheet(QString("* { font-size: %1px; }").arg(genfontsize));
 }
 //---------------------------------------------------------------
 void nutshellqt::increaseHash()

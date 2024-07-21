@@ -34,8 +34,6 @@
 #include <QString>
 #include <QFileInfo>
 
-#define Error(s) QString(s)
-
 //---------------------------------------------------------------------------
 /// CSF map construction, reading, writing series etc.
 /** class to deal with CSF map construction, reading and writing etc.

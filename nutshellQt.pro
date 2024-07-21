@@ -28,78 +28,8 @@ SOURCES += main.cpp\
     CsfMap.cpp \
     nutshellevent.cpp \
     nutshelltreeview.cpp \
-    nutshellCommandwindow.cpp \
-    pcrlib/angle.c \
-    pcrlib/attravai.c \
-    pcrlib/attrsize.c \
-    pcrlib/cellsize.c \
-    pcrlib/create2.c \
-    pcrlib/csfglob.c \
-    pcrlib/csfsup.c \
-    pcrlib/delattr.c \
-    pcrlib/dumconv.c \
-    pcrlib/endian.c \
-    pcrlib/file.c \
-    pcrlib/filename.c \
-    pcrlib/gattrblk.c \
-    pcrlib/gattridx.c \
-    pcrlib/gcellrep.c \
-    pcrlib/gdattype.c \
-    pcrlib/getattr.c \
-    pcrlib/getx0.c \
-    pcrlib/gety0.c \
-    pcrlib/ggisfid.c \
-    pcrlib/gmaxval.c \
-    pcrlib/gminval.c \
-    pcrlib/gnrcols.c \
-    pcrlib/gnrrows.c \
-    pcrlib/gproj.c \
-    pcrlib/gputproj.c \
-    pcrlib/gvalscal.c \
-    pcrlib/gvartype.c \
-    pcrlib/gversion.c \
-    pcrlib/ismv.c \
-    pcrlib/kernlcsf.c \
-    pcrlib/legend.c \
-    pcrlib/mclose.c \
-    pcrlib/mopen.c \
-    pcrlib/moreattr.c \
-    pcrlib/mperror.c \
-    pcrlib/pgisfid.c \
-    pcrlib/pmaxval.c \
-    pcrlib/pminval.c \
-    pcrlib/putallmv.c \
-    pcrlib/putattr.c \
-    pcrlib/putsomec.c \
-    pcrlib/putx0.c \
-    pcrlib/puty0.c \
-    pcrlib/pvalscal.c \
-    pcrlib/rattrblk.c \
-    pcrlib/rcomp.c \
-    pcrlib/rcoords.c \
-    pcrlib/rdup2.c \
-    pcrlib/reseterr.c \
-    pcrlib/rextend.c \
-    pcrlib/rmalloc.c \
-    pcrlib/rrowcol.c \
-    pcrlib/ruseas.c \
-    pcrlib/setangle.c \
-    pcrlib/setmv.c \
-    pcrlib/setvtmv.c \
-    pcrlib/strconst.c \
-    pcrlib/strpad.c \
-    pcrlib/swapio.c \
-    pcrlib/trackmm.c \
-    pcrlib/vs2.c \
-    pcrlib/vsdef.c \
-    pcrlib/vsis.c \
-    pcrlib/vsvers.c \
-    pcrlib/wattrblk.c \
-    pcrlib/_getcell.c \
-    pcrlib/_getrow.c \
-    pcrlib/_gsomece.c \
-    pcrlib/_putcell.c \
-    pcrlib/_rputrow.c
+    nutshellCommandwindow.cpp
+
 
 HEADERS  += include/nutshellqt.h \
     include/csfattr.h \
@@ -141,11 +71,10 @@ CONFIG(debug, debug|release) {
 
 INCLUDEPATH += ./include
 INCLUDEPATH += C:\Qt\msys64\mingw64\include
-INCLUDEPATH += C:\Qt\qwt-6.1-ma\src
-#LIBS += c:/qt/qwtma/lib/libqwt.dll.a
 #INCLUDEPATH += C:\Qt\msys64\mingw64\include\qwt-qt5
 LIBS += C:/prgc/lisemgit/qwt/git/lib/libqwt.dll.a
 LIBS += c:/qt/msys64/mingw64/lib/libgdal.dll.a
+INCLUDEPATH += C:/prgc/lisemgit/qwt/git/src
 #LIBS += -L../pcrlib/libpcraster_raster_format.a
 
 RESOURCES +=  nutshellqt.qrc

@@ -418,7 +418,7 @@ void nutshellmapattribute::SetAndCloseMap()
     m = Mopen(filename.toLatin1().data(),M_READ_WRITE);
 
     if (a->projection != PT_UNDEFINED)
-        MputProjection(m,a->projection);
+        MputProjection(m,PT_YDECT2B);//a->projection);
     if (! (IS_MV_REAL8(&(a->xUL))))
         RputXUL(m, a->xUL);
     if (! (IS_MV_REAL8(&(a->yUL))))
