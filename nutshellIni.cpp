@@ -14,7 +14,8 @@
 //---------------------------------------------------------------
 void nutshellqt::setNutshellIni()
 {
-    QSettings settings(qApp->applicationDirPath()+"/NutShell.ini",QSettings::IniFormat);
+    QSettings settings(NutshellDirName+"NutShell.ini",QSettings::IniFormat);
+    //qApp->applicationDirPath()+"/
     settings.clear();
 
     settings.setValue("CondaDirectory", CondaDirName);
@@ -57,7 +58,7 @@ void nutshellqt::clearNutshellIni()
 void nutshellqt::getNutshellIni()
 {
 
-    QSettings settings(qApp->applicationDirPath()+"/NutShell.ini",QSettings::IniFormat);
+    QSettings settings(NutshellDirName+"NutShell.ini",QSettings::IniFormat);
 
     QString str = settings.value("CondaDirectory").toString();
     if (!str.isEmpty())

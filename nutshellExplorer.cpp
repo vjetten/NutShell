@@ -755,7 +755,7 @@ void nutshellqt::removeWorkdirectory()
 void nutshellqt::saveWorkdirectory()
 {
    setNutshellIni();
-   WarningMsg("All work directories and commands are saved to nutshell.ini.");
+   WarningMsg("All work directories and commands are saved to [USERNAME]/apps/local/nutshell/nutshell.ini.");
 }
 //---------------------------------------------------------------
 void nutshellqt::clearWorkdirectories()

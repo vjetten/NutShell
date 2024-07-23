@@ -67,7 +67,7 @@ void nutshellqt::clearCommandList()
 void nutshellqt::saveCommandList()
 {
     setNutshellIni();
-    WarningMsg("Commands are stored in nutshell.ini");
+    WarningMsg("Commands are stored in [USERNAME]/apps/local/nutshell/nutshell.ini");
 
 }
 //---------------------------------------------------------------
@@ -211,7 +211,7 @@ void nutshellqt::executeCommand(QStringList args)
                 return;
             } else
                 if (args[0].toUpper().contains("MAPEDIT")) {
-                    prog = NutshellDirName + args[0]+".exe";
+                    prog = qApp->applicationDirPath()+"/" + args[0]+".exe";
                     isCMD = true;
                 }
                 else
@@ -222,6 +222,7 @@ void nutshellqt::executeCommand(QStringList args)
     args.removeAt(0);
 
     // difference between CMD Process and PCR process is only change of cursor
+    qDebug() << prog << args;
     if (isCMD) {
         CMDProcess->setProcessEnvironment(env);
         CMDProcess->setWorkingDirectory(currentPath);

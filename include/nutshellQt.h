@@ -293,6 +293,7 @@ public:
     QString CondaDirName;
     QString rootPath;
 
+
     //======================
     //Vars for commandWindow
     //======================

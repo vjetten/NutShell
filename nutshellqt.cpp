@@ -14,8 +14,22 @@ nutshellqt::nutshellqt(QWidget *parent) :
 {
     setupUi(this);
 
-    NutshellDirName = qApp->applicationDirPath() + "/";
-    rootPath = NutshellDirName.left(3);
+    QString appDataLocalPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+    QFileInfo appDataLocalFileInfo(appDataLocalPath);
+    QString localPath = appDataLocalFileInfo.absolutePath()+"/nutshell";
+    QDir dir;
+    if (!dir.exists(localPath)) {
+        if (dir.mkpath(localPath)) {
+            qDebug() << "Directory created successfully: " << localPath;
+        } else {
+            qDebug() << "Failed to create directory: " << localPath;
+        }
+    } else {
+        qDebug() << "Directory already exists: " << localPath;
+    }
+    NutshellDirName = localPath + "/";
+
+    rootPath = QString(qApp->applicationDirPath() + "/").left(3);
     comboBox_workdir->clear();
     comboBox_workdir->setInsertPolicy(QComboBox::InsertAtBottom);
     comboBox_workdir->setDuplicatesEnabled(false);
