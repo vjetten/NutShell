@@ -106,24 +106,29 @@ int nutshellqt::GetActionType()
 
     QString ext = SelectedSuffix;
 
-    bool isTIFF = isTiffFile(SelectedPathName);
-    bool isMap = isMapFile(SelectedPathName);
-    bool isTXT = isTextFile(SelectedPathName);
-    bool isTSS = isTSSFile(SelectedPathName);
+    bool isMap = false;
+    bool isTXT = false;
+    bool isTSS = false;
+    bool isTIFF = false;
+    at = ACTIONTYPEUNDEFINED;
 
+    isMap = isMapFile(SelectedPathName);
+    if (!isMap)
+        isTIFF= isTiffFile(SelectedPathName);
     if (isMap || isTIFF)
         at = ACTIONTYPEAGUILA2D;
     else {
-        if (isTXT) {
-            if(isTSS)
-                at = ACTIONTYPETIMEPLOT;
-            else
-                if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
-                    at = ACTIONTYPEWINDOWSCMD;
-                else
-                    at = ACTIONTYPEMODEL;
-        } else {
-            at = ACTIONTYPEUNDEFINED;
+        isTSS = isTSSFile(SelectedPathName);
+        if (isTSS)
+           at = ACTIONTYPETIMEPLOT;
+        else {
+           isTXT = isTextFile(SelectedPathName);
+           if(isTXT) {
+               if (ext.toUpper() == "BAT" || ext.toUpper() == "CMD")
+                   at = ACTIONTYPEWINDOWSCMD;
+               else
+                   at = ACTIONTYPEMODEL;
+           }
         }
     }
 
@@ -305,7 +310,7 @@ void nutshellqt::PerformAction(int actiontype)
         //open process in its standard OS application, whatever the user has defined
         actiontype = ACTIONTYPENONE;
     }
-
+qDebug() << actiontype << args;
     if (actiontype != ACTIONTYPENONE) {
         executeCommand(args);
     }

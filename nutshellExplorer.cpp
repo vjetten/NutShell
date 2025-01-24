@@ -173,6 +173,7 @@ void nutshellqt::contextualMenu(const QPoint  &point)
 // Getactiontype is in nutshellaction.cpp
 void nutshellqt::selectFiles(const QModelIndex& index)
 {
+    qDebug() << "here";
     PerformAction(GetActionType());
 }
 //---------------------------------------------------------------

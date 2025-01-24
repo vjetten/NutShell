@@ -166,8 +166,9 @@ void nutshellqt::runModel()
     setCursorLast();
 
     args << QString("-1");
+    args << QString("-m");
     args  << QString("-f") <<  ETfilePath;
-    argsscreen << QString("-1 -f") <<  ETfileName;
+    argsscreen << QString("-1 -m -f") <<  ETfileName;
     if (toolButton_argSubs->isChecked())
     {
         QStringList subs;

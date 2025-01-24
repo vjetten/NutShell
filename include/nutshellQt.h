@@ -372,7 +372,7 @@ public:
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
-    void wheelEvent(QObject *obj, QWheelEvent *event);
+ //   void wheelEvent(QObject *obj, QWheelEvent *event);
 
 public slots:
     //void doSomething(QProcess::ProcessState hoi);

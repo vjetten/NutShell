@@ -11,9 +11,11 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+    QCoreApplication::addLibraryPath(QDir::currentPath() + "/platforms");
+
     nutshellqt w;
 
-    w.setWindowTitle("NutShell (version 5.154 [25 May 2024])");
+    w.setWindowTitle("NutShell (version 5.17 [07 Nov 2024])");
     w.showMaximized();
     w.show();
     a.setStyle("Fusion");

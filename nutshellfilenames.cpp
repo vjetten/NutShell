@@ -162,7 +162,7 @@ QString nutshellqt::getMapSeries()
 // if maps are selected 001 002 003 then this is not seen as a series but separate files
 QString nutshellqt::getFileListString()
 {
-
+//qDebug() << "getfileliststring";
     QString Sfilelist;
     QModelIndexList indexes = selectionModel->selectedIndexes();
     QModelIndex index;

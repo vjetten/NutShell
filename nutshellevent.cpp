@@ -86,8 +86,8 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
         {
             QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
 
-            QPoint numPixels = wheelEvent->angleDelta()/120;
-            int y = numPixels.y();
+          //  QPoint numPixels = wheelEvent->angleDelta()/120;
+          //  int y = numPixels.y();
             //qDebug() << "wheel" << y;
             crtlpressed = false;
         }
@@ -159,7 +159,7 @@ void nutshellqt::resizeEvent(QResizeEvent *event)
 }
 
 
-void nutshellqt::wheelEvent(QObject *obj, QWheelEvent *event)
-{
+// void nutshellqt::wheelEvent(QObject *obj, QWheelEvent *event)
+// {
 
-}
+// }
