@@ -19,7 +19,7 @@ typedef enum CSF_ATTR_ID {
 
 typedef struct CSF_LEGEND {
 	INT4    nr;
-	char    descr[60];
+    char    descr[80];
 } CSF_LEGEND;
 
 #ifdef __cplusplus

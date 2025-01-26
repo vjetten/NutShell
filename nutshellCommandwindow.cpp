@@ -33,7 +33,7 @@ void nutshellqt::setupCommandwindow()
     CMDProcess->setProcessChannelMode(QProcess::MergedChannels);
     connect(CMDProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(outputCommand()) );
     connect(CMDProcess, SIGNAL(readyReadStandardError()),this, SLOT(readFromStderrPCR()) );
-    connect(CMDProcess, SIGNAL(error(QProcess::ProcessError)),this, SLOT(errorCommand()) );
+    connect(CMDProcess, SIGNAL(error(QProcess::UnknownError)),this, SLOT(errorCommand()) );
 
     commandWindow = new nutshelleditor(this, 1);
     commandWindow->document()->setDocumentMargin(2);
@@ -303,7 +303,7 @@ void nutshellqt::prevCommand()
     else
     {
         commandcounter--;
-        commandcounter	= max(commandcounter, 0);
+        commandcounter	= std::max(commandcounter, 0);
     }
 
     comboBox_cmdlist->setCurrentIndex(commandcounter);
@@ -330,7 +330,7 @@ void nutshellqt::nextCommand()
     else
     {
         commandcounter++;
-        commandcounter = min(commandcounter, comboBox_cmdlist->count()-1);
+        commandcounter = std::min(commandcounter, comboBox_cmdlist->count()-1);
     }
 
     comboBox_cmdlist->setCurrentIndex(commandcounter);

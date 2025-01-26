@@ -223,7 +223,7 @@ void nutshelleditor::scriptFold(int section)
    int lninitial = scriptFindSectionBlock("initial");
    int lndynamic = scriptFindSectionBlock("dynamic");
 
-   int lnfrom, lnto;
+   int lnfrom = 0, lnto = 0;
    bool do_fold = false;
 
    if (section == 1)

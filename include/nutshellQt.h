@@ -29,8 +29,8 @@
 #define WarningMsg(s) QMessageBox::warning(this,"NutShell WARNING",QString(s),QMessageBox::Yes)// | QMessageBox::No )
 #define QuestionMsg(s) QMessageBox::question(this,"NutShell",QString(s),QMessageBox::Yes | QMessageBox::No)
 
-#define max(a, b)  (((a) > (b)) ? (a) : (b))
-#define min(a, b)  (((a) < (b)) ? (a) : (b))
+//#define max(a, b)  (((a) > (b)) ? (a) : (b))
+//#define min(a, b)  (((a) < (b)) ? (a) : (b))
 
 #define SelectedPathName fileModel->fileInfo(selectionModel->currentIndex()).absoluteFilePath()
 #define SelectedSuffix   fileModel->fileInfo(selectionModel->currentIndex()).suffix()

@@ -288,7 +288,7 @@ void nutshellqt::fontSelect()
 void nutshellqt::fontDecrease()
 {
     genfontsize--;
-    genfontsize =  max(6,genfontsize);
+    genfontsize =  std::max(6,genfontsize);
 
     qApp->setStyleSheet(QString("* { font-size: %1px; }").arg(genfontsize));
 }
@@ -296,7 +296,7 @@ void nutshellqt::fontDecrease()
 void nutshellqt::fontIncrease()
 {
     genfontsize++;
-    genfontsize =  min(32,genfontsize);
+    genfontsize =  std::min(32,genfontsize);
 
     qApp->setStyleSheet(QString("* { font-size: %1px; }").arg(genfontsize));
 }
