@@ -82,8 +82,8 @@ win32 {
 unix {
     INCLUDEPATH += /usr/include/qwt
     INCLUDEPATH += /usr/include/gdal
-    LIBS += -L/usr/local/qwt-6.4.0-ma/lib/libqwt.so -lqwt
-    LIBS += -L/usr/lib/x86_64-linux-gnu/libgdal.so -lgdal
+    LIBS += -L/usr/local/qwt-6.4.0-ma/lib -lqwt
+    LIBS += -L/usr/lib/x86_64-linux-gnu -lgdal
 }
 
 RESOURCES +=  nutshellqt.qrc
