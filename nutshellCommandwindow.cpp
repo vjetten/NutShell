@@ -143,16 +143,16 @@ void nutshellqt::executeCommand(QStringList args)
 
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     env.insert("CONDA_DEAFULT_ENV",envname);
-    env.insert("CONDA_EXE",condascripts+"conda.exe");
+    env.insert("CONDA_EXE",condascripts+"conda" + exeSuffix);
     env.insert("CONDA_PREFIX", condaenv);
     env.insert("CONDA_PREFIX_1", condabase);
-    env.insert("CONDA_PYTHON_EXE",condabase+"/python.exe");
+    env.insert("CONDA_PYTHON_EXE",condabase+"/python" + exeSuffix);
     env.insert("CONDA_SHLVL","2"); // 1 ?
 
     env.insert("USE_PATH_FOR_GDAL_PYTHON","YES");
     env.insert("CONDA_ACTIVATE_SCRIPT",condascripts+"/activate");
     env.insert("CONDA_ENV_PATH",condaenv);
-    env.insert("CONDA_ENV_PYTHON",condaenv+"python.exe");
+    env.insert("CONDA_ENV_PYTHON",condaenv+"python" + exeSuffix);
 
     env.insert("GDAL_DATA",condaenv+"Library/share/gdal");
     env.insert("GDAL_DRIVER",condaenv+"Library/share/gdal");
@@ -177,7 +177,7 @@ void nutshellqt::executeCommand(QStringList args)
             && (args.count() > 1 && args[1].indexOf("-f",Qt::CaseInsensitive) == 0))
     {
         args.removeAt(0);
-        QString prog = CondaDirName+"Library/bin/pcrcalc.exe";
+        QString prog = CondaDirName+"Library/bin/pcrcalc" + exeSuffix;
         runModelCommandwindow(prog, args);
         return;
     }
@@ -194,15 +194,15 @@ void nutshellqt::executeCommand(QStringList args)
     // add .cmd if it exists
 
     if (args[0].toUpper() == "PYTHON" && moreArgs && args[1].toUpper().contains(".PY")) {
-        prog = CondaDirName+args[0]+".exe";
+        prog = CondaDirName+args[0] + exeSuffix;
     } else
         if (args[0].toUpper() == "AGUILA") {
-            prog = CondaDirName+"Library/bin/"+args[0]+".exe";
+            prog = CondaDirName+"Library/bin/"+args[0] + exeSuffix;
             isCMD = true;
         } else
             if (args[0].toUpper().contains(".CMD") || args[0].toUpper().contains(".BAT")) {
                 createBatch(args[0],"");
-                prog = "cmd.exe";
+                prog = "cmd" + exeSuffix;
                 args.clear();
                 QString batchFilePath = NutshellDirName + "_nutshell_batchjob.cmd";
                 args << "xxx" << "/c" << batchFilePath;
@@ -211,11 +211,11 @@ void nutshellqt::executeCommand(QStringList args)
                 return;
             } else
                 if (args[0].toUpper().contains("MAPEDIT")) {
-                    prog = qApp->applicationDirPath()+"/" + args[0]+".exe";
+                    prog = qApp->applicationDirPath()+"/" + args[0]+ exeSuffix;
                     isCMD = true;
                 }
                 else
-                    prog = CondaDirName+"Library/bin/"+args[0]+".exe";
+                    prog = CondaDirName+"Library/bin/"+args[0] + exeSuffix;
 
 
     // Set the command arguments if needed

@@ -1,5 +1,5 @@
 doxygen/html/*
-/pest/lisPesticide.cpp
 /release*
 *.stash
 Makefile
+*.user
