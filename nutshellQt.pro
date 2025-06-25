@@ -70,11 +70,21 @@ CONFIG(debug, debug|release) {
 }
 
 INCLUDEPATH += ./include
-INCLUDEPATH += C:\Qt\msys64\mingw64\include
-LIBS += C:/prgc/lisemgit/qwt/git/lib/libqwt.dll.a
-LIBS += c:/qt/msys64/mingw64/lib/libgdal.dll.a
-INCLUDEPATH += C:/prgc/lisemgit/qwt/git/src
-#LIBS += -L../pcrlib/libpcraster_raster_format.a
+
+win32 {
+    INCLUDEPATH += C:\prgc\lisemgit\qwt\git\src
+    INCLUDEPATH += C:\Qt\msys64\mingw64\include
+    LIBS += C:/prgc/lisemgit/qwt/git/lib/libqwt.dll.a
+    LIBS += c:/qt/msys64/mingw64/lib/libgdal.dll.a
+    #LIBS += -L../pcrlib/libpcraster_raster_format.a
+}
+
+unix {
+    INCLUDEPATH += /usr/include/qwt
+    INCLUDEPATH += /usr/include/gdal
+    LIBS += -L/usr/local/qwt-6.4.0-ma/lib/libqwt.so -lqwt
+    LIBS += -L/usr/lib/x86_64-linux-gnu/libgdal.so -lgdal
+}
 
 RESOURCES +=  nutshellqt.qrc
 RC_FILE = nutshellqt.rc
