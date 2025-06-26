@@ -137,38 +137,55 @@ void nutshellqt::executeCommand(QStringList args)
     QString envname = Sn.at(Sn.count()-2);
 
     QString condabase = QDir(condaenv+"/../..").absolutePath();
-    QString condascripts = QDir(condabase+"/Scripts").absolutePath();
+#ifdef Q_OS_WIN
+    QString condascripts = QDir(condabase + "/Scripts").absolutePath();
+    QString gdalData = condaenv + "Library/share/gdal";
+    QString gdalDriver = condaenv + "Library/share/gdal";
+    QString gdalDriverPath = condaenv + "Library/lib/gdalplugins";
+    QString geotiffCsv = condaenv + "Library/share/epsg_csv";
+    QString addpath = condaenv + pathSep
+                      + condaenv + libPath + "/minw-w64/bin" + pathSep
+                      + condaenv + "Library/usr/bin" + pathSep
+                      + condaenv + libPath + pathSep
+                      + condaenv + "Scripts" + pathSep
+                      + condaenv + "bin" + pathSep
+                      + condaenv + "condabin" + pathSep
+                      + condaenv + "/Scripts" + pathSep;
+#else
+    QString condascripts = QDir(condabase + "/bin").absolutePath();
+    QString gdalData = condaenv + "share/gdal";
+    QString gdalDriver = condaenv + "share/gdal";
+    QString gdalDriverPath = condaenv + "lib/gdalplugins";
+    QString geotiffCsv = condaenv + "share/epsg_csv";
+    QString addpath = condaenv + pathSep
+                      + condaenv + libPath + pathSep
+                      + condaenv + "bin" + pathSep;
+#endif
 
     //qDebug() << CondaDirName << envname << condabase << condascripts;
 
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     env.insert("CONDA_DEAFULT_ENV",envname);
-    env.insert("CONDA_EXE",condascripts+"conda" + exeSuffix);
+    env.insert("CONDA_EXE", condascripts + "/conda" + exeSuffix);
     env.insert("CONDA_PREFIX", condaenv);
     env.insert("CONDA_PREFIX_1", condabase);
-    env.insert("CONDA_PYTHON_EXE",condabase+"/python" + exeSuffix);
-    env.insert("CONDA_SHLVL","2"); // 1 ?
+    env.insert("CONDA_PYTHON_EXE", condabase + "/python" + exeSuffix);
+    env.insert("CONDA_SHLVL", "2");
+    env.insert("USE_PATH_FOR_GDAL_PYTHON", "YES");
+    env.insert("CONDA_ACTIVATE_SCRIPT", condascripts + "/activate");
+    env.insert("CONDA_ENV_PATH", condaenv);
+    env.insert("CONDA_ENV_PYTHON", condaenv + "python" + exeSuffix);
+    env.insert("GDAL_DATA", gdalData);
+    env.insert("GDAL_DRIVER", gdalDriver);
+    env.insert("GDAL_DRIVER_PATH", gdalDriverPath);
+    env.insert("GEOTIFF_CSV", geotiffCsv);
 
-    env.insert("USE_PATH_FOR_GDAL_PYTHON","YES");
-    env.insert("CONDA_ACTIVATE_SCRIPT",condascripts+"/activate");
-    env.insert("CONDA_ENV_PATH",condaenv);
-    env.insert("CONDA_ENV_PYTHON",condaenv+"python" + exeSuffix);
-
-    env.insert("GDAL_DATA",condaenv+"Library/share/gdal");
-    env.insert("GDAL_DRIVER",condaenv+"Library/share/gdal");
-    env.insert("GDAL_DRIVER_PATH",condaenv+ "Library/lib/gdalplugins");
-    env.insert("GEOTIFF_CSV",condaenv+"Library/share/epsg_csv");
-    QString addpath = condaenv+pathSep
-                      +condaenv+libPath + "/minw-w64/bin" + pathSep
-                      +condaenv+"Library/usr/bin" + pathSep
-                      +condaenv+libPath + pathSep
-                      +condaenv+"Scripts" + pathSep
-                      +condaenv+ "bin" + pathSep
-                      +condaenv+"condabin" + pathSep
-                      +condaenv+"/Scripts" + pathSep;
-
+#ifdef Q_OS_WIN
     env.insert("PATH", addpath + env.value("Path"));
-
+#else
+    env.insert("PATH", addpath + env.value("PATH"));
+    env.insert("LD_LIBRARY_PATH", condaenv + "lib:" + env.value("LD_LIBRARY_PATH"));
+#endif
 
     // Set the command to run
 
