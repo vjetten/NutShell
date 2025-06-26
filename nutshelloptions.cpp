@@ -83,19 +83,24 @@ bool nutshellOptions::GetCondaAllEnvs()
         // On Windows, executables are in Library/bin; on Linux, in bin
 #ifdef Q_OS_WIN
         QString pythonPath = base + "python" + exeSuffix;
-        QString pcrPath = base + "Library/bin/pcrcalc" + exeSuffix;
-        QString gdalPath = base + "Library/bin/gdalinfo" + exeSuffix;
+        //QString pcrPath = base + "Library/bin/pcrcalc" + exeSuffix;
+       // QString gdalPath = base + "Library/bin/gdalinfo" + exeSuffix;
 #else
         QString pythonPath = base + "bin/python" + exeSuffix;
-        QString pcrPath = base + "bin/pcrcalc" + exeSuffix;
-        QString gdalPath = base + "bin/gdalinfo" + exeSuffix;
+        //QString pcrPath = base + "bin/pcrcalc" + exeSuffix;
+        //QString gdalPath = base + "bin/gdalinfo" + exeSuffix;
 #endif
+     //  QString pythonPath = base + "python" + exeSuffix;
+       QString pcrPath = base + libPath + "/pcrcalc" + exeSuffix;
+       QString gdalPath = base + libPath + "/gdalinfo" + exeSuffix;
+
 
         bool pythonfound = QFileInfo(pythonPath).exists();
         bool pcrasterfound = QFileInfo(pcrPath).exists();
         bool gdalfound = QFileInfo(gdalPath).exists();
 
         if (pythonfound && pcrasterfound && gdalfound)
+        //if (pcrasterfound)
             combo_envs->addItem(base);
         else {
             QString error = "";

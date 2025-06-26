@@ -26,10 +26,12 @@
 inline const QString exeSuffix = ".exe";
 inline const QString scriptSuffix = ".cmd";
 inline const QString pathSep = ";";
+inline const QString libPath = "Library/bin";
 #else
 inline const QString exeSuffix = "";
 inline const QString scriptSuffix = ".sh";
 inline const QString pathSep = ":";
+inline const QString libPath = "bin";
 #endif
 
 //--------------------------------------------------------------

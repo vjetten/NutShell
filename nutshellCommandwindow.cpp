@@ -158,14 +158,14 @@ void nutshellqt::executeCommand(QStringList args)
     env.insert("GDAL_DRIVER",condaenv+"Library/share/gdal");
     env.insert("GDAL_DRIVER_PATH",condaenv+ "Library/lib/gdalplugins");
     env.insert("GEOTIFF_CSV",condaenv+"Library/share/epsg_csv");
-    QString addpath = condaenv+";"
-                      +condaenv+"Library/bin/minw-w64/bin;"
-                      +condaenv+"Library/usr/bin;"
-                      +condaenv+"Library/bin;"
-                      +condaenv+"Scripts;"
-                      +condaenv+"bin;"
-                      +condaenv+"condabin;"
-                      +condaenv+"/Scripts;";
+    QString addpath = condaenv+pathSep
+                      +condaenv+libPath + "/minw-w64/bin" + pathSep
+                      +condaenv+"Library/usr/bin" + pathSep
+                      +condaenv+libPath + pathSep
+                      +condaenv+"Scripts" + pathSep
+                      +condaenv+ "bin" + pathSep
+                      +condaenv+"condabin" + pathSep
+                      +condaenv+"/Scripts" + pathSep;
 
     env.insert("PATH", addpath + env.value("Path"));
 
@@ -177,7 +177,7 @@ void nutshellqt::executeCommand(QStringList args)
             && (args.count() > 1 && args[1].indexOf("-f",Qt::CaseInsensitive) == 0))
     {
         args.removeAt(0);
-        QString prog = CondaDirName+"Library/bin/pcrcalc" + exeSuffix;
+        QString prog = CondaDirName+libPath + "/pcrcalc" + exeSuffix;
         runModelCommandwindow(prog, args);
         return;
     }
@@ -197,7 +197,7 @@ void nutshellqt::executeCommand(QStringList args)
         prog = CondaDirName+args[0] + exeSuffix;
     } else
         if (args[0].toUpper() == "AGUILA") {
-            prog = CondaDirName+"Library/bin/"+args[0] + exeSuffix;
+            prog = CondaDirName+libPath + "/"+args[0] + exeSuffix;
             isCMD = true;
         } else
             if (args[0].toUpper().contains(scriptSuffix) || args[0].toUpper().contains(".BAT")) {
@@ -222,7 +222,7 @@ void nutshellqt::executeCommand(QStringList args)
                     isCMD = true;
                 }
                 else
-                    prog = CondaDirName+"Library/bin/"+args[0] + exeSuffix;
+                    prog = CondaDirName+libPath + "/"+args[0] + exeSuffix;
 
 
     // Set the command arguments if needed

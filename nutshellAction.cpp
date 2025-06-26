@@ -85,7 +85,7 @@ void nutshellqt::createBatch(QString sss, QString args)
     QTextStream eout(&efout);
     eout << "@echo off\n";
     eout << "CD "+currentPath +"\n";
-    eout << QString("PATH="+CondaDirName+"Library/bin/\n");
+    eout << QString("PATH="+CondaDirName+ libPath + "/\n");
     eout << "@echo on\n";
     eout << "call \"" + sss + "\" " + args;
 

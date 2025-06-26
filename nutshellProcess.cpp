@@ -178,7 +178,7 @@ void nutshellqt::runModel()
     }
     // make argument list
 
-    prog = CondaDirName+"Library/bin/pcrcalc" + exeSuffix;
+    prog = CondaDirName+libPath + "/pcrcalc" + exeSuffix;
     commandWindow->appendPlainText("pcrcalc "+argsscreen.join(" "));
 
     if (!QFileInfo(prog).exists())
