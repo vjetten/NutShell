@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=NutShell
+Comment=NutShell Explorer
+Exec=/home/youruser/.local/bin/nutshell
+Icon=nutshell
+Terminal=false
+Type=Application
+Categories=Science;Education;
