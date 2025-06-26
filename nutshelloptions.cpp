@@ -80,9 +80,9 @@ bool nutshellOptions::GetCondaAllEnvs()
     }
 
     for (int i = 0; i < allCondaDirNames.size(); i++) {
-        QString str = allCondaDirNames.at(i)+"python.exe";
-        QString str1 = allCondaDirNames.at(i)+"Library/bin/pcrcalc.exe";
-        QString str2 = allCondaDirNames.at(i)+"Library/bin/gdalinfo.exe";
+        QString str = allCondaDirNames.at(i)+"python" + exeSuffix;
+        QString str1 = allCondaDirNames.at(i)+"Library/bin/pcrcalc" + exeSuffix;
+        QString str2 = allCondaDirNames.at(i)+"Library/bin/gdalinfo" + exeSuffix;
         bool pythonfound = QFileInfo(str).exists();
         bool pcrasterfound = QFileInfo(str1).exists();
         bool gdalfound = QFileInfo(str2).exists();
