@@ -78,7 +78,7 @@ void nutshellqt::actionmapMap2Tiff()
 //---------------------------------------------------------------------------
 void nutshellqt::createBatch(QString sss, QString args)
 {
-    QFile efout(NutshellDirName+"_nutshell_batchjob.cmd");
+    QFile efout(NutshellDirName+"_nutshell_batchjob" + scriptSuffix);
     if (efout.exists())
         efout.remove();
     efout.open(QIODevice::WriteOnly | QIODevice::Text);
@@ -95,7 +95,7 @@ void nutshellqt::createBatch(QString sss, QString args)
 //---------------------------------------------------------------------------
 void nutshellqt::deleteBatch()
 {
-  //  QFile efout(MapeditDirName+"_nutshell_batchjob.cmd");
+  //  QFile efout(MapeditDirName+"_nutshell_batchjob" + scriptSuffix);
  //   efout.remove();
 }
 //---------------------------------------------------------------------------

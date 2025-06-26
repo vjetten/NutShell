@@ -187,11 +187,11 @@ void nutshellqt::executeCommand(QStringList args)
     bool moreArgs = args.count() > 1;
 
     if (!args[0].contains(".")) {
-        QFile fff(args[0]+".cmd");
+        QFile fff(args[0] + scriptSuffix);
         if (fff.exists())
-            args[0] += ".cmd";
+            args[0] += scriptSuffix;
     }
-    // add .cmd if it exists
+    // Add .cmd/.sh if it exists and no extension is present
 
     if (args[0].toUpper() == "PYTHON" && moreArgs && args[1].toUpper().contains(".PY")) {
         prog = CondaDirName+args[0] + exeSuffix;
@@ -200,12 +200,19 @@ void nutshellqt::executeCommand(QStringList args)
             prog = CondaDirName+"Library/bin/"+args[0] + exeSuffix;
             isCMD = true;
         } else
-            if (args[0].toUpper().contains(".CMD") || args[0].toUpper().contains(".BAT")) {
+            if (args[0].toUpper().contains(scriptSuffix) || args[0].toUpper().contains(".BAT")) {
                 createBatch(args[0],"");
+            #ifdef Q_OS_WIN
                 prog = "cmd" + exeSuffix;
                 args.clear();
-                QString batchFilePath = NutshellDirName + "_nutshell_batchjob.cmd";
+                QString batchFilePath = NutshellDirName + "_nutshell_batchjob" + scriptSuffix;
                 args << "xxx" << "/c" << batchFilePath;
+            #else
+                prog = "bash" + exeSuffix;
+                args.clear();
+                QString batchFilePath = NutshellDirName + "_nutshell_batchjob" + scriptSuffix;
+                args << batchFilePath;
+            #endif
                 isCMD = true;
                 QDesktopServices::openUrl(QUrl("file:///"+batchFilePath));
                 return;
