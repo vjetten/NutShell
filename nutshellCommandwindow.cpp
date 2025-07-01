@@ -302,8 +302,8 @@ void nutshellqt::errorCommand()
 void nutshellqt::outputCommand()
 {
     QString buffer = QString(PCRProcess->readAllStandardOutput());
-
-    if (!buffer.contains('\r')) {
+    qDebug() << "STDOUT from PCRProcess:" << buffer;
+    if (!buffer.contains('\r') && !buffer.contains('\n')) {
         bufprev = bufprev + buffer;
         return;
     }
@@ -312,7 +312,14 @@ void nutshellqt::outputCommand()
         buffer = bufprev;
         bufprev = "";
     }
-
+ 
+    // Check for errors in stdout as well
+    if (buffer.contains("ERROR")) {
+        onScreen(buffer); // or handle as you do in readFromStderrPCR
+        doRunErrorMessage(buffer);
+    } else {
+        commandWindow->appendPlainText(buffer);
+    }
     commandWindow->appendPlainText(buffer);
     QCoreApplication::sendPostedEvents(this, 0);
 }
