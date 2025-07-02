@@ -8,6 +8,7 @@
 
 
 #include "nutshellqt.h"
+#include <QRegularExpression>
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -286,7 +287,7 @@ void nutshellqt::onScreen(QString buffer)
     //            qDebug() << "PIPE STDERR" << line;
     //    }
     listb.clear();
-    listb = buffer.split("\r");
+    listb = buffer.split(QRegularExpression("[\r\n]"), Qt::SkipEmptyParts);
     // split process output all out in seperate lines, using UNIX CR
 
     output = commandWindow->toPlainText();
@@ -298,19 +299,23 @@ void nutshellqt::onScreen(QString buffer)
     if (buffer.contains("ERROR") ) {
         if (output.isEmpty()) {
             //qDebug() << "empty error output";
-        } else {
+        } else if (listb.size() >= 2 && xlast >= 3) {
             //qDebug() << xlast;
             list.replace(xlast-3,listb[0]);  // pcrcalc version
             list.replace(xlast-2,listb[1]);  // error message
             output=list.join("\n");
+        } else if (listb.size() == 1 && xlast >= 2) {
+            // Only error message present
+            list.replace(xlast-2, listb[0]);
+            output = list.join("\n");
         }
         commandWindow->setPlainText(output);
         // join new lines and replace the commandWindow
     }
-    else
-        if(listb[0].contains("version"))
+    else if(!listb.isEmpty() && listb[0].contains("version"))
         {
             int last = listb.count() - 1;
+            {
             list.replace(xlast-3,listb[0]);
             list.replace(xlast-2,listb[last]);
             output=list.join("\n");
@@ -323,6 +328,7 @@ void nutshellqt::onScreen(QString buffer)
             //save output cursor position
             commandWindow->setTextCursor(calcCursor);
         }
+    }
         else
         {
             // runstep output
@@ -364,8 +370,8 @@ void nutshellqt::onScreen(QString buffer)
 void nutshellqt::readFromStderr()
 {
     QString buffer = QString(calcProcess->readAllStandardError());
-
-    if (!buffer.contains('\r')) {
+    //qDebug() << "STDERR from calcProcess:" << buffer;
+    if (!buffer.contains('\r') && !buffer.contains('\n')) {
         bufprev = bufprev + buffer;
         return;
     }
@@ -387,7 +393,8 @@ void nutshellqt::readFromStderr()
 void nutshellqt::readFromStderrPCR()
 {
     QString buffer = QString(PCRProcess->readAllStandardError());
-    if (!buffer.contains('\r')) {
+    //qDebug() << "STDERR from PCRProcess:" << buffer;
+    if (!buffer.contains('\r') && !buffer.contains('\n')) {
         bufprev = bufprev + buffer;
         return;
     }

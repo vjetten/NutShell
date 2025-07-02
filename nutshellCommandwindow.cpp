@@ -302,8 +302,8 @@ void nutshellqt::errorCommand()
 void nutshellqt::outputCommand()
 {
     QString buffer = QString(PCRProcess->readAllStandardOutput());
-
-    if (!buffer.contains('\r')) {
+    //qDebug() << "STDOUT from PCRProcess:" << buffer;
+    if (!buffer.contains('\r') && !buffer.contains('\n')) {
         bufprev = bufprev + buffer;
         return;
     }
@@ -312,7 +312,7 @@ void nutshellqt::outputCommand()
         buffer = bufprev;
         bufprev = "";
     }
-
+ 
     commandWindow->appendPlainText(buffer);
     QCoreApplication::sendPostedEvents(this, 0);
 }
