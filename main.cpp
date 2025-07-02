@@ -5,7 +5,8 @@
  */
 
 #include <QApplication>
-#include "nutshellQt.h"
+#include <QIcon>
+#include "nutshellqt.h"
 
 int main(int argc, char *argv[])
 {
@@ -13,9 +14,12 @@ int main(int argc, char *argv[])
 
     QCoreApplication::addLibraryPath(QDir::currentPath() + "/platforms");
 
+    // Set application icon for all platforms
+    a.setWindowIcon(QIcon(":/resources/nutshell.png"));
+
     nutshellqt w;
 
-    w.setWindowTitle("NutShell (version 5.18 - 250126)");
+    w.setWindowTitle("NutShell (version 5.19 - 250628)");
     w.showMaximized();
     w.show();
     a.setStyle("Fusion");
