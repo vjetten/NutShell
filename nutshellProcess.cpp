@@ -369,7 +369,7 @@ void nutshellqt::onScreen(QString buffer)
 void nutshellqt::readFromStderr()
 {
     QString buffer = QString(calcProcess->readAllStandardError());
-    qDebug() << "STDERR from calcProcess:" << buffer;
+    //qDebug() << "STDERR from calcProcess:" << buffer;
     if (!buffer.contains('\r') && !buffer.contains('\n')) {
         bufprev = bufprev + buffer;
         return;
@@ -392,7 +392,7 @@ void nutshellqt::readFromStderr()
 void nutshellqt::readFromStderrPCR()
 {
     QString buffer = QString(PCRProcess->readAllStandardError());
-    qDebug() << "STDERR from PCRProcess:" << buffer;
+    //qDebug() << "STDERR from PCRProcess:" << buffer;
     if (!buffer.contains('\r') && !buffer.contains('\n')) {
         bufprev = bufprev + buffer;
         return;

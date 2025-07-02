@@ -302,7 +302,7 @@ void nutshellqt::errorCommand()
 void nutshellqt::outputCommand()
 {
     QString buffer = QString(PCRProcess->readAllStandardOutput());
-    qDebug() << "STDOUT from PCRProcess:" << buffer;
+    //qDebug() << "STDOUT from PCRProcess:" << buffer;
     if (!buffer.contains('\r') && !buffer.contains('\n')) {
         bufprev = bufprev + buffer;
         return;
