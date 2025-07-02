@@ -313,13 +313,6 @@ void nutshellqt::outputCommand()
         bufprev = "";
     }
  
-    // Check for errors in stdout as well
-    if (buffer.contains("ERROR")) {
-        onScreen(buffer); // or handle as you do in readFromStderrPCR
-        doRunErrorMessage(buffer);
-    } else {
-        commandWindow->appendPlainText(buffer);
-    }
     commandWindow->appendPlainText(buffer);
     QCoreApplication::sendPostedEvents(this, 0);
 }
