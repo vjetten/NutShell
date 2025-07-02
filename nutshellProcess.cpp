@@ -8,6 +8,7 @@
 
 
 #include "nutshellqt.h"
+#include <QRegularExpression>
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -286,7 +287,7 @@ void nutshellqt::onScreen(QString buffer)
     //            qDebug() << "PIPE STDERR" << line;
     //    }
     listb.clear();
-    listb = buffer.split(QRegExp("[\r\n]"), Qt::SkipEmptyParts);
+    listb = buffer.split(QRegularExpression("[\r\n]"), Qt::SkipEmptyParts);
     // split process output all out in seperate lines, using UNIX CR
 
     output = commandWindow->toPlainText();
