@@ -34,12 +34,12 @@ void nutshellqt::showHelp()
 //---------------------------------------------------------------
 void nutshellqt::showWebHelp()
 {
-    QDesktopServices::openUrl(QUrl("http://pcraster.geo.uu.nl/documentation/PCRaster/html/index.html"));
+    QDesktopServices::openUrl(QUrl("https://pcraster.geo.uu.nl/pcraster/4.4.2/documentation/index.html"));
 }
 //---------------------------------------------------------------
 void nutshellqt::showAguilaHelp()
 {
-    QDesktopServices::openUrl(QUrl("http://pcraster.geo.uu.nl/documentation/Aguila/Aguila.pdf"));
+    QDesktopServices::openUrl(QUrl("https://pcraster.geo.uu.nl/pcraster/4.4.2/documentation/pcraster_aguila/index.html"));
 }
 //---------------------------------------------------------------
 void nutshellqt::showHelpOperation()
