@@ -43,7 +43,18 @@ bool nutshellOptions::findCondaDir(QString dirS)
                  combo_envs->setCurrentText(dirS);
         }
     } else {
-        WarningMsg("No valid Anaconda or Miniconda installation with Python, PCRaster and GDAL is found.\nFollow the instructions on https://pcraster.geo.uu.nl/.");
+        // QString S =
+        //     "No valid Anaconda or Miniconda installation with Python, PCRaster and GDAL is found.\n"
+        //     "Do the following:\n"
+        //     "Download and install miniforge from https://conda-forge.org/download/\n"
+        //     "Open and make a new environment (e.g. \"nutshell\" or any name you want):\n"
+        //     "conda create -n nutshell\n"
+        //     "conda activate nutshell\n"
+        //     "conda install -c conda-forge pcraster owslib scipy gdal soilgrids\n"
+        //     "After that open NutShell again.";
+
+
+        // WarningMsg(S);
         CondaDirName = "";
     }
     return(CondaInstall);
@@ -75,7 +86,7 @@ bool nutshellOptions::GetCondaAllEnvs()
         }
         fin.close();
     } else {
-        WarningMsg("No conda environment found.");
+        WarningMsg("Warrning: No valid conda environment found.");
         return false;
     }
 
