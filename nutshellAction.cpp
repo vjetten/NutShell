@@ -237,7 +237,7 @@ void nutshellqt::PerformAction(int actiontype)
             else
                 args << "mapedit" << cmdl;
         }
-        //qDebug() << args;
+        qDebug() << args;
         break;
     case ACTIONTYPELEGEND:
         if (isMap) {

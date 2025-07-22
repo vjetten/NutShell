@@ -46,7 +46,7 @@ void myTreeView::dropEvent(QDropEvent *event)
 
    QDir dir(m->filePath(index));
 
-   if (event->keyboardModifiers() == Qt::ControlModifier)
+   if (event->modifiers() == Qt::ControlModifier)
       event->setDropAction(Qt::CopyAction);
    else
       event->setDropAction(Qt::MoveAction);

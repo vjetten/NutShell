@@ -71,7 +71,7 @@ CONFIG(debug, debug|release) {
 
 INCLUDEPATH += ./include
 INCLUDEPATH += C:\Qt\msys64\mingw64\include
-LIBS += C:/prgc/lisemgit/qwt/git/lib/libqwt.dll.a
+LIBS += C:\prgc\lisemgit\qwt\qwt-multiaxes\build\lib\libqwt.dll.a
 LIBS += c:/qt/msys64/mingw64/lib/libgdal.dll.a
 INCLUDEPATH += C:/prgc/lisemgit/qwt/git/src
 #LIBS += -L../pcrlib/libpcraster_raster_format.a
