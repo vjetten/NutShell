@@ -283,7 +283,7 @@ bool nutshellqt::getScriptReport(bool addBinding)
             {
                 QString line;
                 line = str;
-                line.remove(str.indexOf(";"),str.count()+10); // remove all behind ";"
+                line.remove(str.indexOf(";"),str.size()+10); // remove all behind ";"
 
                 line.remove(" "); // remove all spaces
                 if (line.contains("=") && !line.contains("#"))
@@ -310,7 +310,7 @@ bool nutshellqt::getScriptReport(bool addBinding)
             {
                 QString line;
                 line = str;
-                line.remove(str.indexOf("="),str.count()+10);
+                line.remove(str.indexOf("="),str.size()+10);
                 line = line.simplified();
                 timer << line;
             }
@@ -330,7 +330,7 @@ bool nutshellqt::getScriptReport(bool addBinding)
 
                 str.remove(QRegularExpression("\\([^\\)]*\\)"));
                 //strip report (...)
-                str.remove(str.indexOf("="),str.count()+10);
+                str.remove(str.indexOf("="),str.size()+10);
                 //strip from '=' to end of line
                 str.remove("report");
                 //strip report keyword
@@ -440,7 +440,7 @@ int nutshellqt::getTimesteps()
             {
                 QString line;
                 line = str.simplified();
-                line.remove(line.indexOf("#"),line.count()+10);
+                line.remove(line.indexOf("#"),line.size()+10);
                 ss = line.split(" ");
             }
         }
@@ -495,6 +495,39 @@ bool nutshellqt::isExtentionInt(QString name)
 //---------------------------------------------------------------------------
 bool nutshellqt::isTextFile(const QString& filename)
 {
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadOnly)) {
+        return false;
+    }
+
+    const qint64 bufferSize = 1024;
+    QByteArray data = file.read(bufferSize);
+    file.close();
+
+    if (data.isEmpty())
+        return false;
+
+    int binaryCount = 0;
+    for (char byte : data) {
+        uchar u = static_cast<uchar>(byte);
+
+        if (u == 0) {
+            return false; // NUL byte = binary
+        }
+
+        // Count as binary if outside common printable text range
+        if ((u < 7 || (u > 14 && u < 32)) && u != 9) {
+            ++binaryCount;
+        }
+    }
+
+    // Heuristic: if more than 10% is suspicious, it's probably binary
+    return binaryCount < data.size() / 10;
+}
+
+/*
+bool nutshellqt::isTextFile(const QString& filename)
+{
     qint64 bufferSize = 1024;
     bool okay = true;
 
@@ -524,6 +557,7 @@ bool nutshellqt::isTextFile(const QString& filename)
 
     return okay;  // Text file
 }
+*/
 //---------------------------------------------------------------------------
 bool nutshellqt::isMapFile(const QString& filename)
 {

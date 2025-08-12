@@ -49,13 +49,7 @@ void nutshellqt::showHelpOperation()
 
     QString helptxt = ETEditor->textCursor().selectedText();
 
-    QString URL = "http://pcraster.geo.uu.nl/documentation/PCRaster/html/";
-
-//    if (!QUrl(URL).isValid())
-//    {
-//        QMessageBox::warning(this,"web based help",QString("Cannot find the PCRaster website"));
-//        return;
-//    }
+    QString URL = "https://pcraster.geo.uu.nl/pcraster/4.4.2/documentation/pcraster_manual/sphinx/";
 
     if (helptxt.isEmpty())
     {
@@ -94,7 +88,8 @@ void nutshellqt::showHelpOperation()
                         found = QString("op_%1.html").arg(helptxt);
                         // all the rest
                     }
-    //qDebug() << URL+found << helptxt;
+
+    //qDebug() << URL << found << helptxt;
     QDesktopServices::openUrl(QUrl(URL+found));
 
 }

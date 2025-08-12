@@ -199,14 +199,14 @@ int nutshelleditor::scriptFindSectionBlock(QString str)
       return -1;
 
    if (S.contains("#"))
-      S.remove(S.indexOf("#"), S.count()+1);
+      S.remove(S.indexOf("#"), S.size()+1);
    S = S.simplified();
    while (S != str && !cur.atEnd())
    {
       cur = document()->find(str, cur.position(), QTextDocument::FindWholeWords);
       S = cur.block().text().simplified();
       if (S.contains("#"))
-         S.remove(S.indexOf("#"), S.count()+1);
+         S.remove(S.indexOf("#"), S.size()+1);
       S = S.simplified();
    }
    return (cur.block().blockNumber());

@@ -235,7 +235,7 @@ void cTMap::WriteMap(QString Name)
       }
    }
 
-   delete Dt;
+   delete[] Dt;
 
    Mclose(out);
 
@@ -250,25 +250,25 @@ void cTMap::WriteMapSeries(QString Dir, QString Name, int count)
    if (Name.indexOf(".") < 0)
    {
 
-    	nam = Name + "00000000";
+        nam = Name + "00000000";
 
-    	nam.remove(8, 80);
-    	dig.setNum(count);
+        nam.remove(8, 80);
+        dig.setNum(count);
 
-    	if (count > 999)
-    	{
-    		nam.remove(8,1);
-    		nam = nam + dig;
-    		nam.insert(9,QString("."));
-    	}
-    	else
-    		if (count > 99)
-    			nam = nam + "." + dig;
-    		else
-    			if (count > 9)
-    				nam = nam + "." + "0" + dig;
-    			else
-    				nam = nam + "." + "00" + dig;
+        if (count > 999)
+        {
+            nam.remove(8,1);
+            nam = nam + dig;
+            nam.insert(9,QString("."));
+        }
+        else
+            if (count > 99)
+                nam = nam + "." + dig;
+            else
+                if (count > 9)
+                    nam = nam + "." + "0" + dig;
+                else
+                    nam = nam + "." + "00" + dig;
    }
    else
       nam = Name;

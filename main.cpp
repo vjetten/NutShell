@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 
     nutshellqt w;
 
-    w.setWindowTitle("NutShell (version 5.19 - 250628)");
+    w.setWindowTitle("NutShell (version 5.19 - 250722)");
     w.showMaximized();
     w.show();
     a.setStyle("Fusion");
