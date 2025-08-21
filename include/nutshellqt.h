@@ -21,6 +21,20 @@
 
 
 //---------------------------------------------------------------
+// make flexible for windows and linux
+#ifdef Q_OS_WIN
+inline const QString exeSuffix = ".exe";
+inline const QString scriptSuffix = ".cmd";
+inline const QString pathSep = ";";
+inline const QString libPath = "Library/bin";
+#else
+inline const QString exeSuffix = "";
+inline const QString scriptSuffix = ".sh";
+inline const QString pathSep = ":";
+inline const QString libPath = "bin";
+#endif
+
+//--------------------------------------------------------------
 
 #define STATUS(s) statusBar()->showMessage(QString(s),1000);
 

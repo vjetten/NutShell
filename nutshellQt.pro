@@ -28,8 +28,78 @@ SOURCES += main.cpp\
     CsfMap.cpp \
     nutshellevent.cpp \
     nutshelltreeview.cpp \
-    nutshellCommandwindow.cpp
-
+    nutshellCommandwindow.cpp \
+    pcrlib/mopen.c \
+    pcrlib/angle.c \
+    pcrlib/dumconv.c \
+    pcrlib/_getrow.c \
+    pcrlib/_gsomece.c \
+    pcrlib/mperror.c \
+    pcrlib/pvalscal.c \
+    pcrlib/rrowcol.c \
+    pcrlib/vsdef.c \
+    pcrlib/attravai.c \
+    pcrlib/endian.c \
+    pcrlib/getx0.c \
+    pcrlib/gvalscal.c \
+    pcrlib/pgisfid.c \
+    pcrlib/rattrblk.c \
+    pcrlib/ruseas.c \
+    pcrlib/vsis.c \
+    pcrlib/attrsize.c \
+    pcrlib/file.c \
+    pcrlib/gety0.c \
+    pcrlib/gvartype.c \
+    pcrlib/pmaxval.c \
+    pcrlib/rcomp.c \
+    pcrlib/setangle.c \
+    pcrlib/vsvers.c \
+    pcrlib/filename.c \
+    pcrlib/ggisfid.c \
+    pcrlib/gversion.c \
+    pcrlib/pminval.c \
+    pcrlib/rcoords.c \
+    pcrlib/setmv.c \
+    pcrlib/wattrblk.c \
+    pcrlib/cellsize.c \
+    pcrlib/gattrblk.c \
+    pcrlib/gmaxval.c \
+    pcrlib/ismv.c \
+    pcrlib/putallmv.c \
+    pcrlib/rdup2.c \
+    pcrlib/setvtmv.c \
+    pcrlib/gattridx.c \
+    pcrlib/gminval.c \
+    pcrlib/kernlcsf.c \
+    pcrlib/putattr.c \
+    pcrlib/strconst.c \
+    pcrlib/create2.c \
+    pcrlib/gcellrep.c \
+    pcrlib/gnrcols.c \
+    pcrlib/legend.c \
+    pcrlib/_putcell.c \
+    pcrlib/reseterr.c \
+    pcrlib/strpad.c \
+    pcrlib/csfglob.c \
+    pcrlib/gdattype.c \
+    pcrlib/gnrrows.c \
+    pcrlib/mclose.c \
+    pcrlib/putsomec.c \
+    pcrlib/rextend.c \
+    pcrlib/swapio.c \
+    pcrlib/csfsup.c \
+    pcrlib/getattr.c \
+    pcrlib/gproj.c \
+    pcrlib/putx0.c \
+    pcrlib/rmalloc.c \
+    pcrlib/trackmm.c \
+    pcrlib/delattr.c \
+    pcrlib/_getcell.c \
+    pcrlib/gputproj.c \
+    pcrlib/moreattr.c \
+    pcrlib/puty0.c \
+    pcrlib/_rputrow.c \
+    pcrlib/vs2.c
 
 HEADERS  += include/nutshellqt.h \
     include/csfattr.h \
@@ -70,11 +140,23 @@ CONFIG(debug, debug|release) {
 }
 
 INCLUDEPATH += ./include
-INCLUDEPATH += C:\Qt\msys64\mingw64\include
-LIBS += C:\prgc\lisemgit\qwt\qwt-multiaxes\build\lib\libqwt.dll.a
-LIBS += c:/qt/msys64/mingw64/lib/libgdal.dll.a
-INCLUDEPATH += C:/prgc/lisemgit/qwt/git/src
-#LIBS += -L../pcrlib/libpcraster_raster_format.a
+
+win32 {
+    INCLUDEPATH += C:\prgc\lisemgit\qwt\git\src
+    INCLUDEPATH += C:\Qt\msys64\mingw64\include
+    LIBS += C:/prgc/lisemgit/qwt/git/lib/libqwt.dll.a
+    LIBS += c:/qt/msys64/mingw64/lib/libgdal.dll.a
+    #LIBS += -L../pcrlib/libpcraster_raster_format.a
+}
+
+unix {
+    INCLUDEPATH += ./pcrlib
+    INCLUDEPATH += /usr/include
+    INCLUDEPATH += /usr/include/qwt
+    INCLUDEPATH += /usr/include/gdal
+    LIBS += -L/usr/local/qwt-6.4.0-ma/lib -lqwt
+    LIBS += -L/usr/lib/x86_64-linux-gnu -lgdal
+}
 
 RESOURCES +=  nutshellqt.qrc
 RC_FILE = nutshellqt.rc

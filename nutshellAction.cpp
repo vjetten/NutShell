@@ -78,14 +78,14 @@ void nutshellqt::actionmapMap2Tiff()
 //---------------------------------------------------------------------------
 void nutshellqt::createBatch(QString sss, QString args)
 {
-    QFile efout(NutshellDirName+"_nutshell_batchjob.cmd");
+    QFile efout(NutshellDirName+"_nutshell_batchjob" + scriptSuffix);
     if (efout.exists())
         efout.remove();
     efout.open(QIODevice::WriteOnly | QIODevice::Text);
     QTextStream eout(&efout);
     eout << "@echo off\n";
     eout << "CD "+currentPath +"\n";
-    eout << QString("PATH="+CondaDirName+"Library/bin/\n");
+    eout << QString("PATH="+CondaDirName+ libPath + "/\n");
     eout << "@echo on\n";
     eout << "call \"" + sss + "\" " + args;
 
@@ -95,7 +95,7 @@ void nutshellqt::createBatch(QString sss, QString args)
 //---------------------------------------------------------------------------
 void nutshellqt::deleteBatch()
 {
-  //  QFile efout(MapeditDirName+"_nutshell_batchjob.cmd");
+  //  QFile efout(MapeditDirName+"_nutshell_batchjob" + scriptSuffix);
  //   efout.remove();
 }
 //---------------------------------------------------------------------------
@@ -226,8 +226,8 @@ void nutshellqt::PerformAction(int actiontype)
             actiontype = ACTIONTYPENONE;
         break;
     case ACTIONTYPEMAPEDIT :
-        //qDebug() << NutshellDirName + "mapedit.exe";
-        if (!QFileInfo(qApp->applicationDirPath() + "/mapedit.exe").exists()) {
+        //qDebug() << NutshellDirName + "mapedit" + exeSuffix;
+        if (!QFileInfo(qApp->applicationDirPath() + "/mapedit" + exeSuffix).exists()) {
             WarningMsg("Mapedit not found in Nutshell install directory.");
             actiontype = ACTIONTYPENONE;
         } else {
@@ -278,7 +278,7 @@ void nutshellqt::PerformAction(int actiontype)
     case ACTIONTYPEATTRIBUTE :
         if (isTIFF) {
             args << "gdalinfo" << SelectedPathName;
-            //prog = GDALAppDirName + "gdalinfo.exe";
+            //prog = GDALAppDirName + "gdalinfo" + exeSuffix;
         } else
         if (isMap) {
             if (mapattribute.fill(SelectedPathName, false) == 0) {

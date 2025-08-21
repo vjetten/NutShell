@@ -5,13 +5,17 @@
  */
 
 #include <QApplication>
-#include "nutshellQt.h"
+#include <QIcon>
+#include "nutshellqt.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
     QCoreApplication::addLibraryPath(QDir::currentPath() + "/platforms");
+
+    // Set application icon for all platforms
+    a.setWindowIcon(QIcon(":/resources/nutshell.png"));
 
     nutshellqt w;
 
