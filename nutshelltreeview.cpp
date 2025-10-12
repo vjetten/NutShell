@@ -38,7 +38,8 @@ QString myTreeView::StripForName(QString S)
  */
 void myTreeView::dropEvent(QDropEvent *event)
 {
-   QModelIndex index = indexAt(event->pos());
+   QModelIndex index = indexAt(event->position().toPoint());
+
    // the dir moved into
 
    QFileSystemModel *m = static_cast<QFileSystemModel*>(model());
@@ -46,7 +47,7 @@ void myTreeView::dropEvent(QDropEvent *event)
 
    QDir dir(m->filePath(index));
 
-   if (event->keyboardModifiers() == Qt::ControlModifier)
+   if (event->modifiers()== Qt::ControlModifier)
       event->setDropAction(Qt::CopyAction);
    else
       event->setDropAction(Qt::MoveAction);
