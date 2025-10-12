@@ -143,3 +143,11 @@ void myTreeView::dropEvent(QDropEvent *event)
    }
 }
 
+// void myTreeView::setModel(QAbstractItemModel *model)
+// {
+//     QTreeView::setModel(model);
+
+//     QTimer::singleShot(0, this, [this]() {
+//         resizeColumnToContents(0);
+//     });
+// }

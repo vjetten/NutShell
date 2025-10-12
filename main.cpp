@@ -15,10 +15,10 @@ int main(int argc, char *argv[])
 
     nutshellqt w;
 
-    w.setWindowTitle("NutShell (version 5.18 - 250126)");
+    w.setWindowTitle("NutShell (version 5.19 - 251012)");
     w.showMaximized();
     w.show();
-    a.setStyle("Fusion");
+    a.setStyle(QStyleFactory::create("Fusion"));
 
     return a.exec();
 }

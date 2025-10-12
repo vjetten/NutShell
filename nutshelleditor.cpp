@@ -525,7 +525,7 @@ void nutshellqt::displayVar()
         QModelIndex ind = fileModel->index(var);
         selectionModel->clearSelection();
         selectionModel->setCurrentIndex(ind, QItemSelectionModel::Select);
-        PerformAction(GetActionType());
+        PerformAction(ind, GetActionType());
     }
     else
         QMessageBox::warning(this,"NutShell",QString("Selected variable not found in directory."));

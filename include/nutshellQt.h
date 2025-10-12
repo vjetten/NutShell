@@ -197,6 +197,7 @@ public:
     QList <filenameseries> fns;
     QString StripForName(QString S);
 
+
 protected:
     void focusInEvent(QFocusEvent *event) override {
         hasFocus = true;
@@ -363,7 +364,7 @@ public:
     QElapsedTimer time_ms;
     int totalsteps;
     int GetActionType();
-    void PerformAction(int actiontype);
+    void PerformAction(QModelIndex id,int actiontype);
     bool isExtentionInt(QString name);
     void scriptFold(int section);
     bool changeName;
@@ -580,7 +581,6 @@ private:
     // explorer variables
     QFileSystemModel *dirModel;
     QFileSystemModel *fileModel;
-   // FSM *fileModel;
     QItemSelectionModel *selectionModel;
     QItemSelectionModel *selectionDirModel;
 

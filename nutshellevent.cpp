@@ -44,8 +44,10 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
 
             if (keyEvent->key() == Qt::Key_Return)
             {
-                if (!changeName)
-                    PerformAction(GetActionType());
+                if (!changeName) {
+                    QModelIndex id = selectionModel->currentIndex();
+                    PerformAction(id, GetActionType());
+                }
                 changeName = false;
                 return true;
             }
@@ -59,7 +61,6 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
             if (keyEvent->key() == Qt::Key_F5)
             {
                 changeFileFilter(_filternr);
-
                 treeView->setVisible(false);
                 treeView->resizeColumnToContents(0);
                 treeView->setVisible(true);
@@ -82,15 +83,15 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
     }
     if (obj == commandWindow)
     {
-        if (event->type() == QEvent::Wheel && crtlpressed)
-        {
-            QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
+        // if (event->type() == QEvent::Wheel && crtlpressed)
+        // {
+        //     QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
 
-          //  QPoint numPixels = wheelEvent->angleDelta()/120;
-          //  int y = numPixels.y();
-            //qDebug() << "wheel" << y;
-            crtlpressed = false;
-        }
+        //   //  QPoint numPixels = wheelEvent->angleDelta()/120;
+        //   //  int y = numPixels.y();
+        //     //qDebug() << "wheel" << y;
+        //     crtlpressed = false;
+        // }
 
         if (event->type() == QEvent::KeyPress)
         {

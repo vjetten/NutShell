@@ -40,9 +40,9 @@ void nutshellqt::setupExplorer()
 
     // create the views
     treeView = new myTreeView();
-    verticalLayout_tree->insertWidget(0, treeView);
+    splitterExplorer->insertWidget(0,treeView);
     treeView->setModel(dirModel);
-    treeView->header()->setStretchLastSection(true);
+   // treeView->header()->setStretchLastSection(true);
     treeView->setUniformRowHeights(true);
     treeView->setSortingEnabled(true);
     treeView->sortByColumn(0, Qt::AscendingOrder);
@@ -50,11 +50,14 @@ void nutshellqt::setupExplorer()
     treeView->setDragEnabled(true);
     treeView->setAcceptDrops(true);
     treeView->setDropIndicatorShown(true);
-   // treeView->resizeColumnToContents(0);
-    treeView->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     treeView->setContextMenuPolicy(Qt::NoContextMenu);
     treeView->setRootIndex(dirModel->index(rootPath));
- //   connect(treeView,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(contextualMenu(const QPoint &)));
+   // treeView->resizeColumnToContents(0);
+   // treeView->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+   // treeView->header()->setSectionResizeMode(0, QHeaderView::Interactive);
+
+
+  //   connect(treeView,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(contextualMenu(const QPoint &)));
 
     // fileview is initialized in the UI
     fileView->setModel(fileModel);
@@ -83,6 +86,12 @@ void nutshellqt::setupExplorer()
     selectionDirModel = new QItemSelectionModel(dirModel);
     treeView->setSelectionModel(selectionDirModel);
 
+  //  splitterExplorer->setStretchFactor(0, 0);  // treeView stays fixed width
+  //  splitterExplorer->setStretchFactor(1, 1);
+  //  treeView->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+   // fileView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+
  //   treeView->setEditTriggers(QAbstractItemView::NoEditTriggers | QAbstractItemView::EditKeyPressed);
     connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(setNSRootIndex(QModelIndex)));
   //  connect(treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(setNSRootIndex(QModelIndex)));
@@ -109,9 +118,6 @@ void nutshellqt::setupExplorer()
     connect(toolButton_showSeries, SIGNAL(clicked()), this, SLOT(showSeries()));
     connect(toolButton_showOutput, SIGNAL(clicked()), this, SLOT(showReport()));
     connect(toolButton_deletereport, SIGNAL(clicked()), this, SLOT(showDelReport())); //deleteScriptReport()));
-
-//QCoreApplication::sendPostedEvents(this, 0);
-
 
     expToolBar = new QToolBar();
     expToolBar->setOrientation(Qt::Vertical);
@@ -173,8 +179,7 @@ void nutshellqt::contextualMenu(const QPoint  &point)
 // Getactiontype is in nutshellaction.cpp
 void nutshellqt::selectFiles(const QModelIndex& index)
 {
-    qDebug() << "here";
-    PerformAction(GetActionType());
+    PerformAction(index, GetActionType());
 }
 //---------------------------------------------------------------
 void nutshellqt::setWorkDirectoryIndex(const QModelIndex& index)
@@ -193,6 +198,7 @@ void nutshellqt::setNSRootIndex(const QModelIndex& index)
     // this is c:\\ or d:\\ etc else only part of the tree is shown
 
     treeView->setCurrentIndex(index);
+
     dirModel->setRootPath(currentPath);
     // set the view to currentpath en also the model
     // set the treeview to the current index when a dir is selected as workdir
@@ -208,8 +214,11 @@ void nutshellqt::setNSRootIndex(const QModelIndex& index)
     treeView->hideColumn(2); // hide column 'size'
     treeView->sortByColumn(0, Qt::AscendingOrder);
     treeView->sortByColumn(3, Qt::AscendingOrder);
+    treeView->resizeColumnToContents(0);
 
-    //qDebug() << "setNSrootindex" << currentPath;
+    int s = treeView->width()*0.7;
+    if (treeView->columnWidth(0) > s)
+        treeView->setColumnWidth(0, s);
 
 }
 
@@ -776,6 +785,11 @@ void nutshellqt::setWorkdirectory()
     //comboBox_workdir->setCurrentIndex(-1);
     comboBox_workdir->setCurrentIndex(place);
     // this shopuld trigger setWorkdirectoryNr
+
+    // set column 0 (the tree) to a guessed default size
+    //clicking will adjust this
+    int half = treeView->width()/3;
+    treeView->setColumnWidth(0, half);
 }
 //---------------------------------------------------------------
 void nutshellqt::returnToWorkdirectory()
