@@ -208,7 +208,7 @@ void nutshellqt::PerformAction(int actiontype)
             args = cmdl.split("!");
             // splt first if possible
 
-            if (args.count() == 1)
+            if (args.size() == 1)
                 args << cmdl;
             // if one map is chosen double it to construct e.g. dem.map + dem.map
 

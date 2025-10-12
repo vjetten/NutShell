@@ -354,7 +354,7 @@ void nutshellqt::doIndent(bool back)
     QStringList line, list = str.split("\n");
     // get the selected text and split into lines
 
-    for (int i = 0; i < list.count(); i++)
+    for (int i = 0; i < list.size(); i++)
     {
         switch (insertType)
         {
@@ -494,7 +494,7 @@ void nutshellqt::displayVar()
 
     int nr = 0;
     bool found = false;
-    for (int i = 0; i < reportNames.count(); i++)
+    for (int i = 0; i < reportNames.size(); i++)
     {
         if (var == reportNames[i].reportName ||
             var == reportNames[i].fileName)
@@ -559,7 +559,7 @@ void nutshellqt::getScriptLinks()
 
             UL.setBackground(QColor(255,255,164,255));
 
-            for(int i = 0; i < reportNames.count(); i++)
+            for(int i = 0; i < reportNames.size(); i++)
             {
                 const QString &search = reportNames[i].reportName;
                 cur = ETEditor->document()->find(search, 0, QTextDocument::FindCaseSensitively | QTextDocument::FindWholeWords);

@@ -106,7 +106,7 @@ int nutshellmapattribute::fill(QString name, bool newmap)
     makenewmap = newmap;
     filename = name;
     if (newmap && !isMap)
-        filename = name.remove(name.count()-3,3);
+        filename = name.remove(name.size()-3,3);
 
     lineEdit_mapname->setText("new.map");
     lineEdit_XUL->setText("0");

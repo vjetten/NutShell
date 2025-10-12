@@ -123,7 +123,7 @@ bool nutshellqt::eventFilter(QObject *obj, QEvent *event)
             }
             if (keyEvent->key() == Qt::Key_Backspace)
             {
-                int bsize = commandWindow->document()->lastBlock().text().count();
+                int bsize = commandWindow->document()->lastBlock().text().size();
                 if (bsize == 0)
                     return true;
             }

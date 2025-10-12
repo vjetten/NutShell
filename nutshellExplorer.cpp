@@ -283,7 +283,7 @@ QStringList nutshellqt::getReportFilter()
     }
 
     QStringList seriesList = getMapSeries().split(";");
-    for (int i = 0; i < reportNames.count(); i++)
+    for (int i = 0; i < reportNames.size(); i++)
     {
         if (!reportNames[i].isSeries)
         {
@@ -291,7 +291,7 @@ QStringList nutshellqt::getReportFilter()
         }
         else
         {
-            for(int j = 0; j < seriesList.count(); j++)
+            for(int j = 0; j < seriesList.size(); j++)
             {
                 if (StripForName(seriesList[j]).compare(reportNames[i].fileName, Qt::CaseInsensitive) == 0)
                 {
@@ -350,7 +350,7 @@ void nutshellqt::changeFileFilter(int filterNr)
     BDgate->setSeries(ismapseries);
     // paint series blue if they are included in the filter
 
-    if (currentFilter.count() == 0)
+    if (currentFilter.size() == 0)
         currentFilter << " ";
     //force display no possible match if empty
 
@@ -410,10 +410,10 @@ void nutshellqt::deleteScriptReport()
         return;
     }
 
-    for(int i = 0; i < reportNames.count(); i++)
+    for(int i = 0; i < reportNames.size(); i++)
         list << reportNames[i].fileName;
 
-    for(int i = 0; i < reportNames.count(); i++)
+    for(int i = 0; i < reportNames.size(); i++)
     {
         if (reportNames[i].isSeries) // mapseries
             list[i] = "<i><font color=\"blue\">" + list[i] + "</font></i>";
@@ -430,11 +430,11 @@ void nutshellqt::deleteScriptReport()
         return;
 
     getMapSeries();
-    for(int i = 0; i < reportNames.count(); i++)
+    for(int i = 0; i < reportNames.size(); i++)
     {
         if (reportNames[i].isSeries)
         {
-            for(int j = 0; j < fns.count(); j++)
+            for(int j = 0; j < fns.size(); j++)
                 if (reportNames[i].fileName.compare(fns[j].base, Qt::CaseInsensitive) == 0)
                 {
                     series << fns[j].series;
@@ -446,11 +446,11 @@ void nutshellqt::deleteScriptReport()
     list.clear();
     // rebuild the list from scratch
 
-    for(int i = 0; i < reportNames.count(); i++)
+    for(int i = 0; i < reportNames.size(); i++)
         if (!reportNames[i].isSeries)
             list << reportNames[i].fileName;
 
-    for(int i = 0; i < list.count(); i++)
+    for(int i = 0; i < list.size(); i++)
     {
         list[i].insert(0, currentPath + QDir::separator());
         list[i] = QDir::fromNativeSeparators(list[i]);
@@ -475,7 +475,7 @@ void nutshellqt::deleteScriptReport()
     }
 
     statusLabel.setText("Deleting reported files: ");
-    statusBarProgress.setMaximum(list.count());
+    statusBarProgress.setMaximum(list.size());
     statusBar()->addWidget(&statusLabel);
     statusBar()->addWidget(&statusBarProgress);
     statusBarProgress.show();
@@ -520,7 +520,7 @@ void nutshellqt::deleteFiles()
             if (isExtentionInt(fileModel->fileName(index)) && currentFilter[0] != "*.*")
             {
                 QString base = StripForName(fileModel->filePath(index));
-                for(int i = 0; i < fns.count(); i++)
+                for(int i = 0; i < fns.size(); i++)
                     if (base == fns[i].base)
                     {
                         statusLabel.setText("Deleting: ");
@@ -528,8 +528,8 @@ void nutshellqt::deleteFiles()
                         statusBar()->addWidget(&statusBarProgress);
                         statusBarProgress.show();
                         statusLabel.show();
-                        statusBarProgress.setMaximum(fns[i].series.count());
-                        for (int k = 0; k < fns[i].series.count(); k++)
+                        statusBarProgress.setMaximum(fns[i].series.size());
+                        for (int k = 0; k < fns[i].series.size(); k++)
                         {
                             file.setFileName(fns[i].series[k]);
                             file.remove();
@@ -603,7 +603,7 @@ void nutshellqt::pasteFile()
       if (str.contains("+")) // is map series
       {
          str.remove(str.indexOf("+"), 10);
-         for(int j = 0; j < fns.count(); j++)//nrseries; j++)
+         for(int j = 0; j < fns.size(); j++)//nrseries; j++)
             if (StripForName(str) == fns[j].base)
                series << fns[j].series;
       }
@@ -611,7 +611,7 @@ void nutshellqt::pasteFile()
          series << str;
 
       statusLabel.setText("Copying files: ");
-      statusBarProgress.setMaximum(series.count());
+      statusBarProgress.setMaximum(series.size());
       statusBar()->addWidget(&statusLabel);
       statusBar()->addWidget(&statusBarProgress);
       statusBarProgress.show();

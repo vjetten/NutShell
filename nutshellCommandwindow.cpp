@@ -94,7 +94,7 @@ void nutshellqt::parseCommand()
     QString prog;
 
     lines = all.split("\n");
-    args = lines[lines.count()-1].split(" ");
+    args = lines[lines.size()-1].split(" ");
 
     if (args[0].isEmpty())
     {
@@ -125,7 +125,7 @@ void nutshellqt::parseCommand()
 
     setCursorLast();
 
-    comboBox_cmdlist->insertItem(0, lines[lines.count()-1]);
+    comboBox_cmdlist->insertItem(0, lines[lines.size()-1]);
     commandcounter = -1;
     // add command to commandlist
 }
@@ -134,7 +134,7 @@ void nutshellqt::executeCommand(QStringList args)
 {
     QString condaenv = CondaDirName;
     QStringList Sn = condaenv.split('/');
-    QString envname = Sn.at(Sn.count()-2);
+    QString envname = Sn.at(Sn.size()-2);
 
     QString condabase = QDir(condaenv+"/../..").absolutePath();
     QString condascripts = QDir(condabase+"/Scripts").absolutePath();
@@ -174,7 +174,7 @@ void nutshellqt::executeCommand(QStringList args)
 
     // run pcrcalc with -f: because of timer treat differently
     if ((args[0].toUpper() == "PCRCALC")
-            && (args.count() > 1 && args[1].indexOf("-f",Qt::CaseInsensitive) == 0))
+            && (args.size() > 1 && args[1].indexOf("-f",Qt::CaseInsensitive) == 0))
     {
         args.removeAt(0);
         QString prog = CondaDirName+"Library/bin/pcrcalc.exe";
@@ -184,7 +184,7 @@ void nutshellqt::executeCommand(QStringList args)
 
     QString prog;
     bool isCMD = false;
-    bool moreArgs = args.count() > 1;
+    bool moreArgs = args.size() > 1;
 
     if (!args[0].contains(".")) {
         QFile fff(args[0]+".cmd");
@@ -257,7 +257,7 @@ void nutshellqt::setCursorLast()
 {
     QString output = commandWindow->toPlainText();
     QStringList hop = output.split("\n");
-    if (hop[hop.count()-1].size() > 1)
+    if (hop[hop.size()-1].size() > 1)
         output.append("\n");
 
     commandWindow->setPlainText(output);
@@ -310,7 +310,7 @@ void nutshellqt::prevCommand()
 
     all = commandWindow->toPlainText();
     lines = all.split("\n");
-    lines.replace(lines.count()-1,comboBox_cmdlist->itemText(commandcounter));
+    lines.replace(lines.size()-1,comboBox_cmdlist->itemText(commandcounter));
     all = lines.join("\n");
     commandWindow->setPlainText(all);
 
@@ -337,7 +337,7 @@ void nutshellqt::nextCommand()
 
     all = commandWindow->toPlainText();
     lines = all.split("\n");
-    lines.replace(lines.count()-1,comboBox_cmdlist->itemText(commandcounter));
+    lines.replace(lines.size()-1,comboBox_cmdlist->itemText(commandcounter));
     all = lines.join("\n");
     commandWindow->setPlainText(all);
 

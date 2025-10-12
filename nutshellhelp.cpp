@@ -198,12 +198,12 @@ void nutshellHelp::setuphelp(QString pcrhelp)
    foreach(QString str, line)
    {
       str.remove(0, str.indexOf("rn01re"));
-      str.remove(str.indexOf("</a>"), str.count()+1);
+      str.remove(str.indexOf("</a>"), str.size()+1);
       str.replace("\">",";");
 
       if (str.contains("timeinput..."))
       {
-         str.remove(str.indexOf(";"),str.count());
+         str.remove(str.indexOf(";"),str.size());
          helphtml << str+";timeinputscalar";
          helphtml << str+";timeinputnominal";
          helphtml << str+";timeinputordinal";

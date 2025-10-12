@@ -50,7 +50,7 @@ int nutshellLegend::CountClasses(MAP *in)
 
    std::sort(list.begin(), list.end());
 
-   return(list.count());
+   return(list.size());
 }
 //---------------------------------------------------------------------------
 void nutshellLegend::makelegend(QString name)

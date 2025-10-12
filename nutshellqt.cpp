@@ -104,7 +104,7 @@ void nutshellqt::createModelActions()
     // run model actions
     runmodelAct = new QAction(QIcon(":/resources/2X/start1.png"), "&Run active model...", this);
     runmodelAct->setCheckable (true);
-    runmodelAct->setShortcut(Qt::CTRL+Qt::Key_R);
+    runmodelAct->setShortcut(Qt::CTRL|Qt::Key_R);
     runmodelAct->setToolTip("Run model script");
     connect(runmodelAct, SIGNAL(triggered()), this, SLOT(runModel()));
 
@@ -178,12 +178,12 @@ void nutshellqt::createMainActions()
     connect(helpAguilaAct, SIGNAL(triggered()), this, SLOT(showAguilaHelp()));
 
     helppcrcalcAct = new QAction(QIcon(":/resources/2X/helpoperation.png"), "Context sensitive help (web)", this);
-    helppcrcalcAct->setShortcut(Qt::CTRL+Qt::Key_F1);
+    helppcrcalcAct->setShortcut(Qt::CTRL|Qt::Key_F1);
     helppcrcalcAct->setToolTip("Context sensitive help (Ctrl-F1)");
     connect(helppcrcalcAct, SIGNAL(triggered()), this, SLOT(showHelpOperation()));
 
     helpNutshellAct = new QAction(QIcon(":/resources/2X/helpnutshell.png"), "Nutshell main commands", this);
-    helpNutshellAct->setShortcut(Qt::ALT+Qt::Key_F1);
+    helpNutshellAct->setShortcut(Qt::ALT|Qt::Key_F1);
     helpNutshellAct->setToolTip("Nutshell main commands (Alt-F1)");
     connect(helpNutshellAct, SIGNAL(triggered()), this, SLOT(showNutshellHelp()));
 
@@ -220,7 +220,7 @@ void nutshellqt::createEditorActions()
 
     //    deleteLineAct = new QAction(QIcon(":/resources/2X/table_delete_row.png"), "&Delete Line", this);
     deleteLineAct = new QAction("&Delete Line", this);
-    deleteLineAct->setShortcut(Qt::CTRL+Qt::Key_D);
+    deleteLineAct->setShortcut(Qt::CTRL|Qt::Key_D);
     connect(deleteLineAct, SIGNAL(triggered()), this, SLOT(deleteLine()));
 
     // the rest is done here3
@@ -242,7 +242,7 @@ void nutshellqt::createEditorActions()
     connect(actionFindNext, SIGNAL(triggered()), this, SLOT(findNextfind()));
 
     actionFindPrev = new QAction(QIcon(":/resources/2X/editfindprev.png"), "&Find Prev", this);
-    actionFindPrev->setShortcut(Qt::SHIFT+Qt::Key_F3);
+    actionFindPrev->setShortcut(Qt::SHIFT|Qt::Key_F3);
     connect(actionFindPrev, SIGNAL(triggered()), this, SLOT(findPrevfind()));
 
  //   fontAct = new QAction(QIcon(":/resources/2X/fontselect.png"), "&Select font", this);
@@ -255,19 +255,19 @@ void nutshellqt::createEditorActions()
     connect(fontDecreaseAct, SIGNAL(triggered()), this, SLOT(fontDecrease()));
 
     decreaseIndentAct = new QAction(QIcon(":/resources/2X/editnoindent.png"), "&Decrease block indent 1 space (Ctrl-U)", this);
-    decreaseIndentAct->setShortcut(Qt::CTRL+Qt::Key_U);
+    decreaseIndentAct->setShortcut(Qt::CTRL|Qt::Key_U);
     connect(decreaseIndentAct, SIGNAL(triggered()), this, SLOT(decreaseIndent()));
 
     increaseIndentAct = new QAction(QIcon(":/resources/2X/editindent.png"), "&Increase block indent 1 space (Ctrl-I)", this);
-    increaseIndentAct->setShortcut(Qt::CTRL+Qt::Key_I);
+    increaseIndentAct->setShortcut(Qt::CTRL|Qt::Key_I);
     connect(increaseIndentAct, SIGNAL(triggered()), this, SLOT(increaseIndent()));
 
     toggleHashAct = new QAction(QIcon(":/resources/2X/edithash.png"), "&Toggle block comment ## (Alt-3)", this);
-    toggleHashAct->setShortcut(Qt::ALT+Qt::Key_3);
+    toggleHashAct->setShortcut(Qt::ALT|Qt::Key_3);
     connect(toggleHashAct, SIGNAL(triggered()), this, SLOT(increaseHash()));
 
     toggleReportAct = new QAction(QIcon(":/resources/2X/editreport.png"), "&Toggle report (Alt-4)", this);
-    toggleReportAct->setShortcut(Qt::ALT+Qt::Key_4);
+    toggleReportAct->setShortcut(Qt::ALT|Qt::Key_4);
     connect(toggleReportAct, SIGNAL(triggered()), this, SLOT(increaseReport()));
 
     displayvarAct = new QAction(QIcon(":/resources/2X/aguilareport.png"), "&Show selected script variable (F4)", this);

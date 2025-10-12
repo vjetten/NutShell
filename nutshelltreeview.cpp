@@ -60,7 +60,7 @@ void myTreeView::dropEvent(QDropEvent *event)
       int thisnr;
 
       QString bn = StripForName(fi.fileName());
-      for (int i = 0; i < fns.count(); i++)
+      for (int i = 0; i < fns.size(); i++)
          if (bn.compare(fns[i].base, Qt::CaseInsensitive) == 0)
          {
             thisnr = i;
@@ -78,7 +78,7 @@ void myTreeView::dropEvent(QDropEvent *event)
          else
             sss = "Moving mapseries: <i><font color=\"blue\">" + bn + "</font></i>";
 
-         QProgressDialog *bar = new QProgressDialog(sss, "", 1, fns[thisnr].series.count());
+         QProgressDialog *bar = new QProgressDialog(sss, "", 1, fns[thisnr].series.size());
          bar->setCancelButton(0);
          int k = 0;
          foreach(QString str, fns[thisnr].series)
