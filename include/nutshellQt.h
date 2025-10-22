@@ -190,13 +190,16 @@ class QDropEvent;
 
 class myTreeView : public QTreeView
 {
-//    myTreeView(QWidget *parent = nullptr) : QTreeView(parent), hasFocus(false) {}
+
+    Q_OBJECT
 
 public:
-    myTreeView(QTreeView *parent = nullptr);
+//    myTreeView(QTreeView *parent = nullptr);
     QList <filenameseries> fns;
     QString StripForName(QString S);
-
+    myTreeView(QWidget *parent = nullptr) : QTreeView(parent), maxWidth(0) {
+        connect(this, &QTreeView::clicked, this, &myTreeView::adjustColumnWidth);
+    }
 
 protected:
     void focusInEvent(QFocusEvent *event) override {
@@ -228,8 +231,21 @@ protected:
 
     void dropEvent(QDropEvent *event);
 
+private slots:
+    void adjustColumnWidth(const QModelIndex &) {
+        int col = 0;
+        resizeColumnToContents(col);
+        int currentWidth = columnWidth(col);
+        if (currentWidth > maxWidth) {
+            maxWidth = currentWidth;
+        } else {
+            setColumnWidth(col, maxWidth);
+        }
+    }
+
 private:
     bool hasFocus;
+    int maxWidth;
 };
 //---------------------------------------------------------------
 class nutshellqt : public QMainWindow, private Ui::nutshellqt
@@ -452,7 +468,7 @@ public slots:
     //slots for explorer
     //====================
     void selectFiles(const QModelIndex& index);
-    void contextualMenu(const QPoint& point);
+    void contextualMenu(QPoint);
 
     // left horizontal toolbar file commands
     void goBack();
@@ -502,8 +518,8 @@ public slots:
 
     void changeFileFilter(int filterNr);
 
-    void setNSRootIndex(const QModelIndex& index);
-    void setWorkDirectoryIndex(const QModelIndex& index);
+    void setNSRootIndex(QModelIndex);
+    void setWorkDirectoryIndex(QModelIndex);
 
     void getScriptLinks();
 

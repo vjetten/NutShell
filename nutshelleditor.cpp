@@ -132,7 +132,8 @@ bool nutshellqt::saveasFile()
 {
     if (!ETExists)
     {
-        QMessageBox::StandardButton reply = ErrorMsg(QString("You do not have script a file to save!"));
+        //QMessageBox::StandardButton reply =
+                ErrorMsg(QString("You do not have script a file to save!"));
         return false;
     }
 

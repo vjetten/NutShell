@@ -14,8 +14,8 @@ void nutshellqt::setupExplorer()
     baseFilters.clear();
     baseFilters << QString("*.mod;*.map;*.csf;*.tbl;*.tss;*.txt;*.dat;*.csv;*.pcr;*.cmd;*.bat;*.tif");
     baseFilters << QString("*.map");
-    baseFilters << QString("*.tss;*.tbl;*.txt;*.dat;*.csv;*.xls");
-    baseFilters << QString("*.mod;*.cmd;*.bat");
+    baseFilters << QString("*.tss;*.tbl;*.txt;*.dat;*.csv;*.xls;");
+    baseFilters << QString("*.mod;*.cmd;*.bat;*.py");
     baseFilters << QString("Map Series");
     baseFilters << QString("*.*");
     baseFilters << QString("*.*");
@@ -162,7 +162,7 @@ void nutshellqt::setupExplorer()
 
 }
 //---------------------------------------------------------------
-void nutshellqt::contextualMenu(const QPoint  &point)
+void nutshellqt::contextualMenu(QPoint)
 {
     QMenu *menu = new QMenu;
     menu->addAction(setDirAct);
@@ -182,12 +182,12 @@ void nutshellqt::selectFiles(const QModelIndex& index)
     PerformAction(index, GetActionType());
 }
 //---------------------------------------------------------------
-void nutshellqt::setWorkDirectoryIndex(const QModelIndex& index)
+void nutshellqt::setWorkDirectoryIndex(QModelIndex)
 {
     setWorkdirectory();
 }
 //---------------------------------------------------------------
-void nutshellqt::setNSRootIndex(const QModelIndex& index)
+void nutshellqt::setNSRootIndex(QModelIndex index)
 {
 
     currentPath = dirModel->fileInfo(index).absoluteFilePath();
@@ -214,7 +214,7 @@ void nutshellqt::setNSRootIndex(const QModelIndex& index)
     treeView->hideColumn(2); // hide column 'size'
     treeView->sortByColumn(0, Qt::AscendingOrder);
     treeView->sortByColumn(3, Qt::AscendingOrder);
-    treeView->resizeColumnToContents(0);
+   // treeView->resizeColumnToContents(0);
 
     int s = treeView->width()*0.7;
     if (treeView->columnWidth(0) > s)

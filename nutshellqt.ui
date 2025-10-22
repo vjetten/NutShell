@@ -562,7 +562,7 @@
               <item>
                <widget class="QToolButton" name="toolButton_showScript">
                 <property name="toolTip">
-                 <string>Show model scripts</string>
+                 <string>Show model scripts (*.mod;*.bat;*.cmd;*.py)</string>
                 </property>
                 <property name="text">
                  <string>...</string>

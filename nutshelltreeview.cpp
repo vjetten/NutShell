@@ -13,10 +13,10 @@
  *  drop map series
  */
 //---------------------------------------------------------------
-myTreeView::myTreeView(QTreeView *parent)
-   : QTreeView(parent)
-{
-}
+// myTreeView::myTreeView(QTreeView *parent)
+//    : QTreeView(parent)
+// {
+// }
 //---------------------------------------------------------------
 //! strip number from basename in map series
 QString myTreeView::StripForName(QString S)
