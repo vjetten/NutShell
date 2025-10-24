@@ -55,7 +55,8 @@ void nutshellqt::setupExplorer()
    // treeView->resizeColumnToContents(0);
    // treeView->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
    // treeView->header()->setSectionResizeMode(0, QHeaderView::Interactive);
-
+    int half = treeView->width()/2;
+    treeView->setColumnWidth(0, half);
 
   //   connect(treeView,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(contextualMenu(const QPoint &)));
 
@@ -788,8 +789,8 @@ void nutshellqt::setWorkdirectory()
 
     // set column 0 (the tree) to a guessed default size
     //clicking will adjust this
-    int half = treeView->width()/3;
-    treeView->setColumnWidth(0, half);
+   // int half = treeView->width()/3;
+   // treeView->setColumnWidth(0, half);
 }
 //---------------------------------------------------------------
 void nutshellqt::returnToWorkdirectory()
