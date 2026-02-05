@@ -118,6 +118,7 @@ void nutshellqt::createModelActions()
     // run model actions
     runmodelAct = new QAction(QIcon(":/resources/2X/start1.png"), "&Run active model...", this);
     runmodelAct->setCheckable (true);
+    runmodelAct->setShortcut(Qt::CTRL|Qt::Key_R);
     runmodelAct->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_R));
     runmodelAct->setToolTip("Run model script");
     connect(runmodelAct, SIGNAL(triggered()), this, SLOT(runModel()));
@@ -192,11 +193,13 @@ void nutshellqt::createMainActions()
     connect(helpAguilaAct, SIGNAL(triggered()), this, SLOT(showAguilaHelp()));
 
     helppcrcalcAct = new QAction(QIcon(":/resources/2X/helpoperation.png"), "Context sensitive help (web)", this);
+    helppcrcalcAct->setShortcut(Qt::CTRL|Qt::Key_F1);
     helppcrcalcAct->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_F1));
     helppcrcalcAct->setToolTip("Context sensitive help (Ctrl-F1)");
     connect(helppcrcalcAct, SIGNAL(triggered()), this, SLOT(showHelpOperation()));
 
     helpNutshellAct = new QAction(QIcon(":/resources/2X/helpnutshell.png"), "Nutshell main commands", this);
+    helpNutshellAct->setShortcut(Qt::ALT|Qt::Key_F1);
     helpNutshellAct->setShortcut(QKeySequence(Qt::ALT|Qt::Key_F1));
     helpNutshellAct->setToolTip("Nutshell main commands (Alt-F1)");
     connect(helpNutshellAct, SIGNAL(triggered()), this, SLOT(showNutshellHelp()));
@@ -234,6 +237,7 @@ void nutshellqt::createEditorActions()
 
     //    deleteLineAct = new QAction(QIcon(":/resources/2X/table_delete_row.png"), "&Delete Line", this);
     deleteLineAct = new QAction("&Delete Line", this);
+    deleteLineAct->setShortcut(Qt::CTRL|Qt::Key_D);
     deleteLineAct->setShortcut(QKeySequence(Qt::CTRL|Qt::Key_D));
     connect(deleteLineAct, SIGNAL(triggered()), this, SLOT(deleteLine()));
 

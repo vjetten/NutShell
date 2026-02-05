@@ -13,10 +13,10 @@
  *  drop map series
  */
 //---------------------------------------------------------------
-myTreeView::myTreeView(QTreeView *parent)
-   : QTreeView(parent)
-{
-}
+// myTreeView::myTreeView(QTreeView *parent)
+//    : QTreeView(parent)
+// {
+// }
 //---------------------------------------------------------------
 //! strip number from basename in map series
 QString myTreeView::StripForName(QString S)
@@ -38,7 +38,8 @@ QString myTreeView::StripForName(QString S)
  */
 void myTreeView::dropEvent(QDropEvent *event)
 {
-   QModelIndex index = indexAt(event->pos());
+   QModelIndex index = indexAt(event->position().toPoint());
+
    // the dir moved into
 
    QFileSystemModel *m = static_cast<QFileSystemModel*>(model());
@@ -46,7 +47,7 @@ void myTreeView::dropEvent(QDropEvent *event)
 
    QDir dir(m->filePath(index));
 
-   if (event->modifiers() == Qt::ControlModifier)
+   if (event->modifiers()== Qt::ControlModifier)
       event->setDropAction(Qt::CopyAction);
    else
       event->setDropAction(Qt::MoveAction);
@@ -60,7 +61,7 @@ void myTreeView::dropEvent(QDropEvent *event)
       int thisnr;
 
       QString bn = StripForName(fi.fileName());
-      for (int i = 0; i < fns.count(); i++)
+      for (int i = 0; i < fns.size(); i++)
          if (bn.compare(fns[i].base, Qt::CaseInsensitive) == 0)
          {
             thisnr = i;
@@ -78,7 +79,7 @@ void myTreeView::dropEvent(QDropEvent *event)
          else
             sss = "Moving mapseries: <i><font color=\"blue\">" + bn + "</font></i>";
 
-         QProgressDialog *bar = new QProgressDialog(sss, "", 1, fns[thisnr].series.count());
+         QProgressDialog *bar = new QProgressDialog(sss, "", 1, fns[thisnr].series.size());
          bar->setCancelButton(0);
          int k = 0;
          foreach(QString str, fns[thisnr].series)
@@ -143,3 +144,11 @@ void myTreeView::dropEvent(QDropEvent *event)
    }
 }
 
+// void myTreeView::setModel(QAbstractItemModel *model)
+// {
+//     QTreeView::setModel(model);
+
+//     QTimer::singleShot(0, this, [this]() {
+//         resizeColumnToContents(0);
+//     });
+// }

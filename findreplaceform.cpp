@@ -205,7 +205,7 @@ void FindReplaceForm::_find(bool next)
         if (next)
             textCursor.setPosition(0);
         else
-            textCursor.setPosition(textEdit->document()->characterCount()-1);
+            textCursor.setPosition(textEdit->document()->charactersize()-1);
             //VJ move to the end when find previous
         */
     }

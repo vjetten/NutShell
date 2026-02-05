@@ -75,14 +75,14 @@ QString nutshellqt::getMapSeries()
     FNall.clear();
     // find all names that have an integer as extention
     // assumes list is sorted on name so 001 comes before 002
-    for (int row = 0; row < allfiles.count(); row++)
+    for (int row = 0; row < allfiles.size(); row++)
         if (isExtentionInt(allfiles.at(row).fileName()))
             FNall << allfiles.at(row).absoluteFilePath();
 
     bool startserie = true;
     bool singleserie = false;
     //retain first and last of each series
-    for (int i = 0; i < FNall.count()-1; i++)
+    for (int i = 0; i < FNall.size()-1; i++)
     {
         QString S1 = FNall.at(i);
         QString S2 = FNall.at(i+1);
@@ -103,7 +103,7 @@ QString nutshellqt::getMapSeries()
 
             //extra check to disregard series of which only one file exists
             // if name at i+1 is only single name singleserie is true
-            if (i < FNall.count()-2)
+            if (i < FNall.size()-2)
             {
                 S3 = StripForName(FNall.at(i+2));
                 singleserie = S1 != S2 && S2 != S3;
@@ -111,7 +111,7 @@ QString nutshellqt::getMapSeries()
 
             // start new timeserie by adding last name = first of new series
             // unless new name is last in the series, then it is a single name
-            if (!singleserie  && i+2 != FNall.count())
+            if (!singleserie  && i+2 != FNall.size())
                 FNts.append(lastname);
         }
 
@@ -123,11 +123,11 @@ QString nutshellqt::getMapSeries()
         }
 
         // stop when end of list is reached
-        if (S1 == S2 && i+1 == FNall.count()-1)
+        if (S1 == S2 && i+1 == FNall.size()-1)
             FNts.append(lastname);
     }
 
-    for (int i = 0; i < FNts.count(); i+=2)
+    for (int i = 0; i < FNts.size(); i+=2)
     {
         // put the first of each series in the filefilter string (only names not path)
         Sres = Sres + QFileInfo(FNts.at(i)).fileName() + ";";
@@ -144,7 +144,7 @@ QString nutshellqt::getMapSeries()
         filter << QString("%1*.*").arg(ofn.base);
 
         allfiles = currentD.entryInfoList(filter, QDir::Files, QDir::Name);
-        for (int j = 0; j < allfiles.count(); j++)
+        for (int j = 0; j < allfiles.size(); j++)
             if (isExtentionInt(allfiles[j].fileName()))
                 ofn.series << allfiles[j].absoluteFilePath();
 
@@ -181,7 +181,7 @@ QString nutshellqt::getFileListString()
             {
                 int j = 0;
                 // find the basename
-                for (j = 0; j < fns.count(); j++)
+                for (j = 0; j < fns.size(); j++)
                 {
                     QString sss = StripForName(fileModel->fileInfo(index).fileName());
                     if (sss.compare(fns[j].base, Qt::CaseInsensitive) == 0)
@@ -234,7 +234,7 @@ bool nutshellqt::getScriptReport(bool addBinding)
 
         bool checksubs = false;
         // strip trailing spaces and check arg substitution
-        for(int i = 0; i < SL.count(); i++)
+        for(int i = 0; i < SL.size(); i++)
         {
             SL[i] = SL[i].simplified();
             if (SL[i].contains("$"))
@@ -247,10 +247,10 @@ bool nutshellqt::getScriptReport(bool addBinding)
             QStringList subs;
             subs = lineEdit_argsubst->text().split(" ", Qt::SkipEmptyParts);
 
-            for(int i = 0; i < SL.count(); i++)
+            for(int i = 0; i < SL.size(); i++)
             {
                 if(SL[i].contains("$"))
-                    for (int j = 0; j < subs.count(); j++)
+                    for (int j = 0; j < subs.size(); j++)
                     {
                         QString repl = QString("$%1").arg(j+1);
                         if (toolButton_argSubs->isChecked() && !lineEdit_argsubst->text().isEmpty())
@@ -268,7 +268,7 @@ bool nutshellqt::getScriptReport(bool addBinding)
 
         // get the binding section, only lines with = in them and not starting with comments
         go = false;
-        for (int i = 0; i < SL.count(); i++)
+        for (int i = 0; i < SL.size(); i++)
         {
             QString str = SL[i];
             if (str.indexOf("binding") == 0)
@@ -319,7 +319,7 @@ bool nutshellqt::getScriptReport(bool addBinding)
 
         // get all reports
         go = false;
-        for (int i = 0; i < SL.count(); i++)
+        for (int i = 0; i < SL.size(); i++)
         {
             QString str = SL[i];
             if (str.indexOf("report") == 0)  // string is found
@@ -363,14 +363,14 @@ bool nutshellqt::getScriptReport(bool addBinding)
                 reportNames << reportRec;
             }
         }
-        //        if (reportNames.count() == 0)
+        //        if (reportNames.size() == 0)
         //            return(false);
         // add the variables in the binding that are not reported but
         // may have a file, these are prob. mostly input file
 
         if (addBinding)
         {
-            for (int i = 0; i < binding.count(); i++)
+            for (int i = 0; i < binding.size(); i++)
             {
                 QStringList bind = binding[i].split("=");
                 bool found = false;
@@ -395,13 +395,13 @@ bool nutshellqt::getScriptReport(bool addBinding)
             }
         }
 
-        for (int i = 0; i < reportNames.count(); i++)
+        for (int i = 0; i < reportNames.size(); i++)
             reportNames[i].isSeries = !reportNames[i].fileName.contains(".");
 
-        //        for (int i = 0; i < reportNames.count(); i++)
+        //        for (int i = 0; i < reportNames.size(); i++)
         //            qDebug() << "rn" << reportNames[i].fileName << reportNames[i].reportName << reportNames[i].isSeries << reportNames[i].isBinding;
     }
-    return (reportNames.count() > 0);
+    return (reportNames.size() > 0);
 }
 //---------------------------------------------------------------------------
 int nutshellqt::getTimesteps()
@@ -418,7 +418,7 @@ int nutshellqt::getTimesteps()
         all = ETPlainText;
         SL = all.split("\n");
 
-        for(int i = 0; i < SL.count(); i++)
+        for(int i = 0; i < SL.size(); i++)
             SL[i] = SL[i].simplified();
 
 
@@ -480,7 +480,7 @@ bool nutshellqt::isTSSFile(const QString& filename)
             continue;
         QStringList vals;
         vals = line.split(QRegularExpression("\\s"),Qt::SkipEmptyParts);
-        if (vals.count() != nr )
+        if (vals.size() != nr )
             istss = false;
     }
     return(istss);

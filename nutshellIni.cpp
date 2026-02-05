@@ -30,7 +30,7 @@ void nutshellqt::setNutshellIni()
     settings.setValue("models/current",tabWidget->currentIndex());
     settings.setValue("models/arg_substitute_do",toolButton_argSubs->isChecked());
     settings.setValue("models/arg_substitute",lineEdit_argsubst->text());
-    for (int i = 0; i < ET.count(); i++)
+    for (int i = 0; i < ET.size(); i++)
     {
         if (!ETfileName.contains("empty"))
             settings.setValue(QString("models/Script%1").arg(i),
@@ -79,7 +79,7 @@ void nutshellqt::getNutshellIni()
     settings.beginGroup("models");
     QStringList keys = settings.childKeys();
     int currentmodel = 0;
-    for (int i = 0; i < keys.count(); i++)
+    for (int i = 0; i < keys.size(); i++)
     {
         if (keys[i] == "current")
         {
@@ -108,7 +108,7 @@ void nutshellqt::getNutshellIni()
 
     settings.beginGroup("cmdlist");
     keys = settings.childKeys();
-    for (int i = 0; i < keys.count(); i++)
+    for (int i = 0; i < keys.size(); i++)
     {
         comboBox_cmdlist->addItem(settings.value(keys[i]).toString());
     }

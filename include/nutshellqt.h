@@ -204,12 +204,16 @@ class QDropEvent;
 
 class myTreeView : public QTreeView
 {
-//    myTreeView(QWidget *parent = nullptr) : QTreeView(parent), hasFocus(false) {}
+
+    Q_OBJECT
 
 public:
-    myTreeView(QTreeView *parent = nullptr);
+//    myTreeView(QTreeView *parent = nullptr);
     QList <filenameseries> fns;
     QString StripForName(QString S);
+    myTreeView(QWidget *parent = nullptr) : QTreeView(parent), maxWidth(0) {
+        connect(this, &QTreeView::clicked, this, &myTreeView::adjustColumnWidth);
+    }
 
 protected:
     void focusInEvent(QFocusEvent *event) override {
@@ -241,8 +245,21 @@ protected:
 
     void dropEvent(QDropEvent *event);
 
+private slots:
+    void adjustColumnWidth(const QModelIndex &) {
+        int col = 0;
+        resizeColumnToContents(col);
+        int currentWidth = columnWidth(col);
+        if (currentWidth > maxWidth) {
+            maxWidth = currentWidth;
+        } else {
+            setColumnWidth(col, maxWidth);
+        }
+    }
+
 private:
     bool hasFocus;
+    int maxWidth;
 };
 //---------------------------------------------------------------
 class nutshellqt : public QMainWindow, private Ui::nutshellqt
@@ -377,7 +394,7 @@ public:
     QElapsedTimer time_ms;
     int totalsteps;
     int GetActionType();
-    void PerformAction(int actiontype);
+    void PerformAction(QModelIndex id,int actiontype);
     bool isExtentionInt(QString name);
     void scriptFold(int section);
     bool changeName;
@@ -465,7 +482,7 @@ public slots:
     //slots for explorer
     //====================
     void selectFiles(const QModelIndex& index);
-    void contextualMenu(const QPoint& point);
+    void contextualMenu(QPoint);
 
     // left horizontal toolbar file commands
     void goBack();
@@ -515,8 +532,8 @@ public slots:
 
     void changeFileFilter(int filterNr);
 
-    void setNSRootIndex(const QModelIndex& index);
-    void setWorkDirectoryIndex(const QModelIndex& index);
+    void setNSRootIndex(QModelIndex);
+    void setWorkDirectoryIndex(QModelIndex);
 
     void getScriptLinks();
 
@@ -594,7 +611,6 @@ private:
     // explorer variables
     QFileSystemModel *dirModel;
     QFileSystemModel *fileModel;
-   // FSM *fileModel;
     QItemSelectionModel *selectionModel;
     QItemSelectionModel *selectionDirModel;
 

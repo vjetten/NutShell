@@ -40,10 +40,10 @@
        </sizepolicy>
       </property>
       <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
+       <enum>QFrame::Shape::NoFrame</enum>
       </property>
       <property name="frameShadow">
-       <enum>QFrame::Plain</enum>
+       <enum>QFrame::Shadow::Plain</enum>
       </property>
       <property name="lineWidth">
        <number>1</number>
@@ -52,7 +52,7 @@
        <number>0</number>
       </property>
       <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+       <enum>Qt::Orientation::Horizontal</enum>
       </property>
       <property name="opaqueResize">
        <bool>true</bool>
@@ -71,7 +71,7 @@
         </sizepolicy>
        </property>
        <property name="orientation">
-        <enum>Qt::Vertical</enum>
+        <enum>Qt::Orientation::Vertical</enum>
        </property>
        <widget class="QFrame" name="frameCommand">
         <property name="sizePolicy">
@@ -81,7 +81,7 @@
          </sizepolicy>
         </property>
         <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
+         <enum>QFrame::Shape::StyledPanel</enum>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_7">
          <property name="spacing">
@@ -132,7 +132,7 @@
                <bool>true</bool>
               </property>
               <property name="arrowType">
-               <enum>Qt::LeftArrow</enum>
+               <enum>Qt::ArrowType::LeftArrow</enum>
               </property>
              </widget>
             </item>
@@ -148,13 +148,13 @@
                </size>
               </property>
               <property name="toolButtonStyle">
-               <enum>Qt::ToolButtonIconOnly</enum>
+               <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
               </property>
               <property name="autoRaise">
                <bool>true</bool>
               </property>
               <property name="arrowType">
-               <enum>Qt::RightArrow</enum>
+               <enum>Qt::ArrowType::RightArrow</enum>
               </property>
              </widget>
             </item>
@@ -256,7 +256,7 @@
                <bool>true</bool>
               </property>
               <property name="insertPolicy">
-               <enum>QComboBox::InsertAtTop</enum>
+               <enum>QComboBox::InsertPolicy::InsertAtTop</enum>
               </property>
               <property name="frame">
                <bool>false</bool>
@@ -386,8 +386,14 @@
         </layout>
        </widget>
        <widget class="QSplitter" name="splitterExplorer">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Orientation::Horizontal</enum>
         </property>
         <widget class="QFrame" name="frameTreeview">
          <property name="sizePolicy">
@@ -397,7 +403,7 @@
           </sizepolicy>
          </property>
          <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
+          <enum>QFrame::Shape::NoFrame</enum>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <property name="spacing">
@@ -415,9 +421,6 @@
           <property name="bottomMargin">
            <number>0</number>
           </property>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_tree"/>
-          </item>
          </layout>
         </widget>
         <widget class="QFrame" name="frameFileview">
@@ -428,7 +431,7 @@
           </sizepolicy>
          </property>
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::Shape::StyledPanel</enum>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
           <property name="spacing">
@@ -559,7 +562,7 @@
               <item>
                <widget class="QToolButton" name="toolButton_showScript">
                 <property name="toolTip">
-                 <string>Show model scripts</string>
+                 <string>Show model scripts (*.mod;*.bat;*.cmd;*.py)</string>
                 </property>
                 <property name="text">
                  <string>...</string>
@@ -721,7 +724,7 @@
               <item>
                <spacer name="verticalSpacer">
                 <property name="orientation">
-                 <enum>Qt::Vertical</enum>
+                 <enum>Qt::Orientation::Vertical</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -745,37 +748,37 @@
                <string/>
               </property>
               <property name="frameShape">
-               <enum>QFrame::NoFrame</enum>
+               <enum>QFrame::Shape::NoFrame</enum>
               </property>
               <property name="frameShadow">
-               <enum>QFrame::Plain</enum>
+               <enum>QFrame::Shadow::Plain</enum>
               </property>
               <property name="horizontalScrollBarPolicy">
-               <enum>Qt::ScrollBarAlwaysOn</enum>
+               <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOn</enum>
               </property>
               <property name="editTriggers">
-               <set>QAbstractItemView::EditKeyPressed</set>
+               <set>QAbstractItemView::EditTrigger::EditKeyPressed</set>
               </property>
               <property name="dragDropMode">
-               <enum>QAbstractItemView::DragDrop</enum>
+               <enum>QAbstractItemView::DragDropMode::DragDrop</enum>
               </property>
               <property name="defaultDropAction">
-               <enum>Qt::CopyAction</enum>
+               <enum>Qt::DropAction::CopyAction</enum>
               </property>
               <property name="selectionMode">
-               <enum>QAbstractItemView::MultiSelection</enum>
+               <enum>QAbstractItemView::SelectionMode::MultiSelection</enum>
               </property>
               <property name="selectionBehavior">
-               <enum>QAbstractItemView::SelectRows</enum>
+               <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
               </property>
               <property name="textElideMode">
-               <enum>Qt::ElideLeft</enum>
+               <enum>Qt::TextElideMode::ElideLeft</enum>
               </property>
               <property name="showGrid">
                <bool>false</bool>
               </property>
               <property name="gridStyle">
-               <enum>Qt::NoPen</enum>
+               <enum>Qt::PenStyle::NoPen</enum>
               </property>
               <property name="sortingEnabled">
                <bool>true</bool>
@@ -820,10 +823,10 @@
         </sizepolicy>
        </property>
        <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
+        <enum>QFrame::Shape::StyledPanel</enum>
        </property>
        <property name="frameShadow">
-        <enum>QFrame::Plain</enum>
+        <enum>QFrame::Shadow::Plain</enum>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <property name="spacing">

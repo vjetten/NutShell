@@ -15,22 +15,26 @@
 // when a toolbutton is pressed or enter or doubleclick on the fileView is executed
 void nutshellqt::actionaguila2D()
 {
-    PerformAction(ACTIONTYPEAGUILA2D);
+    QModelIndex id = selectionModel->currentIndex();
+    PerformAction(id, ACTIONTYPEAGUILA2D);
 }
 //---------------------------------------------------------------------------
 void nutshellqt::actionaquila3D()
 {
-    PerformAction(ACTIONTYPEAGUILA3D);
+    QModelIndex id = selectionModel->currentIndex();
+    PerformAction(id,ACTIONTYPEAGUILA3D);
 }
 //---------------------------------------------------------------------------
 void nutshellqt::actionaguila3Drape()
 {
-    PerformAction(ACTIONTYPEDRAPE);
+    QModelIndex id = selectionModel->currentIndex();
+    PerformAction(id,ACTIONTYPEDRAPE);
 }
 //---------------------------------------------------------------------------
 void nutshellqt::actionaguilaplot()
 {
-    PerformAction(ACTIONTYPETIMEPLOT);
+    QModelIndex id = selectionModel->currentIndex();
+    PerformAction(id,ACTIONTYPETIMEPLOT);
 }
 //---------------------------------------------------------------------------
 void nutshellqt::actionplusaguila(bool check)
@@ -43,27 +47,32 @@ void nutshellqt::actionplusaguila(bool check)
 //---------------------------------------------------------------------------
 void nutshellqt::actionlegend()
 {
-    PerformAction(ACTIONTYPELEGEND);
+    QModelIndex id = selectionModel->currentIndex();
+    PerformAction(id,ACTIONTYPELEGEND);
 }
 //---------------------------------------------------------------------------
 void nutshellqt::actionmapattribute()
 {
-    PerformAction(ACTIONTYPEATTRIBUTE);
+    QModelIndex id = selectionModel->currentIndex();
+    PerformAction(id, ACTIONTYPEATTRIBUTE);
 }
 //---------------------------------------------------------------------------
 void nutshellqt::actionmapnew()
 {
-    PerformAction(ACTIONTYPEATTRIBUTENEW);
+    QModelIndex id = selectionModel->currentIndex();
+    PerformAction(id,ACTIONTYPEATTRIBUTENEW);
 }
 //---------------------------------------------------------------------------
 void nutshellqt::actioneditor()
 {
-    PerformAction(ACTIONTYPEMODEL);
+    QModelIndex id = selectionModel->currentIndex();
+    PerformAction(id,ACTIONTYPEMODEL);
 }
 //---------------------------------------------------------------------------
 void nutshellqt::actionmapedit()
 {
-    PerformAction(ACTIONTYPEMAPEDIT);
+    QModelIndex id = selectionModel->currentIndex();
+    PerformAction(id,ACTIONTYPEMAPEDIT);
 }
 //---------------------------------------------------------------------------
 //void nutshellqt::actionmapDisplay()
@@ -73,7 +82,8 @@ void nutshellqt::actionmapedit()
 //---------------------------------------------------------------------------
 void nutshellqt::actionmapMap2Tiff()
 {
-    PerformAction(ACTIONTYPEMAP2TIFF);
+    QModelIndex id = selectionModel->currentIndex();
+    PerformAction(id,ACTIONTYPEMAP2TIFF);
 }
 //---------------------------------------------------------------------------
 void nutshellqt::createBatch(QString sss, QString args)
@@ -135,16 +145,16 @@ int nutshellqt::GetActionType()
     return at;
 }
 //---------------------------------------------------------------------------
-void nutshellqt::PerformAction(int actiontype)
+void nutshellqt::PerformAction(QModelIndex id, int actiontype)
 {
     QString cmdl;
     QStringList args;
     QString nameout;
     QString namein;
-
+//selectionModel->currentIndex()
     changeFileFilter(_filternr);
     args.clear();
-    if(!selectionModel->currentIndex().isValid() && actiontype != ACTIONTYPEATTRIBUTENEW)
+    if(!id.isValid() && actiontype != ACTIONTYPEATTRIBUTENEW)
     {
         ErrorMsg("No file selected.");
         return;
@@ -208,7 +218,7 @@ void nutshellqt::PerformAction(int actiontype)
             args = cmdl.split("!");
             // splt first if possible
 
-            if (args.count() == 1)
+            if (args.size() == 1)
                 args << cmdl;
             // if one map is chosen double it to construct e.g. dem.map + dem.map
 

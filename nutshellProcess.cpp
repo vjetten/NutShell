@@ -247,7 +247,7 @@ void nutshellqt::killModel()
         calcProcess->waitForFinished();
 
         QStringList list = commandWindow->toPlainText().split("\n");
-        xlast = list.count()-1;
+        xlast = list.size()-1;
         while (xlast > 0  && (list[xlast] == " " || list[xlast].isEmpty()))
         {
             list.removeLast();
@@ -292,7 +292,7 @@ void nutshellqt::onScreen(QString buffer)
 
     output = commandWindow->toPlainText();
     list = output.split("\n");
-    xlast = list.count();
+    xlast = list.size();
     // get the lines in the commandWindow
 //qDebug() << list;
     // first output at start run
@@ -314,8 +314,7 @@ void nutshellqt::onScreen(QString buffer)
     }
     else if(!listb.isEmpty() && listb[0].contains("version"))
         {
-            int last = listb.count() - 1;
-            {
+            int last = listb.size() - 1;
             list.replace(xlast-3,listb[0]);
             list.replace(xlast-2,listb[last]);
             output=list.join("\n");
@@ -328,11 +327,11 @@ void nutshellqt::onScreen(QString buffer)
             //save output cursor position
             commandWindow->setTextCursor(calcCursor);
         }
-    }
+    //}
         else
         {
             // runstep output
-            for (int j = 0; j < listb.count(); j++)//j+=2) //<= each runstep is repeated twice for some reason
+            for (int j = 0; j < listb.size(); j++)//j+=2) //<= each runstep is repeated twice for some reason
                 if (listb[j].contains("Exec"))
                 {
                     //Delay(10);
@@ -467,7 +466,7 @@ void nutshellqt::finishedModel(int)
     }
 
     QStringList list = commandWindow->toPlainText().split("\n");
-    xlast = list.count()-1;
+    xlast = list.size()-1;
     while (xlast > 0  && (list[xlast] == " " || list[xlast].isEmpty()))
     {
         list.removeLast();

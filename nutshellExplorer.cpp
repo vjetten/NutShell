@@ -14,8 +14,8 @@ void nutshellqt::setupExplorer()
     baseFilters.clear();
     baseFilters << QString("*.mod;*.map;*.csf;*.tbl;*.tss;*.txt;*.dat;*.csv;*.pcr;*.cmd;*.bat;*.tif");
     baseFilters << QString("*.map");
-    baseFilters << QString("*.tss;*.tbl;*.txt;*.dat;*.csv;*.xls");
-    baseFilters << QString("*.mod;*.cmd;*.bat");
+    baseFilters << QString("*.tss;*.tbl;*.txt;*.dat;*.csv;*.xls;");
+    baseFilters << QString("*.mod;*.cmd;*.bat;*.py");
     baseFilters << QString("Map Series");
     baseFilters << QString("*.*");
     baseFilters << QString("*.*");
@@ -40,9 +40,9 @@ void nutshellqt::setupExplorer()
 
     // create the views
     treeView = new myTreeView();
-    verticalLayout_tree->insertWidget(0, treeView);
+    splitterExplorer->insertWidget(0,treeView);
     treeView->setModel(dirModel);
-    treeView->header()->setStretchLastSection(true);
+   // treeView->header()->setStretchLastSection(true);
     treeView->setUniformRowHeights(true);
     treeView->setSortingEnabled(true);
     treeView->sortByColumn(0, Qt::AscendingOrder);
@@ -50,11 +50,15 @@ void nutshellqt::setupExplorer()
     treeView->setDragEnabled(true);
     treeView->setAcceptDrops(true);
     treeView->setDropIndicatorShown(true);
-   // treeView->resizeColumnToContents(0);
-    treeView->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     treeView->setContextMenuPolicy(Qt::NoContextMenu);
     treeView->setRootIndex(dirModel->index(rootPath));
- //   connect(treeView,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(contextualMenu(const QPoint &)));
+   // treeView->resizeColumnToContents(0);
+   // treeView->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+   // treeView->header()->setSectionResizeMode(0, QHeaderView::Interactive);
+    int half = treeView->width()/2;
+    treeView->setColumnWidth(0, half);
+
+  //   connect(treeView,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(contextualMenu(const QPoint &)));
 
     // fileview is initialized in the UI
     fileView->setModel(fileModel);
@@ -83,6 +87,12 @@ void nutshellqt::setupExplorer()
     selectionDirModel = new QItemSelectionModel(dirModel);
     treeView->setSelectionModel(selectionDirModel);
 
+  //  splitterExplorer->setStretchFactor(0, 0);  // treeView stays fixed width
+  //  splitterExplorer->setStretchFactor(1, 1);
+  //  treeView->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+   // fileView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+
  //   treeView->setEditTriggers(QAbstractItemView::NoEditTriggers | QAbstractItemView::EditKeyPressed);
     connect(treeView, SIGNAL(clicked(QModelIndex)), this, SLOT(setNSRootIndex(QModelIndex)));
   //  connect(treeView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(setNSRootIndex(QModelIndex)));
@@ -109,9 +119,6 @@ void nutshellqt::setupExplorer()
     connect(toolButton_showSeries, SIGNAL(clicked()), this, SLOT(showSeries()));
     connect(toolButton_showOutput, SIGNAL(clicked()), this, SLOT(showReport()));
     connect(toolButton_deletereport, SIGNAL(clicked()), this, SLOT(showDelReport())); //deleteScriptReport()));
-
-//QCoreApplication::sendPostedEvents(this, 0);
-
 
     expToolBar = new QToolBar();
     expToolBar->setOrientation(Qt::Vertical);
@@ -156,7 +163,7 @@ void nutshellqt::setupExplorer()
 
 }
 //---------------------------------------------------------------
-void nutshellqt::contextualMenu(const QPoint  &point)
+void nutshellqt::contextualMenu(QPoint)
 {
     QMenu *menu = new QMenu;
     menu->addAction(setDirAct);
@@ -173,16 +180,15 @@ void nutshellqt::contextualMenu(const QPoint  &point)
 // Getactiontype is in nutshellaction.cpp
 void nutshellqt::selectFiles(const QModelIndex& index)
 {
-    qDebug() << "here";
-    PerformAction(GetActionType());
+    PerformAction(index, GetActionType());
 }
 //---------------------------------------------------------------
-void nutshellqt::setWorkDirectoryIndex(const QModelIndex& index)
+void nutshellqt::setWorkDirectoryIndex(QModelIndex)
 {
     setWorkdirectory();
 }
 //---------------------------------------------------------------
-void nutshellqt::setNSRootIndex(const QModelIndex& index)
+void nutshellqt::setNSRootIndex(QModelIndex index)
 {
 
     currentPath = dirModel->fileInfo(index).absoluteFilePath();
@@ -193,6 +199,7 @@ void nutshellqt::setNSRootIndex(const QModelIndex& index)
     // this is c:\\ or d:\\ etc else only part of the tree is shown
 
     treeView->setCurrentIndex(index);
+
     dirModel->setRootPath(currentPath);
     // set the view to currentpath en also the model
     // set the treeview to the current index when a dir is selected as workdir
@@ -208,8 +215,11 @@ void nutshellqt::setNSRootIndex(const QModelIndex& index)
     treeView->hideColumn(2); // hide column 'size'
     treeView->sortByColumn(0, Qt::AscendingOrder);
     treeView->sortByColumn(3, Qt::AscendingOrder);
+   // treeView->resizeColumnToContents(0);
 
-    //qDebug() << "setNSrootindex" << currentPath;
+    int s = treeView->width()*0.7;
+    if (treeView->columnWidth(0) > s)
+        treeView->setColumnWidth(0, s);
 
 }
 
@@ -283,7 +293,7 @@ QStringList nutshellqt::getReportFilter()
     }
 
     QStringList seriesList = getMapSeries().split(";");
-    for (int i = 0; i < reportNames.count(); i++)
+    for (int i = 0; i < reportNames.size(); i++)
     {
         if (!reportNames[i].isSeries)
         {
@@ -291,7 +301,7 @@ QStringList nutshellqt::getReportFilter()
         }
         else
         {
-            for(int j = 0; j < seriesList.count(); j++)
+            for(int j = 0; j < seriesList.size(); j++)
             {
                 if (StripForName(seriesList[j]).compare(reportNames[i].fileName, Qt::CaseInsensitive) == 0)
                 {
@@ -350,7 +360,7 @@ void nutshellqt::changeFileFilter(int filterNr)
     BDgate->setSeries(ismapseries);
     // paint series blue if they are included in the filter
 
-    if (currentFilter.count() == 0)
+    if (currentFilter.size() == 0)
         currentFilter << " ";
     //force display no possible match if empty
 
@@ -410,10 +420,10 @@ void nutshellqt::deleteScriptReport()
         return;
     }
 
-    for(int i = 0; i < reportNames.count(); i++)
+    for(int i = 0; i < reportNames.size(); i++)
         list << reportNames[i].fileName;
 
-    for(int i = 0; i < reportNames.count(); i++)
+    for(int i = 0; i < reportNames.size(); i++)
     {
         if (reportNames[i].isSeries) // mapseries
             list[i] = "<i><font color=\"blue\">" + list[i] + "</font></i>";
@@ -430,11 +440,11 @@ void nutshellqt::deleteScriptReport()
         return;
 
     getMapSeries();
-    for(int i = 0; i < reportNames.count(); i++)
+    for(int i = 0; i < reportNames.size(); i++)
     {
         if (reportNames[i].isSeries)
         {
-            for(int j = 0; j < fns.count(); j++)
+            for(int j = 0; j < fns.size(); j++)
                 if (reportNames[i].fileName.compare(fns[j].base, Qt::CaseInsensitive) == 0)
                 {
                     series << fns[j].series;
@@ -446,11 +456,11 @@ void nutshellqt::deleteScriptReport()
     list.clear();
     // rebuild the list from scratch
 
-    for(int i = 0; i < reportNames.count(); i++)
+    for(int i = 0; i < reportNames.size(); i++)
         if (!reportNames[i].isSeries)
             list << reportNames[i].fileName;
 
-    for(int i = 0; i < list.count(); i++)
+    for(int i = 0; i < list.size(); i++)
     {
         list[i].insert(0, currentPath + QDir::separator());
         list[i] = QDir::fromNativeSeparators(list[i]);
@@ -475,7 +485,7 @@ void nutshellqt::deleteScriptReport()
     }
 
     statusLabel.setText("Deleting reported files: ");
-    statusBarProgress.setMaximum(list.count());
+    statusBarProgress.setMaximum(list.size());
     statusBar()->addWidget(&statusLabel);
     statusBar()->addWidget(&statusBarProgress);
     statusBarProgress.show();
@@ -520,7 +530,7 @@ void nutshellqt::deleteFiles()
             if (isExtentionInt(fileModel->fileName(index)) && currentFilter[0] != "*.*")
             {
                 QString base = StripForName(fileModel->filePath(index));
-                for(int i = 0; i < fns.count(); i++)
+                for(int i = 0; i < fns.size(); i++)
                     if (base == fns[i].base)
                     {
                         statusLabel.setText("Deleting: ");
@@ -528,8 +538,8 @@ void nutshellqt::deleteFiles()
                         statusBar()->addWidget(&statusBarProgress);
                         statusBarProgress.show();
                         statusLabel.show();
-                        statusBarProgress.setMaximum(fns[i].series.count());
-                        for (int k = 0; k < fns[i].series.count(); k++)
+                        statusBarProgress.setMaximum(fns[i].series.size());
+                        for (int k = 0; k < fns[i].series.size(); k++)
                         {
                             file.setFileName(fns[i].series[k]);
                             file.remove();
@@ -603,7 +613,7 @@ void nutshellqt::pasteFile()
       if (str.contains("+")) // is map series
       {
          str.remove(str.indexOf("+"), 10);
-         for(int j = 0; j < fns.count(); j++)//nrseries; j++)
+         for(int j = 0; j < fns.size(); j++)//nrseries; j++)
             if (StripForName(str) == fns[j].base)
                series << fns[j].series;
       }
@@ -611,7 +621,7 @@ void nutshellqt::pasteFile()
          series << str;
 
       statusLabel.setText("Copying files: ");
-      statusBarProgress.setMaximum(series.count());
+      statusBarProgress.setMaximum(series.size());
       statusBar()->addWidget(&statusLabel);
       statusBar()->addWidget(&statusBarProgress);
       statusBarProgress.show();
@@ -776,6 +786,11 @@ void nutshellqt::setWorkdirectory()
     //comboBox_workdir->setCurrentIndex(-1);
     comboBox_workdir->setCurrentIndex(place);
     // this shopuld trigger setWorkdirectoryNr
+
+    // set column 0 (the tree) to a guessed default size
+    //clicking will adjust this
+   // int half = treeView->width()/3;
+   // treeView->setColumnWidth(0, half);
 }
 //---------------------------------------------------------------
 void nutshellqt::returnToWorkdirectory()
