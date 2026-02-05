@@ -495,6 +495,39 @@ bool nutshellqt::isExtentionInt(QString name)
 //---------------------------------------------------------------------------
 bool nutshellqt::isTextFile(const QString& filename)
 {
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadOnly)) {
+        return false;
+    }
+
+    const qint64 bufferSize = 1024;
+    QByteArray data = file.read(bufferSize);
+    file.close();
+
+    if (data.isEmpty())
+        return false;
+
+    int binaryCount = 0;
+    for (char byte : data) {
+        uchar u = static_cast<uchar>(byte);
+
+        if (u == 0) {
+            return false; // NUL byte = binary
+        }
+
+        // Count as binary if outside common printable text range
+        if ((u < 7 || (u > 14 && u < 32)) && u != 9) {
+            ++binaryCount;
+        }
+    }
+
+    // Heuristic: if more than 10% is suspicious, it's probably binary
+    return binaryCount < data.size() / 10;
+}
+
+/*
+bool nutshellqt::isTextFile(const QString& filename)
+{
     qint64 bufferSize = 1024;
     bool okay = true;
 
@@ -524,6 +557,7 @@ bool nutshellqt::isTextFile(const QString& filename)
 
     return okay;  // Text file
 }
+*/
 //---------------------------------------------------------------------------
 bool nutshellqt::isMapFile(const QString& filename)
 {

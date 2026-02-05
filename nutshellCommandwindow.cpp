@@ -137,38 +137,55 @@ void nutshellqt::executeCommand(QStringList args)
     QString envname = Sn.at(Sn.size()-2);
 
     QString condabase = QDir(condaenv+"/../..").absolutePath();
-    QString condascripts = QDir(condabase+"/Scripts").absolutePath();
+#ifdef Q_OS_WIN
+    QString condascripts = QDir(condabase + "/Scripts").absolutePath();
+    QString gdalData = condaenv + "Library/share/gdal";
+    QString gdalDriver = condaenv + "Library/share/gdal";
+    QString gdalDriverPath = condaenv + "Library/lib/gdalplugins";
+    QString geotiffCsv = condaenv + "Library/share/epsg_csv";
+    QString addpath = condaenv + pathSep
+                      + condaenv + libPath + "/minw-w64/bin" + pathSep
+                      + condaenv + "Library/usr/bin" + pathSep
+                      + condaenv + libPath + pathSep
+                      + condaenv + "Scripts" + pathSep
+                      + condaenv + "bin" + pathSep
+                      + condaenv + "condabin" + pathSep
+                      + condaenv + "/Scripts" + pathSep;
+#else
+    QString condascripts = QDir(condabase + "/bin").absolutePath();
+    QString gdalData = condaenv + "share/gdal";
+    QString gdalDriver = condaenv + "share/gdal";
+    QString gdalDriverPath = condaenv + "lib/gdalplugins";
+    QString geotiffCsv = condaenv + "share/epsg_csv";
+    QString addpath = condaenv + pathSep
+                      + condaenv + libPath + pathSep
+                      + condaenv + "bin" + pathSep;
+#endif
 
     //qDebug() << CondaDirName << envname << condabase << condascripts;
 
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     env.insert("CONDA_DEAFULT_ENV",envname);
-    env.insert("CONDA_EXE",condascripts+"conda.exe");
+    env.insert("CONDA_EXE", condascripts + "/conda" + exeSuffix);
     env.insert("CONDA_PREFIX", condaenv);
     env.insert("CONDA_PREFIX_1", condabase);
-    env.insert("CONDA_PYTHON_EXE",condabase+"/python.exe");
-    env.insert("CONDA_SHLVL","2"); // 1 ?
+    env.insert("CONDA_PYTHON_EXE", condabase + "/python" + exeSuffix);
+    env.insert("CONDA_SHLVL", "2");
+    env.insert("USE_PATH_FOR_GDAL_PYTHON", "YES");
+    env.insert("CONDA_ACTIVATE_SCRIPT", condascripts + "/activate");
+    env.insert("CONDA_ENV_PATH", condaenv);
+    env.insert("CONDA_ENV_PYTHON", condaenv + "python" + exeSuffix);
+    env.insert("GDAL_DATA", gdalData);
+    env.insert("GDAL_DRIVER", gdalDriver);
+    env.insert("GDAL_DRIVER_PATH", gdalDriverPath);
+    env.insert("GEOTIFF_CSV", geotiffCsv);
 
-    env.insert("USE_PATH_FOR_GDAL_PYTHON","YES");
-    env.insert("CONDA_ACTIVATE_SCRIPT",condascripts+"/activate");
-    env.insert("CONDA_ENV_PATH",condaenv);
-    env.insert("CONDA_ENV_PYTHON",condaenv+"python.exe");
-
-    env.insert("GDAL_DATA",condaenv+"Library/share/gdal");
-    env.insert("GDAL_DRIVER",condaenv+"Library/share/gdal");
-    env.insert("GDAL_DRIVER_PATH",condaenv+ "Library/lib/gdalplugins");
-    env.insert("GEOTIFF_CSV",condaenv+"Library/share/epsg_csv");
-    QString addpath = condaenv+";"
-                      +condaenv+"Library/bin/minw-w64/bin;"
-                      +condaenv+"Library/usr/bin;"
-                      +condaenv+"Library/bin;"
-                      +condaenv+"Scripts;"
-                      +condaenv+"bin;"
-                      +condaenv+"condabin;"
-                      +condaenv+"/Scripts;";
-
+#ifdef Q_OS_WIN
     env.insert("PATH", addpath + env.value("Path"));
-
+#else
+    env.insert("PATH", addpath + env.value("PATH"));
+    env.insert("LD_LIBRARY_PATH", condaenv + "lib:" + env.value("LD_LIBRARY_PATH"));
+#endif
 
     // Set the command to run
 
@@ -177,7 +194,7 @@ void nutshellqt::executeCommand(QStringList args)
             && (args.size() > 1 && args[1].indexOf("-f",Qt::CaseInsensitive) == 0))
     {
         args.removeAt(0);
-        QString prog = CondaDirName+"Library/bin/pcrcalc.exe";
+        QString prog = CondaDirName+libPath + "/pcrcalc" + exeSuffix;
         runModelCommandwindow(prog, args);
         return;
     }
@@ -187,35 +204,42 @@ void nutshellqt::executeCommand(QStringList args)
     bool moreArgs = args.size() > 1;
 
     if (!args[0].contains(".")) {
-        QFile fff(args[0]+".cmd");
+        QFile fff(args[0] + scriptSuffix);
         if (fff.exists())
-            args[0] += ".cmd";
+            args[0] += scriptSuffix;
     }
-    // add .cmd if it exists
+    // Add .cmd/.sh if it exists and no extension is present
 
     if (args[0].toUpper() == "PYTHON" && moreArgs && args[1].toUpper().contains(".PY")) {
-        prog = CondaDirName+args[0]+".exe";
+        prog = CondaDirName+args[0] + exeSuffix;
     } else
         if (args[0].toUpper() == "AGUILA") {
-            prog = CondaDirName+"Library/bin/"+args[0]+".exe";
+            prog = CondaDirName+libPath + "/"+args[0] + exeSuffix;
             isCMD = true;
         } else
-            if (args[0].toUpper().contains(".CMD") || args[0].toUpper().contains(".BAT")) {
+            if (args[0].toUpper().contains(scriptSuffix) || args[0].toUpper().contains(".BAT")) {
                 createBatch(args[0],"");
-                prog = "cmd.exe";
+            #ifdef Q_OS_WIN
+                prog = "cmd" + exeSuffix;
                 args.clear();
-                QString batchFilePath = NutshellDirName + "_nutshell_batchjob.cmd";
+                QString batchFilePath = NutshellDirName + "_nutshell_batchjob" + scriptSuffix;
                 args << "xxx" << "/c" << batchFilePath;
+            #else
+                prog = "bash" + exeSuffix;
+                args.clear();
+                QString batchFilePath = NutshellDirName + "_nutshell_batchjob" + scriptSuffix;
+                args << batchFilePath;
+            #endif
                 isCMD = true;
                 QDesktopServices::openUrl(QUrl("file:///"+batchFilePath));
                 return;
             } else
                 if (args[0].toUpper().contains("MAPEDIT")) {
-                    prog = qApp->applicationDirPath()+"/" + args[0]+".exe";
+                    prog = qApp->applicationDirPath()+"/" + args[0]+ exeSuffix;
                     isCMD = true;
                 }
                 else
-                    prog = CondaDirName+"Library/bin/"+args[0]+".exe";
+                    prog = CondaDirName+libPath + "/"+args[0] + exeSuffix;
 
 
     // Set the command arguments if needed
@@ -278,8 +302,8 @@ void nutshellqt::errorCommand()
 void nutshellqt::outputCommand()
 {
     QString buffer = QString(PCRProcess->readAllStandardOutput());
-
-    if (!buffer.contains('\r')) {
+    //qDebug() << "STDOUT from PCRProcess:" << buffer;
+    if (!buffer.contains('\r') && !buffer.contains('\n')) {
         bufprev = bufprev + buffer;
         return;
     }
@@ -288,7 +312,7 @@ void nutshellqt::outputCommand()
         buffer = bufprev;
         bufprev = "";
     }
-
+ 
     commandWindow->appendPlainText(buffer);
     QCoreApplication::sendPostedEvents(this, 0);
 }
