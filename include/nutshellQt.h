@@ -40,6 +40,7 @@
 
 #define ACTIONTYPEUNDEFINED -1
 #define ACTIONTYPENONE       0
+#define ACTIONTYPEWINDOWS    1
 //#define ACTIONTYPEDISPLAY    1
 #define ACTIONTYPEAGUILA3D   2
 #define ACTIONTYPEDRAPE      3
@@ -285,8 +286,7 @@ public:
     bool isMapFile(const QString& filename);
     bool isTSSFile(const QString& filename);
     bool isTiffFile(const QString& filename);
-
-
+\
     void createBatch(QString sss, QString args);
     void deleteBatch();
 
@@ -608,7 +608,6 @@ private:
     QProcess *CMDProcess;
     //bool processError;
     QProcess *calcProcess;
-    //QProcess *CMDProcess;
 
 };
 

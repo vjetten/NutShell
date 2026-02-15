@@ -91,7 +91,8 @@ void nutshellqt::createBatch(QString sss, QString args)
     QFile efout(NutshellDirName+"_nutshell_batchjob.cmd");
     if (efout.exists())
         efout.remove();
-    efout.open(QIODevice::WriteOnly | QIODevice::Text);
+    if (!efout.open(QIODevice::WriteOnly | QIODevice::Text))
+        return;
     QTextStream eout(&efout);
     eout << "@echo off\n";
     eout << "CD "+currentPath +"\n";
@@ -120,6 +121,7 @@ int nutshellqt::GetActionType()
     bool isTXT = false;
     bool isTSS = false;
     bool isTIFF = false;
+
     at = ACTIONTYPEUNDEFINED;
 
     isMap = isMapFile(SelectedPathName);
@@ -151,7 +153,7 @@ void nutshellqt::PerformAction(QModelIndex id, int actiontype)
     QStringList args;
     QString nameout;
     QString namein;
-//selectionModel->currentIndex()
+
     changeFileFilter(_filternr);
     args.clear();
     if(!id.isValid() && actiontype != ACTIONTYPEATTRIBUTENEW)
@@ -159,6 +161,12 @@ void nutshellqt::PerformAction(QModelIndex id, int actiontype)
         ErrorMsg("No file selected.");
         return;
     }
+
+    bool open_win = false;
+    if (QApplication::keyboardModifiers() & Qt::ControlModifier)  {
+        open_win = true;
+    }
+
     // make a filelist string for aguila related actions
     if (actiontype != ACTIONTYPEATTRIBUTENEW &&
             actiontype != ACTIONTYPEATTRIBUTE &&
@@ -194,6 +202,12 @@ void nutshellqt::PerformAction(QModelIndex id, int actiontype)
         statusBar()->addWidget(&statusLabel);
         statusLabel.show();
     }
+
+    // if (open_win) {
+    //     QDesktopServices::openUrl(QUrl("file:///" + cmdl));
+    //     QDesktopServices::openUrl(QUrl::fromLocalFile(cmdl));
+    //     actiontype = ACTIONTYPENONE;
+    // }
 
     switch (actiontype)
     {
@@ -232,7 +246,11 @@ void nutshellqt::PerformAction(QModelIndex id, int actiontype)
         args << "aguila" << "-t" << cmdl.split("!");
         break;
     case ACTIONTYPEMODEL :
-            AddModel(SelectedPathName,1);
+            if (open_win) {
+                //QDesktopServices::openUrl(QUrl::fromLocalFile(cmdl));
+                QDesktopServices::openUrl(QUrl("file:///" + cmdl));
+            } else
+                AddModel(SelectedPathName,1);
             actiontype = ACTIONTYPENONE;
         break;
     case ACTIONTYPEMAPEDIT :
@@ -320,7 +338,7 @@ void nutshellqt::PerformAction(QModelIndex id, int actiontype)
         //open process in its standard OS application, whatever the user has defined
         actiontype = ACTIONTYPENONE;
     }
-qDebug() << actiontype << args;
+
     if (actiontype != ACTIONTYPENONE) {
         executeCommand(args);
     }

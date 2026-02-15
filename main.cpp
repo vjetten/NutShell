@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 
     nutshellqt w;
 
-    w.setWindowTitle("NutShell (version 5.19 - 251012)");
+    w.setWindowTitle("NutShell (version 5.21 - 260215)");
     w.showMaximized();
     w.show();
     a.setStyle(QStyleFactory::create("Fusion"));

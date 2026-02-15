@@ -15,7 +15,7 @@ void nutshellqt::setupExplorer()
     baseFilters << QString("*.mod;*.map;*.csf;*.tbl;*.tss;*.txt;*.dat;*.csv;*.pcr;*.cmd;*.bat;*.tif");
     baseFilters << QString("*.map");
     baseFilters << QString("*.tss;*.tbl;*.txt;*.dat;*.csv;*.xls;");
-    baseFilters << QString("*.mod;*.cmd;*.bat;*.py");
+    baseFilters << QString("*.mod;*.cmd;*.bat;`*.py");
     baseFilters << QString("Map Series");
     baseFilters << QString("*.*");
     baseFilters << QString("*.*");
@@ -52,11 +52,10 @@ void nutshellqt::setupExplorer()
     treeView->setDropIndicatorShown(true);
     treeView->setContextMenuPolicy(Qt::NoContextMenu);
     treeView->setRootIndex(dirModel->index(rootPath));
-   // treeView->resizeColumnToContents(0);
-   // treeView->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-   // treeView->header()->setSectionResizeMode(0, QHeaderView::Interactive);
     int half = treeView->width()/2;
     treeView->setColumnWidth(0, half);
+    treeView->hideColumn(1); // hide column 'folder'
+    treeView->hideColumn(2); // hide column 'size'
 
   //   connect(treeView,SIGNAL(customContextMenuRequested(const QPoint &)),this,SLOT(contextualMenu(const QPoint &)));
 
@@ -211,15 +210,15 @@ void nutshellqt::setNSRootIndex(QModelIndex index)
     // set the root index of the listview so that is shows files of the new dir
 
     changeFileFilter(_filternr);
-    treeView->hideColumn(1); // hide column 'folder'
-    treeView->hideColumn(2); // hide column 'size'
-    treeView->sortByColumn(0, Qt::AscendingOrder);
-    treeView->sortByColumn(3, Qt::AscendingOrder);
-   // treeView->resizeColumnToContents(0);
+  //  treeView->hideColumn(1); // hide column 'folder'
+  //  treeView->hideColumn(2); // hide column 'size'
+//    treeView->sortByColumn(0, Qt::AscendingOrder);
+//    treeView->sortByColumn(3, Qt::AscendingOrder);
+   // // treeView->resizeColumnToContents(0);
 
-    int s = treeView->width()*0.7;
-    if (treeView->columnWidth(0) > s)
-        treeView->setColumnWidth(0, s);
+   //  int s = treeView->width()*0.7;
+   //  if (treeView->columnWidth(0) > s)
+   //      treeView->setColumnWidth(0, s);
 
 }
 

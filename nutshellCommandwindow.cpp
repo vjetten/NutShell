@@ -130,45 +130,21 @@ void nutshellqt::parseCommand()
     // add command to commandlist
 }
 //---------------------------------------------------------------
+
 void nutshellqt::executeCommand(QStringList args)
 {
-    QString condaenv = CondaDirName;
-    QStringList Sn = condaenv.split('/');
-    QString envname = Sn.at(Sn.size()-2);
+    QStringList newPath;
+    newPath << CondaDirName
+            << CondaDirName + "/Library/bin"
+            << CondaDirName + "/DLLs"
+            << CondaDirName + "/Scripts";
 
-    QString condabase = QDir(condaenv+"/../..").absolutePath();
-    QString condascripts = QDir(condabase+"/Scripts").absolutePath();
-
-    //qDebug() << CondaDirName << envname << condabase << condascripts;
+    QString mergedPath = newPath.join(";") + ";" +
+            QProcessEnvironment::systemEnvironment().value("PATH");
 
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    env.insert("CONDA_DEAFULT_ENV",envname);
-    env.insert("CONDA_EXE",condascripts+"conda.exe");
-    env.insert("CONDA_PREFIX", condaenv);
-    env.insert("CONDA_PREFIX_1", condabase);
-    env.insert("CONDA_PYTHON_EXE",condabase+"/python.exe");
-    env.insert("CONDA_SHLVL","2"); // 1 ?
-
-    env.insert("USE_PATH_FOR_GDAL_PYTHON","YES");
-    env.insert("CONDA_ACTIVATE_SCRIPT",condascripts+"/activate");
-    env.insert("CONDA_ENV_PATH",condaenv);
-    env.insert("CONDA_ENV_PYTHON",condaenv+"python.exe");
-
-    env.insert("GDAL_DATA",condaenv+"Library/share/gdal");
-    env.insert("GDAL_DRIVER",condaenv+"Library/share/gdal");
-    env.insert("GDAL_DRIVER_PATH",condaenv+ "Library/lib/gdalplugins");
-    env.insert("GEOTIFF_CSV",condaenv+"Library/share/epsg_csv");
-    QString addpath = condaenv+";"
-                      +condaenv+"Library/bin/minw-w64/bin;"
-                      +condaenv+"Library/usr/bin;"
-                      +condaenv+"Library/bin;"
-                      +condaenv+"Scripts;"
-                      +condaenv+"bin;"
-                      +condaenv+"condabin;"
-                      +condaenv+"/Scripts;";
-
-    env.insert("PATH", addpath + env.value("Path"));
-
+    env.insert("PATH", mergedPath);
+    env.insert("GDAL_DATA", CondaDirName + "/Library/share/gdal");
 
     // Set the command to run
 
@@ -184,6 +160,7 @@ void nutshellqt::executeCommand(QStringList args)
 
     QString prog;
     bool isCMD = false;
+    bool isAguila = false;
     bool moreArgs = args.size() > 1;
 
     if (!args[0].contains(".")) {
@@ -198,7 +175,7 @@ void nutshellqt::executeCommand(QStringList args)
     } else
         if (args[0].toUpper() == "AGUILA") {
             prog = CondaDirName+"Library/bin/"+args[0]+".exe";
-            isCMD = true;
+            isAguila = true;
         } else
             if (args[0].toUpper().contains(".CMD") || args[0].toUpper().contains(".BAT")) {
                 createBatch(args[0],"");
@@ -222,17 +199,30 @@ void nutshellqt::executeCommand(QStringList args)
     args.removeAt(0);
 
     // difference between CMD Process and PCR process is only change of cursor
-    qDebug() << prog << args;
-    if (isCMD) {
-        CMDProcess->setProcessEnvironment(env);
-        CMDProcess->setWorkingDirectory(currentPath);
-        CMDProcess->startDetached(prog, args);
-        //CProcess->waitForFinished(-1);
-        // qint64 pid;
-        // QProcess::startDetached(prog, args, currentPath, &pid);
-        // qDebug() << pid;
-        // QProcess::startDetached("kill", {QString::number(pid)});
+    //qDebug() << prog << args;
+    if (isAguila) {
+        QProcess *AQProcess = new QProcess(this);
+        AQProcess->setProcessChannelMode(QProcess::MergedChannels);
+        connect(AQProcess, &QProcess::finished, AQProcess, &QObject::deleteLater);
+        connect(AQProcess, &QProcess::errorOccurred,
+                this, [this, prog, args](QProcess::ProcessError) {
+            QString ss = "Aguila cannot display this file.";
+            bool isTIFF= isTiffFile(args[1]);
+            if (isTIFF)
+                ss = "Aguila can not open this file. If it is tif file it could be that the cellsize in x and y direction are not exctly the same. You can correct this with gdalwarp.";
+            QMessageBox::critical(this, "Program Error Output", ss);
+        });
 
+        AQProcess->setProcessEnvironment(env);
+        AQProcess->setWorkingDirectory(currentPath);
+       // CMDProcess->startDetached(prog, args);
+        AQProcess->start(prog, args);
+    } else
+        if (isCMD) {
+qDebug() << prog << args;
+            CMDProcess->setProcessEnvironment(env);
+            CMDProcess->setWorkingDirectory(currentPath);
+            CMDProcess->startDetached(prog, args);
     } else {
         PCRProcess->setProcessEnvironment(env);
         PCRProcess->setWorkingDirectory(currentPath);

@@ -36,7 +36,8 @@ void nutshellqt::setupModel()
     //connect(calcProcess, SIGNAL(readyReadStandardOutput()),this, SLOT(readFromStdOutput()) );
     connect(calcProcess, SIGNAL(finished(int)),this, SLOT(finishedModel(int)) );
 
-    //    useOldCalc = false;
+
+   //    useOldCalc = false;
 
     //    connect(toolButton_oldcalc, SIGNAL(toggled(bool)), this, SLOT(toggleOldcalc(bool)));
     connect(toolButton_startrun, SIGNAL(clicked()), this, SLOT(runModel()));
