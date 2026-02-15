@@ -219,7 +219,7 @@ void nutshellqt::executeCommand(QStringList args)
         AQProcess->start(prog, args);
     } else
         if (isCMD) {
-qDebug() << prog << args;
+
             CMDProcess->setProcessEnvironment(env);
             CMDProcess->setWorkingDirectory(currentPath);
             CMDProcess->startDetached(prog, args);
